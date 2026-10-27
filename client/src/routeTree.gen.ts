@@ -10,22 +10,41 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/_app'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as DesignRouteImport } from './routes/design'
+import { Route as LearnerRouteImport } from './routes/learner'
+import { Route as TrainerRouteImport } from './routes/trainer'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
-import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
-import { Route as AppNotesRouteImport } from './routes/_app/notes'
-import { Route as AppAdminUsersRouteImport } from './routes/_app/admin/users'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as LearnerIndexRouteImport } from './routes/learner/index'
+import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignRoute = DesignRouteImport.update({
+  id: '/design',
+  path: '/design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnerRoute = LearnerRouteImport.update({
+  id: '/learner',
+  path: '/learner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrainerRoute = TrainerRouteImport.update({
+  id: '/trainer',
+  path: '/trainer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
@@ -48,91 +67,110 @@ const authResetPasswordRoute = authResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppDashboardRoute = AppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AppRoute,
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
-const AppNotesRoute = AppNotesRouteImport.update({
-  id: '/notes',
-  path: '/notes',
-  getParentRoute: () => AppRoute,
+const LearnerIndexRoute = LearnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LearnerRoute,
 } as any)
-const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
-  id: '/admin/users',
-  path: '/admin/users',
-  getParentRoute: () => AppRoute,
+const TrainerIndexRoute = TrainerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TrainerRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/design': typeof DesignRoute
+  '/learner': typeof LearnerRouteWithChildren
+  '/trainer': typeof TrainerRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
-  '/dashboard': typeof AppDashboardRoute
-  '/notes': typeof AppNotesRoute
-  '/admin/users': typeof AppAdminUsersRoute
+  '/admin/': typeof AdminIndexRoute
+  '/learner/': typeof LearnerIndexRoute
+  '/trainer/': typeof TrainerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/design': typeof DesignRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
-  '/dashboard': typeof AppDashboardRoute
-  '/notes': typeof AppNotesRoute
-  '/admin/users': typeof AppAdminUsersRoute
+  '/admin': typeof AdminIndexRoute
+  '/learner': typeof LearnerIndexRoute
+  '/trainer': typeof TrainerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_app': typeof AppRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
+  '/design': typeof DesignRoute
+  '/learner': typeof LearnerRouteWithChildren
+  '/trainer': typeof TrainerRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
-  '/_app/dashboard': typeof AppDashboardRoute
-  '/_app/notes': typeof AppNotesRoute
-  '/_app/admin/users': typeof AppAdminUsersRoute
+  '/admin/': typeof AdminIndexRoute
+  '/learner/': typeof LearnerIndexRoute
+  '/trainer/': typeof TrainerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/design'
+    | '/learner'
+    | '/trainer'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
-    | '/dashboard'
-    | '/notes'
-    | '/admin/users'
+    | '/admin/'
+    | '/learner/'
+    | '/trainer/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/design'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
-    | '/dashboard'
-    | '/notes'
-    | '/admin/users'
+    | '/admin'
+    | '/learner'
+    | '/trainer'
   id:
     | '__root__'
     | '/'
-    | '/_app'
+    | '/admin'
+    | '/design'
+    | '/learner'
+    | '/trainer'
     | '/(auth)/forgot-password'
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(auth)/reset-password'
-    | '/_app/dashboard'
-    | '/_app/notes'
-    | '/_app/admin/users'
+    | '/admin/'
+    | '/learner/'
+    | '/trainer/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
+  DesignRoute: typeof DesignRoute
+  LearnerRoute: typeof LearnerRouteWithChildren
+  TrainerRoute: typeof TrainerRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
@@ -148,11 +186,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AppRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design': {
+      id: '/design'
+      path: '/design'
+      fullPath: '/design'
+      preLoaderRoute: typeof DesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learner': {
+      id: '/learner'
+      path: '/learner'
+      fullPath: '/learner'
+      preLoaderRoute: typeof LearnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trainer': {
+      id: '/trainer'
+      path: '/trainer'
+      fullPath: '/trainer'
+      preLoaderRoute: typeof TrainerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/forgot-password': {
@@ -183,47 +242,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/dashboard': {
-      id: '/_app/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AppDashboardRouteImport
-      parentRoute: typeof AppRoute
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/_app/notes': {
-      id: '/_app/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof AppNotesRouteImport
-      parentRoute: typeof AppRoute
+    '/learner/': {
+      id: '/learner/'
+      path: '/'
+      fullPath: '/learner/'
+      preLoaderRoute: typeof LearnerIndexRouteImport
+      parentRoute: typeof LearnerRoute
     }
-    '/_app/admin/users': {
-      id: '/_app/admin/users'
-      path: '/admin/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AppAdminUsersRouteImport
-      parentRoute: typeof AppRoute
+    '/trainer/': {
+      id: '/trainer/'
+      path: '/'
+      fullPath: '/trainer/'
+      preLoaderRoute: typeof TrainerIndexRouteImport
+      parentRoute: typeof TrainerRoute
     }
   }
 }
 
-interface AppRouteChildren {
-  AppDashboardRoute: typeof AppDashboardRoute
-  AppNotesRoute: typeof AppNotesRoute
-  AppAdminUsersRoute: typeof AppAdminUsersRoute
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
-const AppRouteChildren: AppRouteChildren = {
-  AppDashboardRoute: AppDashboardRoute,
-  AppNotesRoute: AppNotesRoute,
-  AppAdminUsersRoute: AppAdminUsersRoute,
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
 }
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface LearnerRouteChildren {
+  LearnerIndexRoute: typeof LearnerIndexRoute
+}
+
+const LearnerRouteChildren: LearnerRouteChildren = {
+  LearnerIndexRoute: LearnerIndexRoute,
+}
+
+const LearnerRouteWithChildren =
+  LearnerRoute._addFileChildren(LearnerRouteChildren)
+
+interface TrainerRouteChildren {
+  TrainerIndexRoute: typeof TrainerIndexRoute
+}
+
+const TrainerRouteChildren: TrainerRouteChildren = {
+  TrainerIndexRoute: TrainerIndexRoute,
+}
+
+const TrainerRouteWithChildren =
+  TrainerRoute._addFileChildren(TrainerRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
+  DesignRoute: DesignRoute,
+  LearnerRoute: LearnerRouteWithChildren,
+  TrainerRoute: TrainerRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,

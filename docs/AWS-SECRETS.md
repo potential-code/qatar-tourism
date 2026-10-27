@@ -36,12 +36,12 @@ Dokploy holding every value.
 
 ## What goes where
 
-| Kind               | Example                                               | Lives in                              |
-| ------------------ | ----------------------------------------------------- | ------------------------------------- |
-| Public build value | `VITE_API_URL`                                        | compose `build.args`; ships to users  |
-| Plain config       | `PORT`, `CLIENT_URL`, `BETTER_AUTH_URL`, `LOG_LEVEL`  | compose `environment:` as `${VAR}`    |
-| Secret             | `DATABASE_URL`, `BETTER_AUTH_SECRET`                  | Secrets Manager only                  |
-| AWS credential     | one scoped access key (later, a Roles Anywhere cert)  | Dokploy — the only secret left there  |
+| Kind               | Example                                              | Lives in                             |
+| ------------------ | ---------------------------------------------------- | ------------------------------------ |
+| Public build value | `VITE_API_URL`                                       | compose `build.args`; ships to users |
+| Plain config       | `PORT`, `CLIENT_URL`, `BETTER_AUTH_URL`, `LOG_LEVEL` | compose `environment:` as `${VAR}`   |
+| Secret             | `DATABASE_URL`, `BETTER_AUTH_SECRET`                 | Secrets Manager only                 |
+| AWS credential     | one scoped access key (later, a Roles Anywhere cert) | Dokploy — the only secret left there |
 
 Never put a secret in a build argument, an image, git, a log line, a chat message, or a compose
 default. Never share one AWS identity between apps or between environments.
@@ -51,11 +51,11 @@ default. Never share one AWS identity between apps or between environments.
 To read from Secrets Manager the container needs an AWS credential. A server outside AWS has no
 instance role to provide one, so something has to be the first credential:
 
-| Option                 | How                                                    | When                     |
-| ---------------------- | ------------------------------------------------------ | ------------------------ |
-| Scoped access key      | IAM user allowed to read one secret and send via SES   | Start here               |
-| IAM Roles Anywhere     | a certificate on the host swapped for 1-hour credentials | Next; no stored key     |
-| EC2 / ECS instance role | the platform supplies credentials                     | Only if hosting moves to AWS |
+| Option                  | How                                                      | When                         |
+| ----------------------- | -------------------------------------------------------- | ---------------------------- |
+| Scoped access key       | IAM user allowed to read one secret and send via SES     | Start here                   |
+| IAM Roles Anywhere      | a certificate on the host swapped for 1-hour credentials | Next; no stored key          |
+| EC2 / ECS instance role | the platform supplies credentials                        | Only if hosting moves to AWS |
 
 A leaked scoped key can read one app's secrets for one environment and send email — not every
 secret you own. Because the same identity sends mail, the separate SES keys go away.
@@ -188,11 +188,11 @@ Anywhere the two access-key lines are replaced by a mounted certificate.
 
 ## Rotation
 
-| Secret               | How                                                          | Effect                       |
-| -------------------- | ------------------------------------------------------------ | ---------------------------- |
-| `BETTER_AUTH_SECRET` | new value, restart                                           | every user is signed out     |
-| Database password    | `ALTER ROLE` in Postgres, update the secret, restart         | a brief reconnect            |
-| AWS access key       | create a second key, update Dokploy, restart, delete the old | none                         |
+| Secret               | How                                                          | Effect                   |
+| -------------------- | ------------------------------------------------------------ | ------------------------ |
+| `BETTER_AUTH_SECRET` | new value, restart                                           | every user is signed out |
+| Database password    | `ALTER ROLE` in Postgres, update the secret, restart         | a brief reconnect        |
+| AWS access key       | create a second key, update Dokploy, restart, delete the old | none                     |
 
 Rotate on a schedule, and immediately when someone with production access leaves. AWS's
 automatic rotation is built for its managed databases (RDS); for Postgres on your own host,
@@ -206,12 +206,12 @@ rotate by hand as above.
 
 ## If something leaks
 
-| Leaked               | Gives access to                                   | Do                                          |
-| -------------------- | ------------------------------------------------- | ------------------------------------------- |
-| AWS access key       | one app's secret for one environment; sending mail | deactivate it in IAM; rotate that secret   |
-| `DATABASE_URL`       | that one database                                 | change the password, restart                |
-| `BETTER_AUTH_SECRET` | forging sessions for that app                     | rotate it; everyone is signed out           |
-| a laptop's `.env`    | development values only                           | rotate the development values               |
+| Leaked               | Gives access to                                    | Do                                       |
+| -------------------- | -------------------------------------------------- | ---------------------------------------- |
+| AWS access key       | one app's secret for one environment; sending mail | deactivate it in IAM; rotate that secret |
+| `DATABASE_URL`       | that one database                                  | change the password, restart             |
+| `BETTER_AUTH_SECRET` | forging sessions for that app                      | rotate it; everyone is signed out        |
+| a laptop's `.env`    | development values only                            | rotate the development values            |
 
 ## Upgrade path
 
@@ -253,13 +253,13 @@ export async function loadSecrets() {
 
 Then:
 
-| File                          | Change                                                            |
-| ----------------------------- | ----------------------------------------------------------------- |
-| `server/config/env.ts`        | `await loadSecrets()` before parsing; add optional `AWS_SECRET_ID` |
-| `server/db/migrate.ts`        | `await loadSecrets()` first — it needs `DATABASE_URL`             |
-| `server/config/secrets.ts`    | the only other file allowed to read `process.env`                 |
-| `docker-compose*.yml`         | drop `DATABASE_URL` and `BETTER_AUTH_SECRET`; add `AWS_SECRET_ID` |
-| `.env.example`                | document `AWS_SECRET_ID` and `AWS_PROFILE` for team mode          |
+| File                       | Change                                                             |
+| -------------------------- | ------------------------------------------------------------------ |
+| `server/config/env.ts`     | `await loadSecrets()` before parsing; add optional `AWS_SECRET_ID` |
+| `server/db/migrate.ts`     | `await loadSecrets()` first — it needs `DATABASE_URL`              |
+| `server/config/secrets.ts` | the only other file allowed to read `process.env`                  |
+| `docker-compose*.yml`      | drop `DATABASE_URL` and `BETTER_AUTH_SECRET`; add `AWS_SECRET_ID`  |
+| `.env.example`             | document `AWS_SECRET_ID` and `AWS_PROFILE` for team mode           |
 
 Bun supports top-level `await` in ES modules, so `env.ts` keeps exporting a plain, typed `env`.
 

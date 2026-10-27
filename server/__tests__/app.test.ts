@@ -75,16 +75,21 @@ describe('auth and roles', () => {
   })
 
   test('GET /api/me returns the viewer', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/me')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
-      user: { id: 'user-user', name: 'Test user', email: 'user@example.com', role: 'user' },
+      user: {
+        id: 'user-learner',
+        name: 'Test learner',
+        email: 'learner@example.com',
+        role: 'learner',
+      },
     })
   })
 
   test('admin route is 403 for role user', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/admin/users')
     expect(res.status).toBe(403)
     expect((await res.json()).error.code).toBe('FORBIDDEN')
@@ -99,7 +104,7 @@ describe('auth and roles', () => {
 
 describe('validation', () => {
   test('invalid body is a 400 with the error shape', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/notes', json({ title: '' }))
     expect(res.status).toBe(400)
     const body = await res.json()
@@ -109,20 +114,20 @@ describe('validation', () => {
   })
 
   test('non-uuid id is a 400', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/notes/not-a-uuid')
     expect(res.status).toBe(400)
     expect((await res.json()).error.details.target).toBe('param')
   })
 
   test('bad pagination is a 400', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/notes?pageSize=1000')
     expect(res.status).toBe(400)
   })
 
   test('body over 1 MB is a 413', async () => {
-    stubSession('user')
+    stubSession('learner')
     const res = await app.request('/api/notes', json({ title: 'x', body: 'a'.repeat(1_100_000) }))
     expect(res.status).toBe(413)
     expect((await res.json()).error.code).toBe('PAYLOAD_TOO_LARGE')

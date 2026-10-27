@@ -235,11 +235,10 @@ them in `server/config/env.ts`; the client validates `VITE_API_URL` when it buil
 Follows the house deployment standard: Dokploy owns routing, TLS and ports; compose lists only
 what to build and which `${VAR}`s each service reads; no database in compose.
 
-|        | Image                        | Port | Notes                                                    |
-| ------ | ---------------------------- | ---- | -------------------------------------------------------- |
+|        | Image                         | Port | Notes                                                     |
+| ------ | ----------------------------- | ---- | --------------------------------------------------------- |
 | server | `oven/bun:1-alpine`, non-root | 8000 | migrations run in the entrypoint before the server starts |
-| client | `nginx:alpine`               | 5000 | `VITE_API_URL` is a build arg                            |
-
+| client | `nginx:alpine`                | 5000 | `VITE_API_URL` is a build arg                             |
 - Put the client and the API under one parent domain (`app.example.com`,
   `api.example.com`) so the session cookie is same-site.
 - `BETTER_AUTH_URL` is the API's public origin; `CLIENT_URL` is the client's.

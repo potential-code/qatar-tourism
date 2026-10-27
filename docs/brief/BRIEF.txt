@@ -1,0 +1,559 @@
+
+Qatar Tourism AcademyMockup Development Brief
+Prepared by Potential.com for the design and development team
+Version 1.0  |  26 October 2026  |  Customer demonstration using fictional data
+Build objective
+Build an attractive, animated Qatar Tourism branded Academy demonstration that connects public registration, personalised learning, hybrid training, trainer assessment and Academy administration. The customer must be able to explore the experience and see how an action in one role updates the other roles and the reporting.
+This is a self-contained implementation brief. The development team should not need to attend the customer meetings or read the email threads. Use the supplied page copy, fictional curricula, sample scenarios, data plan and acceptance criteria as the starting specification.
+Customer context
+Qatar Tourism’s Service Excellence Academy described more than 80,000 learners across two learning management systems and four learning groups: Qatar Host, Qatar Specialist, tour guides and desert safari guides. Existing systems already support many learning functions. The opportunity is to connect the experience, reduce manual coordination and demonstrate controlled access for external trainers.
+Priorities raised on 21 October were a unified entry point, CRM-linked registration, single sign-on, booking and rescheduling, content maintenance, assessment, certification and reporting. External trainer visibility and exports are constrained by the customer’s IT policies. Virtual classroom integration and hosting also require IT review.
+Customer trial request and expanded scope
+Eiman requested Program A with stages, levels and certification; Program B with one learning-path stage and no certification; and complete learner, external trainer and administrator journeys. On 26 October she confirmed that work should proceed using the existing requirements while Karolanne is away.
+Rawzaba has expanded the mockup to include an animated public homepage, open registration, pre and post assessments, AI path recommendations, text and voice role-play, video and SCORM content, trainer scheduling, 1,200 fictional learners and AI-assisted analytics. These are demonstration design requirements, not a claim that Qatar Tourism has approved a production specification.
+Non negotiable outcome
+Deliver a coherent, responsive, stateful demonstration. Every primary button must work, open a purposeful flow or clearly identify a simulated capability. No empty dashboards, unrelated stock screens, dead cards, lorem ipsum or invented production claims.
+
+1  Scope and delivery boundaries
+Working demonstration
+Public homepage and programme catalogue with A, B and C cards; A and B have complete journeys. C is an explicitly labelled additional sample programme with seeded reporting and a working overview.
+Visitor registration defaults to Program B. Program A enrolment uses an explicit programme choice and any demo approval rule. Existing accounts can hold more than one enrolment.
+Learner assessment, path recommendation, lesson progress, SCORM sample, text and voice practice, bookings, assignments, feedback and completion.
+Trainer session creation, rescheduling, cancellation, attendance and scoring; permission-restricted views and exports.
+Admin Dashboard, AI Analytics, Reports and Academy Management, with consistent data and functioning filters and drill-downs.
+Simulated external connections
+CRM and internal-tool SSO, CRM synchronisation, Teams or Zoom integration and outbound email are demonstration adapters unless separately connected and approved. Present their intended behaviour and log simulated events. Never label a simulated email as actually delivered or a mock identity as authenticated by Qatar Tourism.
+Voice practice should accept microphone input where available, display its transcript, play the simulated visitor response and produce feedback. If speech services are unavailable, provide a clearly labelled recorded demonstration and typed fallback. AI recommendations and analytics may use deterministic demo logic, but must disclose demo mode and derive results from the seeded data.
+Governance for this trial
+Use fictional people, organisations, submissions, results and sessions only. Do not import the customer’s internal content, workflow documents or personal data. Eiman requested written confirmation that all dummy data will be deleted after the trial. Include a deletion plan covering records, uploads, recordings, generated certificates and exported files; agree the trial end date with Potential before distribution.
+The NDA process continues separately. Internal programme outlines and production integration details remain outside this dummy-data exercise. Do not infer hosting approval, cybersecurity approval, actual seat capacity or replacement of the existing LMSs from a successful mockup.
+Deliverables to Potential
+Hosted private demo URL and secure role access instructions; editable source code and setup instructions.
+Seed and reset mechanism; asset and content inventory; list of functional versus simulated capabilities.
+Responsive pages, error and empty states, documented permission matrix and test results against this brief.
+A 15–20 minute walkthrough script using the connected examples in section 17.
+
+2  Visual direction and public homepage
+Create a premium tourism learning experience: confident typography, generous spacing, strong imagery, purposeful animation and clear progression. Use official Qatar Tourism assets and approved usage guidance from https://www.qatartourism.com/en and its Qatar Tourism brand logos link. Preserve logo proportions. Do not substitute the Visit Qatar identity for Qatar Tourism without confirmation.
+Provisional UI palette for the mockup: deep maroon #7A1738, warm ivory #FAF7F2, charcoal #20242B and muted gold #B69053, with accessible semantic colours for progress and alerts. These are proposed interface colours, not verified official brand codes. Replace with supplied official tokens when available. Use a legible English font and Arabic-compatible typography; English is the complete initial content set, with bilingual and RTL-ready layouts.
+Homepage content in display order
+Section
+Copy and interaction
+Header
+Qatar Tourism logo; Academy; Programmes; How it works; Upcoming sessions; Sign in; Create account. Language control only shows languages actually available.
+Hero
+Headline: Build the skills to create memorable visitor experiences. Body: Explore flexible learning, practise real situations and progress through a journey shaped around your role. Buttons: Explore programmes and Start your journey.
+Live programmes
+Heading: Find your next learning journey. Three rich cards with image, title, audience, format, duration, certification status and View programme button.
+What to expect
+Learn at your pace. Practise with AI. Learn with expert trainers. Track your progress. Explain each benefit in one short sentence and link to the corresponding preview.
+How it works
+Create your profile → Check your starting point → Follow your learning path → Practise and complete. Note that requirements differ by programme.
+Sessions and trainers
+Upcoming sample sessions with format, Qatar time, trainer, capacity and a sign-in-to-book CTA. Link to trainer profiles.
+FAQ and footer
+Programme differences, self-paced versus live learning, certificates, account access and help. Footer notice: Demonstration environment. All learner and training data is fictional.
+
+Motion and interaction
+Use a short muted hero loop or subtle image movement, staggered card reveals, refined hover states and progress transitions. Keep motion around 150–400 ms for controls; avoid scroll hijacking and auto-playing sound. Respect reduced-motion preferences and provide pause controls for continuous motion. Load imagery efficiently and preserve readable contrast over every image.
+
+3  Programme catalogue and account entry
+Card
+Public description
+Format and action
+Program ATourism Service Professional
+Build service skills through self-paced learning, guided practice and trainer-led sessions. Complete assessments and a practical assignment to earn a demonstration certificate.
+Two levels • Hybrid • Approximately 4 hours • Certification trackView programme / Join Program A
+Program BVisitor Service Essentials
+Develop everyday visitor-service skills through a personalised selection of short lessons and realistic practice. Measure your improvement from start to finish.
+One stage • Self-paced • Approximately 60–90 minutes • No certificateStart with Program B
+Program CDestination Storytelling
+Explore a sample future Academy offering focused on clear, engaging destination stories.
+Additional sample programme • Overview and reporting previewExplore sample programme
+
+Each overview includes learning outcomes, audience, units, prerequisites, expected effort, trainers where relevant and completion rules. A and B are active demo programmes. C must be clearly marked as illustrative; show a functional detail page without implying that a complete third journey was requested or that it is an actual Qatar Tourism programme.
+Sign in and registration
+Use a clear split between Sign in and Create account. Sign-in modes: Learner, Trainer and Academy admin. The prominent Sign in as trainer button opens the trainer mode. Mode selection changes the interface; it must never grant a role. Trainer and admin privileges come from a pre-provisioned or invited account.
+Learner form: email, password, show password, remember me, forgot password and sign-in button. Registration is publicly available. Use email verification in an enabled test service or an explicitly marked simulated verification step. Give a useful duplicate-account message and return users to the programme they were viewing.
+Optional SSO buttons: Continue with Qatar Tourism account and Continue with organisation account. Helper copy: Optional connected sign-in for CRM and internal tools. In demo mode, open an explanation and use a mock account; label the connection as simulated. Actual provider, claims, account linking and CRM APIs must be confirmed later.
+Routing rules
+New visitor account → complete profile → Program B welcome → pre-assessment. Public visitor is an account entry route, not a claim that the user is a tourist.
+Program A CTA → register or sign in → request or confirm A enrolment → Program A dashboard. Preserve any B progress on the same account.
+Trainer mode → assigned trainer workspace. Admin mode → admin Dashboard. A learner cannot access either by changing a URL or selector.
+Demo facilitator access can offer role switching in a clearly marked demo toolbar. Keep this separate from ordinary public registration.
+
+4  Registration and learner profile
+Use a short initial registration followed by a three-step profile wizard. Explain why information is requested: Your profile helps us recommend relevant learning. Mark optional fields clearly, validate inline and allow a draft profile to be resumed.
+Field
+Options and behaviour
+Full name and email
+Required. Validate email; use fictional addresses ending in example.com for all seeded accounts.
+Organisation
+Search existing fictional organisations or choose Other and enter a name. Independent professional and Not currently employed must be available.
+Organisation type
+Hotel or accommodation; tour operator; transport; travel trade; attraction or venue; public sector; education; independent; other.
+Job title and function
+Searchable title plus function: guest services; front office; guiding; transport; sales; operations; training; management; other.
+Seniority
+Student or trainee; entry level; experienced professional; supervisor; manager; senior leader; independent professional.
+Experience
+Less than 1 year; 1–3; 4–7; 8 or more. Do not treat seniority as proof of competence.
+Country and city
+Required country; optional city. No passport, QID or identity-document collection in the mockup.
+Language and accessibility
+Preferred learning language; optional captions or transcript preference; optional accessibility support request.
+Goals and availability
+Select up to three goals: visitor welcome, communication, complaint handling, guiding, storytelling, leadership. Weekly learning time: 15, 30, 60 or 120 minutes.
+Optional contact details
+Mobile number is optional and never exposed to trainers by default. No need for real numbers in seed data.
+Consent and preferences
+Required acceptance of displayed demo terms and privacy information; optional communications preference separate from essential session notices.
+
+Profile example
+Maha Al Nouri — fictional learner L0001; guest relations officer; Demo Pearl Hospitality; hotel/accommodation; experienced professional; 4–7 years; English; goals: complaint handling and communication; 60 minutes per week. Email: learner0001@example.com. This is the principal walkthrough persona.
+Profile updates and path assignment
+Learners can edit their profile. An organisation or role change should offer a revised recommended path without silently deleting completed work. Record the active path version, reason for assignment and any administrator override. If profile fields are incomplete, assign the programme’s default path and prompt the learner to complete the missing details.
+
+5  Program B learner journey
+Program B has one learning-path stage named Visitor Service Essentials. Personalisation changes the selection or order of units within that stage; it must not silently create a multi-level programme. No certificate is issued, including after excellent assessment or role-play scores.
+Step
+Screen and behaviour
+1 Welcome
+Show goals, expected time, profile completeness and Start pre-assessment. Explain that the baseline identifies useful learning and is not an entry barrier.
+2 Pre-assessment
+Five scenario questions; progress indicator; save/resume; results by competency. Button: Build my learning path.
+3 AI path generator
+Show profile and baseline inputs, a short generation animation, suggested units, rationale and time estimate. Buttons: Start this path and View recommendation details.
+4 Self-paced learning
+Video lessons, an interactive SCORM/Articulate-style module and reference resources. Resume at last activity; show required and recommended units separately.
+5 Practice and feedback
+Text and voice role-play with sample visitors. Display transcript, rubric, score, evidence and one specific next action. Allow another attempt.
+6 Short response
+Submit a short visitor-response exercise. Show trainer feedback and allow revision when requested.
+7 Post-assessment
+Equivalent questions measuring the same competencies. Display baseline, post score and percentage-point improvement.
+8 Completion
+All required activities and review completed. Copy: You have completed Program B. Show learning summary, improvement and suggested next programme. No certificate button.
+
+Learner dashboard navigation
+Overview; My learning; Assessments; AI practice; My sessions; Assignments; Progress; Profile. Program B can show no required sessions with a useful explanation and optional catalogue link. Certificates appear only when the learner has a certification-track enrolment.
+Dashboard content
+Greeting: Welcome back, Maha. Next action: Practise responding to a disappointed visitor. Show an explicit programme switcher, progress bar, estimated time remaining, baseline/post results, competency chart, trainer feedback and recommended next action. A completion celebration should be brief and accessible.
+Completion settings for this demo
+Require all core units, one completed role-play in either mode, short-response approval and the post-assessment. No minimum post score blocks B completion; below 80 percent, suggest review. These are illustrative settings editable by the administrator. Track practice scores separately from knowledge assessment scores.
+
+6  Program A hybrid learner journey
+Program A uses two levels with explicit stages, prerequisites and certification rules. Add pre and post assessment and both role-play modes while preserving the self-paced to trainer-led progression.
+Level and stage
+Activities
+Unlock or outcome
+Onboarding
+Programme enrolment, profile and five-question baseline.
+Baseline recorded; Level 1 opens.
+Level 1Foundation learning
+Visitor welcome; clear communication; service recovery; interactive branching scenario; formative quiz.
+Required units complete and foundation quiz at least 80 percent.
+Level 1AI practice
+Text or voice scenario; feedback and retry. Both modes available.
+One attempt completed; score is advisory in the demo.
+Level 2Trainer-led application
+Choose an eligible in-person or live-online session; RSVP; reschedule within policy; attend.
+Attendance marked and session score at least 70 percent.
+Level 2Practical assignment
+Submit visitor-service response plan or short role-play recording; trainer marks with rubric and feedback.
+Assignment at least 70 percent; revisions permitted.
+Final assessment
+Parallel post-assessment with competency comparison.
+At least 80 percent; targeted review and retry available.
+Certification
+System checks every required condition before issuing.
+Watermarked demo certificate and verifiable demo certificate record.
+
+Booking experience
+Show calendar and list views with date, Qatar time, duration, format, venue or online location, trainer, seats remaining and prerequisites. A locked session explains the missing prerequisite. Confirm an RSVP, update capacity and add it to My sessions. Prevent duplicate booking and conflicting active reservations; full sessions offer a waitlist.
+Learner rescheduling uses the same eligibility and capacity checks and releases the original seat only when the replacement is confirmed. Demo policy: self-service changes until 24 hours before the session; later changes request admin review. Display this policy before booking. All thresholds and cut-offs are illustrative configurable defaults.
+Assignment and certification
+Assignment brief: Prepare a 300–500 word response plan for a visitor whose booked experience has changed. Include discovery questions, two feasible options, an escalation path and a follow-up message. Alternatively upload a two-minute fictional role-play. Accept PDF/DOCX up to 10 MB or MP4 up to 50 MB; show validation and submission version history.
+Certificate includes learner name, programme, completion date and demo certificate ID, with DEMONSTRATION ONLY across the design. It is a training completion certificate and must not imply a legal guide licence. Revocation and reissue are admin-only actions with audit records.
+
+7  Sample curriculum and lesson content
+All titles and teaching material below are original fictional demonstration content. Use them to populate complete units. Avoid presenting invented venue rules or customer policies as official guidance. A and B may reuse shared courses while retaining distinct path and completion rules.
+Code and title
+Format and duration
+Content and completion
+C01 Welcoming every visitor
+Video • 3 minutes
+Greet, ask a useful question, listen and offer a clear next step. Captioned video plus transcript; complete at 90 percent watched.
+C02 Understanding visitor needs
+Interactive package • 8 minutes
+Branching scenario with a family choosing an activity. Three choices, feedback and retry; package reports completion and score.
+C03 Clear and inclusive communication
+Video • 4 minutes
+Plain language, accessibility preferences and checking understanding. Add three formative questions.
+C04 Recovering a difficult service moment
+Interactive package • 10 minutes
+A disappointed visitor faces a changed booking. Practise acknowledgement, options and escalation. Minimum 80 percent on module quiz.
+C05 Planning a helpful visitor response
+Resource and exercise • 10 minutes
+One-page checklist with a short written response. B uses a 100–150 word task; A develops it into the practical assignment.
+C06 Delivering service in practice
+Trainer session • 60 minutes
+Role-play in pairs, feedback, attendance and scored demonstration. A only.
+C07 Telling a concise destination story
+Preview • 5 minutes
+Program C sample overview with a fictional story-planning worksheet. No claim of a fully built third programme.
+
+Path examples
+B Hotel guest services: C01, C02, C03, C05, AI complaint scenario and post-assessment. B Transport services: C01, C03, C02 with transport context, C05 and AI directions scenario. A Standard professional path: C01–C06 plus all A assessments and practical assignment. Learners may receive an extra recommended refresher based on baseline gaps.
+Video sample script for C01
+“A helpful welcome begins with attention. Greet the visitor, introduce yourself and ask what they need today. Listen before suggesting an option. If the request is unclear, ask one short follow-up question. Offer information you can verify and explain the next step in plain language. Before the conversation ends, check that the visitor knows what to do next. A confident service experience is built through clarity, respect and follow-through.”
+Produce or use a licensed sample video with this narration, scene captions and a transcript. Show a staff greeting, a visitor question, two useful options and a clear closing. The brief supplies the script; the developer must provide the actual playable sample asset.
+
+8  Interactive content and assessment bank
+SCORM and Articulate demonstration
+Provide at least one functioning sample SCORM 1.2 or SCORM 2004 package exported from an authorised authoring tool or built as a standards-compatible sample. Articulate is an authoring tool; its export format determines player support. The interface must identify the supported format accurately. A branching HTML preview alone must be labelled as a preview, not as verified SCORM integration.
+Player controls: launch, resume, restart with confirmation, captions where available, close and return to path. Persist completion, success status, score, session time and resume/suspend data. Map package outcomes to the unit and enrolment. Demonstrate that closing and reopening resumes the activity and that a reported pass updates progress once. Keep the player keyboard accessible and isolate package code appropriately.
+Sample branching interaction
+Visitor: “Our planned activity is unavailable and we only have two hours.” Choices: A — Promise the original activity anyway; B — Ask about interests and accessibility needs, then offer two verified alternatives; C — Tell them to search online. Correct: B. Feedback: “You clarified the need and offered realistic choices.” Continue to choosing an option and confirming the next step. Record choices and final score.
+Five question baseline and parallel post assessment
+Use five equally weighted items, one per competency, scored 0 or 20. Shuffle answer order. Baseline explains the result without coaching the exact post answers. The post version changes the scenario while testing the same skill. Both programmes can use this starter bank with programme-specific context.
+Competency
+Baseline question and options
+Answer and post variant
+Discover needs
+A visitor is unsure what to do. A List every attraction; B Ask about interests and available time; C Select the most expensive option.
+B. Post: A family has limited time; ask about priorities before recommending.
+Verify information
+You are unsure about opening hours. A Guess; B Verify from an authorised source; C Promise access.
+B. Post: Uncertain availability; verify before confirming.
+Communicate clearly
+A visitor seems confused. A Repeat louder; B Use plain language and check understanding; C End the conversation.
+B. Post: Explain a meeting point using clear steps and confirmation.
+Recover service
+A booking changes unexpectedly. A Blame the visitor; B Acknowledge and offer feasible options; C Promise an unapproved refund.
+B. Post: A delayed service; acknowledge impact and explain realistic choices.
+Protect information
+A third party asks for another learner’s phone number. A Share it; B Use an authorised contact route; C Post the list.
+B. Post: A trainer needs to contact a learner; use the permitted platform channel.
+
+Example result: pre 40 percent, post 80 percent, improvement +40 percentage points. Use matched attempts for comparisons; incomplete post assessments are excluded from improvement averages. Show cohort size and assessment version next to aggregate results.
+
+9  AI learning paths and role play
+Path generator behaviour
+Inputs: programme, job function, organisation type, seniority, experience, goals, available time and baseline competency scores. Use administrator-approved course and path definitions only. Recommend a path and extra units; do not fabricate courses, bypass prerequisites or change certificate requirements.
+Output example: “Your visitor communication skills are strong. We recommend starting with Understanding visitor needs and Recovering a difficult service moment because these were your lowest baseline areas. Your guest-services role also benefits from Clear and inclusive communication.” Show input summary, required units, recommended extras, time estimate and explanation. Learner accepts; admin can override with a recorded reason.
+Text and voice practice
+Scenario picker shows competency, difficulty and estimated duration. Learners choose Text or Voice, see the goal and start a 4–6 turn conversation. Voice requires a microphone permission prompt, visible recording state, stop control and editable transcript before submission. Never start recording automatically. Support text fallback and clearly indicate when a prerecorded demonstration is used.
+Scenario
+Visitor opening and learner objective
+Changed booking
+“I booked this experience for today and now I am told it is unavailable. What can you do?” Acknowledge, clarify constraints, propose two feasible options and confirm follow-up.
+Unclear directions
+“I am lost and worried I will miss the meeting point.” Ask current location without requesting unnecessary personal data; give clear verified instructions and check understanding.
+Accessibility preference
+“We want to join, but one person in our group needs step-free access.” Ask respectfully about requirements, verify suitability and offer an appropriate alternative if uncertain.
+Group running late
+“Half our group has not arrived and we do not want to lose our session.” Clarify the situation, explain the stated demo policy and escalate without inventing exceptions.
+
+Scoring and feedback
+Score five criteria from 0–4: empathy and professionalism; discovery questions; clarity; accuracy and boundaries; solution and follow-through. Total out of 20 converts to 100. Each criterion must include one evidence excerpt from the conversation and a concise improvement suggestion. Do not score accent or demographic characteristics.
+Example: 16/20 = 80/100. Strength: You acknowledged the visitor’s frustration. Improve: Verify availability before promising an alternative. Suggested retry: Ask one question about timing before presenting options. Display attempt history and best/latest score separately. AI practice is formative; trainer marks and programme rules control certification.
+If using scripted demo responses, label “Simulated AI practice”. If a live model is used, confine it to the approved scenario and demo content, handle failures gracefully and never present invented official policies as facts.
+
+10  Trainer workspace and session operations
+Trainer dashboard shows upcoming sessions, assigned learners, attendance outstanding, marking queue, reschedule requests and recent feedback. Navigation: Overview, My sessions, Assigned learners, Attendance and scores, Assignments, Resources and Profile. Trainers see only assignments within their permitted scope.
+Create and edit a session
+Required fields: title, programme, path/level/stage, trainer, format, date, start/end time, timezone, capacity, prerequisites and description. In-person requires a fictional venue, room and access note. Live online requires a demo meeting-room reference and join instructions. Add booking deadline, cancellation policy and materials. Default timezone is Asia/Qatar; show learner-local time as secondary where relevant.
+Publish a session to the eligible catalogue; validate conflicts, capacity and missing fields. A trainer can edit their own assigned sessions within permissions. Programme reassignment and another trainer’s session require an admin. Provide Draft, Published, Full, Completed and Cancelled states, with a separate reschedule history.
+Attendance and scoring
+Roster shows learner ID, permitted display name, RSVP status, attendance and score. Attendance values: pending, attended, late, absent or excused. Record scoring after the session with rubric, numeric score, short feedback and draft/final status. Trainers can save a draft; final submission updates learner progress and the admin marking report. Corrections after finalisation require a reason and audit entry.
+Session rubric: preparation 20 points; communication 30; practical application 30; professionalism 20. Demo pass threshold is 70/100. Absence cannot automatically become a pass. A cancelled session must not unlock attendance or completion requirements.
+Rescheduling and cancellation
+Show affected RSVP count before confirmation. Rescheduling requires a new date/time and reason; format or venue changes are highlighted. Preserve enrolled learners, flag conflicts and allow them to confirm or select another eligible session. Cancellation retains history, releases the active reservation and offers alternatives; it does not mark the learner completed.
+After confirmation, update the session once, create one notification per affected active RSVP, update My sessions, log the event and show the success modal specified in section 11. Retrying the action must not send duplicate messages. Waitlisted learners receive the appropriate separate update if their queue is affected.
+
+11  Notifications permissions and audit
+Notification and email copy
+Reschedule subject: Your session has been rescheduled — [Session title]. Body: Hello [First name], your session with [Trainer] has moved from [Old date and time] to [New date and time, Qatar time]. Format: [Format]. Location: [Venue or online details]. Reason: [Reason]. Please review your booking in My sessions. You can choose another eligible session if the new time does not work for you.
+Cancellation subject: Session cancelled — [Session title]. Body: Hello [First name], your session scheduled for [Date and time] has been cancelled. Reason: [Reason]. Your learning progress has been saved. Please visit My sessions to choose another available session. Contact the Academy through Help if you need support.
+Demo modal: “Session rescheduled. In-app notifications have been created for 18 registered learners. Demo emails have been generated in the notification log; no external emails were sent.” Include View affected learners and View notification log. Cancellation uses the equivalent wording. If a real approved test-email service is enabled, say queued or sent only when the provider confirms that state; surface failures and retry actions.
+Permissions matrix
+Action
+Learner
+Trainer
+Admin
+View profile and learning
+Own only
+Assigned learners; limited fields
+Authorised Academy scope
+View email phone or identity data
+Own permitted fields
+Hidden by default; no QID
+Controlled fields; no real identity data in demo
+Create sessions
+No
+Own permitted programmes
+All authorised programmes
+Mark attendance and work
+No
+Assigned sessions/submissions
+Review and administer
+Export learner personal data
+No
+Blocked
+Permitted report scope
+Export marks
+Own results only
+Optional learner ID and score only
+Authorised reports
+Change paths or certificates
+No
+No
+Yes with audit trail
+Use AI Analytics
+No
+No Academy-wide access
+Authorised read-only analytics
+Manage permissions
+No
+No
+Authorised admin only
+
+For a blocked export show: “Your role does not allow this export. Contact the Academy administrator.” Enforce the restriction in the data/API layer as well as the UI. A hidden button is insufficient. Trainer 1 must not retrieve Trainer 2’s roster by changing an ID.
+Audit events must capture actor, role, timestamp, object, action, before/after summary and reason where applicable. Track permission changes, marking changes, session changes, exports, certificate issuance/revocation and notification status. The demo should show at least one allowed export and one denied export.
+
+12  Admin navigation and Dashboard
+The admin workspace is a central selling point. Give it an executive-quality overview and practical operational controls. Use this exact navigation hierarchy, with clearly nested children and breadcrumbs.
+Primary area
+Child navigation
+Dashboard
+Overview dashboard; AI Analytics directly beneath it
+Reports
+Program A users; Program B users; Program C users; All learners; Trainers; Sessions and attendance; Assessments and improvement; Assignments; Certification; Notifications and exports
+Academy Management
+User management; Trainer management; Programme management; Learning path management; Course and content management; Session management; Assessment and rubric management; Roles and permissions; Integration settings; Audit and demo reset
+
+High level analytics
+Top filters: programme, path, organisation type, organisation, seniority, date range and learner status. Display active filters, Reset filters and Last updated. Date labels must specify whether they refer to registration, activity or completion. Use one consistent reporting definition per widget.
+KPI cards: unique learners, active learners, enrolments, completions, pending assessments, upcoming sessions and A certificates issued. Each card opens its filtered report.
+Programme distribution: bar chart of enrolments by A/B/C with count labels; separate unique learner count to prevent double-counting.
+Progress funnel: enrolled → started → learning complete → practical requirements complete → completed. Use programme-specific steps; do not impose A certification on B.
+Learning improvement: paired pre/post scores with sample size, programme and assessment version; competency breakdown and percentage-point gain.
+Operational panels: attendance rate, sessions nearing capacity, trainer marking backlog and learners inactive for 14 days.
+Data tables: programme performance summary and learners requiring attention, with search, sorting and drill-down.
+Metric definitions
+Unique learners = distinct learner IDs in the selected cohort. Enrolments = programme registrations, allowing more than one per learner. Active learner = at least one recorded learning activity in the last 30 days as of the demo reporting date. Completion rate = completed enrolments divided by eligible enrolments in the same filtered cohort. Attendance rate = attended or late records divided by due non-cancelled session bookings. Certificate count = issued, non-revoked A certificates.
+Show a visible “Demo data” indicator. Use real seeded calculations, not independent hard-coded numbers. Charts must agree with the reports they open and update after the walkthrough actions.
+
+13  AI Analytics and reports
+AI Analytics experience
+Provide a full-width conversational analytics workspace with suggested prompts, chat history and a results canvas. The agent is read-only and restricted to the current admin’s authorised data. It must answer in concise prose plus a chart or table where useful, show applied filters and offer View underlying records.
+Suggested prompts: How many learners are in each programme? Which organisations have the lowest completion rate? Compare pre and post scores for Program B. Which trainers have unmarked assignments? Show attendance by delivery format. How many Program A learners are ready for certification? Which learners have been inactive for two weeks?
+Every answer includes metric definition, relevant period, sample size and timestamp. For a vague question such as “Who is doing best?”, ask whether the user means assessment score, completion or improvement. For unsupported data, state what is unavailable. Do not invent answers or allow writes, arbitrary database execution or access to hidden personal fields.
+Demo answer example: “There are 1,200 unique learners and 1,260 programme enrolments. Program A has 420, Program B has 660 and Program C has 180.” Render an enrolment bar chart and a data table. Label an offline implementation “Demo analytics assistant” and support at least the seven prompts above with computed answers. A live agent must use the same governed metrics.
+Reports
+Report
+Core columns
+Programme users and All learners
+Learner ID, name, fictional organisation, job title, seniority, path, enrolment date, status, progress, pre/post scores, improvement and last activity.
+Trainers
+Trainer ID, name, expertise, assigned programmes, format, upcoming sessions, attendance records and pending marking.
+Sessions and attendance
+Session ID/title, programme, trainer, date/time, format, venue, capacity, RSVPs, waitlist, attendance and status.
+Assessments and assignments
+Learner, programme, assessment/version, attempt, score, submission date, marker, status and feedback.
+Certification
+Certificate ID, A learner, issue date, eligibility evidence, issued/revoked state and download. B must be excluded.
+Notifications and exports
+Event, affected session/report, recipient count, simulated/queued/sent/failed state, timestamp and actor.
+
+All tables need search, column sorting, pagination, status filters, row detail panels and permitted CSV export. Provide Excel export if supported and state its format accurately. Export respects active filters and field permissions. Avoid exposing hidden fields in downloaded files. Show useful no-result states, loading indicators and export feedback. Default page size 25; offer 50 and 100.
+
+14  Academy Management and path builder
+User trainer and programme management
+User management: add/edit a fictional learner, invite through the demo log, assign organisation and role, enrol in programmes, view timeline, suspend/reactivate access and inspect assessment/booking history. Trainer management: profile, bio, expertise, languages, organisation, approved programmes, session rights and reporting permissions. Do not allow public self-registration to create an authorised trainer.
+Programme management: draft/publish/archive, title and public description, card image, audience, enrolment mode, stage/level structure, course catalogue, assessments, completion rules and certification toggle. Enforce Program B certification off. Archive preserves historical reporting. Content editing must preview the result before publication.
+Learning path builder
+Allow multiple paths per programme. The admin can create a path, add levels/stages, select existing courses, order units, define required versus optional items, add pre/post assessments, AI practice, sessions and assignment gates, and set completion rules. Provide a visual preview of the learner experience before publishing.
+Example path
+Assignment rule
+Learning variation
+B Hotel guest services
+Organisation type = hotel AND job function = guest services/front office
+C01, C02, C03 and C05; complaint role-play.
+B Transport services
+Organisation type = transport OR function = driver/transport
+C01, C03, C02 transport scenario and C05; directions role-play.
+B General visitor service
+Default when no more specific rule matches
+General C01–C03 and C05; chosen practice scenario.
+A Professional pathway
+Explicit A enrolment; relevant professional goal
+Foundation units, practice, trainer session, assignment and post-assessment.
+
+Rule controls: organisation type, organisation, job function/title, seniority, experience, goals and baseline competency. Show AND/OR conditions and rule priority. Resolve multiple matches by explicit priority; preview the match before publishing. Provide a default path and a manual override with reason. AI can recommend from approved options but cannot rewrite these mandatory rules.
+Versioning and content maintenance
+Separate draft and published versions. Existing learners retain their assigned version unless the admin deliberately migrates them; show the impact and preserve completed equivalents. Add a path preview using Maha’s profile. Demonstrate changing one module, previewing it, publishing a new version and keeping the previous completion record intact.
+Course management includes video/transcript, resource attachments, interactive package type and version, required completion mapping and preview. Session management reuses trainer scheduling with broader admin controls. Integration settings show the proposed CRM, SSO, email and online-classroom adapters with Demo, Not connected or Connected states supported by evidence.
+
+15  Fictional learners and reporting dataset
+Seed 1,200 unique fictional learners. Use 360 A-only learners, 600 B-only, 180 C-only and 60 learners in both A and B. This gives 420 A enrolments, 660 B enrolments and 180 C enrolments: 1,260 total. The new visitor registration flow adds to B; seed totals must update after additions. Program C is an additional illustrative programme and its records are marked as seeded historical demo activity.
+Programme
+Not started
+In progress
+Awaiting review
+Completed
+Total
+A
+60
+180
+60
+120
+420
+B
+90
+240
+30
+300
+660
+C
+30
+90
+0
+60
+180
+Total
+180
+510
+90
+480
+1260
+
+Initial A certificates: 120 issued and non-revoked, one per completed A enrolment. B and C issue none in this fixture. Pre/post pairs exist for completed A and B records; other post scores are null unless the learner has legitimately reached that step. Seed review cases for absent learners, failed prerequisites, resubmissions and overdue marking without contradicting the aggregate statuses.
+Diversity of sample records
+Distribute the 1,200 profiles across organisation types: hotel/accommodation 420; tour operators 240; transport 180; travel trade 120; attractions/venues 120; independent/other 120. Seniority: trainee 180; entry level 300; experienced 420; supervisor 180; manager/senior leader 120. These are separate dimensions, not programme quotas. Use deterministic seeds so reset reproduces the same charts.
+Create at least 20 fictional organisations such as Demo Pearl Hospitality, Demo Horizon Tours, Demo City Mobility, Demo Coastal Travel and Demo Heritage Venue. Prefix display names with Demo or mark them fictional in profile details. Use learner0001@example.com through learner1200@example.com and no real phone numbers or identity documents.
+Walkthrough personas
+Record
+Starting state
+Purpose
+L0001 Maha Al Nouri
+B learner; baseline 40; needs service recovery practice
+Complete personalised B journey and reach post score 80.
+L0002 Omar Al Safi
+A learner; Level 1 complete; eligible for booking
+Book/reschedule session, attend, submit assignment and certify.
+L0003 Leila Rahman
+A and B; distinct progress in each
+Show shared identity and independent programme progress.
+L0004 Daniel Costa
+A assignment returned for revision
+Show feedback, resubmission and updated marking.
+L0005 Sara Mansour
+B completed; pre 60 and post 100
+Show +40 percentage-point improvement and no certificate.
+
+Seed recent registrations and activity across a 90-day window relative to a documented demo reference date. Upcoming sessions must remain upcoming when the seed is reset. Persist the relative offsets and display actual generated dates, rather than leaving obsolete fixed dates in the UI.
+
+16  Ten trainers and scheduled sessions
+All trainers and providers below are fictional. Give each a consistent profile photo or illustrated avatar, concise bio, expertise, languages and trainer email trainer01@example.com through trainer10@example.com. Include a visible fictional-data note. Create three sessions per trainer, 30 total: one completed, one upcoming and one later session. Dates below are offsets from the demo reference date, in Qatar time.
+Trainer and profile
+Upcoming sample session
+Format and schedule
+T01 Amal Al NouriVisitor service coachArabic and English
+Welcoming every visitorProgram A
+In person; Day +2, 09:00Demo Academy Room 1; 24 seats
+T02 Khalid MansourTour guiding facilitatorArabic and English
+Practical visitor communicationProgram A
+Online; Day +2, 14:00Demo room; 30 seats
+T03 Leila HaddadService recovery trainerArabic and English
+Handling a changed bookingProgram A
+In person; Day +3, 10:00Demo Academy Room 2; 20 seats
+T04 Daniel CostaHospitality trainerEnglish and Portuguese
+Guest service practiceProgram A
+Online; Day +3, 15:00Demo room; 30 seats
+T05 Noura Al SalehInclusive communication coachArabic and English
+Inclusive visitor conversationsProgram A
+In person; Day +4, 09:00Demo Academy Room 1; 24 seats
+T06 Priya MenonFront office learning facilitatorEnglish and Hindi
+Visitor response clinicProgram B optional
+Online; Day +4, 13:00Demo room; 40 seats
+T07 Youssef KarimGroup experience trainerArabic and French
+Managing group expectationsProgram A
+In person; Day +5, 10:00Demo Training Studio; 20 seats
+T08 Sofia MartinsDestination storytelling coachEnglish and Portuguese
+Storytelling preview clinicProgram C sample
+Online; Day +5, 14:00Demo room; 35 seats
+T09 Hassan FaroukTransport service facilitatorArabic and English
+Clear directions practiceProgram B optional
+Online; Day +6, 09:00Demo room; 30 seats
+T10 Aisha RahmanAssessment and feedback coachEnglish and Urdu
+Professional response workshopProgram A
+In person; Day +6, 13:00Demo Academy Room 3; 24 seats
+
+Each upcoming session lasts 60 minutes. Completed sessions use Day −14 to Day −5 and later sessions Day +9 to Day +18. Populate actual RSVPs from eligible learners, attendance for completed sessions, scores and feedback. Include a full session, a waitlist, a cancelled historical session and a rescheduled one within the total of 30. Avoid trainer overlaps and counts exceeding capacity. Optional B sessions never become required programme gates.
+
+17  Data behaviour and walkthrough
+Minimum connected data model
+Maintain separate records for user/profile, organisation, role/permission, programme, path/version, assignment rule, course/unit/package, enrolment, unit progress, assessment/attempt, role-play/score, session, RSVP, attendance, assignment/submission/review, certificate, notification and audit event. Stable IDs connect all records. A learner’s programme status must derive from the active enrolment requirements.
+Store dates consistently and render Qatar time clearly. Preserve historical session details and assessment versions. A rescheduled session changes its date but retains its ID and RSVP history. Notifications reference the same event ID for deduplication. Do not store fake secrets, real customer IDs or real email recipients in the demo configuration.
+Connected demonstration script
+Time
+Action
+Evidence to show
+0–2 minutes
+Open homepage and explore A/B/C.
+Branding, animation, meaningful programme differences and public entry.
+2–5 minutes
+Register a visitor; complete profile and baseline; generate B path.
+Default B routing, tailored recommendation, playable video and interactive module.
+5–7 minutes
+Run text/voice practice and open completed B example.
+Transcript, criterion scores, pre/post improvement and no certificate.
+7–10 minutes
+Open A persona; book session; switch to trainer and reschedule.
+Eligibility, capacity, My sessions update and simulated notification log.
+10–13 minutes
+Record attendance, score and review assignment; try restricted export.
+Changes propagate; export denied; admin retains authorised access.
+13–16 minutes
+Complete A requirements; open admin Dashboard and reports.
+Certificate eligibility, updated totals, filtered tables and drill-down.
+16–19 minutes
+Ask AI Analytics two questions and create a path variant.
+Charts from actual data, underlying records, profile rules and learner preview.
+
+Demonstration resilience
+Provide a named reset action restricted to the demo administrator, with confirmation and a clear explanation that it resets fictional data. Use a snapshot so the presenter can repeat the walkthrough. Handle network failure, empty results, denied microphone access, unavailable speech/AI services, invalid uploads, expired sessions and failed exports with actionable messages. Never discard a learner’s submission silently.
+Maintain one coherent visual language across public, learner, trainer and admin screens. Give each role an appropriate information hierarchy. Use charts, cards and tables purposefully; animation should reinforce progress and feedback, not obstruct task completion.
+
+18  Acceptance criteria and handover
+The developer should demonstrate every item below before handover. The mockup is complete when the journeys work together and all displayed totals reconcile with their underlying records.
+Area
+Acceptance evidence
+Homepage and navigation
+Responsive animated Qatar Tourism branded homepage; A/B/C cards; complete content and working actions; reduced-motion support.
+Accounts and profiles
+Open visitor registration routes to B; A enrolment preserved; rich profile; trainer button works without granting privilege; simulated SSO labelled.
+Program B
+One stage; pre-assessment; AI path; video and real sample interactive package; text/voice practice; short response; post comparison; no certificate.
+Program A
+Two-level progression; pre/post assessments; gated booking; online/in-person formats; attendance; assignment and revisions; certificate only when all conditions pass.
+Trainer operations
+Ten populated trainers; 30 coherent sessions; scheduling, rescheduling, cancellation, attendance and scoring work; notifications reflect the correct delivery state.
+Permissions
+Trainer sees assigned data only; restricted export blocked at access layer; admin export scoped; changes logged; learner cannot escalate role.
+Dataset
+1,200 unique learners; 1,260 enrolments; A 420/B 660/C 180; 120 initial A certificates; tables, filters and charts reconcile.
+Admin workspace
+Required navigation hierarchy; complete reports; functioning management screens; multiple paths and assignment rules with preview/versioning.
+AI Analytics
+At least seven supported analytical questions; computed answers/charts; filters, sample size and underlying records; no unsupported data claims.
+Quality and handover
+Keyboard navigation, readable contrast, captions, mobile layouts, clear empty/error states, seed/reset, source and access instructions supplied.
+
+Accessibility and device review
+Review at desktop 1440 px, tablet 768 px and mobile 390 px. Tables may scroll within a labelled container without breaking the page. Forms require labels, visible focus, inline errors and keyboard operation. Charts require text summaries or accessible tables; status cannot depend on colour alone. Keep videos captioned, voice optional and essential actions available without motion.
+Handover decisions and sources
+Record the stack, SCORM format, AI and speech mode, email mode, dummy hosting location and demo access duration. Identify deviations before handover. Brief owner: Rawzaba Alhalabi, Potential.com.
+Basis: Qatar Tourism meeting on 21 October; Eiman’s emails on 22 and 26 October; Moza’s governance correspondence; Rawzaba’s expanded requirements on 26 October 2026. Brand reference: https://www.qatartourism.com/en. Curricula, names, thresholds and data are fictional demo fixtures, not official customer policies.

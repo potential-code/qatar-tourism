@@ -4,7 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 :root {
   --radius: 0.75rem;
   --background: var(--qt-sand);
@@ -41,7 +40,6 @@
   --sidebar-border: var(--qt-stone);
   --sidebar-ring: var(--qt-teal-soft);
 }
-
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -108,16 +106,23 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
-  h1, h2, h3, .font-display {
+  h1,
+  h2,
+  h3,
+  .font-display {
     font-family: var(--qt-font-display);
     letter-spacing: -0.01em;
   }
+  /* biome-ignore-start lint/complexity/noImportantStyles: reduced-motion override must beat component transitions */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
   }
+  /* biome-ignore-end lint/complexity/noImportantStyles: end of reduced-motion override */
 }

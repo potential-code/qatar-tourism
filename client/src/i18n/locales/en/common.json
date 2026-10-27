@@ -139,7 +139,8 @@
     "columnJoined": "Joined",
     "empty": "No users yet.",
     "roles": {
-      "user": "User",
+      "learner": "Learner",
+      "trainer": "Trainer",
       "admin": "Admin"
     }
   }

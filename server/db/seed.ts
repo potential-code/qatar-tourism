@@ -54,7 +54,7 @@ async function main() {
 
   const seed = seedEnv.data
   await ensureAccount(seed.SEED_ADMIN_EMAIL, seed.SEED_ADMIN_PASSWORD, 'Admin', 'admin')
-  await ensureAccount(seed.SEED_USER_EMAIL, seed.SEED_USER_PASSWORD, 'User', 'user')
+  await ensureAccount(seed.SEED_USER_EMAIL, seed.SEED_USER_PASSWORD, 'Learner', 'learner')
 }
 
 main()

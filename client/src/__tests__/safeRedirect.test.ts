@@ -14,6 +14,6 @@ describe('safeRedirect', () => {
     '/\\evil.example',
     'javascript:alert(1)',
   ])('falls back for %p', (target) => {
-    expect(safeRedirect(target)).toBe('/dashboard')
+    expect(safeRedirect(target)).toBe('/')
   })
 })

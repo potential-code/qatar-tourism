@@ -47,11 +47,11 @@ exists. Controllers and services never import it.
 
 ## Routes, controller, services
 
-| Layer         | Knows about                        | Never                         |
-| ------------- | ---------------------------------- | ----------------------------- |
-| `routes/`     | URL, method, validator, middleware | Drizzle                       |
-| `controller/` | the viewer, the input, services    | Hono, `Request`, `c`          |
-| `services/`   | Drizzle, transactions, ownership   | Hono, HTTP status codes       |
+| Layer         | Knows about                        | Never                   |
+| ------------- | ---------------------------------- | ----------------------- |
+| `routes/`     | URL, method, validator, middleware | Drizzle                 |
+| `controller/` | the viewer, the input, services    | Hono, `Request`, `c`    |
+| `services/`   | Drizzle, transactions, ownership   | Hono, HTTP status codes |
 
 Ownership checks live in services, next to the query, so a new route cannot forget them: a
 service asked for a note it does not own answers "not found", the same as a note that does not
@@ -106,3 +106,34 @@ cross-origin. Deploy them under the same parent domain. CORS allows exactly the 
 
 Migrations are generated from the schema in the project that adopts the skeleton, so the first
 migration belongs to that project's history. Run `bun run db:generate` once after copying.
+
+---
+
+# Qatar Tourism Academy decisions
+
+## Brand source: qatartourism.com, not the brief
+
+The brief's palette (maroon #7A1738 primary, gold #B69053) is marked provisional. The user decided to take branding from https://www.qatartourism.com/en:
+
+- Colours: teal #00627B is the dominant site colour; maroon #7D002A is secondary; the background is #FAF8F4. No gold appears on the site.
+- Logo: the official SVG from the site (`client/public/brand/`). Media-pack logos live at /en/travel-trade/sales-resources/qatar-tourism-media-pack.
+- Fonts: the site uses **Orchidea Pro** (display serif) and **VisitQatar** (body). Both are commercial, so we use free lookalikes: **Spectral** (display, closest match side by side) and **Jost** (UI, matches the site's own Futura fallback). Swap in the real files if Qatar Tourism supplies them.
+- Light theme only, matching the site.
+
+## English only
+
+The language switcher and Arabic resources were removed. Layouts keep logical (start/end) spacing so RTL can be added later (brief §2 asks for "RTL-ready").
+
+## Roles
+
+`learner`, `trainer` and `admin`. Public registration always creates a learner. Trainer and admin accounts are pre-provisioned (brief §3). Portal routes redirect a wrong role to its own home, but the API is the real check.
+
+## Scripted AI, sample SCORM
+
+AI path generation, role-play, voice and analytics chat use deterministic demo logic, labelled simulated (brief §9 allows this). There is no Articulate licence, so we built our own SCORM 2004 sample package, labelled as such (brief §8).
+
+## Deviations from the brief (report at handover)
+
+- The admin portal is desktop only (brief §18 asks for 390 / 768 / 1440 px everywhere).
+- Trainer T04 is renamed because the brief gives the name "Daniel Costa" to both T04 and learner persona L0004.
+- The fonts are substitutes (see above).

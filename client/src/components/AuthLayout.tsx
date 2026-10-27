@@ -22,8 +22,7 @@ export function AuthLayout({
 }) {
   return (
     <div className="relative flex min-h-svh items-center justify-center bg-muted/40 p-4">
-      <div className="absolute end-4 top-4 flex gap-1">
-      </div>
+      <div className="absolute end-4 top-4 flex gap-1"></div>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-xl">

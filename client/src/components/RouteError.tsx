@@ -24,7 +24,7 @@ export function RouteError({ error }: ErrorComponentProps) {
       <div className="flex justify-center gap-2">
         <Button onClick={() => void router.invalidate()}>{t('common.retry')}</Button>
         <Button variant="outline" asChild>
-          <Link to="/dashboard">{t('common.goToDashboard')}</Link>
+          <Link to="/">{t('common.goToDashboard')}</Link>
         </Button>
       </div>
     </div>
@@ -39,7 +39,7 @@ export function NotFound() {
       <p className="text-muted-foreground">{t('errors.notFoundBody')}</p>
       <div>
         <Button asChild>
-          <Link to="/dashboard">{t('common.goToDashboard')}</Link>
+          <Link to="/">{t('common.goToDashboard')}</Link>
         </Button>
       </div>
     </div>

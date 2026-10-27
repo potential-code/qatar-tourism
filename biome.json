@@ -1,26 +1,75 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "includes": [
       "**",
       "!**/dist",
       "!**/routeTree.gen.ts",
       "!server/db/migrations",
-      "!client/src/components/ui"
+      "!client/src/components/ui",
+      "!client/public",
+      "!scorm/**/vendor"
     ]
   },
-  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
-  "javascript": {
-    "formatter": { "quoteStyle": "single", "semicolons": "asNeeded", "trailingCommas": "all" }
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
   },
-  "css": { "parser": { "tailwindDirectives": true } },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "linter": {
     "rules": {
       "preset": "recommended",
-      "style": { "useImportType": "error" },
-      "correctness": { "noUnusedImports": "error", "noUnusedVariables": "error" }
+      "style": {
+        "useImportType": "error"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      }
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } }
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["client/src/components/data/charts/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useExhaustiveDependencies": "off",
+            "noComponentHookFactories": "off"
+          },
+          "a11y": {
+            "useAriaPropsSupportedByRole": "off",
+            "useSemanticElements": "off"
+          },
+          "complexity": {
+            "noUselessFragments": "off"
+          }
+        }
+      }
+    }
+  ]
 }
