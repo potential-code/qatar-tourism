@@ -9,7 +9,8 @@ import { notify } from '@server/modules/notifications/notifications.service'
 import { enrol } from '@server/modules/programmes/enrolment.service'
 import { SIMULATED_EMAIL_LABEL } from '@shared/content'
 import type { RegisterInput } from '@shared/schemas'
-import { and, eq, gt, sql } from 'drizzle-orm'
+import { and, eq, gt } from 'drizzle-orm'
+import { nextLearnerCode } from './learner-code.service'
 
 /**
  * Public registration (brief §3–4).
@@ -55,18 +56,6 @@ async function findUserByEmail(email: string) {
     .where(eq(user.email, email))
     .limit(1)
   return row ?? null
-}
-
-/** Next free learner code (L1201, L1202, …) after the seeded L0001–L1200. */
-async function nextLearnerCode(
-  executor: typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0],
-) {
-  const [row] = await executor
-    .select({
-      max: sql<number>`coalesce(max(substring(${profiles.learnerCode} from 2)::int), 0)::int`,
-    })
-    .from(profiles)
-  return `L${String((row?.max ?? 0) + 1).padStart(4, '0')}`
 }
 
 /** Issues a fresh demo code (older codes for the address stop working) and logs the simulated email. */

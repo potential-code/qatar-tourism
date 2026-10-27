@@ -37,6 +37,7 @@ import type {
 import { and, asc, count, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import { recordAudit } from '../audit/audit.service'
 import { notify } from '../notifications/notifications.service'
+import { nextLearnerCode } from '../profiles/learner-code.service'
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
 
@@ -334,15 +335,6 @@ export async function getUserDetail(userId: string) {
 // ---------------------------------------------------------------------------------------------
 // Writes
 // ---------------------------------------------------------------------------------------------
-
-async function nextLearnerCode(tx: Tx) {
-  const [row] = await tx
-    .select({
-      max: sql<number>`coalesce(max(substring(${profiles.learnerCode} from 2)::int), 0)`,
-    })
-    .from(profiles)
-  return `L${String((row?.max ?? 0) + 1).padStart(4, '0')}`
-}
 
 function completenessOf(input: Partial<AdminUserCreateInput>) {
   const fields = [
