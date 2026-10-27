@@ -1,7 +1,6 @@
 import { ROLES, type Role } from '@shared/roles'
 
-/**
- * Roles that may reach the attendance module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
- */
 export const attendancePingRoles: readonly Role[] = ROLES
+
+/** Brief §11 `marking.record`: trainers for assigned sessions, admins to review and administer. */
+export const MARKING_ROLES: Role[] = ['trainer', 'admin']

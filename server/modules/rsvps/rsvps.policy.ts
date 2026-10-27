@@ -1,7 +1,6 @@
 import { ROLES, type Role } from '@shared/roles'
 
-/**
- * Roles that may reach the rsvps module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
- */
 export const rsvpsPingRoles: readonly Role[] = ROLES
+
+/** Booking is a learner action on their own records (brief §11 `rsvp.manage`: own). */
+export const BOOKING_ROLES: Role[] = ['learner']
