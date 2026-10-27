@@ -20,11 +20,19 @@ db.execute(sql`select 1`)
     logger.error({ err: error }, 'Database is not reachable; requests that need it will fail'),
   )
 
+// `bun run db:reset` runs in its own process: re-read the snapshot's anchor now and then, so a
+// running server picks up a command-line reset without a restart.
+const CLOCK_REFRESH_MS = 15_000
+const clockRefresh = setInterval(() => {
+  loadClock().catch((error: unknown) => logger.warn({ err: error }, 'Demo clock refresh failed'))
+}, CLOCK_REFRESH_MS)
+
 let shuttingDown = false
 
 async function shutdown(signal: string) {
   if (shuttingDown) return
   shuttingDown = true
+  clearInterval(clockRefresh)
   logger.info({ signal }, 'Shutting down')
   try {
     // Stop accepting connections and let in-flight requests finish, then release the pool.
