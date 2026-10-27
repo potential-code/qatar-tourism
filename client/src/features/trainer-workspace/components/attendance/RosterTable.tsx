@@ -21,7 +21,7 @@ export function RosterTable({
   return (
     <section
       aria-labelledby="roster-caption"
-      className="overflow-x-auto rounded-xl border bg-card shadow-xs"
+      className="relative overflow-x-auto rounded-xl border bg-card shadow-xs"
       tabIndex={-1}
     >
       <table className="w-full min-w-[760px] text-sm">

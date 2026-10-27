@@ -298,7 +298,9 @@ export function SessionForm({ options, session }: { options: FormOptions; sessio
           Discard
         </Button>
         {editing ? (
-          <form.SubmitButton>Save changes</form.SubmitButton>
+          <form.AppForm>
+            <form.SubmitButton>Save changes</form.SubmitButton>
+          </form.AppForm>
         ) : (
           <>
             <Button type="submit" variant="outline" onClick={() => setPublishOnSave(false)}>
