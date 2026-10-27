@@ -7,7 +7,7 @@ import { findEnrolment, loadEvidence } from './progress.evidence'
 import { assignmentApproved, evaluate } from './progress.rules'
 
 /** The pooled db or a transaction. */
-type Executor = Pick<typeof db, 'select' | 'insert' | 'update'>
+type Executor = Pick<typeof db, 'select' | 'insert' | 'update' | 'execute'>
 
 /**
  * Re-derives an enrolment's status and progress from its programme's completion rules
