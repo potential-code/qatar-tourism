@@ -3,6 +3,7 @@ import './helpers/env'
 import { afterEach, describe, expect, mock, spyOn, test } from 'bun:test'
 import { app } from '@server/app'
 import { auth } from '@server/auth/auth'
+import { CREDENTIAL_LIMIT } from '@server/middleware/rate-limit.middleware'
 import { CLIENT_ORIGIN } from './helpers/env'
 import { stubSession } from './helpers/session'
 
@@ -132,17 +133,17 @@ describe('validation', () => {
 })
 
 describe('credential rate limit', () => {
-  test('sign-in is limited to 10 attempts per window', async () => {
+  test('sign-in is limited to CREDENTIAL_LIMIT.max attempts per window', async () => {
     const handler = spyOn(auth, 'handler').mockImplementation(async () => Response.json({}))
     const attempt = () =>
       app.request('/api/auth/sign-in/email', json({ email: 'a@b.co', password: 'x' }))
 
-    for (let i = 0; i < 10; i++) expect((await attempt()).status).toBe(200)
+    for (let i = 0; i < CREDENTIAL_LIMIT.max; i++) expect((await attempt()).status).toBe(200)
 
     const blocked = await attempt()
     expect(blocked.status).toBe(429)
     expect((await blocked.json()).error.code).toBe('RATE_LIMITED')
-    expect(handler).toHaveBeenCalledTimes(10)
+    expect(handler).toHaveBeenCalledTimes(CREDENTIAL_LIMIT.max)
   })
 
   test('Better Auth receives our client IP, not the caller-supplied header', async () => {

@@ -41,9 +41,9 @@ const PACKAGE_LABEL: Record<string, string> = {
 }
 
 const PACKAGE_LAUNCH: Record<string, string | null> = {
-  C01: '/videos/c01-welcoming-every-visitor.mp4',
+  C01: '/media/c01-welcoming-every-visitor.mp4',
   C02: '/previews/c02-understanding-visitor-needs/index.html',
-  C03: '/videos/c03-clear-and-inclusive-communication.mp4',
+  C03: '/media/c03-clear-and-inclusive-communication.mp4',
   C04: '/scorm/qta-sample-c04/index.html',
   C05: null,
   C06: null,

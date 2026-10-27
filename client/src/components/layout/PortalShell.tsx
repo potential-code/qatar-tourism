@@ -24,7 +24,7 @@ export function PortalShell({
   return (
     <SidebarProvider>
       <PortalSidebar portal={portal} />
-      <SidebarInset className="bg-sand">
+      <SidebarInset className="min-w-0 bg-sand">
         <PortalHeader notifications={notifications} />
         <motion.main
           key={pathname}

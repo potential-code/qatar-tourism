@@ -44,7 +44,8 @@ export const globalRateLimit = rateLimiter({
 })
 
 /** Settings shared with Better Auth's own limiter so both layers agree. */
-export const CREDENTIAL_LIMIT = { windowSeconds: 15 * 60, max: 10 } as const
+// Demo setting: presenters rehearse the walkthrough from one machine, so allow more attempts.
+export const CREDENTIAL_LIMIT = { windowSeconds: 15 * 60, max: 50 } as const
 
 /**
  * Credential endpoints (sign-in, sign-up, password reset): tight, to slow brute force and

@@ -3,6 +3,7 @@ import { HttpError } from '@server/lib/errors'
 import { notFound, onError } from '@server/middleware/error.middleware'
 import { requestLogger } from '@server/middleware/logger.middleware'
 import { globalRateLimit } from '@server/middleware/rate-limit.middleware'
+import { adminApiRoutes } from '@server/modules/admin-api/admin-api.routes'
 import { aiAnalyticsRoutes } from '@server/modules/ai-analytics/ai-analytics.routes'
 import { aiPathRoutes } from '@server/modules/ai-path/ai-path.routes'
 import { analyticsRoutes } from '@server/modules/analytics/analytics.routes'
@@ -52,6 +53,7 @@ app
       credentials: true,
       allowMethods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization'],
+      exposeHeaders: ['Content-Disposition'],
       maxAge: 600,
     }),
   )
@@ -78,6 +80,7 @@ const routes = app
   .route('/health', healthRoutes)
   .route('/me', meRoutes)
   .route('/admin/users', adminUserRoutes)
+  .route('/admin', adminApiRoutes)
   .route('/audit', auditRoutes)
   .route('/demo', demoRoutes)
   .route('/profiles', profilesRoutes)
