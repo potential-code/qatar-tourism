@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as LearnerRouteImport } from './routes/learner'
+import { Route as SessionsRouteImport } from './routes/sessions'
 import { Route as TrainerRouteImport } from './routes/trainer'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
@@ -21,8 +22,14 @@ import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-pas
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminAiAnalyticsRouteImport } from './routes/admin/ai-analytics'
 import { Route as LearnerIndexRouteImport } from './routes/learner/index'
+import { Route as LearnerProfileRouteImport } from './routes/learner/profile'
 import { Route as LearnerProgressRouteImport } from './routes/learner/progress'
+import { Route as OnboardingIndexRouteImport } from './routes/onboarding/index'
+import { Route as OnboardingWelcomeRouteImport } from './routes/onboarding/welcome'
+import { Route as ProgrammesIndexRouteImport } from './routes/programmes/index'
 import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
+import { Route as TrainersIndexRouteImport } from './routes/trainers/index'
+import { Route as TrainersCodeRouteImport } from './routes/trainers/$code'
 import { Route as AdminManageIndexRouteImport } from './routes/admin/manage/index'
 import { Route as AdminManageAssessmentsRouteImport } from './routes/admin/manage/assessments'
 import { Route as AdminManageAuditRouteImport } from './routes/admin/manage/audit'
@@ -46,6 +53,8 @@ import { Route as LearnerLearningCodeRouteImport } from './routes/learner/learni
 import { Route as LearnerLearningPathRouteImport } from './routes/learner/learning/path'
 import { Route as LearnerPracticeIndexRouteImport } from './routes/learner/practice.index'
 import { Route as LearnerPracticeScenarioKeyRouteImport } from './routes/learner/practice.$scenarioKey'
+import { Route as ProgrammesCodeIndexRouteImport } from './routes/programmes/$code/index'
+import { Route as ProgrammesCodeEnrolRouteImport } from './routes/programmes/$code/enrol'
 import { Route as TrainerAssignmentsIndexRouteImport } from './routes/trainer/assignments.index'
 import { Route as TrainerAssignmentsSubmissionIdRouteImport } from './routes/trainer/assignments.$submissionId'
 import { Route as AdminManagePathsIndexRouteImport } from './routes/admin/manage/paths.index'
@@ -72,6 +81,11 @@ const DesignRoute = DesignRouteImport.update({
 const LearnerRoute = LearnerRouteImport.update({
   id: '/learner',
   path: '/learner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SessionsRoute = SessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrainerRoute = TrainerRouteImport.update({
@@ -114,15 +128,45 @@ const LearnerIndexRoute = LearnerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LearnerRoute,
 } as any)
+const LearnerProfileRoute = LearnerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LearnerRoute,
+} as any)
 const LearnerProgressRoute = LearnerProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
   getParentRoute: () => LearnerRoute,
 } as any)
+const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingWelcomeRoute = OnboardingWelcomeRouteImport.update({
+  id: '/onboarding/welcome',
+  path: '/onboarding/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgrammesIndexRoute = ProgrammesIndexRouteImport.update({
+  id: '/programmes/',
+  path: '/programmes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrainerIndexRoute = TrainerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TrainerRoute,
+} as any)
+const TrainersIndexRoute = TrainersIndexRouteImport.update({
+  id: '/trainers/',
+  path: '/trainers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrainersCodeRoute = TrainersCodeRouteImport.update({
+  id: '/trainers/$code',
+  path: '/trainers/$code',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminManageIndexRoute = AdminManageIndexRouteImport.update({
   id: '/manage/',
@@ -241,6 +285,16 @@ const LearnerPracticeScenarioKeyRoute =
     path: '/practice/$scenarioKey',
     getParentRoute: () => LearnerRoute,
   } as any)
+const ProgrammesCodeIndexRoute = ProgrammesCodeIndexRouteImport.update({
+  id: '/programmes/$code/',
+  path: '/programmes/$code/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgrammesCodeEnrolRoute = ProgrammesCodeEnrolRouteImport.update({
+  id: '/programmes/$code/enrol',
+  path: '/programmes/$code/enrol',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrainerAssignmentsIndexRoute = TrainerAssignmentsIndexRouteImport.update({
   id: '/assignments/',
   path: '/assignments/',
@@ -284,16 +338,23 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/design': typeof DesignRoute
   '/learner': typeof LearnerRouteWithChildren
+  '/sessions': typeof SessionsRoute
   '/trainer': typeof TrainerRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
   '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
+  '/learner/profile': typeof LearnerProfileRoute
   '/learner/progress': typeof LearnerProgressRoute
+  '/onboarding/welcome': typeof OnboardingWelcomeRoute
+  '/trainers/$code': typeof TrainersCodeRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/trainers/': typeof TrainersIndexRoute
   '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
   '/admin/manage/audit': typeof AdminManageAuditRoute
   '/admin/manage/courses': typeof AdminManageCoursesRoute
@@ -310,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/programmes/$code/enrol': typeof ProgrammesCodeEnrolRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/admin/manage/': typeof AdminManageIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
@@ -318,6 +380,7 @@ export interface FileRoutesByFullPath {
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
   '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/programmes/$code/': typeof ProgrammesCodeIndexRoute
   '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
   '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
   '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
@@ -328,15 +391,22 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
+  '/sessions': typeof SessionsRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
   '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
+  '/learner/profile': typeof LearnerProfileRoute
   '/learner/progress': typeof LearnerProgressRoute
+  '/onboarding/welcome': typeof OnboardingWelcomeRoute
+  '/trainers/$code': typeof TrainersCodeRoute
   '/admin': typeof AdminIndexRoute
   '/learner': typeof LearnerIndexRoute
+  '/onboarding': typeof OnboardingIndexRoute
+  '/programmes': typeof ProgrammesIndexRoute
   '/trainer': typeof TrainerIndexRoute
+  '/trainers': typeof TrainersIndexRoute
   '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
   '/admin/manage/audit': typeof AdminManageAuditRoute
   '/admin/manage/courses': typeof AdminManageCoursesRoute
@@ -353,6 +423,7 @@ export interface FileRoutesByTo {
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/programmes/$code/enrol': typeof ProgrammesCodeEnrolRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/admin/manage': typeof AdminManageIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
@@ -361,6 +432,7 @@ export interface FileRoutesByTo {
   '/learner/certificates': typeof LearnerCertificatesIndexRoute
   '/learner/learning': typeof LearnerLearningIndexRoute
   '/learner/practice': typeof LearnerPracticeIndexRoute
+  '/programmes/$code': typeof ProgrammesCodeIndexRoute
   '/trainer/assignments': typeof TrainerAssignmentsIndexRoute
   '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
   '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
@@ -374,16 +446,23 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/design': typeof DesignRoute
   '/learner': typeof LearnerRouteWithChildren
+  '/sessions': typeof SessionsRoute
   '/trainer': typeof TrainerRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
   '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
+  '/learner/profile': typeof LearnerProfileRoute
   '/learner/progress': typeof LearnerProgressRoute
+  '/onboarding/welcome': typeof OnboardingWelcomeRoute
+  '/trainers/$code': typeof TrainersCodeRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
+  '/onboarding/': typeof OnboardingIndexRoute
+  '/programmes/': typeof ProgrammesIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/trainers/': typeof TrainersIndexRoute
   '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
   '/admin/manage/audit': typeof AdminManageAuditRoute
   '/admin/manage/courses': typeof AdminManageCoursesRoute
@@ -400,6 +479,7 @@ export interface FileRoutesById {
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/programmes/$code/enrol': typeof ProgrammesCodeEnrolRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/admin/manage/': typeof AdminManageIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
@@ -408,6 +488,7 @@ export interface FileRoutesById {
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
   '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/programmes/$code/': typeof ProgrammesCodeIndexRoute
   '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
   '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
   '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
@@ -422,16 +503,23 @@ export interface FileRouteTypes {
     | '/admin'
     | '/design'
     | '/learner'
+    | '/sessions'
     | '/trainer'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
     | '/admin/ai-analytics'
+    | '/learner/profile'
     | '/learner/progress'
+    | '/onboarding/welcome'
+    | '/trainers/$code'
     | '/admin/'
     | '/learner/'
+    | '/onboarding/'
+    | '/programmes/'
     | '/trainer/'
+    | '/trainers/'
     | '/admin/manage/assessments'
     | '/admin/manage/audit'
     | '/admin/manage/courses'
@@ -448,6 +536,7 @@ export interface FileRouteTypes {
     | '/learner/learning/$code'
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
+    | '/programmes/$code/enrol'
     | '/trainer/assignments/$submissionId'
     | '/admin/manage/'
     | '/admin/reports/'
@@ -456,6 +545,7 @@ export interface FileRouteTypes {
     | '/learner/certificates/'
     | '/learner/learning/'
     | '/learner/practice/'
+    | '/programmes/$code/'
     | '/trainer/assignments/'
     | '/admin/manage/paths/$pathId'
     | '/admin/manage/users/$userId'
@@ -466,15 +556,22 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/design'
+    | '/sessions'
     | '/forgot-password'
     | '/login'
     | '/register'
     | '/reset-password'
     | '/admin/ai-analytics'
+    | '/learner/profile'
     | '/learner/progress'
+    | '/onboarding/welcome'
+    | '/trainers/$code'
     | '/admin'
     | '/learner'
+    | '/onboarding'
+    | '/programmes'
     | '/trainer'
+    | '/trainers'
     | '/admin/manage/assessments'
     | '/admin/manage/audit'
     | '/admin/manage/courses'
@@ -491,6 +588,7 @@ export interface FileRouteTypes {
     | '/learner/learning/$code'
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
+    | '/programmes/$code/enrol'
     | '/trainer/assignments/$submissionId'
     | '/admin/manage'
     | '/admin/reports'
@@ -499,6 +597,7 @@ export interface FileRouteTypes {
     | '/learner/certificates'
     | '/learner/learning'
     | '/learner/practice'
+    | '/programmes/$code'
     | '/trainer/assignments'
     | '/admin/manage/paths/$pathId'
     | '/admin/manage/users/$userId'
@@ -511,16 +610,23 @@ export interface FileRouteTypes {
     | '/admin'
     | '/design'
     | '/learner'
+    | '/sessions'
     | '/trainer'
     | '/(auth)/forgot-password'
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(auth)/reset-password'
     | '/admin/ai-analytics'
+    | '/learner/profile'
     | '/learner/progress'
+    | '/onboarding/welcome'
+    | '/trainers/$code'
     | '/admin/'
     | '/learner/'
+    | '/onboarding/'
+    | '/programmes/'
     | '/trainer/'
+    | '/trainers/'
     | '/admin/manage/assessments'
     | '/admin/manage/audit'
     | '/admin/manage/courses'
@@ -537,6 +643,7 @@ export interface FileRouteTypes {
     | '/learner/learning/$code'
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
+    | '/programmes/$code/enrol'
     | '/trainer/assignments/$submissionId'
     | '/admin/manage/'
     | '/admin/reports/'
@@ -545,6 +652,7 @@ export interface FileRouteTypes {
     | '/learner/certificates/'
     | '/learner/learning/'
     | '/learner/practice/'
+    | '/programmes/$code/'
     | '/trainer/assignments/'
     | '/admin/manage/paths/$pathId'
     | '/admin/manage/users/$userId'
@@ -558,12 +666,20 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   DesignRoute: typeof DesignRoute
   LearnerRoute: typeof LearnerRouteWithChildren
+  SessionsRoute: typeof SessionsRoute
   TrainerRoute: typeof TrainerRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
   authResetPasswordRoute: typeof authResetPasswordRoute
+  OnboardingWelcomeRoute: typeof OnboardingWelcomeRoute
+  TrainersCodeRoute: typeof TrainersCodeRoute
+  OnboardingIndexRoute: typeof OnboardingIndexRoute
+  ProgrammesIndexRoute: typeof ProgrammesIndexRoute
+  TrainersIndexRoute: typeof TrainersIndexRoute
   CertificatesVerifyIdRoute: typeof CertificatesVerifyIdRoute
+  ProgrammesCodeEnrolRoute: typeof ProgrammesCodeEnrolRoute
+  ProgrammesCodeIndexRoute: typeof ProgrammesCodeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -594,6 +710,13 @@ declare module '@tanstack/react-router' {
       path: '/learner'
       fullPath: '/learner'
       preLoaderRoute: typeof LearnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sessions': {
+      id: '/sessions'
+      path: '/sessions'
+      fullPath: '/sessions'
+      preLoaderRoute: typeof SessionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trainer': {
@@ -652,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerIndexRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/learner/profile': {
+      id: '/learner/profile'
+      path: '/profile'
+      fullPath: '/learner/profile'
+      preLoaderRoute: typeof LearnerProfileRouteImport
+      parentRoute: typeof LearnerRoute
+    }
     '/learner/progress': {
       id: '/learner/progress'
       path: '/progress'
@@ -659,12 +789,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerProgressRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/onboarding/': {
+      id: '/onboarding/'
+      path: '/onboarding'
+      fullPath: '/onboarding/'
+      preLoaderRoute: typeof OnboardingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/welcome': {
+      id: '/onboarding/welcome'
+      path: '/onboarding/welcome'
+      fullPath: '/onboarding/welcome'
+      preLoaderRoute: typeof OnboardingWelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programmes/': {
+      id: '/programmes/'
+      path: '/programmes'
+      fullPath: '/programmes/'
+      preLoaderRoute: typeof ProgrammesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trainer/': {
       id: '/trainer/'
       path: '/'
       fullPath: '/trainer/'
       preLoaderRoute: typeof TrainerIndexRouteImport
       parentRoute: typeof TrainerRoute
+    }
+    '/trainers/': {
+      id: '/trainers/'
+      path: '/trainers'
+      fullPath: '/trainers/'
+      preLoaderRoute: typeof TrainersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trainers/$code': {
+      id: '/trainers/$code'
+      path: '/trainers/$code'
+      fullPath: '/trainers/$code'
+      preLoaderRoute: typeof TrainersCodeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/manage/': {
       id: '/admin/manage/'
@@ -827,6 +992,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerPracticeScenarioKeyRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/programmes/$code/': {
+      id: '/programmes/$code/'
+      path: '/programmes/$code'
+      fullPath: '/programmes/$code/'
+      preLoaderRoute: typeof ProgrammesCodeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programmes/$code/enrol': {
+      id: '/programmes/$code/enrol'
+      path: '/programmes/$code/enrol'
+      fullPath: '/programmes/$code/enrol'
+      preLoaderRoute: typeof ProgrammesCodeEnrolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trainer/assignments/': {
       id: '/trainer/assignments/'
       path: '/assignments'
@@ -922,6 +1101,7 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LearnerRouteChildren {
+  LearnerProfileRoute: typeof LearnerProfileRoute
   LearnerProgressRoute: typeof LearnerProgressRoute
   LearnerIndexRoute: typeof LearnerIndexRoute
   LearnerAssessmentsKindRoute: typeof LearnerAssessmentsKindRoute
@@ -939,6 +1119,7 @@ interface LearnerRouteChildren {
 }
 
 const LearnerRouteChildren: LearnerRouteChildren = {
+  LearnerProfileRoute: LearnerProfileRoute,
   LearnerProgressRoute: LearnerProgressRoute,
   LearnerIndexRoute: LearnerIndexRoute,
   LearnerAssessmentsKindRoute: LearnerAssessmentsKindRoute,
@@ -978,12 +1159,20 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   DesignRoute: DesignRoute,
   LearnerRoute: LearnerRouteWithChildren,
+  SessionsRoute: SessionsRoute,
   TrainerRoute: TrainerRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
   authResetPasswordRoute: authResetPasswordRoute,
+  OnboardingWelcomeRoute: OnboardingWelcomeRoute,
+  TrainersCodeRoute: TrainersCodeRoute,
+  OnboardingIndexRoute: OnboardingIndexRoute,
+  ProgrammesIndexRoute: ProgrammesIndexRoute,
+  TrainersIndexRoute: TrainersIndexRoute,
   CertificatesVerifyIdRoute: CertificatesVerifyIdRoute,
+  ProgrammesCodeEnrolRoute: ProgrammesCodeEnrolRoute,
+  ProgrammesCodeIndexRoute: ProgrammesCodeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
