@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { apiAs, getJson, resetDemo } from './support/api'
-import { ACCOUNTS } from './support/env'
+import { ACCOUNTS, API_URL, CLIENT_ORIGIN } from './support/env'
 import { signInAs } from './support/ui'
 
 /**
@@ -53,8 +53,8 @@ test('the named reset restores the snapshot and reproduces identical dashboard n
 
   // A learner cannot run the reset.
   const learner = await apiAs(ACCOUNTS.maha)
-  const denied = await learner.post('http://localhost:8100/api/demo/reset', {
-    headers: { Origin: 'http://localhost:5200' },
+  const denied = await learner.post(`${API_URL}/api/demo/reset`, {
+    headers: { Origin: CLIENT_ORIGIN },
     data: { confirm: true },
   })
   expect(denied.status()).toBe(403)

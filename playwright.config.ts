@@ -5,8 +5,8 @@ import { defineConfig, devices } from '@playwright/test'
  * demo through the admin reset endpoint, so every run starts from the same snapshot. Specs run
  * in file order on one worker: the walkthrough is a single connected story.
  */
-const API_URL = 'http://localhost:8100'
-const CLIENT_URL = 'http://localhost:5200'
+const API_URL = 'http://localhost:8140'
+const CLIENT_URL = 'http://localhost:5240'
 
 export default defineConfig({
   testDir: './e2e',
@@ -42,7 +42,7 @@ export default defineConfig({
       env: { API_RATE_LIMIT_PER_MINUTE: '5000', CREDENTIAL_RATE_LIMIT: '1000' },
     },
     {
-      command: 'cd client && bunx --bun vite --host 0.0.0.0 --port 5200 --strictPort',
+      command: 'cd client && bunx --bun vite --host 0.0.0.0 --port 5240 --strictPort',
       url: CLIENT_URL,
       reuseExistingServer: true,
       timeout: 60_000,
