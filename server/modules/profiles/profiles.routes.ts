@@ -10,14 +10,19 @@ import {
   verifySimulatedInput,
 } from '@shared/schemas/profile-account'
 import { Hono } from 'hono'
+import { z } from 'zod'
 import {
   currentSessionToken,
   readFacilitatorCookie,
-  writeSwitchCookies,
+  writeFacilitatorCookie,
+  writeSessionCookie,
 } from './facilitator.cookies'
 import { packFacilitator } from './facilitator.service'
 import * as profilesController from './profiles.controller'
 import { OWN_PROFILE_ROLES } from './profiles.policy'
+import { SSO_PROVIDERS } from './sso.service'
+
+const ssoInput = z.object({ provider: z.enum(SSO_PROVIDERS) })
 
 const ownProfile = [requireAuth, requireRole(...OWN_PROFILE_ROLES)] as const
 
@@ -25,6 +30,7 @@ const ownProfile = [requireAuth, requireRole(...OWN_PROFILE_ROLES)] as const
  * Mounted at /api/profiles in server/app.ts.
  *   /register*        public, credential rate limit (brief §3 open registration)
  *   /me*              the signed-in learner's own profile
+ *   /sso/simulated    public, SIMULATED SSO into a fixed mock learner (labelled in the UI)
  *   /facilitator*     demo toolbar, demo administrator only (checked in the controller/policy)
  */
 export const profilesRoutes = new Hono<AuthEnv>()
@@ -46,6 +52,11 @@ export const profilesRoutes = new Hono<AuthEnv>()
     validate('json', resendSimulatedInput),
     async (c) => c.json(await profilesController.resend(c.req.valid('json').email), 200),
   )
+  .post('/sso/simulated', credentialRateLimit, validate('json', ssoInput), async (c) => {
+    const { session, result } = await profilesController.simulatedSso(c.req.valid('json').provider)
+    await writeSessionCookie(c, session)
+    return c.json(result, 200)
+  })
   .get('/ping', requireAuth, (c) => c.json(profilesController.ping(), 200))
   .get('/me', ...ownProfile, async (c) =>
     c.json(await profilesController.getMine(c.var.viewer), 200),
@@ -79,6 +90,7 @@ export const profilesRoutes = new Hono<AuthEnv>()
       cookie,
       c.req.valid('json').target,
     )
-    await writeSwitchCookies(c, packFacilitator(adminId, session.token), session)
+    await writeSessionCookie(c, session)
+    await writeFacilitatorCookie(c, packFacilitator(adminId, session.token))
     return c.json(result, 200)
   })

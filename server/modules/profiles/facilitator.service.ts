@@ -1,10 +1,10 @@
-import { auth } from '@server/auth/auth'
 import { db } from '@server/db/connection'
 import { profiles, trainerProfiles, user } from '@server/db/schema'
 import { HttpError } from '@server/lib/errors'
 import { recordAudit } from '@server/modules/audit/audit.service'
 import type { FacilitatorTarget } from '@shared/schemas/profile-account'
 import { eq, inArray } from 'drizzle-orm'
+import { createDemoSession } from './demo-session'
 
 /**
  * Demo facilitator quick switch (brief §3: "Demo facilitator access can offer role switching in
@@ -120,11 +120,8 @@ export async function switchTo(adminId: string, target: FacilitatorTarget, previ
     .limit(1)
   if (admin?.role !== 'admin') throw HttpError.forbidden()
 
-  const context = await auth.$context
-  const session = await context.internalAdapter.createSession(account.id)
-  if (!session) throw new Error('Could not create the demo session')
   // The facilitator's previous session is closed so only one stays active in this browser.
-  await context.internalAdapter.deleteSession(previousToken)
+  const session = await createDemoSession(account.id, previousToken)
 
   await recordAudit(
     { id: admin.id, role: 'admin', name: admin.name },
@@ -136,15 +133,5 @@ export async function switchTo(adminId: string, target: FacilitatorTarget, previ
       reason: 'Demo facilitator quick switch',
     },
   )
-  return {
-    token: session.token,
-    cookie: {
-      name: context.authCookies.sessionToken.name,
-      attributes: context.authCookies.sessionToken.attributes,
-      maxAge: context.sessionConfig.expiresIn,
-      secret: context.secret,
-    },
-    role: account.role,
-    name: account.name,
-  }
+  return { session, role: account.role, name: account.name }
 }

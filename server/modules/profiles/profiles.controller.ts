@@ -5,6 +5,8 @@ import * as facilitatorService from './facilitator.service'
 import { assertFacilitator } from './profiles.policy'
 import * as profilesService from './profiles.service'
 import * as registrationService from './registration.service'
+import type { SsoProvider } from './sso.service'
+import * as ssoService from './sso.service'
 
 export function ping() {
   return { module: 'profiles' as const, status: 'ok' as const }
@@ -66,10 +68,14 @@ export async function facilitatorSwitch(
     cookie,
   )
   assertFacilitator(adminId)
-  const session = await facilitatorService.switchTo(adminId, target, token)
+  const switched = await facilitatorService.switchTo(adminId, target, token)
   return {
     adminId,
-    session,
-    result: { role: session.role, name: session.name },
+    session: switched.session,
+    result: { role: switched.role, name: switched.name },
   }
+}
+
+export function simulatedSso(provider: SsoProvider) {
+  return ssoService.signInSimulated(provider)
 }

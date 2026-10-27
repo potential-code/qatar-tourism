@@ -389,3 +389,34 @@ describe('demo facilitator toolbar (brief §3)', () => {
     expect(res.status).toBe(400)
   })
 })
+
+describe('simulated SSO (brief §3)', () => {
+  test('signs in to the fixed mock learner and records it as simulated', async () => {
+    const res = await call('/api/profiles/sso/simulated', {
+      body: { provider: 'organisation' },
+      ip: '10.0.1.200',
+    })
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
+      name: 'Rania Al Thani',
+      role: 'learner',
+      provider: 'organisation',
+    })
+    const me = await (await call('/api/me', { cookie: cookiesFrom(res) })).json()
+    expect(me.user).toMatchObject({ email: 'learner0016@example.com', role: 'learner' })
+
+    const [audit] = await db
+      .select({ after: auditEvents.after })
+      .from(auditEvents)
+      .where(eq(auditEvents.action, 'auth.sso_simulated'))
+    expect(audit?.after).toMatchObject({ mode: 'simulated', claimsVerified: false })
+  })
+
+  test('only the two documented providers exist', async () => {
+    const res = await call('/api/profiles/sso/simulated', {
+      body: { provider: 'admin' },
+      ip: '10.0.1.200',
+    })
+    expect(res.status).toBe(400)
+  })
+})
