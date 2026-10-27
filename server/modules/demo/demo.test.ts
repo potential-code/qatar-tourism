@@ -1,10 +1,14 @@
 import '../../__tests__/helpers/env'
 
 import { afterEach, beforeAll, describe, expect, mock, setDefaultTimeout, test } from 'bun:test'
+import { existsSync } from 'node:fs'
+import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 import { app } from '@server/app'
 import { auth } from '@server/auth/auth'
 import { db } from '@server/db/connection'
 import { auditEvents, session, user } from '@server/db/schema'
+import { UPLOAD_ROOT } from '@server/modules/assignments/assignments.storage'
 import { and, count, eq } from 'drizzle-orm'
 import { CLIENT_ORIGIN } from '../../__tests__/helpers/env'
 import { ensureSeeded } from '../../__tests__/helpers/seeded'
@@ -60,10 +64,23 @@ describe('POST /api/demo/reset', () => {
       expiresAt: new Date(Date.now() + 3_600_000),
       updatedAt: new Date(),
     })
+    // Uploaded demo files are dummy data too; the reset empties them inside the uploads root.
+    const uploaded = join(UPLOAD_ROOT, 'submissions', 'demo-sub', 'file.pdf')
+    const partial = join(UPLOAD_ROOT, 'tmp', 'demo-upload.part')
+    const outsideFolders = join(UPLOAD_ROOT, 'keep.txt')
+    await mkdir(dirname(uploaded), { recursive: true })
+    await mkdir(dirname(partial), { recursive: true })
+    await writeFile(uploaded, '%PDF-1.4 demo')
+    await writeFile(partial, 'partial')
+    await writeFile(outsideFolders, 'not a demo upload folder')
     stubSession('admin')
 
     const res = await app.request('/api/demo/reset', post({ confirm: true }))
     expect(res.status).toBe(200)
+    expect(existsSync(uploaded)).toBe(false)
+    expect(existsSync(partial)).toBe(false)
+    expect(existsSync(outsideFolders)).toBe(true)
+    await rm(outsideFolders, { force: true })
     const body = await res.json()
     expect(body.meta.counts.learners).toBe(1200)
     expect(body.meta.referenceDate).toBe('2026-10-27')

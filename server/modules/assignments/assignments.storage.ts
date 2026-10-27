@@ -173,4 +173,17 @@ export async function storedFile(relative: string | null): Promise<string | null
   return info?.isFile() ? full : null
 }
 
+/**
+ * Empties the uploads directory for a demo reset (brief §1 deletion plan: uploads are dummy
+ * data too). Only the known sub-folders of the uploads root are removed, never the root itself
+ * (it may be a mounted volume) and never anything outside it.
+ */
+export async function clearUploads(): Promise<void> {
+  for (const folder of ['submissions', 'tmp']) {
+    const target = path.join(ROOT, folder)
+    if (!target.startsWith(`${ROOT}${path.sep}`)) continue
+    await rm(target, { recursive: true, force: true })
+  }
+}
+
 export const UPLOAD_ROOT = ROOT
