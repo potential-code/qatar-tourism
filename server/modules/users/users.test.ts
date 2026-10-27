@@ -166,6 +166,39 @@ describe('suspend and reactivate', () => {
     expect(events.every((e) => Boolean(e.reason))).toBe(true)
   })
 
+  test('a suspended learner cannot sign in again until reactivated', async () => {
+    stubSession('admin')
+    const suspend = await app.request(
+      '/api/admin/users/user-l0011/suspend',
+      send('POST', { reason: 'Demo access review' }),
+    )
+    expect(suspend.status).toBe(200)
+    mock.restore()
+
+    const [account] = await db
+      .select({ email: user.email })
+      .from(user)
+      .where(eq(user.id, 'user-l0011'))
+    const signIn = () =>
+      auth.api.signInEmail({
+        body: { email: account?.email ?? '', password: 'DemoAcademy2026!' },
+        asResponse: true,
+      })
+    const blocked = await signIn()
+    expect(blocked.status).toBe(403)
+    expect(await blocked.text()).toContain('suspended')
+    const live = await db.select().from(session).where(eq(session.userId, 'user-l0011'))
+    expect(live).toHaveLength(0)
+
+    stubSession('admin')
+    await app.request(
+      '/api/admin/users/user-l0011/reactivate',
+      send('POST', { reason: 'Review complete' }),
+    )
+    mock.restore()
+    expect((await signIn()).status).toBe(200)
+  })
+
   test('a reason is required', async () => {
     stubSession('admin')
     const res = await app.request(
