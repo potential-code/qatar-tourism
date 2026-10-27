@@ -25,11 +25,18 @@ import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
 import { Route as CertificatesVerifyIdRouteImport } from './routes/certificates/verify.$id'
 import { Route as LearnerAssessmentsIndexRouteImport } from './routes/learner/assessments/index'
 import { Route as LearnerAssessmentsKindRouteImport } from './routes/learner/assessments/$kind'
+import { Route as LearnerAssignmentsIndexRouteImport } from './routes/learner/assignments.index'
+import { Route as LearnerAssignmentsCodeRouteImport } from './routes/learner/assignments.$code'
 import { Route as LearnerCertificatesIndexRouteImport } from './routes/learner/certificates/index'
 import { Route as LearnerCertificatesCodeRouteImport } from './routes/learner/certificates/$code'
 import { Route as LearnerLearningIndexRouteImport } from './routes/learner/learning/index'
 import { Route as LearnerLearningCodeRouteImport } from './routes/learner/learning/$code'
 import { Route as LearnerLearningPathRouteImport } from './routes/learner/learning/path'
+import { Route as LearnerPracticeIndexRouteImport } from './routes/learner/practice.index'
+import { Route as LearnerPracticeScenarioKeyRouteImport } from './routes/learner/practice.$scenarioKey'
+import { Route as TrainerAssignmentsIndexRouteImport } from './routes/trainer/assignments.index'
+import { Route as TrainerAssignmentsSubmissionIdRouteImport } from './routes/trainer/assignments.$submissionId'
+import { Route as LearnerPracticeAttemptsAttemptIdRouteImport } from './routes/learner/practice.attempts.$attemptId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -111,6 +118,16 @@ const LearnerAssessmentsKindRoute = LearnerAssessmentsKindRouteImport.update({
   path: '/assessments/$kind',
   getParentRoute: () => LearnerRoute,
 } as any)
+const LearnerAssignmentsIndexRoute = LearnerAssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerAssignmentsCodeRoute = LearnerAssignmentsCodeRouteImport.update({
+  id: '/assignments/$code',
+  path: '/assignments/$code',
+  getParentRoute: () => LearnerRoute,
+} as any)
 const LearnerCertificatesIndexRoute =
   LearnerCertificatesIndexRouteImport.update({
     id: '/certificates/',
@@ -137,6 +154,34 @@ const LearnerLearningPathRoute = LearnerLearningPathRouteImport.update({
   path: '/learning/path',
   getParentRoute: () => LearnerRoute,
 } as any)
+const LearnerPracticeIndexRoute = LearnerPracticeIndexRouteImport.update({
+  id: '/practice/',
+  path: '/practice/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerPracticeScenarioKeyRoute =
+  LearnerPracticeScenarioKeyRouteImport.update({
+    id: '/practice/$scenarioKey',
+    path: '/practice/$scenarioKey',
+    getParentRoute: () => LearnerRoute,
+  } as any)
+const TrainerAssignmentsIndexRoute = TrainerAssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerAssignmentsSubmissionIdRoute =
+  TrainerAssignmentsSubmissionIdRouteImport.update({
+    id: '/assignments/$submissionId',
+    path: '/assignments/$submissionId',
+    getParentRoute: () => TrainerRoute,
+  } as any)
+const LearnerPracticeAttemptsAttemptIdRoute =
+  LearnerPracticeAttemptsAttemptIdRouteImport.update({
+    id: '/practice/attempts/$attemptId',
+    path: '/practice/attempts/$attemptId',
+    getParentRoute: () => LearnerRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -154,12 +199,19 @@ export interface FileRoutesByFullPath {
   '/trainer/': typeof TrainerIndexRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
   '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
+  '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
+  '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -174,12 +226,19 @@ export interface FileRoutesByTo {
   '/trainer': typeof TrainerIndexRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
   '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/learner/assessments': typeof LearnerAssessmentsIndexRoute
+  '/learner/assignments': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates': typeof LearnerCertificatesIndexRoute
   '/learner/learning': typeof LearnerLearningIndexRoute
+  '/learner/practice': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -198,12 +257,19 @@ export interface FileRoutesById {
   '/trainer/': typeof TrainerIndexRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
   '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
   '/learner/learning/$code': typeof LearnerLearningCodeRoute
   '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
   '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
+  '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
+  '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,12 +289,19 @@ export interface FileRouteTypes {
     | '/trainer/'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
+    | '/learner/assignments/$code'
     | '/learner/certificates/$code'
     | '/learner/learning/$code'
     | '/learner/learning/path'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
     | '/learner/assessments/'
+    | '/learner/assignments/'
     | '/learner/certificates/'
     | '/learner/learning/'
+    | '/learner/practice/'
+    | '/trainer/assignments/'
+    | '/learner/practice/attempts/$attemptId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -243,12 +316,19 @@ export interface FileRouteTypes {
     | '/trainer'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
+    | '/learner/assignments/$code'
     | '/learner/certificates/$code'
     | '/learner/learning/$code'
     | '/learner/learning/path'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
     | '/learner/assessments'
+    | '/learner/assignments'
     | '/learner/certificates'
     | '/learner/learning'
+    | '/learner/practice'
+    | '/trainer/assignments'
+    | '/learner/practice/attempts/$attemptId'
   id:
     | '__root__'
     | '/'
@@ -266,12 +346,19 @@ export interface FileRouteTypes {
     | '/trainer/'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
+    | '/learner/assignments/$code'
     | '/learner/certificates/$code'
     | '/learner/learning/$code'
     | '/learner/learning/path'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
     | '/learner/assessments/'
+    | '/learner/assignments/'
     | '/learner/certificates/'
     | '/learner/learning/'
+    | '/learner/practice/'
+    | '/trainer/assignments/'
+    | '/learner/practice/attempts/$attemptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -401,6 +488,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerAssessmentsKindRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/learner/assignments/': {
+      id: '/learner/assignments/'
+      path: '/assignments'
+      fullPath: '/learner/assignments/'
+      preLoaderRoute: typeof LearnerAssignmentsIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/assignments/$code': {
+      id: '/learner/assignments/$code'
+      path: '/assignments/$code'
+      fullPath: '/learner/assignments/$code'
+      preLoaderRoute: typeof LearnerAssignmentsCodeRouteImport
+      parentRoute: typeof LearnerRoute
+    }
     '/learner/certificates/': {
       id: '/learner/certificates/'
       path: '/certificates'
@@ -436,6 +537,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerLearningPathRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/learner/practice/': {
+      id: '/learner/practice/'
+      path: '/practice'
+      fullPath: '/learner/practice/'
+      preLoaderRoute: typeof LearnerPracticeIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/practice/$scenarioKey': {
+      id: '/learner/practice/$scenarioKey'
+      path: '/practice/$scenarioKey'
+      fullPath: '/learner/practice/$scenarioKey'
+      preLoaderRoute: typeof LearnerPracticeScenarioKeyRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/trainer/assignments/': {
+      id: '/trainer/assignments/'
+      path: '/assignments'
+      fullPath: '/trainer/assignments/'
+      preLoaderRoute: typeof TrainerAssignmentsIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/assignments/$submissionId': {
+      id: '/trainer/assignments/$submissionId'
+      path: '/assignments/$submissionId'
+      fullPath: '/trainer/assignments/$submissionId'
+      preLoaderRoute: typeof TrainerAssignmentsSubmissionIdRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/learner/practice/attempts/$attemptId': {
+      id: '/learner/practice/attempts/$attemptId'
+      path: '/practice/attempts/$attemptId'
+      fullPath: '/learner/practice/attempts/$attemptId'
+      preLoaderRoute: typeof LearnerPracticeAttemptsAttemptIdRouteImport
+      parentRoute: typeof LearnerRoute
+    }
   }
 }
 
@@ -453,24 +589,34 @@ interface LearnerRouteChildren {
   LearnerProgressRoute: typeof LearnerProgressRoute
   LearnerIndexRoute: typeof LearnerIndexRoute
   LearnerAssessmentsKindRoute: typeof LearnerAssessmentsKindRoute
+  LearnerAssignmentsCodeRoute: typeof LearnerAssignmentsCodeRoute
   LearnerCertificatesCodeRoute: typeof LearnerCertificatesCodeRoute
   LearnerLearningCodeRoute: typeof LearnerLearningCodeRoute
   LearnerLearningPathRoute: typeof LearnerLearningPathRoute
+  LearnerPracticeScenarioKeyRoute: typeof LearnerPracticeScenarioKeyRoute
   LearnerAssessmentsIndexRoute: typeof LearnerAssessmentsIndexRoute
+  LearnerAssignmentsIndexRoute: typeof LearnerAssignmentsIndexRoute
   LearnerCertificatesIndexRoute: typeof LearnerCertificatesIndexRoute
   LearnerLearningIndexRoute: typeof LearnerLearningIndexRoute
+  LearnerPracticeIndexRoute: typeof LearnerPracticeIndexRoute
+  LearnerPracticeAttemptsAttemptIdRoute: typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 
 const LearnerRouteChildren: LearnerRouteChildren = {
   LearnerProgressRoute: LearnerProgressRoute,
   LearnerIndexRoute: LearnerIndexRoute,
   LearnerAssessmentsKindRoute: LearnerAssessmentsKindRoute,
+  LearnerAssignmentsCodeRoute: LearnerAssignmentsCodeRoute,
   LearnerCertificatesCodeRoute: LearnerCertificatesCodeRoute,
   LearnerLearningCodeRoute: LearnerLearningCodeRoute,
   LearnerLearningPathRoute: LearnerLearningPathRoute,
+  LearnerPracticeScenarioKeyRoute: LearnerPracticeScenarioKeyRoute,
   LearnerAssessmentsIndexRoute: LearnerAssessmentsIndexRoute,
+  LearnerAssignmentsIndexRoute: LearnerAssignmentsIndexRoute,
   LearnerCertificatesIndexRoute: LearnerCertificatesIndexRoute,
   LearnerLearningIndexRoute: LearnerLearningIndexRoute,
+  LearnerPracticeIndexRoute: LearnerPracticeIndexRoute,
+  LearnerPracticeAttemptsAttemptIdRoute: LearnerPracticeAttemptsAttemptIdRoute,
 }
 
 const LearnerRouteWithChildren =
@@ -478,10 +624,14 @@ const LearnerRouteWithChildren =
 
 interface TrainerRouteChildren {
   TrainerIndexRoute: typeof TrainerIndexRoute
+  TrainerAssignmentsSubmissionIdRoute: typeof TrainerAssignmentsSubmissionIdRoute
+  TrainerAssignmentsIndexRoute: typeof TrainerAssignmentsIndexRoute
 }
 
 const TrainerRouteChildren: TrainerRouteChildren = {
   TrainerIndexRoute: TrainerIndexRoute,
+  TrainerAssignmentsSubmissionIdRoute: TrainerAssignmentsSubmissionIdRoute,
+  TrainerAssignmentsIndexRoute: TrainerAssignmentsIndexRoute,
 }
 
 const TrainerRouteWithChildren =
