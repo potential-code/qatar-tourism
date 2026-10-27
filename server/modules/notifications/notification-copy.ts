@@ -1,0 +1,122 @@
+import { formatQatarDateTime } from '@server/db/seed/format'
+import { NOTIFICATION_TEMPLATES, renderTemplate } from '@shared/content/notifications'
+
+/**
+ * Builds session notification messages. The reschedule and cancellation copy is the brief §11
+ * template, verbatim, with merge fields. The waitlist and booking-change messages have no brief
+ * copy, so they follow the same tone and are defined here.
+ */
+
+export type SessionCopyContext = {
+  sessionTitle: string
+  trainerName: string
+  format: 'in_person' | 'online'
+  location: string
+}
+
+export const firstNameOf = (fullName: string) => fullName.trim().split(/\s+/)[0] ?? fullName
+
+export const formatLabel = (format: 'in_person' | 'online') =>
+  format === 'in_person' ? 'In person' : 'Live online'
+
+export function rescheduledMessage(
+  ctx: SessionCopyContext,
+  firstName: string,
+  previousStart: Date,
+  newStart: Date,
+  reason: string,
+) {
+  const values = {
+    'Session title': ctx.sessionTitle,
+    'First name': firstName,
+    Trainer: ctx.trainerName,
+    'Old date and time': formatQatarDateTime(previousStart),
+    'New date and time, Qatar time': formatQatarDateTime(newStart),
+    Format: formatLabel(ctx.format),
+    'Venue or online details': ctx.location,
+    Reason: reason,
+  }
+  const template = NOTIFICATION_TEMPLATES.session_rescheduled
+  return {
+    subject: renderTemplate(template.subject, values),
+    body: renderTemplate(template.body, values),
+  }
+}
+
+export function cancelledMessage(
+  ctx: SessionCopyContext,
+  firstName: string,
+  start: Date,
+  reason: string,
+) {
+  const values = {
+    'Session title': ctx.sessionTitle,
+    'First name': firstName,
+    'Date and time': formatQatarDateTime(start),
+    Reason: reason,
+  }
+  const template = NOTIFICATION_TEMPLATES.session_cancelled
+  return {
+    subject: renderTemplate(template.subject, values),
+    body: renderTemplate(template.body, values),
+  }
+}
+
+export function waitlistRescheduledMessage(
+  ctx: SessionCopyContext,
+  firstName: string,
+  previousStart: Date,
+  newStart: Date,
+  position: number,
+) {
+  return {
+    subject: `Waitlist update: ${ctx.sessionTitle} has moved`,
+    body: `Hello ${firstName}, a session you are on the waitlist for has moved from ${formatQatarDateTime(previousStart)} to ${formatQatarDateTime(newStart)}. You are number ${position} on the waitlist. We will let you know if a seat becomes available. You can choose another eligible session in My sessions.`,
+  }
+}
+
+export function waitlistCancelledMessage(
+  ctx: SessionCopyContext,
+  firstName: string,
+  start: Date,
+  reason: string,
+) {
+  return {
+    subject: `Waitlist update: ${ctx.sessionTitle} has been cancelled`,
+    body: `Hello ${firstName}, the session you were on the waitlist for, scheduled for ${formatQatarDateTime(start)}, has been cancelled. Reason: ${reason}. Your learning progress has been saved. Please visit My sessions to choose another available session.`,
+  }
+}
+
+export function waitlistPromotedMessage(ctx: SessionCopyContext, firstName: string, start: Date) {
+  return {
+    subject: `Your seat is confirmed: ${ctx.sessionTitle}`,
+    body: `Hello ${firstName}, a seat has become available and your booking for ${ctx.sessionTitle} on ${formatQatarDateTime(start)} is now confirmed. Please review it in My sessions.`,
+  }
+}
+
+export function changeRequestMessage(
+  learnerCode: string,
+  sessionTitle: string,
+  start: Date,
+  kind: 'cancel' | 'reschedule',
+  reason: string,
+) {
+  const action = kind === 'cancel' ? 'cancel' : 'reschedule'
+  return {
+    subject: `Admin review requested: ${learnerCode} wants to ${action} a booking`,
+    body: `Learner ${learnerCode} asked to ${action} their booking for ${sessionTitle} on ${formatQatarDateTime(start)}, inside the 24-hour self-service window. Reason: ${reason}.`,
+  }
+}
+
+/** "Demo Academy, Room 2" or "Online: DEMO-ROOM-T02-2". */
+export function locationOf(session: {
+  format: 'in_person' | 'online'
+  venue: string | null
+  room: string | null
+  meetingRef: string | null
+}) {
+  if (session.format === 'in_person') {
+    return [session.venue, session.room].filter(Boolean).join(', ') || 'Venue to be confirmed'
+  }
+  return `Live online, demo meeting room ${session.meetingRef ?? 'to be confirmed'}`
+}
