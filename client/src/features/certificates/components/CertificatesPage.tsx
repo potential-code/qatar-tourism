@@ -12,8 +12,8 @@ import { LoadError } from '@/features/learning/components/LoadError'
 import { StageMap } from '@/features/learning/components/StageMap'
 import { useActiveProgramme } from '@/features/learning/hooks/useActiveProgramme'
 import { journeyQuery } from '@/features/learning/queries/learning.queries'
-import { qatarDate } from '@/features/learning/utils/format'
 import { PAGE_IMAGE } from '@/features/learning/utils/imagery'
+import { qatarDate } from '@/lib/format/qatar-time'
 import { myCertificatesQuery } from '../queries/certificates.queries'
 
 /**

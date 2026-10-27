@@ -4,6 +4,7 @@ import type { InferResponseType } from 'hono/client'
 import { toast } from 'sonner'
 import { toApiFilters } from '@/features/admin-dashboard/utils/filters'
 import { ApiError, api, unwrap } from '@/lib/api'
+import { qatarDateKey } from '@/lib/format/qatar-time'
 import type { ReportSearch } from '../utils/search'
 
 export type ReportPage = InferResponseType<(typeof api.reports)[':report']['$get'], 200>
@@ -46,7 +47,7 @@ function exportFilename(title: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Qatar' }).format(new Date())
+  const day = qatarDateKey(new Date())
   return `${slug || 'report'}-${day}.csv`
 }
 

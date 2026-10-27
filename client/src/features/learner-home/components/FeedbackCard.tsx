@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import type { Journey } from '@/features/learning/types'
-import { qatarDate } from '@/features/learning/utils/format'
+import { qatarDate } from '@/lib/format/qatar-time'
 
 const initials = (name: string) =>
   name

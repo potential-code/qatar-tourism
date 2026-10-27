@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { qatarDateTime } from '@/features/sessions/utils/qatar-time'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { myNotificationsQuery, useMarkRead } from '../queries/notifications.queries'
 

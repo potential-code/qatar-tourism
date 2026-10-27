@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ApiError } from '@/lib/api'
+import { qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { useMoveBooking } from '../queries/sessions.queries'
 import type { CatalogueSession, MyBooking } from '../types'
-import { qatarRange } from '../utils/qatar-time'
 import { FORMAT_LABEL, locationLabel } from '../utils/session-labels'
 import { BookingPolicyNote } from './BookingPolicyNote'
 

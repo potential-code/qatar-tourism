@@ -1,9 +1,9 @@
 import { Clock, Hourglass, Lock, MapPin, MonitorPlay, Users } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
+import { learnerLocal, qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { SessionInfo } from '../types'
-import { learnerLocal, qatarRange } from '../utils/qatar-time'
 import {
   durationLabel,
   FORMAT_LABEL,

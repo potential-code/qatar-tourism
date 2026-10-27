@@ -7,7 +7,7 @@ import {
   MessageSquareWarning,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { qatarDateShort } from '@/features/sessions/utils/qatar-time'
+import { qatarDateShort } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
 
 function Row({

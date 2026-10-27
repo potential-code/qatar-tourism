@@ -1,9 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { History, Keyboard, Mic } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { AttemptView } from '../types'
-import { qatarTime } from '../utils/format'
 import { scoreBand } from '../utils/labels'
 
 interface AttemptHistoryProps {
@@ -57,7 +57,8 @@ export function AttemptHistory({
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <ModeIcon aria-hidden className="size-3" />
-                  {attempt.mode === 'voice' ? 'Voice' : 'Text'}, {qatarTime(attempt.completedAt)}
+                  {attempt.mode === 'voice' ? 'Voice' : 'Text'},{' '}
+                  {qatarDateTime(attempt.completedAt)}
                 </span>
               </span>
               <span className="flex shrink-0 flex-wrap justify-end gap-1">

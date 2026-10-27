@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { useMarkingFields } from '../hooks/useMarkingFields'
 import { useFinalise, useSaveDraft } from '../queries/marking.queries'
 import type { MarkingDetail } from '../types'
@@ -76,7 +76,9 @@ export function MarkingForm({ detail }: { detail: MarkingDetail }) {
           Mark version {detail.current?.version}
         </h2>
         {draft ? (
-          <p className="text-xs text-muted-foreground">Draft saved {qatarTime(draft.savedAt)}</p>
+          <p className="text-xs text-muted-foreground">
+            Draft saved {qatarDateTime(draft.savedAt)}
+          </p>
         ) : (
           <p className="text-xs text-muted-foreground">
             Save a draft at any time. Learners only see final marks.

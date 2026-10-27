@@ -1,6 +1,6 @@
 import { type SessionUpdateInput, sessionUpdateInput } from '@shared/schemas/trainer-ops'
 import type { SessionInfo } from '@/features/sessions/types'
-import { qatarDateKey, qatarTime, qatarToIso } from '@/features/sessions/utils/qatar-time'
+import { qatarDateKey, qatarTime, qatarToIso } from '@/lib/format/qatar-time'
 import type { FormOptions } from '../../types'
 
 /** Form state: wall-clock Qatar date and times, converted to UTC instants on submit. */

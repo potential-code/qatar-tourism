@@ -1,37 +1,14 @@
-/** Qatar-time formatting for management screens (CONVENTIONS: times shown in Asia/Qatar). */
-const TZ = 'Asia/Qatar'
+import { qatarDate, qatarDateTime, qatarTime } from '@/lib/format/qatar-time'
 
-export function qDate(value: string | null | undefined): string {
-  if (!value) return 'Not recorded'
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: TZ,
-  }).format(new Date(value))
-}
+/** Management screens show a placeholder where a date was never recorded. */
+const NOT_RECORDED = 'Not recorded'
 
-export function qDateTime(value: string | null | undefined): string {
-  if (!value) return 'Not recorded'
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: TZ,
-  }).format(new Date(value))
-}
+export const qDate = (value: string | null | undefined) => qatarDate(value) || NOT_RECORDED
 
-export function qTime(value: string): string {
-  return new Intl.DateTimeFormat('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: TZ,
-  }).format(new Date(value))
-}
+export const qDateTime = (value: string | null | undefined) =>
+  qatarDateTime(value, { label: false }) || NOT_RECORDED
+
+export const qTime = (value: string) => qatarTime(value)
 
 export function initials(name: string): string {
   return name

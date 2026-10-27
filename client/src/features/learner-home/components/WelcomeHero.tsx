@@ -4,8 +4,8 @@ import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { easeOut } from '@/components/motion/variants'
 import { ProgrammeSwitcher } from '@/features/learning/components/ProgrammeSwitcher'
 import type { EnrolmentSummary, Journey } from '@/features/learning/types'
-import { qatarDate } from '@/features/learning/utils/format'
 import { PROGRAMME_IMAGE } from '@/features/learning/utils/imagery'
+import { qatarDate } from '@/lib/format/qatar-time'
 
 /** Overview hero: greeting over official photography, with the explicit programme switcher. */
 export function WelcomeHero({

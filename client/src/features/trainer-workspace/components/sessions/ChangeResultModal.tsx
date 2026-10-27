@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { qatarRange } from '@/features/sessions/utils/qatar-time'
+import { qatarRange } from '@/lib/format/qatar-time'
 
 export type ChangeResult = {
   kind: 'reschedule' | 'cancel'

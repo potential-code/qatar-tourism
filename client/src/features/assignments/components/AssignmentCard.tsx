@@ -3,7 +3,7 @@ import { ArrowRight, Layers } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { cardHover } from '@/components/motion/variants'
 import { Badge } from '@/components/ui/badge'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { LearnerAssignment } from '../types'
 import { ASSIGNMENT_STATE, type AssignmentState } from '../utils/status'
 import { StatusPill } from './StatusPill'
@@ -61,7 +61,7 @@ export function AssignmentCard({ item }: { item: LearnerAssignment }) {
                 {latest.review ? `, latest mark ${latest.review.score}/100` : ''}
               </span>
               <span className="text-xs text-muted-foreground">
-                Last submitted {qatarTime(latest.submittedAt)}
+                Last submitted {qatarDateTime(latest.submittedAt)}
               </span>
             </>
           ) : (

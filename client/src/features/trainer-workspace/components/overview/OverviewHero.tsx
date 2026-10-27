@@ -5,19 +5,13 @@ import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { TrainerAvatar } from '@/features/sessions/components/TrainerAvatar'
-import { qatarDateShort, qatarTime, relativeTo } from '@/features/sessions/utils/qatar-time'
 import { FORMAT_LABEL, locationLabel } from '@/features/sessions/utils/session-labels'
+import { qatarDateShort, qatarTime, relativeTo } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
 import { SeatMeter } from '../shared/SeatMeter'
 
 function greeting(nowIso: string) {
-  const hour = Number(
-    new Intl.DateTimeFormat('en-GB', {
-      hour: 'numeric',
-      hour12: false,
-      timeZone: 'Asia/Qatar',
-    }).format(new Date(nowIso)),
-  )
+  const hour = Number(qatarTime(nowIso).slice(0, 2))
   return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 }
 

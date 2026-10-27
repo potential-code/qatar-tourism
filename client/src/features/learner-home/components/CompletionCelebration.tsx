@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { Button } from '@/components/ui/button'
 import type { Journey } from '@/features/learning/types'
-import { qatarDate } from '@/features/learning/utils/format'
 import { PAGE_IMAGE } from '@/features/learning/utils/imagery'
+import { qatarDate } from '@/lib/format/qatar-time'
 
 const BURST = Array.from({ length: 14 }, (_, i) => i)
 
@@ -74,7 +74,7 @@ export function CompletionCelebration({ journey }: { journey: Journey }) {
           </h2>
           <p className="text-white/85">
             {journey.enrolment.completedAt
-              ? `Completed ${qatarDate(journey.enrolment.completedAt, 'long')}. `
+              ? `Completed ${qatarDate(journey.enrolment.completedAt, { month: 'long' })}. `
               : ''}
             {unitsDone} units, {journey.practice.attempts.length} practice{' '}
             {journey.practice.attempts.length === 1 ? 'conversation' : 'conversations'}

@@ -1,7 +1,7 @@
 import { ChevronDown, Mail, Smartphone } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { qatarDateTime } from '@/features/sessions/utils/qatar-time'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { LogRow } from '../types'
 import { DeliveryStateBadge } from './DeliveryStateBadge'
 

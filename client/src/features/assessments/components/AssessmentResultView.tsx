@@ -6,7 +6,7 @@ import { ProgressRing } from '@/components/data/ProgressRing'
 import { CountUp } from '@/components/motion/CountUp'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
-import { qatarDateTime } from '@/features/learning/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { AssessmentResult } from '../types'
 
@@ -63,7 +63,7 @@ export function AssessmentResultView({
           </h2>
           <p className="text-sm text-muted-foreground">
             Attempt {result.attemptNo}, version {result.version}, submitted{' '}
-            {qatarDateTime(result.submittedAt)} Qatar time
+            {qatarDateTime(result.submittedAt, { year: false })}
           </p>
           {verdict ? (
             <p className={cn('flex items-center gap-2 font-medium', verdict.tone)}>

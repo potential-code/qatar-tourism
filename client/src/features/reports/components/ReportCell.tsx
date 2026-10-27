@@ -1,6 +1,6 @@
 import { PROGRAMME_LABELS } from '@shared/schemas/admin-labels'
 import { Badge } from '@/components/ui/badge'
-import { qatarDate, qatarDateTime } from '@/features/admin-dashboard/utils/format'
+import { qatarDate, qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { ReportColumn } from '../queries/reports.queries'
 
@@ -39,7 +39,7 @@ export function formatCell(column: Pick<ReportColumn, 'type'>, value: Value): st
     case 'date':
       return qatarDate(String(value))
     case 'datetime':
-      return qatarDateTime(String(value))
+      return qatarDateTime(String(value), { year: false, label: false })
     case 'percent':
       return `${value}%`
     case 'programme':

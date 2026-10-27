@@ -4,7 +4,7 @@ import { MessagesSquare, Mic, Type } from 'lucide-react'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { EmptyState } from '@/components/ui/empty-state'
 import type { Journey } from '@/features/learning/types'
-import { qatarDate } from '@/features/learning/utils/format'
+import { qatarDate } from '@/lib/format/qatar-time'
 
 /** Practice scores, tracked separately from knowledge scores (brief §5, §9). */
 export function PracticeScores({

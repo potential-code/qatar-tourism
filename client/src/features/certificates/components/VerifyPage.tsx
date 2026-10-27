@@ -8,8 +8,8 @@ import { DemoBadge } from '@/components/layout/DemoBadge'
 import { easeOut } from '@/components/motion/variants'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadError } from '@/features/learning/components/LoadError'
-import { qatarDate } from '@/features/learning/utils/format'
 import { PAGE_IMAGE } from '@/features/learning/utils/imagery'
+import { qatarDate } from '@/lib/format/qatar-time'
 import { verifyQuery } from '../queries/certificates.queries'
 
 const CODE_PATTERN = /^QTA-DEMO-[A-Z]-\d{6}$/
@@ -71,14 +71,14 @@ export function VerifyPage({ code }: { code: string }) {
                 body={
                   result.data.status === 'issued'
                     ? 'This record exists in the Qatar Tourism Academy demonstration environment.'
-                    : `Revoked on ${qatarDate(result.data.revokedAt, 'long')}.`
+                    : `Revoked on ${qatarDate(result.data.revokedAt, { month: 'long' })}.`
                 }
               />
               <dl className="grid gap-4 border-t pt-6 sm:grid-cols-2">
                 {[
                   ['Learner', result.data.learnerName],
                   ['Programme', `Program A: ${result.data.programmeTitle}`],
-                  ['Issued', qatarDate(result.data.issuedAt, 'long')],
+                  ['Issued', qatarDate(result.data.issuedAt, { month: 'long' })],
                   ['Demo certificate ID', result.data.code],
                 ].map(([label, value]) => (
                   <div key={label}>

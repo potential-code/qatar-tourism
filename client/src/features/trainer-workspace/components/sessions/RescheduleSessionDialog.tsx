@@ -13,14 +13,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import type { SessionInfo } from '@/features/sessions/types'
-import {
-  qatarDateKey,
-  qatarRange,
-  qatarTime,
-  qatarToIso,
-} from '@/features/sessions/utils/qatar-time'
 import { locationLabel, newActionKey } from '@/features/sessions/utils/session-labels'
 import { ApiError } from '@/lib/api'
+import { qatarDateKey, qatarRange, qatarTime, qatarToIso } from '@/lib/format/qatar-time'
 import { useRescheduleSession } from '../../queries/trainer.queries'
 import { AffectedSummary } from './AffectedSummary'
 import type { ChangeResult } from './ChangeResultModal'

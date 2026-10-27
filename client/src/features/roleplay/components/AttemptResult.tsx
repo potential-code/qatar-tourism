@@ -7,8 +7,8 @@ import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { practiceAttemptQuery, practiceAttemptsQuery } from '../queries/roleplay.queries'
-import { qatarTime } from '../utils/format'
 import { AttemptHistory } from './AttemptHistory'
 import { ChatThread } from './ChatThread'
 import { CriterionRow } from './CriterionRow'
@@ -52,7 +52,7 @@ export function AttemptResult({ attemptId }: { attemptId: string }) {
           <>
             <ModeIcon aria-hidden className="me-1.5 inline size-4 align-[-2px]" />
             {a.mode === 'voice' ? 'Voice' : 'Text'} practice, Program {a.programmeCode},{' '}
-            {qatarTime(a.completedAt)}
+            {qatarDateTime(a.completedAt)}
           </>
         }
         actions={

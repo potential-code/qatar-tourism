@@ -2,8 +2,9 @@ import { PROGRAMME_LABELS } from '@shared/schemas/admin-labels'
 import { CalendarCheck, ClipboardList, Hourglass, MonitorPlay, Users } from 'lucide-react'
 import { Meter } from '@/components/data'
 import { EmptyState } from '@/components/ui/empty-state'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { Overview } from '../../queries/analytics.queries'
-import { count, qatarDateTime } from '../../utils/format'
+import { count } from '../../utils/format'
 import { PanelCard } from '../PanelCard'
 
 type OpenReport = (report: string, extra?: Record<string, string>) => void
@@ -56,7 +57,7 @@ function CapacityPanel({ data, openReport }: { data: Overview; openReport: OpenR
                 value={s.confirmed}
                 max={s.capacity}
                 toneLabel={s.confirmed >= s.capacity ? 'Full' : 'Nearly full'}
-                caption={`${s.code} · ${qatarDateTime(s.startsAt)} Qatar time · ${s.confirmed} of ${s.capacity} seats${s.waitlisted ? ` · ${s.waitlisted} waitlisted` : ''}`}
+                caption={`${s.code} · ${qatarDateTime(s.startsAt, { year: false })} · ${s.confirmed} of ${s.capacity} seats${s.waitlisted ? ` · ${s.waitlisted} waitlisted` : ''}`}
               />
             </li>
           ))}
@@ -72,7 +73,7 @@ function CapacityPanel({ data, openReport }: { data: Overview; openReport: OpenR
                   label={<span className="truncate text-xs">{s.title}</span>}
                   value={s.confirmed}
                   max={s.capacity}
-                  caption={`${s.code} · ${qatarDateTime(s.startsAt)} · ${s.confirmed} of ${s.capacity} seats`}
+                  caption={`${s.code} · ${qatarDateTime(s.startsAt, { year: false, label: false })} · ${s.confirmed} of ${s.capacity} seats`}
                 />
               </li>
             ))}

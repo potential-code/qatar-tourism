@@ -3,7 +3,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { ArrowUpRight, BookOpen, CalendarClock, Clock, Filter, Users } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/button'
-import { count, qatarDateTime } from '@/features/admin-dashboard/utils/format'
+import { count } from '@/features/admin-dashboard/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { AnswerChart } from './AnswerChart'
 import { AnswerTable } from './AnswerTable'
 import { PromptGrid } from './PromptGrid'
@@ -95,8 +96,8 @@ export function ResultsCanvas({
                 {answer.period ?? 'Not applicable'}
               </Meta>
               <Meta icon={Clock} term="Generated" wide>
-                {qatarDateTime(answer.generatedAt)} Qatar time. Computed read-only from the demo
-                records; the same governed metrics as the Dashboard and Reports.
+                {qatarDateTime(answer.generatedAt, { year: false })}. Computed read-only from the
+                demo records; the same governed metrics as the Dashboard and Reports.
               </Meta>
             </dl>
           </motion.div>

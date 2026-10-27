@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { easeOut } from '@/components/motion/variants'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { SUBMISSION_STATUS, type SubmissionStatus } from '../utils/status'
 import { FileChip } from './FileChip'
@@ -55,7 +55,9 @@ export function VersionHistory({ versions, currentId, onSelect }: VersionHistory
               </h3>
               <StatusPill label={status.label} tone={status.tone} />
             </div>
-            <p className="text-xs text-muted-foreground">Submitted {qatarTime(v.submittedAt)}</p>
+            <p className="text-xs text-muted-foreground">
+              Submitted {qatarDateTime(v.submittedAt)}
+            </p>
             {v.file ? <FileChip submissionId={v.id} file={v.file} /> : null}
             {v.responseText ? (
               <details className="group rounded-lg border bg-white px-3 py-2 text-sm">
@@ -70,7 +72,7 @@ export function VersionHistory({ versions, currentId, onSelect }: VersionHistory
             {v.review ? (
               <p className="text-sm text-muted-foreground">
                 Marked <span className="font-medium text-ink">{v.review.score}/100</span> by{' '}
-                {v.review.reviewerName ?? 'the trainer'}, {qatarTime(v.review.reviewedAt)}
+                {v.review.reviewerName ?? 'the trainer'}, {qatarDateTime(v.review.reviewedAt)}
                 {v.correctedAt ? '. Mark corrected later.' : ''}
               </p>
             ) : (

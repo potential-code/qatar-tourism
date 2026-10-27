@@ -6,8 +6,8 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Skeleton } from '@/components/ui/skeleton'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { practiceAttemptsQuery, practiceOverviewQuery } from '../queries/roleplay.queries'
-import { qatarTime } from '../utils/format'
 import { AttemptHistory } from './AttemptHistory'
 import { LoadError } from './LoadError'
 import { ScenarioCard } from './ScenarioCard'
@@ -56,7 +56,7 @@ export function PracticeOverview() {
           tone="maroon"
           isLoading={overview.isPending}
           description={
-            summary?.best ? qatarTime(summary.best.completedAt) : 'Complete a conversation'
+            summary?.best ? qatarDateTime(summary.best.completedAt) : 'Complete a conversation'
           }
         />
         <StatCard
@@ -67,7 +67,7 @@ export function PracticeOverview() {
           tone="neutral"
           isLoading={overview.isPending}
           description={
-            summary?.latest ? qatarTime(summary.latest.completedAt) : 'Complete a conversation'
+            summary?.latest ? qatarDateTime(summary.latest.completedAt) : 'Complete a conversation'
           }
         />
       </div>

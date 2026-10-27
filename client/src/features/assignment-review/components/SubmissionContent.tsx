@@ -1,7 +1,7 @@
 import { ScrollText } from 'lucide-react'
 import { FileChip } from '@/features/assignments/components/FileChip'
 import { fileUrl } from '@/features/assignments/utils/files'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { MarkingDetail } from '../types'
 
 /** The learner's work for the version being marked, with the brief to mark against. */
@@ -19,7 +19,7 @@ export function SubmissionContent({ detail }: { detail: MarkingDetail }) {
           Version {version.version}
         </h2>
         <p className="text-sm text-muted-foreground">
-          Submitted {qatarTime(version.submittedAt)}
+          Submitted {qatarDateTime(version.submittedAt)}
           {detail.waitingDays > 0 && !version.review ? `, waiting ${detail.waitingDays} days` : ''}
         </p>
       </div>

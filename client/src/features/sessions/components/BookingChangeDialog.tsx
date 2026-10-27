@@ -13,9 +13,9 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { ApiError } from '@/lib/api'
+import { qatarRange } from '@/lib/format/qatar-time'
 import { useCancelBooking, useRequestChange } from '../queries/sessions.queries'
 import type { MyBooking } from '../types'
-import { qatarRange } from '../utils/qatar-time'
 
 /**
  * Cancel a booking. Outside 24 hours the learner cancels directly; inside 24 hours the same

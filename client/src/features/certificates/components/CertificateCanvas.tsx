@@ -1,5 +1,5 @@
 import { ArchFrame } from '@/components/brand/ArchFrame'
-import { qatarDate } from '@/features/learning/utils/format'
+import { qatarDate } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 
 /**
@@ -61,7 +61,7 @@ export function CertificateCanvas({
         <p className="text-lg font-semibold text-ink">Program A: {programmeTitle}</p>
         <dl className="mt-2 grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3">
           {[
-            ['Completion date', qatarDate(completedAt, 'long')],
+            ['Completion date', qatarDate(completedAt, { month: 'long' })],
             ['Demo certificate ID', code],
             ['Status', status === 'issued' ? 'Issued (demo record)' : 'Revoked'],
           ].map(([label, value]) => (

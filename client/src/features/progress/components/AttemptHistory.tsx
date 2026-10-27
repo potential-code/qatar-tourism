@@ -4,7 +4,7 @@ import { ClipboardList } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadError } from '@/features/learning/components/LoadError'
-import { qatarDateTime } from '@/features/learning/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { historyQuery } from '../queries/progress.queries'
 
 /** Knowledge assessment attempts (brief §9: attempt history), separate from practice. */
@@ -75,7 +75,7 @@ export function AttemptHistory({ programme }: { programme: ProgrammeCode }) {
                   </td>
                   <td className="px-4 py-3">{row.version}</td>
                   <td className="px-4 py-3 text-muted-foreground">
-                    {qatarDateTime(row.submittedAt ?? row.startedAt)}
+                    {qatarDateTime(row.submittedAt ?? row.startedAt, { year: false, label: false })}
                   </td>
                 </tr>
               ))}
