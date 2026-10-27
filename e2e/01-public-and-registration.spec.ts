@@ -107,7 +107,7 @@ test('2–5 min: register, profile, baseline and a generated B path', async ({ p
   await page.getByRole('button', { name: 'Start this path' }).click()
   await expect(page.getByRole('heading', { name: 'My learning', level: 1 })).toBeVisible()
   await expect(
-    page.getByRole('link', { name: /Step 1 .*Pre-assessment \(baseline\) Complete/ }),
+    page.getByRole('link', { name: /Step 1 .*Pre-assessment \(baseline\).*Complete/ }),
   ).toBeVisible()
 
   // A playable, captioned video unit.
