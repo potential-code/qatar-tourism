@@ -4,7 +4,7 @@ import { afterEach, beforeAll, describe, expect, mock, setDefaultTimeout, test }
 import { app } from '@server/app'
 import { auth } from '@server/auth/auth'
 import { db } from '@server/db/connection'
-import { auditEvents, notifications, profiles, session, user } from '@server/db/schema'
+import { auditEvents, enrolments, notifications, profiles, session, user } from '@server/db/schema'
 import { reseed } from '@server/db/seed'
 import { and, eq } from 'drizzle-orm'
 import { CLIENT_ORIGIN } from '../../__tests__/helpers/env'
@@ -100,6 +100,13 @@ describe('create, invite, enrol', () => {
     expect(events.map((e) => e.action).sort()).toEqual(['user.create', 'user.invite'])
     const [created] = await db.select().from(user).where(eq(user.id, createdId))
     expect(created?.role).toBe('learner')
+    // Same starting state as a self-enrolment: a stage and progress are shown at once.
+    const [enrolment] = await db
+      .select({ stage: enrolments.currentStage, progress: enrolments.progressPercent })
+      .from(enrolments)
+      .where(eq(enrolments.learnerId, createdId))
+    expect(enrolment?.stage).toBeTruthy()
+    expect(enrolment?.progress).toBe(0)
   })
 
   test('re-inviting creates no duplicate messages', async () => {

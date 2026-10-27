@@ -38,6 +38,8 @@ import { and, asc, count, desc, eq, ilike, inArray, isNull, or, sql } from 'driz
 import { recordAudit } from '../audit/audit.service'
 import { notify } from '../notifications/notifications.service'
 import { nextLearnerCode } from '../profiles/learner-code.service'
+import { FIRST_STAGE } from '../programmes/enrolment.service'
+import { recomputeEnrolment } from '../progress/progress.service'
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
 
@@ -378,8 +380,9 @@ async function enrolWithin(tx: Tx, userId: string, programme: ProgrammeCode) {
     .where(eq(programmes.code, programme))
     .limit(1)
   if (!prog) throw HttpError.notFound('Programme not found')
-  if (prog.status === 'archived')
-    throw HttpError.badRequest('This programme is archived and cannot take new enrolments')
+  // Same rule as self-enrolment: only a published programme takes new learners.
+  if (prog.status !== 'published')
+    throw new HttpError(409, 'PROGRAMME_CLOSED', `Program ${programme} is not open for enrolment`)
 
   const [existing] = await tx
     .select({ id: enrolments.id })
@@ -436,11 +439,16 @@ async function enrolWithin(tx: Tx, userId: string, programme: ProgrammeCode) {
       pathId: path?.id ?? null,
       pathVersionId: path?.currentVersionId ?? null,
       assignmentReason: resolution.reason,
+      // Same starting state as a self-enrolment, so dashboards show a stage at once.
+      currentStage: FIRST_STAGE[programme],
+      progressPercent: 0,
       enrolledAt: at,
+      lastActivityAt: at,
       createdAt: at,
       updatedAt: at,
     })
     .returning({ id: enrolments.id })
+  await recomputeEnrolment(userId, programme, tx)
   return {
     enrolmentId: created?.id as string,
     reason: resolution.reason,
