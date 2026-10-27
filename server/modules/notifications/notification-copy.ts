@@ -111,6 +111,30 @@ export function changeRequestMessage(
   }
 }
 
+/** The learner's answer to a late change request (brief §6: changes inside 24 hours). */
+export function changeDecisionMessage(
+  firstName: string,
+  sessionTitle: string,
+  kind: 'cancel' | 'reschedule',
+  decision: 'approved' | 'declined',
+  note: string | null,
+) {
+  const extra = note ? ` Note from the Academy: ${sentence(note)}.` : ''
+  if (decision === 'approved') {
+    return {
+      subject: `Your change request was approved: ${sessionTitle}`,
+      body:
+        kind === 'cancel'
+          ? `Hello ${firstName}, the Academy approved your request. Your place on ${sessionTitle} has been released and your learning progress is saved.${extra}`
+          : `Hello ${firstName}, the Academy approved your request. Your place on ${sessionTitle} has been released, so you can choose another eligible session in My sessions.${extra}`,
+    }
+  }
+  return {
+    subject: `Your change request was declined: ${sessionTitle}`,
+    body: `Hello ${firstName}, the Academy reviewed your request and your booking for ${sessionTitle} stays in place.${extra} Please contact the Academy through Help if you need support.`,
+  }
+}
+
 /** "Demo Academy, Room 2" or "Online: DEMO-ROOM-T02-2". */
 export function locationOf(session: {
   format: 'in_person' | 'online'

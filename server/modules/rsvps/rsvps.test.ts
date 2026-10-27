@@ -15,6 +15,7 @@ import { auditEvents, notifications, rsvps } from '@server/db/schema'
 import { getClockState, setClockState } from '@server/lib/clock'
 import { and, asc, eq } from 'drizzle-orm'
 import {
+  ADMIN,
   call,
   freshSeed,
   LEILA,
@@ -200,6 +201,51 @@ describe('learner reschedule', () => {
     } finally {
       setClockState(saved)
     }
+  })
+
+  test('the admin sees the late request and approving it releases the seat, once', async () => {
+    const booking = (await activeOn('SES-T02-2')).find(
+      (r) => r.cancelledReason === null && r.status === 'confirmed',
+    )
+    const [request] = await db
+      .select()
+      .from(auditEvents)
+      .where(eq(auditEvents.action, 'rsvp.change_requested'))
+    const rsvpId = request?.objectId as string
+
+    signInAs(booking?.learnerId as string, 'learner')
+    expect((await call('GET', '/api/admin/sessions/change-requests')).status).toBe(403)
+
+    as(ADMIN)
+    const list = await call('GET', '/api/admin/sessions/change-requests')
+    expect(list.status).toBe(200)
+    const item = list.json.items.find((i: { rsvpId: string }) => i.rsvpId === rsvpId)
+    expect(item.kind).toBe('cancel')
+    expect(item.decision).toBeNull()
+
+    const approved = await call('POST', `/api/admin/sessions/change-requests/${rsvpId}`, {
+      decision: 'approved',
+      note: 'Approved as a one-off',
+    })
+    expect(approved.status).toBe(200)
+    expect(approved.json.released).toBe(true)
+    const [row] = await db.select().from(rsvps).where(eq(rsvps.id, rsvpId))
+    expect(row?.status).toBe('cancelled')
+    const told = await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.eventId, `evt-change-decision-${rsvpId}`))
+    expect(told.length).toBeGreaterThan(0)
+    const [decision] = await db
+      .select()
+      .from(auditEvents)
+      .where(and(eq(auditEvents.action, 'rsvp.change_approved'), eq(auditEvents.objectId, rsvpId)))
+    expect(decision?.reason).toBe('Approved as a one-off')
+
+    const again = await call('POST', `/api/admin/sessions/change-requests/${rsvpId}`, {
+      decision: 'declined',
+    })
+    expect(again.status).toBe(409)
   })
 
   test("a learner cannot touch another learner's booking", async () => {

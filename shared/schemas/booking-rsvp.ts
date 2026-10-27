@@ -30,6 +30,13 @@ export const bookingChangeRequestInput = z.object({
 })
 export type BookingChangeRequestInput = z.infer<typeof bookingChangeRequestInput>
 
+/** Admin decision on a late change request. */
+export const changeRequestDecisionInput = z.object({
+  decision: z.enum(['approved', 'declined']),
+  note: z.string().trim().max(300).optional(),
+})
+export type ChangeRequestDecisionInput = z.infer<typeof changeRequestDecisionInput>
+
 /** Codes the booking API answers with when a booking is refused, so the UI can explain. */
 export const BOOKING_BLOCK_CODES = [
   'NOT_ENROLLED',
