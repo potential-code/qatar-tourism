@@ -37,6 +37,7 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
   const journey = useQuery(journeyQuery(ctx.programme))
   const header = (
     <PageHeader
+      image="learning"
       title="My learning"
       description={
         ctx.programme === 'B'

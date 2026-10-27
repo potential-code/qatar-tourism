@@ -113,6 +113,7 @@ export function ProfilePage() {
   return (
     <div className="grid gap-8 pb-24">
       <PageHeader
+        image="profile"
         title="Profile"
         description="Your profile helps us recommend relevant learning. Change any answer at any time."
         actions={<DemoBadge compact />}

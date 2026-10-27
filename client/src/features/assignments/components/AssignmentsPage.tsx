@@ -25,6 +25,7 @@ export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
+        image="assignments"
         title="Assignments"
         description="Submit your work, read your trainer's feedback and revise when asked. Every version you submit is kept."
         actions={<DemoBadge compact />}

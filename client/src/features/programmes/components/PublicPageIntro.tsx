@@ -25,7 +25,7 @@ export function PublicPageIntro({ title, image, alt, children }: PublicPageIntro
       <PhotoPanel src={image} alt={alt} fade="start" priority className="bg-ink">
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/55 to-transparent"
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/75 via-ink/30 to-transparent md:from-ink/55 md:via-transparent"
         />
         <div className="mx-auto flex min-h-[46dvh] max-w-[1400px] flex-col justify-end gap-4 px-4 pt-32 pb-12 md:min-h-[52dvh] md:px-8 md:pb-16">
           <motion.h1

@@ -44,6 +44,7 @@ export function AttendanceIndexPage() {
   const sessions = useQuery(trainerSessionsQuery())
   const header = (
     <PageHeader
+      image="trainerAttendance"
       title="Attendance and scores"
       description="Record attendance, score with the session rubric and export marks."
     />

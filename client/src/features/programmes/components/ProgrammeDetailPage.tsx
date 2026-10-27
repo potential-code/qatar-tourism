@@ -78,7 +78,7 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                 {ILLUSTRATIVE_NOTE}
               </p>
             ) : null}
-            <Reveal>
+            <Reveal className="relative z-10 md:-mt-36">
               <ProgrammeFacts programme={data} />
             </Reveal>
 

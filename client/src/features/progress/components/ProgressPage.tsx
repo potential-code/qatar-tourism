@@ -44,6 +44,7 @@ function Progress({ ctx }: { ctx: ProgrammeContext }) {
   const journey = useQuery(journeyQuery(ctx.programme))
   const header = (
     <PageHeader
+      image="progress"
       title="Progress"
       description="Knowledge results, practice and trainer-marked work, kept separate so each tells its own story."
       actions={

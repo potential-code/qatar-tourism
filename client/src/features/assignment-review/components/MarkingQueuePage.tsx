@@ -59,6 +59,7 @@ export function MarkingQueuePage() {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
+        image="marking"
         title="Assignments"
         description={`Mark the submissions assigned to you with the rubric. The pass mark is ${THRESHOLDS.assignmentPass}. Learners see only your final marks, never drafts.`}
         actions={<DemoBadge compact />}

@@ -29,24 +29,29 @@ function groupByStage(units: Unit[]) {
 export function UnitList({ units, levels }: { units: Unit[]; levels: number }) {
   const groups = groupByStage(units)
   return (
-    <Stagger className="grid gap-5" stagger={0.06}>
-      {groups.map((group) => (
+    <Stagger className="grid" stagger={0.06}>
+      {groups.map((group, index) => (
         <StaggerItem key={group.key}>
-          <section className="grid gap-3 rounded-xl bg-white p-5 ring-1 ring-ink/5 md:p-6">
-            <h3 className="font-display text-xl">
-              {levels > 1 && group.stage !== 'Onboarding' ? `Level ${group.level}: ` : ''}
-              {group.stage}
-            </h3>
-            <ul className="grid gap-2">
+          <section className="grid gap-5 border-ink/10 border-t py-8 md:grid-cols-[minmax(0,240px)_1fr] md:gap-10">
+            <header className="grid content-start gap-1.5">
+              <p className="font-medium text-teal text-xs tracking-wide">
+                {`Stage ${String(index + 1).padStart(2, '0')}`}
+                {levels > 1 && group.stage !== 'Onboarding' ? `, Level ${group.level}` : ''}
+              </p>
+              <h3 className="font-display font-light text-2xl leading-snug">{group.stage}</h3>
+            </header>
+            <ul className="grid gap-2.5">
               {group.units.map((unit) => (
                 <li
                   key={unit.position}
-                  className="grid gap-1 rounded-lg bg-sand p-3.5 sm:grid-cols-[1fr_auto] sm:items-start"
+                  className="grid gap-1 rounded-xl bg-white p-4 ring-1 ring-ink/5 transition-shadow duration-300 hover:shadow-md sm:grid-cols-[1fr_auto] sm:items-start"
                 >
                   <div className="grid gap-0.5">
                     <p className="font-medium text-sm">
                       {unit.courseCode ? (
-                        <span className="me-2 text-teal">{unit.courseCode}</span>
+                        <span className="me-2 rounded-full bg-teal-mist px-2 py-0.5 text-teal-deep text-xs">
+                          {unit.courseCode}
+                        </span>
                       ) : null}
                       {unit.title}
                     </p>
