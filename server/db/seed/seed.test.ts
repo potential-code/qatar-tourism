@@ -622,6 +622,27 @@ describe('accounts', () => {
   })
 })
 
+describe('seeded activity', () => {
+  test('timestamps fall in Qatar working hours', async () => {
+    const outside = await one(sql`
+      SELECT (SELECT count(*) FROM assessment_attempts
+              WHERE EXTRACT(hour FROM submitted_at AT TIME ZONE 'Asia/Qatar') NOT BETWEEN 8 AND 19)
+           + (SELECT count(*) FROM certificates
+              WHERE EXTRACT(hour FROM issued_at AT TIME ZONE 'Asia/Qatar') NOT BETWEEN 8 AND 19)
+           + (SELECT count(*) FROM session_scores
+              WHERE EXTRACT(hour FROM finalised_at AT TIME ZONE 'Asia/Qatar') NOT BETWEEN 8 AND 19)`)
+    expect(Number(outside)).toBe(0)
+  })
+
+  test('two late change requests wait for the admin', async () => {
+    expect(
+      Number(
+        await one(sql`SELECT count(*) FROM audit_events WHERE action = 'rsvp.change_requested'`),
+      ),
+    ).toBe(2)
+  })
+})
+
 describe('determinism', () => {
   test('a second reseed produces byte-identical rows in every table', async () => {
     await reseed({ referenceDate: REFERENCE_DATE })

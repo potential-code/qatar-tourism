@@ -952,7 +952,7 @@ export function buildActivity(
       certificateSeq += 1
       const number = certificateNumber.get(e.id) ?? certificateSeq
       const issuedAt = new Date(
-        (completedAgo === null ? 0.1 : completedAgo) * -DAY + cal.nowMs + 5 * 60_000,
+        agoDate(completedAgo === null ? 0.1 : completedAgo).getTime() + 5 * 60_000,
       )
       const issued = new Date(Math.min(issuedAt.getTime(), cal.nowMs - 60_000))
       const code = `QTA-DEMO-A-${String(number).padStart(6, '0')}`
