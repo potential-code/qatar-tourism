@@ -19,9 +19,21 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAiAnalyticsRouteImport } from './routes/admin/ai-analytics'
 import { Route as LearnerIndexRouteImport } from './routes/learner/index'
 import { Route as LearnerProgressRouteImport } from './routes/learner/progress'
 import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
+import { Route as AdminManageIndexRouteImport } from './routes/admin/manage/index'
+import { Route as AdminManageAssessmentsRouteImport } from './routes/admin/manage/assessments'
+import { Route as AdminManageAuditRouteImport } from './routes/admin/manage/audit'
+import { Route as AdminManageCoursesRouteImport } from './routes/admin/manage/courses'
+import { Route as AdminManageIntegrationsRouteImport } from './routes/admin/manage/integrations'
+import { Route as AdminManageProgrammesRouteImport } from './routes/admin/manage/programmes'
+import { Route as AdminManageRolesRouteImport } from './routes/admin/manage/roles'
+import { Route as AdminManageSessionsRouteImport } from './routes/admin/manage/sessions'
+import { Route as AdminManageTrainersRouteImport } from './routes/admin/manage/trainers'
+import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports/index'
+import { Route as AdminReportsReportRouteImport } from './routes/admin/reports/$report'
 import { Route as CertificatesVerifyIdRouteImport } from './routes/certificates/verify.$id'
 import { Route as LearnerAssessmentsIndexRouteImport } from './routes/learner/assessments/index'
 import { Route as LearnerAssessmentsKindRouteImport } from './routes/learner/assessments/$kind'
@@ -36,6 +48,10 @@ import { Route as LearnerPracticeIndexRouteImport } from './routes/learner/pract
 import { Route as LearnerPracticeScenarioKeyRouteImport } from './routes/learner/practice.$scenarioKey'
 import { Route as TrainerAssignmentsIndexRouteImport } from './routes/trainer/assignments.index'
 import { Route as TrainerAssignmentsSubmissionIdRouteImport } from './routes/trainer/assignments.$submissionId'
+import { Route as AdminManagePathsIndexRouteImport } from './routes/admin/manage/paths.index'
+import { Route as AdminManagePathsPathIdRouteImport } from './routes/admin/manage/paths.$pathId'
+import { Route as AdminManageUsersIndexRouteImport } from './routes/admin/manage/users.index'
+import { Route as AdminManageUsersUserIdRouteImport } from './routes/admin/manage/users.$userId'
 import { Route as LearnerPracticeAttemptsAttemptIdRouteImport } from './routes/learner/practice.attempts.$attemptId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -88,6 +104,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAiAnalyticsRoute = AdminAiAnalyticsRouteImport.update({
+  id: '/ai-analytics',
+  path: '/ai-analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
 const LearnerIndexRoute = LearnerIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -102,6 +123,61 @@ const TrainerIndexRoute = TrainerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TrainerRoute,
+} as any)
+const AdminManageIndexRoute = AdminManageIndexRouteImport.update({
+  id: '/manage/',
+  path: '/manage/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageAssessmentsRoute = AdminManageAssessmentsRouteImport.update({
+  id: '/manage/assessments',
+  path: '/manage/assessments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageAuditRoute = AdminManageAuditRouteImport.update({
+  id: '/manage/audit',
+  path: '/manage/audit',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageCoursesRoute = AdminManageCoursesRouteImport.update({
+  id: '/manage/courses',
+  path: '/manage/courses',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageIntegrationsRoute = AdminManageIntegrationsRouteImport.update({
+  id: '/manage/integrations',
+  path: '/manage/integrations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageProgrammesRoute = AdminManageProgrammesRouteImport.update({
+  id: '/manage/programmes',
+  path: '/manage/programmes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageRolesRoute = AdminManageRolesRouteImport.update({
+  id: '/manage/roles',
+  path: '/manage/roles',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageSessionsRoute = AdminManageSessionsRouteImport.update({
+  id: '/manage/sessions',
+  path: '/manage/sessions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageTrainersRoute = AdminManageTrainersRouteImport.update({
+  id: '/manage/trainers',
+  path: '/manage/trainers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsReportRoute = AdminReportsReportRouteImport.update({
+  id: '/reports/$report',
+  path: '/reports/$report',
+  getParentRoute: () => AdminRoute,
 } as any)
 const CertificatesVerifyIdRoute = CertificatesVerifyIdRouteImport.update({
   id: '/certificates/verify/$id',
@@ -176,6 +252,26 @@ const TrainerAssignmentsSubmissionIdRoute =
     path: '/assignments/$submissionId',
     getParentRoute: () => TrainerRoute,
   } as any)
+const AdminManagePathsIndexRoute = AdminManagePathsIndexRouteImport.update({
+  id: '/manage/paths/',
+  path: '/manage/paths/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManagePathsPathIdRoute = AdminManagePathsPathIdRouteImport.update({
+  id: '/manage/paths/$pathId',
+  path: '/manage/paths/$pathId',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageUsersIndexRoute = AdminManageUsersIndexRouteImport.update({
+  id: '/manage/users/',
+  path: '/manage/users/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminManageUsersUserIdRoute = AdminManageUsersUserIdRouteImport.update({
+  id: '/manage/users/$userId',
+  path: '/manage/users/$userId',
+  getParentRoute: () => AdminRoute,
+} as any)
 const LearnerPracticeAttemptsAttemptIdRoute =
   LearnerPracticeAttemptsAttemptIdRouteImport.update({
     id: '/practice/attempts/$attemptId',
@@ -193,10 +289,20 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
   '/learner/progress': typeof LearnerProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
+  '/admin/manage/audit': typeof AdminManageAuditRoute
+  '/admin/manage/courses': typeof AdminManageCoursesRoute
+  '/admin/manage/integrations': typeof AdminManageIntegrationsRoute
+  '/admin/manage/programmes': typeof AdminManageProgrammesRoute
+  '/admin/manage/roles': typeof AdminManageRolesRoute
+  '/admin/manage/sessions': typeof AdminManageSessionsRoute
+  '/admin/manage/trainers': typeof AdminManageTrainersRoute
+  '/admin/reports/$report': typeof AdminReportsReportRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
   '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
@@ -205,13 +311,19 @@ export interface FileRoutesByFullPath {
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/admin/manage/': typeof AdminManageIndexRoute
+  '/admin/reports/': typeof AdminReportsIndexRoute
   '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
   '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
   '/learner/practice/': typeof LearnerPracticeIndexRoute
   '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
+  '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
   '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
+  '/admin/manage/paths/': typeof AdminManagePathsIndexRoute
+  '/admin/manage/users/': typeof AdminManageUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -220,10 +332,20 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
   '/learner/progress': typeof LearnerProgressRoute
   '/admin': typeof AdminIndexRoute
   '/learner': typeof LearnerIndexRoute
   '/trainer': typeof TrainerIndexRoute
+  '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
+  '/admin/manage/audit': typeof AdminManageAuditRoute
+  '/admin/manage/courses': typeof AdminManageCoursesRoute
+  '/admin/manage/integrations': typeof AdminManageIntegrationsRoute
+  '/admin/manage/programmes': typeof AdminManageProgrammesRoute
+  '/admin/manage/roles': typeof AdminManageRolesRoute
+  '/admin/manage/sessions': typeof AdminManageSessionsRoute
+  '/admin/manage/trainers': typeof AdminManageTrainersRoute
+  '/admin/reports/$report': typeof AdminReportsReportRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
   '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
@@ -232,13 +354,19 @@ export interface FileRoutesByTo {
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/admin/manage': typeof AdminManageIndexRoute
+  '/admin/reports': typeof AdminReportsIndexRoute
   '/learner/assessments': typeof LearnerAssessmentsIndexRoute
   '/learner/assignments': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates': typeof LearnerCertificatesIndexRoute
   '/learner/learning': typeof LearnerLearningIndexRoute
   '/learner/practice': typeof LearnerPracticeIndexRoute
   '/trainer/assignments': typeof TrainerAssignmentsIndexRoute
+  '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
+  '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
   '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
+  '/admin/manage/paths': typeof AdminManagePathsIndexRoute
+  '/admin/manage/users': typeof AdminManageUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,10 +379,20 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/admin/ai-analytics': typeof AdminAiAnalyticsRoute
   '/learner/progress': typeof LearnerProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/admin/manage/assessments': typeof AdminManageAssessmentsRoute
+  '/admin/manage/audit': typeof AdminManageAuditRoute
+  '/admin/manage/courses': typeof AdminManageCoursesRoute
+  '/admin/manage/integrations': typeof AdminManageIntegrationsRoute
+  '/admin/manage/programmes': typeof AdminManageProgrammesRoute
+  '/admin/manage/roles': typeof AdminManageRolesRoute
+  '/admin/manage/sessions': typeof AdminManageSessionsRoute
+  '/admin/manage/trainers': typeof AdminManageTrainersRoute
+  '/admin/reports/$report': typeof AdminReportsReportRoute
   '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
   '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
   '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
@@ -263,13 +401,19 @@ export interface FileRoutesById {
   '/learner/learning/path': typeof LearnerLearningPathRoute
   '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
   '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/admin/manage/': typeof AdminManageIndexRoute
+  '/admin/reports/': typeof AdminReportsIndexRoute
   '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
   '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
   '/learner/certificates/': typeof LearnerCertificatesIndexRoute
   '/learner/learning/': typeof LearnerLearningIndexRoute
   '/learner/practice/': typeof LearnerPracticeIndexRoute
   '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/admin/manage/paths/$pathId': typeof AdminManagePathsPathIdRoute
+  '/admin/manage/users/$userId': typeof AdminManageUsersUserIdRoute
   '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
+  '/admin/manage/paths/': typeof AdminManagePathsIndexRoute
+  '/admin/manage/users/': typeof AdminManageUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -283,10 +427,20 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/admin/ai-analytics'
     | '/learner/progress'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/admin/manage/assessments'
+    | '/admin/manage/audit'
+    | '/admin/manage/courses'
+    | '/admin/manage/integrations'
+    | '/admin/manage/programmes'
+    | '/admin/manage/roles'
+    | '/admin/manage/sessions'
+    | '/admin/manage/trainers'
+    | '/admin/reports/$report'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
     | '/learner/assignments/$code'
@@ -295,13 +449,19 @@ export interface FileRouteTypes {
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
     | '/trainer/assignments/$submissionId'
+    | '/admin/manage/'
+    | '/admin/reports/'
     | '/learner/assessments/'
     | '/learner/assignments/'
     | '/learner/certificates/'
     | '/learner/learning/'
     | '/learner/practice/'
     | '/trainer/assignments/'
+    | '/admin/manage/paths/$pathId'
+    | '/admin/manage/users/$userId'
     | '/learner/practice/attempts/$attemptId'
+    | '/admin/manage/paths/'
+    | '/admin/manage/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -310,10 +470,20 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/admin/ai-analytics'
     | '/learner/progress'
     | '/admin'
     | '/learner'
     | '/trainer'
+    | '/admin/manage/assessments'
+    | '/admin/manage/audit'
+    | '/admin/manage/courses'
+    | '/admin/manage/integrations'
+    | '/admin/manage/programmes'
+    | '/admin/manage/roles'
+    | '/admin/manage/sessions'
+    | '/admin/manage/trainers'
+    | '/admin/reports/$report'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
     | '/learner/assignments/$code'
@@ -322,13 +492,19 @@ export interface FileRouteTypes {
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
     | '/trainer/assignments/$submissionId'
+    | '/admin/manage'
+    | '/admin/reports'
     | '/learner/assessments'
     | '/learner/assignments'
     | '/learner/certificates'
     | '/learner/learning'
     | '/learner/practice'
     | '/trainer/assignments'
+    | '/admin/manage/paths/$pathId'
+    | '/admin/manage/users/$userId'
     | '/learner/practice/attempts/$attemptId'
+    | '/admin/manage/paths'
+    | '/admin/manage/users'
   id:
     | '__root__'
     | '/'
@@ -340,10 +516,20 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(auth)/reset-password'
+    | '/admin/ai-analytics'
     | '/learner/progress'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/admin/manage/assessments'
+    | '/admin/manage/audit'
+    | '/admin/manage/courses'
+    | '/admin/manage/integrations'
+    | '/admin/manage/programmes'
+    | '/admin/manage/roles'
+    | '/admin/manage/sessions'
+    | '/admin/manage/trainers'
+    | '/admin/reports/$report'
     | '/certificates/verify/$id'
     | '/learner/assessments/$kind'
     | '/learner/assignments/$code'
@@ -352,13 +538,19 @@ export interface FileRouteTypes {
     | '/learner/learning/path'
     | '/learner/practice/$scenarioKey'
     | '/trainer/assignments/$submissionId'
+    | '/admin/manage/'
+    | '/admin/reports/'
     | '/learner/assessments/'
     | '/learner/assignments/'
     | '/learner/certificates/'
     | '/learner/learning/'
     | '/learner/practice/'
     | '/trainer/assignments/'
+    | '/admin/manage/paths/$pathId'
+    | '/admin/manage/users/$userId'
     | '/learner/practice/attempts/$attemptId'
+    | '/admin/manage/paths/'
+    | '/admin/manage/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -446,6 +638,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ai-analytics': {
+      id: '/admin/ai-analytics'
+      path: '/ai-analytics'
+      fullPath: '/admin/ai-analytics'
+      preLoaderRoute: typeof AdminAiAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/learner/': {
       id: '/learner/'
       path: '/'
@@ -466,6 +665,83 @@ declare module '@tanstack/react-router' {
       fullPath: '/trainer/'
       preLoaderRoute: typeof TrainerIndexRouteImport
       parentRoute: typeof TrainerRoute
+    }
+    '/admin/manage/': {
+      id: '/admin/manage/'
+      path: '/manage'
+      fullPath: '/admin/manage/'
+      preLoaderRoute: typeof AdminManageIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/assessments': {
+      id: '/admin/manage/assessments'
+      path: '/manage/assessments'
+      fullPath: '/admin/manage/assessments'
+      preLoaderRoute: typeof AdminManageAssessmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/audit': {
+      id: '/admin/manage/audit'
+      path: '/manage/audit'
+      fullPath: '/admin/manage/audit'
+      preLoaderRoute: typeof AdminManageAuditRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/courses': {
+      id: '/admin/manage/courses'
+      path: '/manage/courses'
+      fullPath: '/admin/manage/courses'
+      preLoaderRoute: typeof AdminManageCoursesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/integrations': {
+      id: '/admin/manage/integrations'
+      path: '/manage/integrations'
+      fullPath: '/admin/manage/integrations'
+      preLoaderRoute: typeof AdminManageIntegrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/programmes': {
+      id: '/admin/manage/programmes'
+      path: '/manage/programmes'
+      fullPath: '/admin/manage/programmes'
+      preLoaderRoute: typeof AdminManageProgrammesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/roles': {
+      id: '/admin/manage/roles'
+      path: '/manage/roles'
+      fullPath: '/admin/manage/roles'
+      preLoaderRoute: typeof AdminManageRolesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/sessions': {
+      id: '/admin/manage/sessions'
+      path: '/manage/sessions'
+      fullPath: '/admin/manage/sessions'
+      preLoaderRoute: typeof AdminManageSessionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/trainers': {
+      id: '/admin/manage/trainers'
+      path: '/manage/trainers'
+      fullPath: '/admin/manage/trainers'
+      preLoaderRoute: typeof AdminManageTrainersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports/': {
+      id: '/admin/reports/'
+      path: '/reports'
+      fullPath: '/admin/reports/'
+      preLoaderRoute: typeof AdminReportsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports/$report': {
+      id: '/admin/reports/$report'
+      path: '/reports/$report'
+      fullPath: '/admin/reports/$report'
+      preLoaderRoute: typeof AdminReportsReportRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/certificates/verify/$id': {
       id: '/certificates/verify/$id'
@@ -565,6 +841,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerAssignmentsSubmissionIdRouteImport
       parentRoute: typeof TrainerRoute
     }
+    '/admin/manage/paths/': {
+      id: '/admin/manage/paths/'
+      path: '/manage/paths'
+      fullPath: '/admin/manage/paths/'
+      preLoaderRoute: typeof AdminManagePathsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/paths/$pathId': {
+      id: '/admin/manage/paths/$pathId'
+      path: '/manage/paths/$pathId'
+      fullPath: '/admin/manage/paths/$pathId'
+      preLoaderRoute: typeof AdminManagePathsPathIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/users/': {
+      id: '/admin/manage/users/'
+      path: '/manage/users'
+      fullPath: '/admin/manage/users/'
+      preLoaderRoute: typeof AdminManageUsersIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/manage/users/$userId': {
+      id: '/admin/manage/users/$userId'
+      path: '/manage/users/$userId'
+      fullPath: '/admin/manage/users/$userId'
+      preLoaderRoute: typeof AdminManageUsersUserIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/learner/practice/attempts/$attemptId': {
       id: '/learner/practice/attempts/$attemptId'
       path: '/practice/attempts/$attemptId'
@@ -576,11 +880,43 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAiAnalyticsRoute: typeof AdminAiAnalyticsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminManageAssessmentsRoute: typeof AdminManageAssessmentsRoute
+  AdminManageAuditRoute: typeof AdminManageAuditRoute
+  AdminManageCoursesRoute: typeof AdminManageCoursesRoute
+  AdminManageIntegrationsRoute: typeof AdminManageIntegrationsRoute
+  AdminManageProgrammesRoute: typeof AdminManageProgrammesRoute
+  AdminManageRolesRoute: typeof AdminManageRolesRoute
+  AdminManageSessionsRoute: typeof AdminManageSessionsRoute
+  AdminManageTrainersRoute: typeof AdminManageTrainersRoute
+  AdminReportsReportRoute: typeof AdminReportsReportRoute
+  AdminManageIndexRoute: typeof AdminManageIndexRoute
+  AdminReportsIndexRoute: typeof AdminReportsIndexRoute
+  AdminManagePathsPathIdRoute: typeof AdminManagePathsPathIdRoute
+  AdminManageUsersUserIdRoute: typeof AdminManageUsersUserIdRoute
+  AdminManagePathsIndexRoute: typeof AdminManagePathsIndexRoute
+  AdminManageUsersIndexRoute: typeof AdminManageUsersIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAiAnalyticsRoute: AdminAiAnalyticsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminManageAssessmentsRoute: AdminManageAssessmentsRoute,
+  AdminManageAuditRoute: AdminManageAuditRoute,
+  AdminManageCoursesRoute: AdminManageCoursesRoute,
+  AdminManageIntegrationsRoute: AdminManageIntegrationsRoute,
+  AdminManageProgrammesRoute: AdminManageProgrammesRoute,
+  AdminManageRolesRoute: AdminManageRolesRoute,
+  AdminManageSessionsRoute: AdminManageSessionsRoute,
+  AdminManageTrainersRoute: AdminManageTrainersRoute,
+  AdminReportsReportRoute: AdminReportsReportRoute,
+  AdminManageIndexRoute: AdminManageIndexRoute,
+  AdminReportsIndexRoute: AdminReportsIndexRoute,
+  AdminManagePathsPathIdRoute: AdminManagePathsPathIdRoute,
+  AdminManageUsersUserIdRoute: AdminManageUsersUserIdRoute,
+  AdminManagePathsIndexRoute: AdminManagePathsIndexRoute,
+  AdminManageUsersIndexRoute: AdminManageUsersIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

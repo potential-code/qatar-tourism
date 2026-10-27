@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { OverviewDashboard } from '@/features/admin-dashboard/components/OverviewDashboard'
+import { filterSearchSchema } from '@/features/admin-dashboard/utils/filters'
 
 export const Route = createFileRoute('/admin/')({
-  component: () => <PageHeader title="Overview" description="Coming in Phase 2." />,
+  validateSearch: filterSearchSchema,
+  component: OverviewDashboard,
 })
