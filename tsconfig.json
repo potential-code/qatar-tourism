@@ -36,6 +36,6 @@
       "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["client", "server", "shared", "drizzle.config.ts"],
+  "include": ["client", "server", "shared", "e2e", "drizzle.config.ts", "playwright.config.ts"],
   "exclude": ["node_modules", "**/dist", "server/db/migrations"]
 }

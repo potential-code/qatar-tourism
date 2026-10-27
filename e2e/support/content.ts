@@ -1,0 +1,11 @@
+/** A fictional response plan for A-ASSIGN-1 (brief §6: 300–500 words). */
+const PARAGRAPHS = [
+  'Discovery questions. I would begin by acknowledging how disappointing the change is and apologising for the inconvenience. Then I would ask what time the visitor needs to be back at the hotel, how many people are in the group, whether anyone has accessibility needs, and what made this experience important to them. I would confirm the booking reference and listen without interrupting, so I understand the real need before I suggest anything.',
+  'Two feasible options. Before offering anything, I would verify availability with the operator by phone and check the booking system. The first option is the same desert experience tomorrow morning at the same price, with hotel pickup confirmed in writing. The second option is a similar guided cultural tour this evening, which fits the afternoon the visitor already set aside. I would explain the differences in timing, duration and inclusions clearly, and let the visitor choose.',
+  'Escalation path. If neither option works, or if the visitor asks for compensation beyond my authority, I would escalate to the duty manager within fifteen minutes. I would brief the manager with the booking reference, what has already been offered and what the visitor wants, so the visitor does not need to repeat the story. I would never promise a refund or an exception that I have not confirmed with the person who can approve it.',
+  'Follow-up message. After the conversation I would send a short written message that summarises the agreed option, the confirmed time and meeting point, the operator contact and my name. I would check the next morning that the pickup is still confirmed and send a brief reminder to the visitor. If anything changes again, I would contact the visitor first, explain what happened and offer the next best option straight away.',
+  'Throughout, I would keep my tone calm and respectful, use plain language, avoid internal jargon, and protect the visitor’s personal information by sharing details only with the operator and colleagues who need them.',
+]
+
+export const RESPONSE_PLAN = PARAGRAPHS.join('\n\n')
+export const RESPONSE_PLAN_WORDS = RESPONSE_PLAN.split(/\s+/).filter(Boolean).length

@@ -23,6 +23,7 @@
     "test": "bun run test:server && bun run test:client",
     "test:server": "bun test ./server ./shared",
     "test:client": "bun test --preload ./client/test/setup.ts ./client",
+    "test:e2e": "playwright test",
     "lint": "biome check .",
     "format": "biome check --write .",
     "db:generate": "bunx --bun drizzle-kit generate --config ./drizzle.config.ts",

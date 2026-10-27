@@ -106,7 +106,7 @@ export function PortalSidebar({
 function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
   const open =
     isActive(pathname, item.to, false) ||
-    Boolean(item.children?.some((c) => isActive(pathname, c.to, true)))
+    Boolean(item.children?.some((c) => isActive(pathname, c.to, c.to === item.to)))
   return (
     <Collapsible asChild defaultOpen={open} className="group/collapsible">
       <SidebarMenuItem>
@@ -129,7 +129,7 @@ function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
               <SidebarMenuSubItem key={child.to}>
                 <SidebarMenuSubButton
                   asChild
-                  isActive={isActive(pathname, child.to, true)}
+                  isActive={isActive(pathname, child.to, child.to === item.to)}
                   className="data-[active=true]:bg-teal-mist data-[active=true]:text-teal-deep"
                 >
                   <Link to={child.to as never}>

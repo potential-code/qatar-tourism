@@ -3,7 +3,7 @@ import type { PreviewRule } from '@shared/schemas/admin-paths'
 import { useQuery } from '@tanstack/react-query'
 import { Check, CircleDashed, Crown, Search, UserRound, X } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { type FormEvent, useState } from 'react'
+import { useState } from 'react'
 import { easeOut } from '@/components/motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -39,29 +39,36 @@ export function MatchPreview({
   const [learnerCode, setLearnerCode] = useState('L0001')
   const query = useQuery(matchPreviewQuery({ programme, learnerCode, ...(rules ? { rules } : {}) }))
 
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
+  // Not a <form>: this panel also sits inside the rule editor's form, and a nested form's submit
+  // would bubble to (and save) the rule.
+  const submit = () => {
     const code = draftCode.trim().toUpperCase()
     if (/^L\d{4}$/.test(code)) setLearnerCode(code)
   }
 
   return (
     <div className="grid gap-4">
-      <form onSubmit={submit} className="flex items-end gap-2">
+      <div className="flex items-end gap-2">
         <div className="grid flex-1 gap-1.5">
           <Label htmlFor={`learner-${programme}-${compact ? 'c' : 'p'}`}>Learner ID</Label>
           <Input
             id={`learner-${programme}-${compact ? 'c' : 'p'}`}
             value={draftCode}
             onChange={(e) => setDraftCode(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                submit()
+              }
+            }}
             placeholder="L0001"
             aria-describedby={`learner-help-${programme}`}
           />
         </div>
-        <Button type="submit" variant="outline">
+        <Button type="button" variant="outline" onClick={submit}>
           <Search aria-hidden /> Preview
         </Button>
-      </form>
+      </div>
       <p id={`learner-help-${programme}`} className="-mt-2 text-xs text-muted-foreground">
         Maha Al Nouri is L0001. Try L0002 Omar or L0005 Sara.
       </p>
