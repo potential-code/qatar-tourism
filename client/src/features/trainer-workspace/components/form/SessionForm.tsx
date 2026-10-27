@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import type { SessionInfo } from '@/features/sessions/types'
-import { learnerLocal, qatarToIso } from '@/features/sessions/utils/qatar-time'
 import { useAppForm } from '@/hooks/useAppForm'
 import { ApiError } from '@/lib/api'
+import { learnerLocal, qatarToIso } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { useCreateSession, useUpdateSession } from '../../queries/trainer.queries'
 import type { FormOptions } from '../../types'
@@ -298,7 +298,9 @@ export function SessionForm({ options, session }: { options: FormOptions; sessio
           Discard
         </Button>
         {editing ? (
-          <form.SubmitButton>Save changes</form.SubmitButton>
+          <form.AppForm>
+            <form.SubmitButton>Save changes</form.SubmitButton>
+          </form.AppForm>
         ) : (
           <>
             <Button type="submit" variant="outline" onClick={() => setPublishOnSave(false)}>

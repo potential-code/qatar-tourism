@@ -41,9 +41,7 @@ export function ConversationPanel({
         <div>
           <h2 className="text-sm font-medium text-ink">Chat history</h2>
           <p className="text-xs text-muted-foreground">
-            {turns.length
-              ? `${turns.filter((t) => t.role === 'user').length} questions this session`
-              : 'No questions yet'}
+            {questionCountLabel(turns.filter((t) => t.role === 'user').length)}
           </p>
         </div>
         <Button variant="ghost" size="sm" onClick={onReset} disabled={!turns.length || pending}>
@@ -116,4 +114,9 @@ export function ConversationPanel({
       </div>
     </section>
   )
+}
+
+function questionCountLabel(count: number) {
+  if (count === 0) return 'No questions yet'
+  return `${count} ${count === 1 ? 'question' : 'questions'} this session`
 }

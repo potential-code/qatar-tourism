@@ -82,7 +82,7 @@ export function ProfileWizard() {
     try {
       await saveDraft.mutateAsync(draftPayload(draft, step))
       toast.success('Draft saved. You can resume from this step at any time.')
-      await navigate({ to: '/learner' as never })
+      await navigate({ to: '/learner', search: { profile: 'later' } })
     } catch {
       toast.error('Your draft could not be saved. Try again.')
     }

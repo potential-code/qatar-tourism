@@ -265,7 +265,7 @@ describe.skipIf(!HAS_TEST_DB)('marking, notifications and corrections', () => {
     expect(res.status).toBe(400)
   })
 
-  test('a draft is audited and kept off the learner view', async () => {
+  test('a draft is a draft review row, audited and kept off the learner view', async () => {
     const id = await danielLatest()
     signInAs('user-t04', 'trainer')
     const res = await app.request(
@@ -277,8 +277,16 @@ describe.skipIf(!HAS_TEST_DB)('marking, notifications and corrections', () => {
       draft: { breakdown: Record<string, number> }
     }
     expect(detail.draft.breakdown.discovery).toBe(20)
+    const [stored] = await db.select().from(reviews).where(eq(reviews.submissionId, id))
+    expect(stored?.status).toBe('draft')
+    const queue = (await (await app.request('/api/assignments/marking?status=open')).json()) as {
+      items: { id: string; hasDraft: boolean }[]
+    }
+    expect(queue.items.find((i) => i.id === id)?.hasDraft).toBe(true)
     const learnerView = JSON.stringify(await mine('user-l0004'))
     expect(learnerView).not.toContain('Draft note')
+    const [practical] = (await mine('user-l0004')).filter((i) => i.assignment.code === 'A-ASSIGN-1')
+    expect(practical?.versions[0]?.review).toBeNull()
   })
 
   test('approving notifies the learner once, even when retried', async () => {

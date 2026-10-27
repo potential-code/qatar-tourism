@@ -11,9 +11,9 @@ import { useQuery } from '@tanstack/react-query'
 import { BookPlus, Mail, PencilLine, ShieldCheck, UserRoundCheck, UserRoundX } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Reveal } from '@/components/motion/Reveal'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -26,7 +26,7 @@ import { Panel } from '../../hub/components/Panel'
 import { ErrorPanel } from '../../hub/components/QueryStates'
 import { ReasonDialog } from '../../hub/components/ReasonDialog'
 import { StatusPill } from '../../hub/components/StatusPill'
-import { initials, qDate } from '../../hub/utils/format'
+import { qDate } from '../../hub/utils/format'
 import {
   useChangeRole,
   useInvite,
@@ -137,11 +137,13 @@ export function UserDetailPage({ userId }: { userId: string }) {
           <Reveal>
             <Panel bodyClassName="p-0">
               <div className="flex items-center gap-4 bg-gradient-to-br from-teal-deep to-teal px-6 py-6 text-white">
-                <Avatar className="size-14 border-2 border-white/30">
-                  <AvatarFallback className="bg-white/15 font-display text-lg text-white">
-                    {initials(account.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <PersonAvatar
+                  name={account.name}
+                  src={account.image}
+                  tone="glass"
+                  className="size-14 border-2 border-white/30 text-lg"
+                  fallbackClassName="font-display"
+                />
                 <div className="grid min-w-0">
                   <p className="truncate font-display text-xl">{account.name}</p>
                   <p className="text-sm text-white/75">

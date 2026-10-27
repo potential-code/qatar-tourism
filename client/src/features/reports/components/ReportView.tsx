@@ -5,7 +5,7 @@ import { DemoBadge, PageHeader } from '@/components/layout'
 import { Reveal } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
 import { FilterBar } from '@/features/admin-dashboard/components/filters/FilterBar'
-import { qatarDateTime } from '@/features/admin-dashboard/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { useReportSearch } from '../hooks/useReportSearch'
 import { type ReportRow, reportPageQuery, useExportReport } from '../queries/reports.queries'
 import { REPORT_META } from '../utils/meta'
@@ -34,7 +34,7 @@ export function ReportView({ report }: { report: ReportKey }) {
           <div className="flex items-center gap-3">
             {data ? (
               <span className="text-xs text-muted-foreground">
-                Last updated {qatarDateTime(data.asOf)} Qatar time
+                Last updated {qatarDateTime(data.asOf, { year: false })}
               </span>
             ) : null}
             <DemoBadge compact />

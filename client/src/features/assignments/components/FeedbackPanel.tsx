@@ -1,6 +1,6 @@
 import { MessageSquareQuote } from 'lucide-react'
 import { CountUp } from '@/components/motion/CountUp'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { AssignmentVersion, RubricItem, VersionReview } from '../types'
 import { RubricBreakdown } from './RubricBreakdown'
@@ -47,11 +47,11 @@ export function FeedbackPanel({ version, review, rubric, passPercent }: Feedback
             <span>{review.feedback}</span>
           </blockquote>
           <p className="text-sm text-muted-foreground">
-            {review.reviewerName ?? 'Your trainer'}, {qatarTime(review.reviewedAt)}
+            {review.reviewerName ?? 'Your trainer'}, {qatarDateTime(review.reviewedAt)}
           </p>
           {version.correctedAt ? (
             <p className="text-xs text-muted-foreground">
-              Your trainer updated this mark on {qatarTime(version.correctedAt)}.
+              Your trainer updated this mark on {qatarDateTime(version.correctedAt)}.
             </p>
           ) : null}
         </div>

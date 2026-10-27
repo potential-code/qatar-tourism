@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import type { ReportPage, ReportRow } from '../queries/reports.queries'
+import { CertificateActions } from './CertificateActions'
 import { ReportCell } from './ReportCell'
 
 /** Where a row drills down to, by report. Learner rows open the learner record. */
@@ -77,6 +78,9 @@ export function RowDetailSheet({
                 Hidden for your role by field permissions: {data.hiddenColumns.join(', ')}. These
                 fields are never sent to the browser or included in exports.
               </p>
+            ) : null}
+            {report === 'certification' && typeof row.code === 'string' ? (
+              <CertificateActions code={row.code} />
             ) : null}
             {target ? (
               <Link

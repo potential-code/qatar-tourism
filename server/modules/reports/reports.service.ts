@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -99,7 +100,7 @@ export async function submissionRows() {
     .from(submissions)
     .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
     .leftJoin(trainerProfiles, eq(trainerProfiles.id, submissions.markerTrainerId))
-    .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+    .leftJoin(reviews, finalReviewOfSubmission)
 }
 
 export async function certificateRows() {

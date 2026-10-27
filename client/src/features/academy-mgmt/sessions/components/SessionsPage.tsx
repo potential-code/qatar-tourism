@@ -23,6 +23,7 @@ import { TableFrame } from '../../hub/components/TableFrame'
 import { humanise, qDateTime } from '../../hub/utils/format'
 import { adminSessionsQuery, type SessionItem } from '../queries/sessions.queries'
 import { CapacityBar } from './CapacityBar'
+import { ChangeRequestsPanel } from './ChangeRequestsPanel'
 import { SessionSheet } from './SessionSheet'
 
 const STATUS = {
@@ -232,6 +233,7 @@ export function SessionsPage() {
           </TableFrame>
         )}
       </section>
+      <ChangeRequestsPanel />
       <SessionSheet session={open} onClose={() => setOpen(null)} />
     </ManagePage>
   )

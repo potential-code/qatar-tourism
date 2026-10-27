@@ -1,18 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { MessageSquareQuote } from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import type { Journey } from '@/features/learning/types'
-import { qatarDate } from '@/features/learning/utils/format'
-
-const initials = (name: string) =>
-  name
-    .split(' ')
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+import { qatarDate } from '@/lib/format/qatar-time'
 
 /** Trainer feedback on assignments and sessions (brief §5 dashboard content). */
 export function FeedbackCard({ journey }: { journey: Journey }) {
@@ -50,11 +42,7 @@ export function FeedbackCard({ journey }: { journey: Journey }) {
         <ul className="flex flex-col gap-4">
           {latest.map((item) => (
             <li key={`${item.source}-${item.at}`} className="flex gap-3">
-              <Avatar className="size-9">
-                <AvatarFallback className="bg-maroon-mist text-xs text-maroon-deep">
-                  {initials(item.trainerName)}
-                </AvatarFallback>
-              </Avatar>
+              <PersonAvatar name={item.trainerName} src={item.trainerImage} tone="maroon" />
               <div className="flex min-w-0 flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-medium text-ink">{item.trainerName}</p>

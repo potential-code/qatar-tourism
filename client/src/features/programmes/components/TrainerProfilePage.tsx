@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { CalendarX, ChevronLeft, Languages } from 'lucide-react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { DemoBadge } from '@/components/layout'
 import { Reveal } from '@/components/motion'
 import { Badge } from '@/components/ui/badge'
@@ -13,7 +14,6 @@ import { programmeSlug } from '../content'
 import { trainerQuery } from '../queries/programmes.queries'
 import { BookAction } from './BookAction'
 import { SessionTicket } from './SessionTicket'
-import { TrainerAvatar } from './TrainerAvatar'
 
 /** Public trainer profile (brief §16): bio, expertise, languages, programmes, sessions. */
 export function TrainerProfilePage({ code }: { code: string }) {
@@ -46,10 +46,10 @@ export function TrainerProfilePage({ code }: { code: string }) {
         ) : (
           <>
             <Reveal className="grid gap-8 rounded-xl bg-white p-6 ring-1 ring-ink/5 md:grid-cols-[auto_1fr] md:p-10">
-              <TrainerAvatar
+              <PersonAvatar
                 name={data.fullName}
-                code={data.code}
                 src={data.avatarPath}
+                tone="teal"
                 className="size-28 text-3xl"
               />
               <div className="grid gap-5">

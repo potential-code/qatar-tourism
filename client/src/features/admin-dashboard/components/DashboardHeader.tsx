@@ -2,9 +2,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { CalendarDays, RefreshCw, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { qatarTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { analyticsKeys } from '../queries/analytics.queries'
-import { calendarDate, qatarTime } from '../utils/format'
+import { calendarDate } from '../utils/format'
 
 /** Title block: reporting date, Last updated (Qatar time) and refresh. The portal header carries the Demo data indicator. */
 export function DashboardHeader({

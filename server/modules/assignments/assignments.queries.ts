@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assignments,
   auditEvents,
@@ -29,7 +30,7 @@ export async function versionsOf(assignmentId: string, enrolmentId: string) {
   return db
     .select(versionColumns)
     .from(submissions)
-    .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+    .leftJoin(reviews, finalReviewOfSubmission)
     .leftJoin(reviewer, eq(reviewer.id, reviews.reviewerId))
     .leftJoin(trainerProfiles, eq(trainerProfiles.id, submissions.markerTrainerId))
     .where(

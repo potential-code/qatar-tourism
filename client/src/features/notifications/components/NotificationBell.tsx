@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { qatarDateTime } from '@/features/sessions/utils/qatar-time'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { myNotificationsQuery, useMarkRead } from '../queries/notifications.queries'
 
@@ -49,7 +49,11 @@ export function NotificationBell() {
           </AnimatePresence>
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[min(24rem,calc(100vw-2rem))] p-0">
+      <PopoverContent
+        aria-label="Notifications"
+        align="end"
+        className="w-[min(24rem,calc(100vw-2rem))] p-0"
+      >
         <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
           <p className="font-display text-lg text-ink">Notifications</p>
           {unread > 0 ? (

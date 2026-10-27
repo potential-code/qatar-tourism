@@ -1,6 +1,6 @@
 import { History } from 'lucide-react'
 import { SUBMISSION_STATUS, type SubmissionStatus } from '@/features/assignments/utils/status'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { MarkerVersion } from '../types'
 
 type Summary = { status?: string; score?: number } | null
@@ -40,7 +40,7 @@ export function MarkingAuditTrail({ versions }: { versions: MarkerVersion[] }) {
             </p>
             <p className="text-muted-foreground">Reason: {entry.reason}</p>
             <p className="text-xs text-muted-foreground">
-              {entry.by ?? 'Marker'}, {qatarTime(entry.at)}
+              {entry.by ?? 'Marker'}, {qatarDateTime(entry.at)}
             </p>
           </li>
         ))}

@@ -52,14 +52,6 @@ export function locationLabel(session: {
     : 'Online room to be confirmed'
 }
 
-export const initials = (name: string) =>
-  name
-    .split(' ')
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
-
 /** Idempotency key for one confirmed action; retrying the same request reuses it. */
 export const newActionKey = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`

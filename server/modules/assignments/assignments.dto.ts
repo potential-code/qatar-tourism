@@ -1,4 +1,4 @@
-import type { AuditEventRow } from '@server/db/schema'
+import type { AuditEventRow, ReviewRow } from '@server/db/schema'
 import { now } from '@server/lib/clock'
 import { THRESHOLDS } from '@shared/constants'
 import { pickVisibleLearnerFields } from '@shared/permissions'
@@ -78,21 +78,14 @@ export function markerVersionView(row: VersionRow, events: AuditEventRow[]) {
   }
 }
 
-export function latestDraft(events: AuditEventRow[], submissionId: string) {
-  const draft = events
-    .filter((e) => e.action === 'marking.draft' && e.objectId === submissionId)
-    .at(-1)
-  if (!draft) return null
-  const after = (draft.after ?? {}) as {
-    breakdown?: Record<string, number>
-    feedback?: string
-    decision?: 'returned' | 'approved' | null
-  }
+/** The marker's saved draft (a `draft` review row), shown only to markers. */
+export function draftView(row: ReviewRow | null) {
+  if (!row) return null
   return {
-    savedAt: draft.createdAt.toISOString(),
-    breakdown: after.breakdown ?? {},
-    feedback: after.feedback ?? '',
-    decision: after.decision ?? null,
+    savedAt: row.reviewedAt.toISOString(),
+    breakdown: row.rubricBreakdown ?? {},
+    feedback: row.feedback,
+    decision: row.draftDecision === 'draft' ? null : row.draftDecision,
   }
 }
 

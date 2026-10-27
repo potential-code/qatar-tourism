@@ -3,8 +3,8 @@ import { motion, useReducedMotion } from 'motion/react'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { CountUp } from '@/components/motion/CountUp'
 import { easeOut } from '@/components/motion/variants'
+import { qatarDateShort, qatarTime } from '@/lib/format/qatar-time'
 import type { CatalogueData } from '../types'
-import { qatarDateShort, qatarTime } from '../utils/qatar-time'
 
 /** Photo header: where the learner stands, and the numbers that matter for booking. */
 export function SessionsHero({

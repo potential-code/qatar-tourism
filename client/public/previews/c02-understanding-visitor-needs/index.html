@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>C02 Understanding visitor needs: branching preview</title>
+<style>
+  :root { --teal:#00627b; --teal-deep:#035367; --teal-mist:#e6f0f2; --maroon:#7d002a; --maroon-mist:#f6e9ed; --sand:#faf8f4; --ink:#1a1919; --ink-soft:#55524e; --stone:#e2e0dc; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--sand); color:var(--ink); font:16px/1.55 "Jost","Trebuchet MS",sans-serif; }
+  header { background:#fff; border-bottom:1px solid var(--stone); padding:14px 20px; display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; justify-content:space-between; }
+  header p { margin:0; font-weight:500; color:var(--teal-deep); }
+  .tag { display:inline-block; border-radius:999px; padding:4px 12px; font-size:13px; background:var(--maroon-mist); color:var(--maroon); }
+  main { max-width:760px; margin:0 auto; padding:28px 20px 48px; display:grid; gap:20px; }
+  h1 { font:300 32px/1.2 "Spectral",Georgia,serif; margin:0; }
+  .card { background:#fff; border:1px solid var(--stone); border-radius:16px; padding:22px; display:grid; gap:14px; }
+  blockquote { margin:0; padding:14px 18px; border-left:4px solid var(--teal); background:var(--teal-mist); border-radius:0 12px 12px 0; font-style:italic; }
+  .step { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--maroon); margin:0; }
+  button.choice { text-align:start; width:100%; border:1px solid var(--stone); background:#fff; border-radius:12px; padding:14px 16px; font:inherit; cursor:pointer; transition:border-color .2s, background .2s; }
+  button.choice:hover, button.choice:focus-visible { border-color:var(--teal); outline:none; box-shadow:0 0 0 3px rgba(0,98,123,.25); }
+  button.choice[aria-pressed="true"] { border-color:var(--teal); background:var(--teal-mist); }
+  .feedback { margin:0; padding:12px 14px; border-radius:12px; }
+  .good { background:var(--teal-mist); color:var(--teal-deep); }
+  .bad { background:var(--maroon-mist); color:var(--maroon); }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .pill { border:0; border-radius:999px; padding:10px 20px; font:inherit; font-weight:500; cursor:pointer; background:var(--teal); color:#fff; }
+  .pill.ghost { background:transparent; color:var(--teal-deep); border:1px solid var(--stone); }
+  .note { font-size:14px; color:var(--ink-soft); margin:0; }
+  [hidden] { display:none !important; }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <p>Qatar Tourism Academy</p>
+  <span class="tag">Branching HTML preview. Not a verified SCORM package.</span>
+</header>
+<main>
+  <div>
+    <p class="step">C02 · Interactive preview</p>
+    <h1>Understanding visitor needs</h1>
+  </div>
+  <p class="note">Administrator preview: choices work, but nothing is saved. Learners take this unit from their learning path, where progress is recorded.</p>
+
+  <section class="card" id="part1" aria-labelledby="p1">
+    <p class="step">Step 1 of 2</p>
+    <h2 id="p1" style="margin:0;font-size:20px;font-weight:500">A family of four is choosing an activity at the visitor desk.</h2>
+    <blockquote>“Our planned activity is unavailable and we only have two hours.”</blockquote>
+    <p class="note">What do you do first?</p>
+    <div role="group" aria-label="Your response" style="display:grid;gap:10px">
+      <button class="choice" data-step="1" data-correct="false" data-feedback="Promising something you cannot confirm risks a second disappointment. Try again.">Promise the original activity anyway</button>
+      <button class="choice" data-step="1" data-correct="true" data-feedback="You clarified the need and offered realistic choices.">Ask about interests and accessibility needs, then offer two verified alternatives</button>
+      <button class="choice" data-step="1" data-correct="false" data-feedback="Sending the visitor away leaves their need unmet. Try again.">Tell them to search online</button>
+    </div>
+    <p class="feedback" id="fb1" role="status" hidden></p>
+    <div class="actions"><button class="pill" id="next" hidden>Continue to choosing an option and confirming the next step</button></div>
+  </section>
+
+  <section class="card" id="part2" aria-labelledby="p2" hidden>
+    <p class="step">Step 2 of 2</p>
+    <h2 id="p2" style="margin:0;font-size:20px;font-weight:500">The family chooses a guided museum visit or a short dhow cruise. How do you close?</h2>
+    <ul class="note" style="margin:0;padding-inline-start:20px">
+      <li>A guided museum visit: a 75-minute family tour with step-free access, starting in 20 minutes. Availability confirmed with the venue desk.</li>
+      <li>A short dhow cruise: a 60-minute bay cruise with seats held until 15:00. Boarding ramp available. Availability confirmed with the operator.</li>
+    </ul>
+    <div role="group" aria-label="Your closing" style="display:grid;gap:10px">
+      <button class="choice" data-step="2" data-correct="true" data-feedback="Clear next step. The family knows where to go, when, and who to ask.">Confirm the booking, give the meeting point and time, and check they know what to do next</button>
+      <button class="choice" data-step="2" data-correct="false" data-feedback="The family still has to work out the next step alone. Try confirming it with them.">Hand over a leaflet and wish them a good day</button>
+    </div>
+    <p class="feedback" id="fb2" role="status" hidden></p>
+    <div class="actions"><button class="pill ghost" id="restart" hidden>Start the preview again</button></div>
+  </section>
+</main>
+<script>
+  ;(function () {
+    var next = document.getElementById('next')
+    var restart = document.getElementById('restart')
+    document.querySelectorAll('button.choice').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var step = button.getAttribute('data-step')
+        var good = button.getAttribute('data-correct') === 'true'
+        document.querySelectorAll('button.choice[data-step="' + step + '"]').forEach(function (b) {
+          b.setAttribute('aria-pressed', String(b === button))
+        })
+        var fb = document.getElementById('fb' + step)
+        fb.textContent = button.getAttribute('data-feedback')
+        fb.className = 'feedback ' + (good ? 'good' : 'bad')
+        fb.hidden = false
+        if (step === '1') next.hidden = !good
+        if (step === '2') restart.hidden = !good
+      })
+    })
+    next.addEventListener('click', function () {
+      document.getElementById('part2').hidden = false
+      document.getElementById('p2').scrollIntoView({ block: 'start' })
+    })
+    restart.addEventListener('click', function () { window.location.reload() })
+  })()
+</script>
+</body>
+</html>

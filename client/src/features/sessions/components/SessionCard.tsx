@@ -1,14 +1,14 @@
 import { ArrowRight, Lock, MapPin, MonitorPlay } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { cardHover } from '@/components/motion/variants'
 import { Badge } from '@/components/ui/badge'
+import { learnerLocal, qatarDateShort, qatarTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { CatalogueSession } from '../types'
-import { learnerLocal, qatarDateShort, qatarTime } from '../utils/qatar-time'
 import { durationLabel, FORMAT_LABEL, locationLabel } from '../utils/session-labels'
 import { DateTile } from './DateTile'
 import { EligibilityBadge } from './EligibilityBadge'
-import { TrainerAvatar } from './TrainerAvatar'
 
 /** One bookable session in the list view. The whole card opens the booking dialog. */
 export function SessionCard({
@@ -67,9 +67,10 @@ export function SessionCard({
             {FORMAT_LABEL[session.format]}, {locationLabel(session)}
           </span>
           <span className="inline-flex items-center gap-2">
-            <TrainerAvatar
+            <PersonAvatar
               name={session.trainer.name}
-              avatarPath={session.trainer.avatarPath}
+              src={session.trainer.avatarPath}
+              tone="maroon"
               className="size-6"
             />
             {session.trainer.name}

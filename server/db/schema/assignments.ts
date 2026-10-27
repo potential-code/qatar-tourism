@@ -1,4 +1,4 @@
-import { REVIEW_STATUSES, SUBMISSION_STATUSES } from '@shared/constants'
+import { REVIEW_RECORD_STATUSES, SUBMISSION_STATUSES } from '@shared/constants'
 import {
   boolean,
   index,
@@ -18,7 +18,7 @@ import { programmes } from './programmes'
 import { trainerProfiles } from './trainers'
 
 export const submissionStatusEnum = pgEnum('submission_status', SUBMISSION_STATUSES)
-export const reviewStatusEnum = pgEnum('review_status', REVIEW_STATUSES)
+export const reviewStatusEnum = pgEnum('review_status', REVIEW_RECORD_STATUSES)
 
 /** Assignment definitions: the A practical assignment and the B short response. */
 export const assignments = pgTable('assignments', {
@@ -88,7 +88,11 @@ export const reviews = pgTable(
     rubricScore: smallint('rubric_score').notNull(),
     rubricBreakdown: jsonb('rubric_breakdown').$type<Record<string, number>>(),
     feedback: text('feedback').notNull(),
+    /** `draft` while a marker is still working; `returned` or `approved` once final. */
     status: reviewStatusEnum('status').notNull(),
+    /** The decision a draft is leaning towards (returned or approved); null once final. */
+    draftDecision: reviewStatusEnum('draft_decision'),
+    /** When the draft was last saved, or when the mark was finalised. */
     reviewedAt: tstz('reviewed_at').notNull(),
     ...timestamps,
   },

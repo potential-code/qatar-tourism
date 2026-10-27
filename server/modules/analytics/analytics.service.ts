@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -106,7 +107,7 @@ export async function loadFacts(): Promise<Facts> {
         reviewScore: reviews.rubricScore,
       })
       .from(submissions)
-      .leftJoin(reviews, eq(reviews.submissionId, submissions.id)),
+      .leftJoin(reviews, finalReviewOfSubmission),
     db
       .select({ enrolmentId: certificates.enrolmentId })
       .from(certificates)

@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -83,6 +84,7 @@ export async function listUsers(query: AdminUserListQuery) {
         id: user.id,
         name: user.name,
         email: user.email,
+        image: user.image,
         role: user.role,
         createdAt: user.createdAt,
         learnerCode: profiles.learnerCode,
@@ -142,6 +144,7 @@ async function requireUser(userId: string) {
       id: user.id,
       name: user.name,
       email: user.email,
+      image: user.image,
       role: user.role,
       emailVerified: user.emailVerified,
       createdAt: user.createdAt,
@@ -271,7 +274,7 @@ export async function getUserDetail(userId: string) {
         })
         .from(submissions)
         .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
-        .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+        .leftJoin(reviews, finalReviewOfSubmission)
         .where(eq(submissions.learnerId, userId))
         .orderBy(desc(submissions.submittedAt)),
       db

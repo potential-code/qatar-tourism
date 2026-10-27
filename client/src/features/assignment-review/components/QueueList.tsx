@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { AlertTriangle, ChevronRight, FileText, Film, PenLine, Type } from 'lucide-react'
 import { StatusPill } from '@/features/assignments/components/StatusPill'
 import { SUBMISSION_STATUS, type SubmissionStatus } from '@/features/assignments/utils/status'
-import { qatarDate, qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDate, qatarDateTime } from '@/lib/format/qatar-time'
 import type { QueueItem } from '../types'
 
 const FORMAT = {
@@ -95,8 +95,8 @@ export function QueueList({ items, scoreColumn }: { items: QueueItem[]; scoreCol
                     </span>
                   </td>
                   <td className="px-4 py-3 tabular-nums">v{item.version}</td>
-                  <td className="px-4 py-3" title={qatarTime(item.submittedAt)}>
-                    {qatarDate(item.submittedAt)}
+                  <td className="px-4 py-3" title={qatarDateTime(item.submittedAt)}>
+                    {qatarDate(item.submittedAt, { year: false })}
                   </td>
                   <td className="px-4 py-3">
                     <Waiting item={item} />
@@ -155,7 +155,9 @@ export function QueueList({ items, scoreColumn }: { items: QueueItem[]; scoreCol
                 </span>
                 <span className="text-sm text-ink">{item.assignmentTitle}</span>
                 <span className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{qatarDate(item.submittedAt)}</span>
+                  <span className="text-muted-foreground">
+                    {qatarDate(item.submittedAt, { year: false })}
+                  </span>
                   <Waiting item={item} />
                 </span>
               </Link>

@@ -9,3 +9,7 @@ uploads
 
 # Phase 2 agent worktrees
 .worktrees
+
+# Playwright output
+e2e/.results
+e2e/.report

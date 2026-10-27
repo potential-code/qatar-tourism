@@ -19,7 +19,7 @@ export async function getDemoMeta() {
   return meta
 }
 
-/** Loads the demo clock from the stored snapshot. Called once at server start. */
+/** Loads the demo clock from the stored snapshot. Called at server start and every 15 s. */
 export async function loadClock() {
   const [meta] = await db.select().from(demoMeta).limit(1)
   if (!meta) {

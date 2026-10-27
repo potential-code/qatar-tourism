@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { Languages } from 'lucide-react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { cn } from '@/lib/utils'
 import type { PublicTrainer } from '../queries/programmes.queries'
-import { TrainerAvatar } from './TrainerAvatar'
 
 /** Compact trainer link card for strips and grids. */
 export function TrainerCard({
@@ -21,10 +21,10 @@ export function TrainerCard({
         className,
       )}
     >
-      <TrainerAvatar
+      <PersonAvatar
         name={trainer.fullName}
-        code={trainer.code}
         src={trainer.avatarPath}
+        tone="teal"
         className="size-14 text-base"
       />
       <div className="grid gap-1">

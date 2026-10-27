@@ -1,17 +1,8 @@
 import { History } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { PathVersion } from '../types'
-
-const qatarDate = (iso: string) =>
-  new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Qatar',
-  }).format(new Date(iso))
 
 /**
  * Every version with the enrolments that are on it (brief §14: existing learners retain their
@@ -45,8 +36,8 @@ export function VersionHistory({ versions }: { versions: PathVersion[] }) {
           {v.changeNote ? <p className="text-sm text-ink/80">{v.changeNote}</p> : null}
           <p className="text-xs text-muted-foreground">
             {v.publishedAt
-              ? `Published ${qatarDate(v.publishedAt)} Qatar time${v.publishedBy ? ` by ${v.publishedBy}` : ''}`
-              : `Last edited ${qatarDate(v.updatedAt)} Qatar time`}
+              ? `Published ${qatarDateTime(v.publishedAt)}${v.publishedBy ? ` by ${v.publishedBy}` : ''}`
+              : `Last edited ${qatarDateTime(v.updatedAt)}`}
             , {v.items.length} items
           </p>
           <dl className="grid grid-cols-4 gap-2 border-t pt-2 text-center">

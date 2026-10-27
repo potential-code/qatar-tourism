@@ -1,5 +1,5 @@
+import { qatarDay, qatarMonth, qatarWeekday } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
-import { qatarDay, qatarMonth, qatarWeekday } from '../utils/qatar-time'
 
 /** Calendar-leaf date: the day number set large in the display face. Qatar date. */
 export function DateTile({

@@ -5,7 +5,7 @@ import { SwoopReveal } from '@/components/brand/SwoopReveal'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/motion/Reveal'
 import { QueryErrorPanel } from '@/features/sessions/components/QueryErrorPanel'
-import { qatarDateShort } from '@/features/sessions/utils/qatar-time'
+import { qatarDateShort } from '@/lib/format/qatar-time'
 import { resourcesQuery } from '../../queries/trainer.queries'
 import { WorkspaceSkeleton } from '../shared/WorkspaceSkeleton'
 

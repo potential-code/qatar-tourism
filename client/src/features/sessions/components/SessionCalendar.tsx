@@ -2,8 +2,8 @@ import { CalendarX2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { EmptyState } from '@/components/ui/empty-state'
+import { qatarDateKey, qatarDateLong } from '@/lib/format/qatar-time'
 import type { CatalogueSession } from '../types'
-import { qatarDateKey, qatarDateLong } from '../utils/qatar-time'
 import { SessionCard } from './SessionCard'
 
 const fromKey = (key: string) => {

@@ -1,4 +1,4 @@
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { AssignmentVersion } from '../types'
 import { FileChip } from './FileChip'
 
@@ -13,7 +13,9 @@ export function LatestSubmission({ version }: { version: AssignmentVersion }) {
         <h2 id="latest-heading" className="font-display text-2xl font-light text-ink">
           Version {version.version}
         </h2>
-        <p className="text-sm text-muted-foreground">Submitted {qatarTime(version.submittedAt)}</p>
+        <p className="text-sm text-muted-foreground">
+          Submitted {qatarDateTime(version.submittedAt)}
+        </p>
       </div>
       {version.file ? <FileChip submissionId={version.id} file={version.file} /> : null}
       {version.responseText ? (

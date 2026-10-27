@@ -1,5 +1,6 @@
-import { THRESHOLDS, UPLOAD_LIMITS } from '@shared/constants'
+import { type ProgrammeCode, THRESHOLDS, UPLOAD_LIMITS } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import { FileText } from 'lucide-react'
 import { DemoBadge } from '@/components/layout/DemoBadge'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -12,9 +13,15 @@ import { AssignmentCard } from './AssignmentCard'
 
 const MB = 1024 * 1024
 
-/** Learner Assignments: every assignment across the learner's programmes. */
-export function AssignmentsPage() {
+/**
+ * Learner Assignments: every assignment across the learner's programmes. A `programme` (from a
+ * path item link) narrows the list, with a way back to all of them.
+ */
+export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
   const { data, isPending, isError, refetch } = useQuery(myAssignmentsQuery())
+  const all = data?.items ?? []
+  const items = programme ? all.filter((i) => i.enrolment.programmeCode === programme) : all
+  const filtered = Boolean(programme) && items.length > 0 && items.length < all.length
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -29,7 +36,7 @@ export function AssignmentsPage() {
         </div>
       ) : isError ? (
         <LoadError what="Your assignments" onRetry={() => refetch()} />
-      ) : data.items.length === 0 ? (
+      ) : items.length === 0 ? (
         <EmptyState
           className="rounded-xl border bg-card"
           icon={FileText}
@@ -38,7 +45,15 @@ export function AssignmentsPage() {
         />
       ) : (
         <Stagger className="grid gap-5 lg:grid-cols-2">
-          {data.items.map((item) => (
+          {filtered ? (
+            <p className="text-muted-foreground text-sm lg:col-span-2">
+              Showing Program {programme} assignments.{' '}
+              <Link to="/learner/assignments" className="font-medium text-teal underline">
+                Show all programmes
+              </Link>
+            </p>
+          ) : null}
+          {(filtered ? items : all).map((item) => (
             <StaggerItem key={item.assignment.id} className="h-full">
               <AssignmentCard item={item} />
             </StaggerItem>

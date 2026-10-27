@@ -37,6 +37,12 @@ export const envSchema = z
     // Otherwise X-Forwarded-For is attacker-controlled and must be ignored.
     TRUST_PROXY: z.stringbool().default(false),
 
+    // Requests per minute per IP on /api/*. The e2e walkthrough and screenshot gallery raise it,
+    // since they load many screens a minute from one machine.
+    API_RATE_LIMIT_PER_MINUTE: z.coerce.number().int().min(1).default(300),
+    // Sign-in, registration and password reset attempts per 15 minutes per IP.
+    CREDENTIAL_RATE_LIMIT: z.coerce.number().int().min(1).default(50),
+
     // Demo reference date (YYYY-MM-DD). Every "Day +N" offset in the seed is relative to it.
     // Unset: today, at seed time. See server/lib/clock.ts.
     DEMO_REFERENCE_DATE: z.iso.date().optional(),

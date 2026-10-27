@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { RubricBreakdown } from '@/features/assignments/components/RubricBreakdown'
 import { StatusPill } from '@/features/assignments/components/StatusPill'
 import { SUBMISSION_STATUS, type SubmissionStatus } from '@/features/assignments/utils/status'
-import { qatarTime } from '@/features/roleplay/utils/format'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { MarkingDetail } from '../types'
 import { CorrectionDialog } from './CorrectionDialog'
 
@@ -33,7 +33,7 @@ export function FinalMarkCard({ detail }: { detail: MarkingDetail }) {
         {review.feedback}
       </blockquote>
       <p className="text-xs text-muted-foreground">
-        {review.reviewerName ?? 'Marker'}, {qatarTime(review.reviewedAt)}
+        {review.reviewerName ?? 'Marker'}, {qatarDateTime(review.reviewedAt)}
       </p>
       {!detail.isLatest ? (
         <p className="rounded-lg bg-teal-mist/60 p-3 text-xs text-teal-deep">

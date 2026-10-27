@@ -5,7 +5,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { ChevronRight, Search, UserPlus, UsersRound } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -24,7 +24,7 @@ import { Pager } from '../../hub/components/Pager'
 import { ErrorPanel, TableSkeleton } from '../../hub/components/QueryStates'
 import { StatusPill } from '../../hub/components/StatusPill'
 import { TableFrame } from '../../hub/components/TableFrame'
-import { initials, qDate } from '../../hub/utils/format'
+import { qDate } from '../../hub/utils/format'
 import { usersListQuery } from '../queries/users.queries'
 import { ACCOUNT_STATUS, ROLE_LABEL } from '../utils/status'
 import { LearnerFormDialog } from './LearnerFormDialog'
@@ -185,11 +185,7 @@ export function UsersPage({
                     >
                       <TableCell className="ps-6">
                         <div className="flex items-center gap-3">
-                          <Avatar className="size-9">
-                            <AvatarFallback className="bg-teal-mist text-xs font-medium text-teal-deep">
-                              {initials(row.name)}
-                            </AvatarFallback>
-                          </Avatar>
+                          <PersonAvatar name={row.name} src={row.image} />
                           <div className="grid">
                             <button
                               type="button"

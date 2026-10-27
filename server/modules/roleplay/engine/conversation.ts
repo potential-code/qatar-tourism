@@ -93,12 +93,31 @@ export function replay(
     if (reaction) usedReactions.add(reaction)
     transcript.push({
       speaker: 'visitor',
-      text: reaction ? `${REACTIONS[reaction]} ${line}` : line,
+      text: reaction ? withReaction(REACTIONS[reaction], line) : line,
     })
     if (spineIndex >= spine.length) done = true
   })
 
   return { transcript, done }
+}
+
+const firstWord = (text: string) =>
+  text
+    .trim()
+    .split(/[\s,.!?]+/)[0]
+    ?.toLowerCase() ?? ''
+
+/**
+ * Puts the reaction before the scripted line. When the line opens with a short echo of the same
+ * words ("Okay." after "Okay, that helps."), the echo is dropped so the visitor does not repeat
+ * themselves.
+ */
+export function withReaction(reaction: string, line: string) {
+  const opener = /^([^.!?]{1,12}[.!?])\s+(.+)$/.exec(line)
+  if (opener?.[1] && opener[2] && firstWord(opener[1]) === firstWord(reaction)) {
+    return `${reaction} ${opener[2]}`
+  }
+  return `${reaction} ${line}`
 }
 
 export function learnerTurnsOf(transcript: readonly TranscriptTurn[]): string[] {

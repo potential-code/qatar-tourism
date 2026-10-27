@@ -13,10 +13,10 @@ export const PROGRAMMES: readonly ProgrammeCode[] = ['A', 'B', 'C']
 
 const pct = (part: number, whole: number) =>
   whole === 0 ? 0 : Math.round((part / whole) * 1000) / 10
-const avg = (values: readonly number[]) =>
-  values.length === 0
-    ? 0
-    : Math.round((values.reduce((sum, v) => sum + v, 0) / values.length) * 10) / 10
+const mean = (values: readonly number[]) =>
+  values.length === 0 ? 0 : values.reduce((sum, v) => sum + v, 0) / values.length
+const round1 = (value: number) => Math.round(value * 10) / 10
+const avg = (values: readonly number[]) => round1(mean(values))
 
 export const daysSince = (at: Date | null, asOf: Date) =>
   at ? Math.floor((asOf.getTime() - at.getTime()) / DAY_MS) : null
@@ -193,24 +193,31 @@ export const hasPair = (row: EnrolmentFact) => row.pre !== null && row.post !== 
 export function improvement(rows: readonly EnrolmentFact[]) {
   const pairs = rows.filter(hasPair)
   const summarise = (subset: readonly EnrolmentFact[]) => {
-    const pre = avg(subset.map((row) => row.pre?.score ?? 0))
-    const post = avg(subset.map((row) => row.post?.score ?? 0))
+    const pre = mean(subset.map((row) => row.pre?.score ?? 0))
+    const post = mean(subset.map((row) => row.post?.score ?? 0))
     const versions = [
       ...new Set(subset.map((row) => `${row.pre?.version ?? '?'} / ${row.post?.version ?? '?'}`)),
     ]
-    return { n: subset.length, pre, post, gain: Math.round((post - pre) * 10) / 10, versions }
+    // Gain from the unrounded means, so it matches the average of per-learner gains in Reports.
+    return {
+      n: subset.length,
+      pre: round1(pre),
+      post: round1(post),
+      gain: round1(post - pre),
+      versions,
+    }
   }
   const competencies = COMPETENCIES.map((key) => {
     const value = (row: EnrolmentFact, which: 'pre' | 'post') =>
       ((row[which]?.competencyScores?.[key] ?? 0) / 20) * 100
-    const pre = avg(pairs.map((row) => value(row, 'pre')))
-    const post = avg(pairs.map((row) => value(row, 'post')))
+    const pre = mean(pairs.map((row) => value(row, 'pre')))
+    const post = mean(pairs.map((row) => value(row, 'post')))
     return {
       key,
       label: COMPETENCY_LABELS[key],
-      pre,
-      post,
-      gain: Math.round((post - pre) * 10) / 10,
+      pre: round1(pre),
+      post: round1(post),
+      gain: round1(post - pre),
     }
   })
   return {

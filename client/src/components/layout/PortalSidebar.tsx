@@ -1,7 +1,13 @@
 import type { Role } from '@shared/roles'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
-import { NAV_BY_ROLE, type NavItem, PORTAL_LABEL } from '@/app/navigation'
+import {
+  NAV_BY_ROLE,
+  type NavContext,
+  type NavItem,
+  PORTAL_LABEL,
+  visibleNav,
+} from '@/app/navigation'
 import { Logo } from '@/components/brand/Logo'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
@@ -28,10 +34,21 @@ function isActive(pathname: string, to: string, exact: boolean) {
     : pathname === to || pathname.startsWith(`${to}/`)
 }
 
-/** Branded portal sidebar. Children are nested under their parent (admin hierarchy, brief §12). */
-export function PortalSidebar({ portal }: { portal: Role }) {
+const UNKNOWN_CONTEXT: NavContext = { programmes: null }
+
+/**
+ * Branded portal sidebar. Children are nested under their parent (admin hierarchy, brief §12).
+ * Items with a `visible` rule are filtered against `navContext`.
+ */
+export function PortalSidebar({
+  portal,
+  navContext = UNKNOWN_CONTEXT,
+}: {
+  portal: Role
+  navContext?: NavContext
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const sections = NAV_BY_ROLE[portal]
+  const sections = visibleNav(NAV_BY_ROLE[portal], navContext)
   const home = sections[0]?.items[0]?.to ?? '/'
 
   return (
@@ -89,7 +106,7 @@ export function PortalSidebar({ portal }: { portal: Role }) {
 function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
   const open =
     isActive(pathname, item.to, false) ||
-    Boolean(item.children?.some((c) => isActive(pathname, c.to, true)))
+    Boolean(item.children?.some((c) => isActive(pathname, c.to, c.to === item.to)))
   return (
     <Collapsible asChild defaultOpen={open} className="group/collapsible">
       <SidebarMenuItem>
@@ -112,7 +129,7 @@ function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
               <SidebarMenuSubItem key={child.to}>
                 <SidebarMenuSubButton
                   asChild
-                  isActive={isActive(pathname, child.to, true)}
+                  isActive={isActive(pathname, child.to, child.to === item.to)}
                   className="data-[active=true]:bg-teal-mist data-[active=true]:text-teal-deep"
                 >
                   <Link to={child.to as never}>

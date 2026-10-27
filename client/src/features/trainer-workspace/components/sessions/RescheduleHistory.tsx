@@ -1,5 +1,5 @@
 import { History } from 'lucide-react'
-import { qatarDateTime } from '@/features/sessions/utils/qatar-time'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { SessionDetailData } from '../../types'
 
 /** The separate reschedule history (brief §10, §17): the ID stays, the times move. */

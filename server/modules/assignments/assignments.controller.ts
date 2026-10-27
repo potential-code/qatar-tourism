@@ -10,7 +10,7 @@ import type {
   UploadStartInput,
 } from '@shared/schemas/assignment-marking'
 import {
-  latestDraft,
+  draftView,
   learnerIdentity,
   learnerVersionView,
   markerVersionView,
@@ -144,7 +144,7 @@ export async function queue(viewer: Viewer, scope: Scope, query: MarkingQueueQue
 }
 
 export async function detail(viewer: Viewer, scope: Scope, submissionId: string) {
-  const { context, versions, events, markerName, isLatest } = await marking.detail(
+  const { context, versions, events, draft, markerName, isLatest } = await marking.detail(
     scope,
     submissionId,
   )
@@ -168,7 +168,7 @@ export async function detail(viewer: Viewer, scope: Scope, submissionId: string)
     isLatest,
     ...waiting(context.submission.submittedAt, open),
     current: current ? markerVersionView(current, events) : null,
-    draft: current?.review ? null : latestDraft(events, submissionId),
+    draft: current?.review ? null : draftView(draft),
     versions: versions.map((v) => markerVersionView(v, events)),
   }
 }

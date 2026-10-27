@@ -1,16 +1,16 @@
 import { Clock, Hourglass, Lock, MapPin, MonitorPlay, Users } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
+import { learnerLocal, qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { SessionInfo } from '../types'
-import { learnerLocal, qatarRange } from '../utils/qatar-time'
 import {
   durationLabel,
   FORMAT_LABEL,
   locationLabel,
   PREREQUISITE_LABEL,
 } from '../utils/session-labels'
-import { TrainerAvatar } from './TrainerAvatar'
 
 function Fact({
   icon: Icon,
@@ -64,7 +64,7 @@ export function SessionFacts({ session, className }: { session: SessionInfo; cla
           : 'None. Optional session'}
       </Fact>
       <div className="flex items-center gap-3">
-        <TrainerAvatar name={session.trainer.name} avatarPath={session.trainer.avatarPath} />
+        <PersonAvatar name={session.trainer.name} src={session.trainer.avatarPath} tone="maroon" />
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground">Trainer</p>
           <p className="truncate text-sm text-ink">

@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { isFinalReview } from '@server/db/review-filters'
 import {
   attendance,
   programmes,
@@ -89,7 +90,10 @@ export async function getTrainer(trainerId: string) {
       .from(attendance)
       .innerJoin(sessions, eq(sessions.id, attendance.sessionId))
       .where(and(eq(sessions.trainerId, trainerId), sql`${attendance.status} <> 'pending'`)),
-    db.select({ n: count() }).from(reviews).where(eq(reviews.reviewerId, trainer.userId)),
+    db
+      .select({ n: count() })
+      .from(reviews)
+      .where(and(eq(reviews.reviewerId, trainer.userId), isFinalReview)),
   ])
   return {
     trainer,

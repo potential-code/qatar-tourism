@@ -9,9 +9,9 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { learnerLocal, qatarDateTime, qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { MyBooking } from '../types'
-import { learnerLocal, qatarDateTime, qatarRange } from '../utils/qatar-time'
 import { ATTENDANCE_LABEL, FORMAT_LABEL, locationLabel, RSVP_LABEL } from '../utils/session-labels'
 import { DateTile } from './DateTile'
 

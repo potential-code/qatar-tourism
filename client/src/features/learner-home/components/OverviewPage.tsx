@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { Navigate } from '@tanstack/react-router'
 import { Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { LoadError } from '@/features/learning/components/LoadError'
 import { type ProgrammeContext, WithProgramme } from '@/features/learning/components/WithProgramme'
@@ -9,26 +10,35 @@ import { FeedbackCard } from './FeedbackCard'
 import { JourneyCard } from './JourneyCard'
 import { NextActionCard } from './NextActionCard'
 import { OverviewSkeleton } from './OverviewSkeleton'
+import { ProfileReminder } from './ProfileReminder'
 import { RecommendationCard } from './RecommendationCard'
 import { ScoreCard } from './ScoreCard'
 import { WelcomeHero } from './WelcomeHero'
 
-/** Learner Overview (brief §5 "Dashboard content"). */
-export function OverviewPage() {
+/**
+ * Learner Overview (brief §5 "Dashboard content"). A draft profile goes to the wizard first,
+ * unless the learner chose "Save and finish later" (then a reminder shows instead).
+ */
+export function OverviewPage({ profileDeferred = false }: { profileDeferred?: boolean }) {
   return (
-    <WithProgramme skeleton={<OverviewSkeleton />}>{(ctx) => <Overview ctx={ctx} />}</WithProgramme>
+    <WithProgramme skeleton={<OverviewSkeleton />}>
+      {(ctx) => <Overview ctx={ctx} profileDeferred={profileDeferred} />}
+    </WithProgramme>
   )
 }
 
-function Overview({ ctx }: { ctx: ProgrammeContext }) {
+function Overview({ ctx, profileDeferred }: { ctx: ProgrammeContext; profileDeferred: boolean }) {
   const journey = useQuery(journeyQuery(ctx.programme))
   if (journey.isLoading) return <OverviewSkeleton />
   if (journey.error || !journey.data) {
     return <LoadError error={journey.error} onRetry={() => void journey.refetch()} />
   }
   const data = journey.data
+  const draftProfile = !data.learner.profileComplete
+  if (draftProfile && !profileDeferred) return <Navigate to="/onboarding" replace />
   return (
     <div className="flex flex-col gap-8">
+      {draftProfile ? <ProfileReminder /> : null}
       <div className="flex flex-col">
         <WelcomeHero
           journey={data}

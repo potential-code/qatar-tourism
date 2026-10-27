@@ -1,5 +1,5 @@
 import { History } from 'lucide-react'
-import { qatarDateTime } from '@/features/sessions/utils/qatar-time'
+import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
 
 /** Recent reschedules of the trainer's sessions: the separate history the brief asks for. */

@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import { Bell, LogOut } from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,15 +13,6 @@ import {
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useSession, useSignOut } from '@/hooks/useSession'
 import { DemoBadge } from './DemoBadge'
-
-function initials(name?: string) {
-  return (name ?? '?')
-    .split(' ')
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
-}
 
 /** Sticky top bar for all portals. `notifications` slot is filled by the notifications feature. */
 export function PortalHeader({ notifications }: { notifications?: React.ReactNode }) {
@@ -42,11 +33,12 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-10 gap-2 px-1.5" aria-label="Account menu">
-              <Avatar className="size-8">
-                <AvatarFallback className="bg-teal text-xs text-white">
-                  {initials(session?.user.name)}
-                </AvatarFallback>
-              </Avatar>
+              <PersonAvatar
+                name={session?.user.name}
+                src={session?.user.image}
+                tone="teal"
+                className="size-8"
+              />
               <span className="hidden max-w-40 truncate text-sm font-medium md:inline">
                 {session?.user.name}
               </span>
