@@ -71,7 +71,8 @@ export const auth = betterAuth({
   rateLimit: {
     enabled: true,
     window: 60,
-    max: 100,
+    // Same per-minute budget as the rest of /api; a presenter's session checks add up quickly.
+    max: env.API_RATE_LIMIT_PER_MINUTE,
     customRules: {
       '/sign-in/*': credentialRule,
       '/sign-up/*': credentialRule,

@@ -37,7 +37,7 @@ function limitExceeded(c: Context) {
 /** Every /api request: generous, just a brake on scraping and floods. */
 export const globalRateLimit = rateLimiter({
   windowMs: 60 * 1000,
-  limit: 300,
+  limit: env.API_RATE_LIMIT_PER_MINUTE,
   standardHeaders: 'draft-7',
   keyGenerator: (c) => clientIp(c),
   handler: limitExceeded,
@@ -45,7 +45,7 @@ export const globalRateLimit = rateLimiter({
 
 /** Settings shared with Better Auth's own limiter so both layers agree. */
 // Demo setting: presenters rehearse the walkthrough from one machine, so allow more attempts.
-export const CREDENTIAL_LIMIT = { windowSeconds: 15 * 60, max: 50 } as const
+export const CREDENTIAL_LIMIT = { windowSeconds: 15 * 60, max: env.CREDENTIAL_RATE_LIMIT } as const
 
 /**
  * Credential endpoints (sign-in, sign-up, password reset): tight, to slow brute force and
