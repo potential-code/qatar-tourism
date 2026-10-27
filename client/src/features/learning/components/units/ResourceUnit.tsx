@@ -28,7 +28,11 @@ export function ResourceUnit({
   programme: ProgrammeCode
   completed: boolean
 }) {
-  const [checked, setChecked] = useState<string[]>(content.saved.checklist)
+  const [checked, setChecked] = useState<string[]>(
+    content.saved.checklist.length > 0 || !completed
+      ? content.saved.checklist
+      : content.checklist.map((item) => item.key),
+  )
   const [draft, setDraft] = useState(content.saved.draft)
   const save = useSaveResource()
   const count = words(draft)
@@ -45,7 +49,7 @@ export function ResourceUnit({
     )
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <section
         aria-labelledby="checklist-title"
         className="flex flex-col gap-4 rounded-xl border bg-white p-6 shadow-sm"
@@ -73,7 +77,7 @@ export function ResourceUnit({
                   }
                   className="mt-0.5"
                 />
-                <Label htmlFor={id} className="font-normal leading-relaxed text-ink">
+                <Label htmlFor={id} className="block font-normal leading-relaxed text-ink">
                   <span className="me-1 font-display text-teal">{index + 1}.</span> {item.label}
                 </Label>
               </li>
@@ -97,6 +101,7 @@ export function ResourceUnit({
           <Textarea
             id="c05-draft"
             rows={8}
+            className="min-h-48"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             disabled={completed && programme === 'A'}

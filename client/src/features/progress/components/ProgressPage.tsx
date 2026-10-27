@@ -154,7 +154,7 @@ function Progress({ ctx }: { ctx: ProgrammeContext }) {
         />
       </Reveal>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <AttemptHistory programme={ctx.programme} />
         <PracticeScores practice={data.practice} programme={ctx.programme} />
       </div>

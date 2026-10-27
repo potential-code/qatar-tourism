@@ -93,7 +93,7 @@ export function AssessmentResultView({
             [programme === 'A' ? 'Final' : 'Post', `${result.comparison.post}%`],
             [
               'Improvement',
-              `${result.comparison.gainPoints >= 0 ? '+' : ''}${result.comparison.gainPoints} points`,
+              `${result.comparison.gainPoints >= 0 ? '+' : ''}${result.comparison.gainPoints} pp`,
             ],
           ].map(([label, value]) => (
             <div key={label} className="flex flex-col gap-1">
@@ -102,7 +102,8 @@ export function AssessmentResultView({
             </div>
           ))}
           <p className="text-sm text-white/75 sm:col-span-3">
-            Matched attempts: your first baseline and this attempt on the same enrolment.
+            Improvement in percentage points (pp), from matched attempts: your first baseline and
+            this attempt on the same enrolment.
           </p>
         </section>
       ) : null}

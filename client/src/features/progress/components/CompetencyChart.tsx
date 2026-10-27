@@ -97,32 +97,34 @@ export function CompetencyChart({
           </div>
         ))}
       </div>
-      <table className="sr-only">
-        <caption>
-          Points per competency, out of 20
-          {hasPost ? `, baseline compared with ${postLabel.toLowerCase()}` : ''}
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Competency</th>
-            {series.map((s) => (
-              <th key={s.key} scope="col">
-                {s.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row) => (
-            <tr key={row.key}>
-              <th scope="row">{row.label}</th>
+      <div className="sr-only">
+        <table>
+          <caption>
+            Points per competency, out of 20
+            {hasPost ? `, baseline compared with ${postLabel.toLowerCase()}` : ''}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Competency</th>
               {series.map((s) => (
-                <td key={s.key}>{row[s.key] ?? 'Not yet taken'}</td>
+                <th key={s.key} scope="col">
+                  {s.label}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((row) => (
+              <tr key={row.key}>
+                <th scope="row">{row.label}</th>
+                {series.map((s) => (
+                  <td key={s.key}>{row[s.key] ?? 'Not yet taken'}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

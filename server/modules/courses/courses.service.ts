@@ -49,7 +49,12 @@ export async function getUnit(learnerId: string, programme: ProgrammeCode, code:
 
   const { unit } = await db.transaction((tx) => requireUnitContext(tx, learnerId, programme, code))
   const extra = (unit?.extra ?? {}) as Record<string, unknown>
-  const formative = (extra.formative ?? {}) as Record<string, { option: string; correct: boolean }>
+  const completedUnit = unit?.status === 'completed'
+  // Seeded history completed C03 without answer detail: show the questions as answered.
+  const formative = (extra.formative ??
+    (completedUnit
+      ? Object.fromEntries(C03_QUESTIONS.map((q) => [q.id, { option: q.correct, correct: true }]))
+      : {})) as Record<string, { option: string; correct: boolean }>
 
   const content = (() => {
     switch (code) {
@@ -72,7 +77,7 @@ export async function getUnit(learnerId: string, programme: ProgrammeCode, code:
           kind: 'video_questions' as const,
           media: MEDIA.C03,
           transcript: C03_TRANSCRIPT,
-          watchedPercent: Number(extra.videoPercent ?? 0),
+          watchedPercent: Math.max(Number(extra.videoPercent ?? 0), completedUnit ? 100 : 0),
           positionSeconds: Number(extra.positionSeconds ?? 0),
           questions: C03_QUESTIONS.map((q) => ({
             id: q.id,

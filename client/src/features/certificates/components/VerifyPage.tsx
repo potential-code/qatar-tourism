@@ -32,7 +32,7 @@ export function VerifyPage({ code }: { code: string }) {
           </h1>
         </div>
       </PhotoPanel>
-      <main className="mx-auto -mt-28 flex max-w-3xl flex-col gap-6 px-4 pb-16">
+      <main className="relative z-10 mx-auto -mt-28 flex max-w-3xl flex-col gap-6 px-4 pb-16">
         <motion.section
           initial={reduce ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

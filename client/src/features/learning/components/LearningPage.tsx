@@ -85,7 +85,7 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
         </Reveal>
       ) : null}
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-labelledby="required-title" className="flex flex-col gap-6">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="required-title" className="font-display text-2xl font-normal text-ink">
@@ -97,7 +97,7 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
             </p>
           </div>
           {groupByStage(required).map((group) => (
-            <div key={`${group.level}-${group.stage}`} className="flex flex-col gap-3">
+            <div key={group.items[0]?.id ?? group.stage} className="flex flex-col gap-3">
               <h3 className="text-sm font-medium text-muted-foreground">
                 {ctx.programme === 'A' && group.stage !== 'Onboarding'
                   ? `Level ${group.level}: `

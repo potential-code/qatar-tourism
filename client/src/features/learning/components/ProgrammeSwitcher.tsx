@@ -83,7 +83,7 @@ export function ProgrammeSwitcher({
             ) : null}
             <span className="whitespace-nowrap">
               Program {enrolment.programme}
-              <span className="hidden sm:inline">: {enrolment.programmeTitle}</span>
+              <span className="hidden xl:inline">: {enrolment.programmeTitle}</span>
             </span>
           </button>
         )

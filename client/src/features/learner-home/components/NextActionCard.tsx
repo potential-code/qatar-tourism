@@ -30,7 +30,7 @@ export function NextActionCard({ journey }: { journey: Journey }) {
       initial={reduce ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: easeOut, delay: 0.15 }}
-      className="relative z-10 mx-3 -mt-16 grid md:-mt-20 gap-6 rounded-xl border bg-white/95 p-5 shadow-lg backdrop-blur md:mx-8 md:grid-cols-[1fr_auto] md:items-center md:p-7"
+      className="relative z-10 mx-3 -mt-16 grid md:-mt-20 gap-6 rounded-xl border bg-white/95 p-5 shadow-lg backdrop-blur md:mx-8 lg:grid-cols-[1fr_auto] lg:items-center md:p-7"
     >
       <div className="flex min-w-0 flex-col gap-3">
         <p className="text-sm font-medium text-maroon">Next action</p>
@@ -88,7 +88,7 @@ export function NextActionCard({ journey }: { journey: Journey }) {
           </>
         )}
       </div>
-      <div className="flex items-center gap-4 border-t pt-5 md:flex-col md:border-t-0 md:border-s md:ps-8 md:pt-0">
+      <div className="flex items-center gap-4 border-t pt-5 lg:flex-col lg:border-t-0 lg:border-s lg:ps-8 lg:pt-0">
         <ProgressRing
           value={journey.enrolment.progressPercent}
           size={92}
@@ -99,7 +99,7 @@ export function NextActionCard({ journey }: { journey: Journey }) {
             {journey.enrolment.progressPercent}%
           </span>
         </ProgressRing>
-        <p className="text-sm text-muted-foreground md:text-center">
+        <p className="text-sm text-muted-foreground lg:text-center">
           {done} of {required.length} required steps
         </p>
       </div>

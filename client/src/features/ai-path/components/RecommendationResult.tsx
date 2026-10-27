@@ -48,7 +48,7 @@ export function RecommendationResult({ data }: { data: Recommendation }) {
         </blockquote>
       </motion.figure>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section aria-labelledby="suggested-title" className="flex flex-col gap-4">
           <h2 id="suggested-title" className="font-display text-2xl font-normal text-ink">
             Suggested units
