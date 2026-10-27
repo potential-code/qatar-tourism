@@ -19,6 +19,7 @@ import {
 import { baselineAttempt, itemMinutes } from '@server/modules/progress/progress.rules'
 import { recomputeEnrolment } from '@server/modules/progress/progress.service'
 import type { Competency, ProgrammeCode } from '@shared/constants'
+import { COMPETENCIES } from '@shared/constants'
 import { COMPETENCY_LABELS } from '@shared/content/assessments'
 import { eq } from 'drizzle-orm'
 import { recommend } from './ai-path.logic'
@@ -99,11 +100,13 @@ async function build(reader: Reader, enrolment: EnrolmentContext) {
         ? {
             score: baseline.score ?? 0,
             submittedAt: baseline.submittedAt?.toISOString() ?? null,
-            competencies: Object.entries(baselineScores ?? {}).map(([key, value]) => ({
-              key,
-              label: COMPETENCY_LABELS[key as Competency] ?? key,
-              score: value,
-            })),
+            competencies: COMPETENCIES.filter((key) => baselineScores?.[key] !== undefined).map(
+              (key) => ({
+                key,
+                label: COMPETENCY_LABELS[key],
+                score: baselineScores?.[key] ?? 0,
+              }),
+            ),
           }
         : null,
     },

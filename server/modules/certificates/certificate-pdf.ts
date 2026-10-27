@@ -155,19 +155,23 @@ export async function renderCertificatePdf(input: CertificatePdfInput): Promise<
     }
   }
 
-  // Watermark across the design (brief §6).
-  for (const [x, y] of [
-    [120, 120],
-    [330, 300],
-  ] as const) {
-    page.drawText('DEMONSTRATION ONLY', {
-      x,
-      y,
-      size: 58,
+  // Watermark across the design (brief §6), centred on the page.
+  const mark = 'DEMONSTRATION ONLY'
+  const markSize = 50
+  const markWidth = sansBold.widthOfTextAtSize(mark, markSize)
+  const angle = 22
+  const rad = (angle * Math.PI) / 180
+  for (const offset of [-95, 95]) {
+    const cx = PAGE_WIDTH / 2 - Math.sin(rad) * offset
+    const cy = PAGE_HEIGHT / 2 + Math.cos(rad) * offset - 40
+    page.drawText(mark, {
+      x: cx - (Math.cos(rad) * markWidth) / 2,
+      y: cy - (Math.sin(rad) * markWidth) / 2,
+      size: markSize,
       font: sansBold,
       color: MAROON,
-      opacity: 0.08,
-      rotate: degrees(24),
+      opacity: 0.075,
+      rotate: degrees(angle),
     })
   }
 

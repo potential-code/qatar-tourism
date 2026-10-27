@@ -60,7 +60,11 @@ export async function getUnit(learnerId: string, programme: ProgrammeCode, code:
           transcript: row.transcript ?? '',
           scenes: C01_SCENES.map((s) => s.caption),
           completeAtPercent: THRESHOLDS.videoCompletePercent,
-          watchedPercent: Number(extra.videoPercent ?? 0),
+          // Seeded history has no watch position; a completed unit counts as fully watched.
+          watchedPercent: Math.max(
+            Number(extra.videoPercent ?? 0),
+            unit?.status === 'completed' ? 100 : 0,
+          ),
           positionSeconds: Number(extra.positionSeconds ?? 0),
         }
       case 'C03':
