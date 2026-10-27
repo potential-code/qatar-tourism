@@ -28,7 +28,8 @@
     "db:generate": "bunx --bun drizzle-kit generate --config ./drizzle.config.ts",
     "db:migrate": "bunx --bun drizzle-kit migrate --config ./drizzle.config.ts",
     "db:studio": "bunx --bun drizzle-kit studio --config ./drizzle.config.ts",
-    "db:seed": "bun run server/db/seed.ts",
+    "db:seed": "bun run server/db/seed/index.ts",
+    "db:reset": "bun run server/db/seed/index.ts",
     "auth:generate": "bunx --bun @better-auth/cli generate --config server/auth/auth.ts --output server/db/schema/auth.ts -y"
   },
   "devDependencies": {

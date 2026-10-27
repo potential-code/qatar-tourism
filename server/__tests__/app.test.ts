@@ -51,13 +51,13 @@ describe('CORS and CSRF', () => {
   })
 
   test('rejects a cross-site form post', async () => {
-    const res = await app.request('/api/notes', {
+    const res = await app.request('/api/demo/reset', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Origin: 'https://evil.test',
       },
-      body: 'title=x',
+      body: 'confirm=true',
     })
     expect(res.status).toBe(403)
     expect((await res.json()).error.code).toBe('FORBIDDEN')
@@ -88,7 +88,7 @@ describe('auth and roles', () => {
     })
   })
 
-  test('admin route is 403 for role user', async () => {
+  test('admin route is 403 for a learner', async () => {
     stubSession('learner')
     const res = await app.request('/api/admin/users')
     expect(res.status).toBe(403)
@@ -104,31 +104,28 @@ describe('auth and roles', () => {
 
 describe('validation', () => {
   test('invalid body is a 400 with the error shape', async () => {
-    stubSession('learner')
-    const res = await app.request('/api/notes', json({ title: '' }))
+    stubSession('admin')
+    const res = await app.request('/api/demo/reset', json({ confirm: false }))
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.error.code).toBe('VALIDATION_ERROR')
     expect(body.error.details.target).toBe('json')
-    expect(body.error.details.issues[0].path).toBe('title')
-  })
-
-  test('non-uuid id is a 400', async () => {
-    stubSession('learner')
-    const res = await app.request('/api/notes/not-a-uuid')
-    expect(res.status).toBe(400)
-    expect((await res.json()).error.details.target).toBe('param')
+    expect(body.error.details.issues[0].path).toBe('confirm')
   })
 
   test('bad pagination is a 400', async () => {
-    stubSession('learner')
-    const res = await app.request('/api/notes?pageSize=1000')
+    stubSession('admin')
+    const res = await app.request('/api/admin/users?pageSize=1000')
     expect(res.status).toBe(400)
+    expect((await res.json()).error.details.target).toBe('query')
   })
 
   test('body over 1 MB is a 413', async () => {
-    stubSession('learner')
-    const res = await app.request('/api/notes', json({ title: 'x', body: 'a'.repeat(1_100_000) }))
+    stubSession('admin')
+    const res = await app.request(
+      '/api/demo/reset',
+      json({ confirm: true, pad: 'a'.repeat(1_100_000) }),
+    )
     expect(res.status).toBe(413)
     expect((await res.json()).error.code).toBe('PAYLOAD_TOO_LARGE')
   })

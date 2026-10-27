@@ -9,13 +9,13 @@ Qatar Tourism Academy demo: a stateful mockup LMS. Sources of truth, in order:
 
 ## Stack
 
-| Layer  | Choice |
-|--------|--------|
+| Layer  | Choice                                                                                           |
+| ------ | ------------------------------------------------------------------------------------------------ |
 | Client | React 19, Vite, TanStack Router (file routes) / Query / Table / Form, Tailwind 4, shadcn + Radix |
-| Motion | `motion` (Framer Motion) everywhere; GSAP ScrollTrigger and Lenis on the public site only |
-| Server | Hono on Bun, Better Auth (cookie sessions), Drizzle on Postgres (`qatar_tourism_db`) |
-| Shared | `shared/` with zod schemas, roles, permissions matrix, constants and curriculum content |
-| Tests  | `bun test` (server via `app.request`, client via happy-dom); Playwright for the e2e walkthrough |
+| Motion | `motion` (Framer Motion) everywhere; GSAP ScrollTrigger and Lenis on the public site only        |
+| Server | Hono on Bun, Better Auth (cookie sessions), Drizzle on Postgres (`qatar_tourism_db`)             |
+| Shared | `shared/` with zod schemas, roles, permissions matrix, constants and curriculum content          |
+| Tests  | `bun test` (server via `app.request`, client via happy-dom); Playwright for the e2e walkthrough  |
 
 Two processes: client on :5173 (nginx :5000 in Docker), API on :8000. The client calls the API through the typed Hono RPC client (`client/src/lib/api.ts`).
 
@@ -50,7 +50,8 @@ server/
     <domain>.test.ts
   db/schema/<domain>.ts     Drizzle tables, exported from db/schema/index.ts
   db/seed/                  deterministic demo dataset + reset snapshot
-  middleware/               auth (requireAuth, requireRole), error, logger, rate-limit, validate, audit
+  middleware/               auth (requireAuth, requireRole), scope (withScope, assert...InScope), error, logger, rate-limit, validate
+  modules/audit/audit.service.ts   audit(c, {...}) helper that services call for every audited write
   lib/                      errors, logger, clock (demo reference date)
 
 shared/

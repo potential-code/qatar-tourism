@@ -2,6 +2,7 @@ import { app } from '@server/app'
 import { env } from '@server/config/env'
 import { closeDb, db } from '@server/db/connection'
 import { logger } from '@server/lib/logger'
+import { loadClock } from '@server/modules/demo/demo.service'
 import { sql } from 'drizzle-orm'
 
 const server = Bun.serve({ hostname: '0.0.0.0', port: env.PORT, fetch: app.fetch })
@@ -11,7 +12,10 @@ logger.info({ port: server.port, env: env.NODE_ENV }, 'Server listening')
 // Report database reachability at boot without blocking it: the container's migrator has
 // already failed hard if the database is down, and postgres.js reconnects on its own.
 db.execute(sql`select 1`)
-  .then(() => logger.info('Database connection ok'))
+  .then(() => loadClock())
+  .then((referenceDate) =>
+    logger.info({ referenceDate }, 'Database connection ok; demo clock loaded'),
+  )
   .catch((error: unknown) =>
     logger.error({ err: error }, 'Database is not reachable; requests that need it will fail'),
   )

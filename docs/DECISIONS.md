@@ -137,3 +137,37 @@ AI path generation, role-play, voice and analytics chat use deterministic demo l
 - The admin portal is desktop only (brief §18 asks for 390 / 768 / 1440 px everywhere).
 - Trainer T04 is renamed because the brief gives the name "Daniel Costa" to both T04 and learner persona L0004.
 - The fonts are substitutes (see above).
+
+---
+
+# Phase 1 data decisions
+
+## Driver stays postgres.js
+
+The skeleton connects Drizzle through `postgres` (postgres.js) with `drizzle-orm/postgres-js`. Phase 1 keeps it: Better Auth's Drizzle adapter, the migrator and every test already use it, and swapping drivers would change nothing the brief asks for.
+
+## The demo clock
+
+`server/lib/clock.ts` holds the **demo reference date** (a Qatar calendar date). It comes from `DEMO_REFERENCE_DATE`, or is today at seed time, and is stored in `demo_meta`. Every "Day +N" offset (brief §15–16) is relative to it. `now()` is the reference date at 08:00 Qatar plus real time elapsed since the snapshot was anchored, so a reset always leaves "Day +2" two days ahead, and timestamps written during a walkthrough still increase. Services call `now()`, never `new Date()`.
+
+## Courses are the units
+
+`courses` (C01–C07) are also the "units" a learner progresses through: `unit_progress.course_id` records progress, `path_items` place a course in a path. There is no separate units table.
+
+## Brief ambiguities and how they were resolved
+
+- **Organisation types.** The brief's six buckets sum to 1,200; "independent/other 120" is seeded as independent 70 plus other 50. Public sector and education exist as selectable types but hold no seeded learners. Seniority "manager/senior leader 120" is manager 70 plus senior leader 50.
+- **Completed A learners and sessions.** The 30 sample sessions have 152 seats in completed Program A sessions, but 120 completers plus 100 learners in later stages need a session record. Everyone in a later stage, and 40 completers, are linked to a real completed session. The other 80 completers have C06 marked `completed` with `source = 'historical'`: they attended an earlier cohort outside the sample window.
+- **Program B short response** is the C05 exercise (brief §7: "B uses a 100–150 word task"). It is an `assignments` row (B-SHORT-1) marked by Priya Menon or Aisha Rahman.
+- **C02 is a branching preview**, labelled "not a verified SCORM package" (brief §8). C04 is the SCORM 2004 sample package that Phase 2 builds at `/scorm/qta-sample-c04/`.
+- **Rule priority.** A higher number wins when several rules match; the programme default is the fallback. An incomplete (draft) profile always receives the default path (brief §4).
+- **The cancelled historical session** takes the place of T07's "completed" session, so T07 still has three sessions.
+- **Absence** never becomes a pass: absent and excused learners have no score row.
+- **Trainer avatars.** `avatar_path` is null until the generated avatars exist under `/images/generated/trainers/<code>.png`; the UI falls back to initials.
+- **Email states.** Seeded emails are always `simulated`; in-app notifications are `sent`.
+
+## Seeding and reset
+
+`bun run db:seed` and `bun run db:reset` are the same operation, and so is `POST /api/demo/reset`: truncate every table, rebuild the deterministic dataset in one transaction, and restore the calling admin's session rows so they stay signed in. The only non-deterministic values are `demo_meta` timestamps. Both refuse `NODE_ENV=production` unless `ALLOW_DEMO_SEED=true`, which a hosted demo deployment sets deliberately.
+
+Tests run against `qatar_tourism_test` (`TEST_DATABASE_URL`). `server/__tests__/helpers/env.ts` forces `DATABASE_URL` to it for every test file, so no test can truncate the development database.

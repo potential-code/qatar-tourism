@@ -37,6 +37,10 @@ export const envSchema = z
     // Otherwise X-Forwarded-For is attacker-controlled and must be ignored.
     TRUST_PROXY: z.stringbool().default(false),
 
+    // Demo reference date (YYYY-MM-DD). Every "Day +N" offset in the seed is relative to it.
+    // Unset: today, at seed time. See server/lib/clock.ts.
+    DEMO_REFERENCE_DATE: z.iso.date().optional(),
+
     // Email: SES when deployed (staging, production), Mailpit everywhere else.
     AWS_REGION: z.string().default('us-east-1'),
     // Optional: without them the AWS SDK falls back to its default chain (e.g. an IAM role).

@@ -24,7 +24,7 @@ function sendInBackground(kind: string, send: Promise<void>) {
 }
 
 export const auth = betterAuth({
-  appName: 'Project Skeleton',
+  appName: 'Qatar Tourism Academy (demo)',
   baseURL: env.BETTER_AUTH_URL,
   basePath: '/api/auth',
   secret: env.BETTER_AUTH_SECRET,

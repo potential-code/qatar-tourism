@@ -3,11 +3,33 @@ import { HttpError } from '@server/lib/errors'
 import { notFound, onError } from '@server/middleware/error.middleware'
 import { requestLogger } from '@server/middleware/logger.middleware'
 import { globalRateLimit } from '@server/middleware/rate-limit.middleware'
-import { adminRoutes } from '@server/routes/admin.routes'
-import { authRoutes } from '@server/routes/auth.routes'
-import { healthRoutes } from '@server/routes/health.routes'
-import { meRoutes } from '@server/routes/me.routes'
-import { noteRoutes } from '@server/routes/note.routes'
+import { aiAnalyticsRoutes } from '@server/modules/ai-analytics/ai-analytics.routes'
+import { aiPathRoutes } from '@server/modules/ai-path/ai-path.routes'
+import { analyticsRoutes } from '@server/modules/analytics/analytics.routes'
+import { assessmentsRoutes } from '@server/modules/assessments/assessments.routes'
+import { assignmentsRoutes } from '@server/modules/assignments/assignments.routes'
+import { attendanceRoutes } from '@server/modules/attendance/attendance.routes'
+import { auditRoutes } from '@server/modules/audit/audit.routes'
+import { authRoutes } from '@server/modules/auth/auth.routes'
+import { certificatesRoutes } from '@server/modules/certificates/certificates.routes'
+import { coursesRoutes } from '@server/modules/courses/courses.routes'
+import { demoRoutes } from '@server/modules/demo/demo.routes'
+import { enrolmentsRoutes } from '@server/modules/enrolments/enrolments.routes'
+import { exportsRoutes } from '@server/modules/exports/exports.routes'
+import { healthRoutes } from '@server/modules/health/health.routes'
+import { meRoutes } from '@server/modules/me/me.routes'
+import { notificationsRoutes } from '@server/modules/notifications/notifications.routes'
+import { organisationsRoutes } from '@server/modules/organisations/organisations.routes'
+import { pathsRoutes } from '@server/modules/paths/paths.routes'
+import { profilesRoutes } from '@server/modules/profiles/profiles.routes'
+import { programmesRoutes } from '@server/modules/programmes/programmes.routes'
+import { progressRoutes } from '@server/modules/progress/progress.routes'
+import { reportsRoutes } from '@server/modules/reports/reports.routes'
+import { roleplayRoutes } from '@server/modules/roleplay/roleplay.routes'
+import { rsvpsRoutes } from '@server/modules/rsvps/rsvps.routes'
+import { scormRoutes } from '@server/modules/scorm/scorm.routes'
+import { sessionsRoutes } from '@server/modules/sessions/sessions.routes'
+import { adminUserRoutes } from '@server/modules/users/users.routes'
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { cors } from 'hono/cors'
@@ -55,7 +77,29 @@ const routes = app
   .basePath('/api')
   .route('/health', healthRoutes)
   .route('/me', meRoutes)
-  .route('/notes', noteRoutes)
-  .route('/admin', adminRoutes)
+  .route('/admin/users', adminUserRoutes)
+  .route('/audit', auditRoutes)
+  .route('/demo', demoRoutes)
+  .route('/profiles', profilesRoutes)
+  .route('/organisations', organisationsRoutes)
+  .route('/programmes', programmesRoutes)
+  .route('/paths', pathsRoutes)
+  .route('/courses', coursesRoutes)
+  .route('/scorm', scormRoutes)
+  .route('/enrolments', enrolmentsRoutes)
+  .route('/progress', progressRoutes)
+  .route('/assessments', assessmentsRoutes)
+  .route('/ai-path', aiPathRoutes)
+  .route('/roleplay', roleplayRoutes)
+  .route('/sessions', sessionsRoutes)
+  .route('/rsvps', rsvpsRoutes)
+  .route('/attendance', attendanceRoutes)
+  .route('/assignments', assignmentsRoutes)
+  .route('/certificates', certificatesRoutes)
+  .route('/notifications', notificationsRoutes)
+  .route('/reports', reportsRoutes)
+  .route('/analytics', analyticsRoutes)
+  .route('/ai-analytics', aiAnalyticsRoutes)
+  .route('/exports', exportsRoutes)
 
 export type AppType = typeof routes
