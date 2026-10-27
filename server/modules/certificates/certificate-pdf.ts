@@ -1,5 +1,4 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { QATAR_TOURISM_LOGO_SVG } from '@server/assets/qatar-tourism-logo'
 import {
   degrees,
   PDFDocument,
@@ -72,14 +71,11 @@ function centred(
 type LogoShape = { d: string; fill: RGB }
 let logoCache: { shapes: LogoShape[]; width: number; height: number } | null = null
 
-/** Paths of the official Qatar Tourism logo, read once from the client's brand folder. */
+/** Paths of the official Qatar Tourism logo, parsed once from the embedded copy. */
 async function loadLogo() {
   if (logoCache) return logoCache
   try {
-    const svg = await readFile(
-      join(import.meta.dir, '../../../client/public/brand/qatar-tourism-logo.svg'),
-      'utf8',
-    )
+    const svg = QATAR_TOURISM_LOGO_SVG
     const viewBox = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)
     const shapes: LogoShape[] = []
     for (const match of svg.matchAll(/<path d="([^"]+)"[^>]*style="fill:(#[0-9a-fA-F]{6})"/g)) {
