@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { Award, Building2, Languages } from 'lucide-react'
 import { ArchFrame } from '@/components/brand/ArchFrame'
+import { initialsOf } from '@/components/data/PersonAvatar'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/motion/Reveal'
 import { Badge } from '@/components/ui/badge'
 import { QueryErrorPanel } from '@/features/sessions/components/QueryErrorPanel'
-import { initials } from '@/features/sessions/utils/session-labels'
 import { profileQuery } from '../../queries/trainer.queries'
 import { WorkspaceSkeleton } from '../shared/WorkspaceSkeleton'
 
@@ -31,7 +31,7 @@ export function TrainerProfilePage() {
             ) : (
               <div className="flex size-full items-center justify-center bg-gradient-to-b from-teal to-teal-deep">
                 <span className="font-display text-7xl font-light text-white">
-                  {initials(p.fullName)}
+                  {initialsOf(p.fullName)}
                 </span>
               </div>
             )}

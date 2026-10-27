@@ -2,9 +2,9 @@ import { Link } from '@tanstack/react-router'
 import { ArrowRight, MapPin, MonitorPlay } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
-import { TrainerAvatar } from '@/features/sessions/components/TrainerAvatar'
 import { FORMAT_LABEL, locationLabel } from '@/features/sessions/utils/session-labels'
 import { qatarDateShort, qatarTime, relativeTo } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
@@ -40,9 +40,10 @@ export function OverviewHero({ data }: { data: OverviewData }) {
           className="flex flex-col gap-4 self-end"
         >
           <div className="flex items-center gap-3">
-            <TrainerAvatar
+            <PersonAvatar
               name={data.profile.fullName}
-              avatarPath={data.profile.avatarPath}
+              src={data.profile.avatarPath}
+              tone="maroon"
               className="size-12 ring-2 ring-white/40"
             />
             <p className="text-sm text-white/80">

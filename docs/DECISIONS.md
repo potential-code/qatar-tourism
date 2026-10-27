@@ -163,7 +163,7 @@ The skeleton connects Drizzle through `postgres` (postgres.js) with `drizzle-orm
 - **Rule priority.** A higher number wins when several rules match; the programme default is the fallback. An incomplete (draft) profile always receives the default path (brief §4).
 - **The cancelled historical session** takes the place of T07's "completed" session, so T07 still has three sessions.
 - **Absence** never becomes a pass: absent and excused learners have no score row.
-- **Trainer avatars.** `avatar_path` is null until the generated avatars exist under `/images/generated/trainers/<code>.png`; the UI falls back to initials.
+- **Portraits.** The ten trainers and five walkthrough personas have generated portraits under `/images/generated/{trainers,personas}/<code>.webp` (prompts in `docs/ASSET-INVENTORY.md`). The seed sets `trainer_profiles.avatar_path` and `user.image`; every other learner shows initials through the shared `PersonAvatar`.
 - **Email states.** Seeded emails are always `simulated`; in-app notifications are `sent`.
 
 ## Seeding and reset

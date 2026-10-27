@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin, MonitorPlay } from 'lucide-react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { cn } from '@/lib/utils'
 import type { PublicSession } from '../queries/programmes.queries'
 import { dateChip, formatLabel, QATAR_TIME_LABEL, sessionTimeRange } from '../utils/format'
 import { SeatsMeter } from './SeatsMeter'
-import { TrainerAvatar } from './TrainerAvatar'
 
 /**
  * One upcoming session (brief §2): format, Qatar time, trainer, capacity and the booking action.
@@ -68,10 +68,10 @@ export function SessionTicket({
               params={{ code: session.trainerCode }}
               className="inline-flex w-fit items-center gap-2.5 rounded-full text-sm hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
-              <TrainerAvatar
+              <PersonAvatar
                 name={session.trainerName}
-                code={session.trainerCode}
                 src={session.trainerAvatar}
+                tone="teal"
                 className="size-8 text-xs"
               />
               <span>

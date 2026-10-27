@@ -27,13 +27,3 @@ export function minutesLabel(minutes: number): string {
   const rest = minutes % 60
   return rest === 0 ? `${hours} hour${hours > 1 ? 's' : ''}` : `${hours} h ${rest} min`
 }
-
-export function initials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
-}

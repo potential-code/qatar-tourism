@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Ban, CalendarDays, CircleCheck, PencilLine, ShieldHalf, UserRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,7 +21,7 @@ import { ApiError } from '@/lib/api'
 import { ErrorPanel } from '../../hub/components/QueryStates'
 import { ReasonDialog } from '../../hub/components/ReasonDialog'
 import { StatusPill } from '../../hub/components/StatusPill'
-import { humanise, initials, qDateTime } from '../../hub/utils/format'
+import { humanise, qDateTime } from '../../hub/utils/format'
 import { trainerDetailQuery, useSetTrainerProgrammes } from '../queries/trainers.queries'
 import { TrainerFormDialog } from './TrainerFormDialog'
 
@@ -71,11 +71,12 @@ export function TrainerSheet({
           <>
             <SheetHeader className="border-b bg-sand/60 p-6">
               <div className="flex items-center gap-4">
-                <Avatar className="size-16">
-                  <AvatarFallback className="bg-teal font-display text-xl text-white">
-                    {initials(t.fullName)}
-                  </AvatarFallback>
-                </Avatar>
+                <PersonAvatar
+                  name={t.fullName}
+                  src={t.avatarPath}
+                  className="size-16 text-lg"
+                  fallbackClassName="bg-teal font-display text-xl text-white"
+                />
                 <div className="grid gap-0.5">
                   <SheetTitle className="font-display text-2xl font-normal">
                     {t.fullName}
@@ -114,8 +115,8 @@ export function TrainerSheet({
                   <dd>{t.email}</dd>
                 </dl>
                 <p className="rounded-lg bg-maroon-mist px-3 py-2 text-xs text-maroon-deep">
-                  Fictional trainer for demonstration. The profile photo uses initials until
-                  generated avatars are added.
+                  Fictional trainer for demonstration. The portrait is AI-generated and shows no
+                  real person.
                 </p>
               </section>
 

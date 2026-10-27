@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { ChevronUp, FlaskConical, GraduationCap, Loader2, Shield, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -111,7 +112,11 @@ export function DemoToolbar() {
                       onSelect={() => choose(target)}
                       className="items-start gap-3 py-2"
                     >
-                      <Icon aria-hidden className="mt-0.5 text-teal" />
+                      {target.image ? (
+                        <PersonAvatar name={target.name} src={target.image} className="size-8" />
+                      ) : (
+                        <Icon aria-hidden className="mt-0.5 text-teal" />
+                      )}
                       <span className="grid gap-0.5">
                         <span className="font-medium">
                           {target.name}

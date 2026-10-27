@@ -11,6 +11,7 @@ import type { ActivityResult } from './activity'
 import { stableUuid, userIds } from './ids'
 import type { LearnerSeed } from './learners'
 import type { OrganisationSeed } from './organisations'
+import { personaPortrait, trainerPortrait } from './portraits'
 import type { Calendar } from './reference-date'
 import type { Rng } from './rng'
 import { TRAINER_ORGANISATION, TRAINERS } from './trainers'
@@ -64,6 +65,7 @@ export function buildUsers(
       email: t.email,
       emailVerified: true,
       role: 'trainer',
+      image: trainerPortrait(t.code),
       createdAt: staffCreated,
       updatedAt: staffCreated,
     })),
@@ -75,6 +77,7 @@ export function buildUsers(
         email: l.email,
         emailVerified: true,
         role: 'learner',
+        image: personaPortrait(l.code),
         createdAt: registeredAt,
         updatedAt: registeredAt,
       }
@@ -168,8 +171,7 @@ export function buildTrainerRows(
     expertise: t.expertise,
     languages: t.languages,
     organisation: TRAINER_ORGANISATION,
-    // Avatars are generated later under /images/generated/trainers/<code>.png (see ASSET-INVENTORY).
-    avatarPath: null,
+    avatarPath: trainerPortrait(t.code),
     createdAt: created,
     updatedAt: created,
   }))

@@ -1,12 +1,8 @@
 import { describe, expect, test } from 'bun:test'
+import { initialsOf } from '@/components/data/PersonAvatar'
 import { draftPayload, fullPayload, type ProfileDraft } from '@/features/profile/utils/draft'
 import { validateStep } from '@/features/profile/utils/validation'
-import {
-  dateChip,
-  formatLabel,
-  initials,
-  sessionTimeRange,
-} from '@/features/programmes/utils/format'
+import { dateChip, formatLabel, sessionTimeRange } from '@/features/programmes/utils/format'
 import { programmeFromSlug } from '@/features/programmes/utils/slug'
 
 const empty: ProfileDraft = {
@@ -63,7 +59,7 @@ describe('Qatar time formatting', () => {
     // 22:30 UTC is already the next calendar day in Qatar.
     expect(dateChip('2026-10-29T22:30:00.000Z')).toMatchObject({ day: '30', month: 'Oct' })
     expect(formatLabel('online')).toBe('Live online')
-    expect(initials('Amal Al Nouri')).toBe('AA')
+    expect(initialsOf('Amal Al Nouri')).toBe('AA')
   })
 })
 

@@ -101,6 +101,7 @@ async function feedbackFor(enrolmentId: string, learnerId: string, programme: Pr
       status: reviews.status,
       at: reviews.reviewedAt,
       trainerName: user.name,
+      trainerImage: user.image,
       version: submissions.version,
     })
     .from(reviews)
@@ -118,6 +119,7 @@ async function feedbackFor(enrolmentId: string, learnerId: string, programme: Pr
             score: sessionScores.total,
             at: sessionScores.finalisedAt,
             trainerName: trainerProfiles.fullName,
+            trainerImage: trainerProfiles.avatarPath,
             sessionTitle: sessions.title,
           })
           .from(sessionScores)
@@ -143,6 +145,7 @@ async function feedbackFor(enrolmentId: string, learnerId: string, programme: Pr
           ? `Practical assignment, version ${r.version}`
           : `Short response, version ${r.version}`,
       trainerName: r.trainerName ?? 'Academy trainer',
+      trainerImage: r.trainerImage,
       text: r.text,
       score: r.score,
       status: r.status,
@@ -152,6 +155,7 @@ async function feedbackFor(enrolmentId: string, learnerId: string, programme: Pr
       source: 'session' as const,
       title: r.sessionTitle,
       trainerName: r.trainerName,
+      trainerImage: r.trainerImage,
       text: r.text ?? '',
       score: r.score,
       status: r.score >= THRESHOLDS.sessionPass ? ('approved' as const) : ('returned' as const),

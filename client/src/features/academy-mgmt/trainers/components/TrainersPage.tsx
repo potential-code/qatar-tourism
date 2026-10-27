@@ -9,14 +9,13 @@ import {
 } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { cardHover } from '@/components/motion/variants'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ManagePage } from '../../hub/components/ManagePage'
 import { CardsSkeleton, ErrorPanel } from '../../hub/components/QueryStates'
-import { initials } from '../../hub/utils/format'
 import { trainersQuery } from '../queries/trainers.queries'
 import { TrainerFormDialog } from './TrainerFormDialog'
 import { TrainerSheet } from './TrainerSheet'
@@ -59,11 +58,12 @@ export function TrainersPage() {
                 className="group flex h-full w-full flex-col gap-4 rounded-xl border bg-card p-6 text-start focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               >
                 <div className="flex items-start gap-4">
-                  <Avatar className="size-14 ring-4 ring-teal-mist">
-                    <AvatarFallback className="bg-teal-deep font-display text-lg text-white">
-                      {initials(t.fullName)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <PersonAvatar
+                    name={t.fullName}
+                    src={t.avatarPath}
+                    className="size-14 ring-4 ring-teal-mist text-lg"
+                    fallbackClassName="bg-teal-deep font-display text-lg text-white"
+                  />
                   <div className="grid min-w-0 gap-0.5">
                     <p className="text-xs font-medium tracking-wide text-teal tabular-nums">
                       {t.code}

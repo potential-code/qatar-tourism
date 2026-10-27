@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { TrainerAvatar } from '@/features/programmes/components/TrainerAvatar'
 import { upcomingSessionsQuery } from '@/features/programmes/queries/programmes.queries'
 import {
   formatLabel,
@@ -23,11 +23,7 @@ export function TrainersPreview() {
           key={session.id}
           className="flex items-center gap-4 rounded-xl bg-white p-4 ring-1 ring-ink/5"
         >
-          <TrainerAvatar
-            name={session.trainerName}
-            code={session.trainerCode}
-            src={session.trainerAvatar}
-          />
+          <PersonAvatar name={session.trainerName} src={session.trainerAvatar} tone="teal" />
           <div className="grid gap-0.5 text-sm">
             <p className="font-medium">{session.title}</p>
             <p className="text-muted-foreground">

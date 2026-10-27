@@ -85,6 +85,7 @@ export async function listTargets() {
       email: user.email,
       name: user.name,
       role: user.role,
+      image: user.image,
       learnerCode: profiles.learnerCode,
       trainerCode: trainerProfiles.code,
       headline: trainerProfiles.headline,
@@ -100,7 +101,9 @@ export async function listTargets() {
       const code = account.learnerCode ?? account.trainerCode ?? null
       const description =
         PERSONA_PURPOSE[key] ?? account.headline ?? 'Academy administrator: Dashboard and reports'
-      return [{ key, name: account.name, role: account.role, code, description }]
+      return [
+        { key, name: account.name, role: account.role, code, description, image: account.image },
+      ]
     },
   )
 }
