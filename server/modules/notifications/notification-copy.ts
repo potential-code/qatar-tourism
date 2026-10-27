@@ -14,6 +14,9 @@ export type SessionCopyContext = {
   location: string
 }
 
+/** The templates add their own full stop after the reason, so drop a trailing one. */
+const sentence = (text: string) => text.trim().replace(/[.\s]+$/, '')
+
 export const firstNameOf = (fullName: string) => fullName.trim().split(/\s+/)[0] ?? fullName
 
 export const formatLabel = (format: 'in_person' | 'online') =>
@@ -34,7 +37,7 @@ export function rescheduledMessage(
     'New date and time, Qatar time': formatQatarDateTime(newStart),
     Format: formatLabel(ctx.format),
     'Venue or online details': ctx.location,
-    Reason: reason,
+    Reason: sentence(reason),
   }
   const template = NOTIFICATION_TEMPLATES.session_rescheduled
   return {
@@ -53,7 +56,7 @@ export function cancelledMessage(
     'Session title': ctx.sessionTitle,
     'First name': firstName,
     'Date and time': formatQatarDateTime(start),
-    Reason: reason,
+    Reason: sentence(reason),
   }
   const template = NOTIFICATION_TEMPLATES.session_cancelled
   return {
@@ -83,7 +86,7 @@ export function waitlistCancelledMessage(
 ) {
   return {
     subject: `Waitlist update: ${ctx.sessionTitle} has been cancelled`,
-    body: `Hello ${firstName}, the session you were on the waitlist for, scheduled for ${formatQatarDateTime(start)}, has been cancelled. Reason: ${reason}. Your learning progress has been saved. Please visit My sessions to choose another available session.`,
+    body: `Hello ${firstName}, the session you were on the waitlist for, scheduled for ${formatQatarDateTime(start)}, has been cancelled. Reason: ${sentence(reason)}. Your learning progress has been saved. Please visit My sessions to choose another available session.`,
   }
 }
 
@@ -104,7 +107,7 @@ export function changeRequestMessage(
   const action = kind === 'cancel' ? 'cancel' : 'reschedule'
   return {
     subject: `Admin review requested: ${learnerCode} wants to ${action} a booking`,
-    body: `Learner ${learnerCode} asked to ${action} their booking for ${sessionTitle} on ${formatQatarDateTime(start)}, inside the 24-hour self-service window. Reason: ${reason}.`,
+    body: `Learner ${learnerCode} asked to ${action} their booking for ${sessionTitle} on ${formatQatarDateTime(start)}, inside the 24-hour self-service window. Reason: ${sentence(reason)}.`,
   }
 }
 

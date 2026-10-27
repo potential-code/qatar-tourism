@@ -20,7 +20,18 @@ import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as LearnerIndexRouteImport } from './routes/learner/index'
+import { Route as LearnerSessionsRouteImport } from './routes/learner/sessions'
 import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
+import { Route as TrainerLearnersRouteImport } from './routes/trainer/learners'
+import { Route as TrainerProfileRouteImport } from './routes/trainer/profile'
+import { Route as TrainerResourcesRouteImport } from './routes/trainer/resources'
+import { Route as TrainerAttendanceIndexRouteImport } from './routes/trainer/attendance/index'
+import { Route as TrainerAttendanceSessionIdRouteImport } from './routes/trainer/attendance/$sessionId'
+import { Route as TrainerSessionsIndexRouteImport } from './routes/trainer/sessions/index'
+import { Route as TrainerSessionsNewRouteImport } from './routes/trainer/sessions/new'
+import { Route as TrainerSessionsNotificationLogRouteImport } from './routes/trainer/sessions/notification-log'
+import { Route as TrainerSessionsSessionIdIndexRouteImport } from './routes/trainer/sessions/$sessionId/index'
+import { Route as TrainerSessionsSessionIdEditRouteImport } from './routes/trainer/sessions/$sessionId/edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -77,11 +88,70 @@ const LearnerIndexRoute = LearnerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LearnerRoute,
 } as any)
+const LearnerSessionsRoute = LearnerSessionsRouteImport.update({
+  id: '/sessions',
+  path: '/sessions',
+  getParentRoute: () => LearnerRoute,
+} as any)
 const TrainerIndexRoute = TrainerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TrainerRoute,
 } as any)
+const TrainerLearnersRoute = TrainerLearnersRouteImport.update({
+  id: '/learners',
+  path: '/learners',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerProfileRoute = TrainerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerResourcesRoute = TrainerResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerAttendanceIndexRoute = TrainerAttendanceIndexRouteImport.update({
+  id: '/attendance/',
+  path: '/attendance/',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerAttendanceSessionIdRoute =
+  TrainerAttendanceSessionIdRouteImport.update({
+    id: '/attendance/$sessionId',
+    path: '/attendance/$sessionId',
+    getParentRoute: () => TrainerRoute,
+  } as any)
+const TrainerSessionsIndexRoute = TrainerSessionsIndexRouteImport.update({
+  id: '/sessions/',
+  path: '/sessions/',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerSessionsNewRoute = TrainerSessionsNewRouteImport.update({
+  id: '/sessions/new',
+  path: '/sessions/new',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerSessionsNotificationLogRoute =
+  TrainerSessionsNotificationLogRouteImport.update({
+    id: '/sessions/notification-log',
+    path: '/sessions/notification-log',
+    getParentRoute: () => TrainerRoute,
+  } as any)
+const TrainerSessionsSessionIdIndexRoute =
+  TrainerSessionsSessionIdIndexRouteImport.update({
+    id: '/sessions/$sessionId/',
+    path: '/sessions/$sessionId/',
+    getParentRoute: () => TrainerRoute,
+  } as any)
+const TrainerSessionsSessionIdEditRoute =
+  TrainerSessionsSessionIdEditRouteImport.update({
+    id: '/sessions/$sessionId/edit',
+    path: '/sessions/$sessionId/edit',
+    getParentRoute: () => TrainerRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -93,9 +163,20 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/learner/sessions': typeof LearnerSessionsRoute
+  '/trainer/learners': typeof TrainerLearnersRoute
+  '/trainer/profile': typeof TrainerProfileRoute
+  '/trainer/resources': typeof TrainerResourcesRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/trainer/attendance/$sessionId': typeof TrainerAttendanceSessionIdRoute
+  '/trainer/sessions/new': typeof TrainerSessionsNewRoute
+  '/trainer/sessions/notification-log': typeof TrainerSessionsNotificationLogRoute
+  '/trainer/attendance/': typeof TrainerAttendanceIndexRoute
+  '/trainer/sessions/': typeof TrainerSessionsIndexRoute
+  '/trainer/sessions/$sessionId/edit': typeof TrainerSessionsSessionIdEditRoute
+  '/trainer/sessions/$sessionId/': typeof TrainerSessionsSessionIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,9 +185,20 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/learner/sessions': typeof LearnerSessionsRoute
+  '/trainer/learners': typeof TrainerLearnersRoute
+  '/trainer/profile': typeof TrainerProfileRoute
+  '/trainer/resources': typeof TrainerResourcesRoute
   '/admin': typeof AdminIndexRoute
   '/learner': typeof LearnerIndexRoute
   '/trainer': typeof TrainerIndexRoute
+  '/trainer/attendance/$sessionId': typeof TrainerAttendanceSessionIdRoute
+  '/trainer/sessions/new': typeof TrainerSessionsNewRoute
+  '/trainer/sessions/notification-log': typeof TrainerSessionsNotificationLogRoute
+  '/trainer/attendance': typeof TrainerAttendanceIndexRoute
+  '/trainer/sessions': typeof TrainerSessionsIndexRoute
+  '/trainer/sessions/$sessionId/edit': typeof TrainerSessionsSessionIdEditRoute
+  '/trainer/sessions/$sessionId': typeof TrainerSessionsSessionIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,9 +211,20 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/learner/sessions': typeof LearnerSessionsRoute
+  '/trainer/learners': typeof TrainerLearnersRoute
+  '/trainer/profile': typeof TrainerProfileRoute
+  '/trainer/resources': typeof TrainerResourcesRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/trainer/attendance/$sessionId': typeof TrainerAttendanceSessionIdRoute
+  '/trainer/sessions/new': typeof TrainerSessionsNewRoute
+  '/trainer/sessions/notification-log': typeof TrainerSessionsNotificationLogRoute
+  '/trainer/attendance/': typeof TrainerAttendanceIndexRoute
+  '/trainer/sessions/': typeof TrainerSessionsIndexRoute
+  '/trainer/sessions/$sessionId/edit': typeof TrainerSessionsSessionIdEditRoute
+  '/trainer/sessions/$sessionId/': typeof TrainerSessionsSessionIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,9 +238,20 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/learner/sessions'
+    | '/trainer/learners'
+    | '/trainer/profile'
+    | '/trainer/resources'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/trainer/attendance/$sessionId'
+    | '/trainer/sessions/new'
+    | '/trainer/sessions/notification-log'
+    | '/trainer/attendance/'
+    | '/trainer/sessions/'
+    | '/trainer/sessions/$sessionId/edit'
+    | '/trainer/sessions/$sessionId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,9 +260,20 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/learner/sessions'
+    | '/trainer/learners'
+    | '/trainer/profile'
+    | '/trainer/resources'
     | '/admin'
     | '/learner'
     | '/trainer'
+    | '/trainer/attendance/$sessionId'
+    | '/trainer/sessions/new'
+    | '/trainer/sessions/notification-log'
+    | '/trainer/attendance'
+    | '/trainer/sessions'
+    | '/trainer/sessions/$sessionId/edit'
+    | '/trainer/sessions/$sessionId'
   id:
     | '__root__'
     | '/'
@@ -160,9 +285,20 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(auth)/reset-password'
+    | '/learner/sessions'
+    | '/trainer/learners'
+    | '/trainer/profile'
+    | '/trainer/resources'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/trainer/attendance/$sessionId'
+    | '/trainer/sessions/new'
+    | '/trainer/sessions/notification-log'
+    | '/trainer/attendance/'
+    | '/trainer/sessions/'
+    | '/trainer/sessions/$sessionId/edit'
+    | '/trainer/sessions/$sessionId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -256,11 +392,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerIndexRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/learner/sessions': {
+      id: '/learner/sessions'
+      path: '/sessions'
+      fullPath: '/learner/sessions'
+      preLoaderRoute: typeof LearnerSessionsRouteImport
+      parentRoute: typeof LearnerRoute
+    }
     '/trainer/': {
       id: '/trainer/'
       path: '/'
       fullPath: '/trainer/'
       preLoaderRoute: typeof TrainerIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/learners': {
+      id: '/trainer/learners'
+      path: '/learners'
+      fullPath: '/trainer/learners'
+      preLoaderRoute: typeof TrainerLearnersRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/profile': {
+      id: '/trainer/profile'
+      path: '/profile'
+      fullPath: '/trainer/profile'
+      preLoaderRoute: typeof TrainerProfileRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/resources': {
+      id: '/trainer/resources'
+      path: '/resources'
+      fullPath: '/trainer/resources'
+      preLoaderRoute: typeof TrainerResourcesRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/attendance/': {
+      id: '/trainer/attendance/'
+      path: '/attendance'
+      fullPath: '/trainer/attendance/'
+      preLoaderRoute: typeof TrainerAttendanceIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/attendance/$sessionId': {
+      id: '/trainer/attendance/$sessionId'
+      path: '/attendance/$sessionId'
+      fullPath: '/trainer/attendance/$sessionId'
+      preLoaderRoute: typeof TrainerAttendanceSessionIdRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/sessions/': {
+      id: '/trainer/sessions/'
+      path: '/sessions'
+      fullPath: '/trainer/sessions/'
+      preLoaderRoute: typeof TrainerSessionsIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/sessions/new': {
+      id: '/trainer/sessions/new'
+      path: '/sessions/new'
+      fullPath: '/trainer/sessions/new'
+      preLoaderRoute: typeof TrainerSessionsNewRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/sessions/notification-log': {
+      id: '/trainer/sessions/notification-log'
+      path: '/sessions/notification-log'
+      fullPath: '/trainer/sessions/notification-log'
+      preLoaderRoute: typeof TrainerSessionsNotificationLogRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/sessions/$sessionId/': {
+      id: '/trainer/sessions/$sessionId/'
+      path: '/sessions/$sessionId'
+      fullPath: '/trainer/sessions/$sessionId/'
+      preLoaderRoute: typeof TrainerSessionsSessionIdIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/sessions/$sessionId/edit': {
+      id: '/trainer/sessions/$sessionId/edit'
+      path: '/sessions/$sessionId/edit'
+      fullPath: '/trainer/sessions/$sessionId/edit'
+      preLoaderRoute: typeof TrainerSessionsSessionIdEditRouteImport
       parentRoute: typeof TrainerRoute
     }
   }
@@ -277,10 +490,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LearnerRouteChildren {
+  LearnerSessionsRoute: typeof LearnerSessionsRoute
   LearnerIndexRoute: typeof LearnerIndexRoute
 }
 
 const LearnerRouteChildren: LearnerRouteChildren = {
+  LearnerSessionsRoute: LearnerSessionsRoute,
   LearnerIndexRoute: LearnerIndexRoute,
 }
 
@@ -288,11 +503,31 @@ const LearnerRouteWithChildren =
   LearnerRoute._addFileChildren(LearnerRouteChildren)
 
 interface TrainerRouteChildren {
+  TrainerLearnersRoute: typeof TrainerLearnersRoute
+  TrainerProfileRoute: typeof TrainerProfileRoute
+  TrainerResourcesRoute: typeof TrainerResourcesRoute
   TrainerIndexRoute: typeof TrainerIndexRoute
+  TrainerAttendanceSessionIdRoute: typeof TrainerAttendanceSessionIdRoute
+  TrainerSessionsNewRoute: typeof TrainerSessionsNewRoute
+  TrainerSessionsNotificationLogRoute: typeof TrainerSessionsNotificationLogRoute
+  TrainerAttendanceIndexRoute: typeof TrainerAttendanceIndexRoute
+  TrainerSessionsIndexRoute: typeof TrainerSessionsIndexRoute
+  TrainerSessionsSessionIdEditRoute: typeof TrainerSessionsSessionIdEditRoute
+  TrainerSessionsSessionIdIndexRoute: typeof TrainerSessionsSessionIdIndexRoute
 }
 
 const TrainerRouteChildren: TrainerRouteChildren = {
+  TrainerLearnersRoute: TrainerLearnersRoute,
+  TrainerProfileRoute: TrainerProfileRoute,
+  TrainerResourcesRoute: TrainerResourcesRoute,
   TrainerIndexRoute: TrainerIndexRoute,
+  TrainerAttendanceSessionIdRoute: TrainerAttendanceSessionIdRoute,
+  TrainerSessionsNewRoute: TrainerSessionsNewRoute,
+  TrainerSessionsNotificationLogRoute: TrainerSessionsNotificationLogRoute,
+  TrainerAttendanceIndexRoute: TrainerAttendanceIndexRoute,
+  TrainerSessionsIndexRoute: TrainerSessionsIndexRoute,
+  TrainerSessionsSessionIdEditRoute: TrainerSessionsSessionIdEditRoute,
+  TrainerSessionsSessionIdIndexRoute: TrainerSessionsSessionIdIndexRoute,
 }
 
 const TrainerRouteWithChildren =

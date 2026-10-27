@@ -185,13 +185,19 @@ export async function reschedule(
     const clashing = new Set(overlaps.map((o) => o.learnerId))
 
     const inPerson = session.format === 'in_person'
-    const newVenue = inPerson ? (input.venue ?? session.venue) : session.venue
+    // For in person, `venue` is the full new location ("Demo Academy, Room 2"); a changed
+    // location replaces venue and room together so learners see one clear place.
+    const previousLocation = locationOf(session)
+    const venueMoved = inPerson && Boolean(input.venue) && input.venue !== previousLocation
+    const newVenue = venueMoved ? (input.venue as string) : session.venue
+    const newRoom = venueMoved ? null : session.room
     const newMeetingRef = inPerson ? session.meetingRef : (input.meetingRef ?? session.meetingRef)
     const shift = startsAt.getTime() - session.startsAt.getTime()
     const updated = {
       startsAt,
       endsAt,
       venue: newVenue,
+      room: newRoom,
       meetingRef: newMeetingRef,
       bookingDeadline: session.bookingDeadline
         ? new Date(session.bookingDeadline.getTime() + shift)
@@ -205,8 +211,10 @@ export async function reschedule(
       previousEndsAt: session.endsAt,
       newStartsAt: startsAt,
       newEndsAt: endsAt,
-      previousVenue: inPerson ? session.venue : session.meetingRef,
-      newVenue: inPerson ? newVenue : newMeetingRef,
+      previousVenue: inPerson ? previousLocation : session.meetingRef,
+      newVenue: inPerson
+        ? locationOf({ ...session, venue: newVenue, room: newRoom })
+        : newMeetingRef,
       reason: input.reason,
       affectedRsvps: confirmed.length,
       eventId,
@@ -275,8 +283,7 @@ export async function reschedule(
       affected,
       waitlistNotified,
       conflicts: confirmed.filter((b) => clashing.has(b.learnerId)).map((b) => b.learnerCode ?? ''),
-      venueChanged:
-        (inPerson ? session.venue : session.meetingRef) !== (inPerson ? newVenue : newMeetingRef),
+      venueChanged: inPerson ? venueMoved : session.meetingRef !== newMeetingRef,
     }
   })
 }

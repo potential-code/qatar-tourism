@@ -170,7 +170,7 @@ describe('reschedule (brief §10–11)', () => {
       startsAt: newStart.toISOString(),
       endsAt: new Date(newStart.getTime() + 3_600_000).toISOString(),
       reason: 'The trainer is presenting at an Academy briefing.',
-      venue: 'Demo Academy Room 2',
+      venue: 'Demo Academy, Room 2',
       idempotencyKey: 'test-reschedule-0001',
     }
     const first = await call('POST', `/api/sessions/${id}/reschedule`, body)
