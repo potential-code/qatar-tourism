@@ -139,7 +139,11 @@ export function ProgramBWelcome() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg" variant="glass">
-              <Link to={'/learner/assessments' as never}>
+              <Link
+                to="/learner/assessments/$kind"
+                params={{ kind: 'pre' }}
+                search={{ programme: 'B' }}
+              >
                 Start pre-assessment
                 <ArrowRight aria-hidden className="rtl:-scale-x-100" />
               </Link>

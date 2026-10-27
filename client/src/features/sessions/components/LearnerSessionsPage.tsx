@@ -1,4 +1,6 @@
+import type { ProgrammeCode } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
 import { CalendarSearch } from 'lucide-react'
 import { useRef } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -11,8 +13,11 @@ import { SessionCatalogue } from './SessionCatalogue'
 import { SessionsHero } from './SessionsHero'
 import { SessionsSkeleton } from './SessionsSkeleton'
 
-/** Learner booking experience (brief §6): My sessions, then the eligible catalogue. */
-export function LearnerSessionsPage() {
+/**
+ * Learner booking experience (brief §6): My sessions, then the eligible catalogue. A `programme`
+ * (from a path item link) narrows the catalogue to that programme's sessions.
+ */
+export function LearnerSessionsPage({ programme }: { programme?: ProgrammeCode }) {
   const catalogue = useQuery(catalogueQuery())
   const mine = useQuery(mySessionsQuery())
   const browseRef = useRef<HTMLElement>(null)
@@ -42,6 +47,10 @@ export function LearnerSessionsPage() {
         new Date(b.session.endsAt) > now,
     )
     .sort((a, b) => a.session.startsAt.localeCompare(b.session.startsAt))
+  const inProgramme = programme
+    ? catalogue.data.items.filter((s) => s.programmeCode === programme)
+    : catalogue.data.items
+  const narrowed = inProgramme.length > 0 && inProgramme.length < catalogue.data.items.length
   const browse = () => browseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
   return (
@@ -83,7 +92,17 @@ export function LearnerSessionsPage() {
             />
           </div>
         ) : (
-          <SessionCatalogue sessions={catalogue.data.items} />
+          <>
+            {narrowed ? (
+              <p className="text-muted-foreground text-sm">
+                Showing Program {programme} sessions.{' '}
+                <Link to="/learner/sessions" className="font-medium text-teal underline">
+                  Show all programmes
+                </Link>
+              </p>
+            ) : null}
+            <SessionCatalogue sessions={narrowed ? inProgramme : catalogue.data.items} />
+          </>
         )}
       </section>
     </div>

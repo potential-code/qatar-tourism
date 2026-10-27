@@ -2,6 +2,7 @@ import type { Role } from '@shared/roles'
 import { Outlet, useRouterState } from '@tanstack/react-router'
 import { motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
+import type { NavContext } from '@/app/navigation'
 import { easeOut } from '@/components/motion/variants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { PortalHeader } from './PortalHeader'
@@ -14,16 +15,19 @@ import { PortalSidebar } from './PortalSidebar'
 export function PortalShell({
   portal,
   notifications,
+  navContext,
 }: {
   portal: Role
   notifications?: ReactNode
+  /** Decides which conditional nav items show (e.g. Certificates only with Program A). */
+  navContext?: NavContext
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const reduce = useReducedMotion()
 
   return (
     <SidebarProvider>
-      <PortalSidebar portal={portal} />
+      <PortalSidebar portal={portal} navContext={navContext} />
       <SidebarInset className="min-w-0 bg-sand">
         <PortalHeader notifications={notifications} />
         <motion.main

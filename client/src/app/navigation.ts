@@ -1,3 +1,4 @@
+import type { ProgrammeCode } from '@shared/constants'
 import type { Role } from '@shared/roles'
 import {
   Award,
@@ -25,13 +26,26 @@ import {
  * Single source of truth for portal navigation (brief §5 learner, §10 trainer, §12 admin).
  * Visibility only: every API enforces access itself.
  */
+
+/** What the portal knows about the viewer when it decides which items to show. */
+export interface NavContext {
+  /** Programmes the learner is enrolled in; null while unknown (show everything). */
+  programmes: readonly ProgrammeCode[] | null
+}
+
 export interface NavItem {
   label: string
   to: string
   icon?: LucideIcon
   /** Nested children render indented under the parent (admin hierarchy, brief §12). */
   children?: NavItem[]
+  /** Hides the item when it returns false. Absent means always shown. */
+  visible?: (ctx: NavContext) => boolean
 }
+
+/** Certificates belong to the Program A certification track only (brief §5: B has none). */
+const hasCertificationTrack = (ctx: NavContext) =>
+  ctx.programmes === null || ctx.programmes.includes('A')
 
 export interface NavSection {
   label?: string
@@ -48,7 +62,12 @@ export const LEARNER_NAV: NavSection[] = [
       { label: 'My sessions', to: '/learner/sessions', icon: CalendarDays },
       { label: 'Assignments', to: '/learner/assignments', icon: FileText },
       { label: 'Progress', to: '/learner/progress', icon: TrendingUp },
-      { label: 'Certificates', to: '/learner/certificates', icon: Award },
+      {
+        label: 'Certificates',
+        to: '/learner/certificates',
+        icon: Award,
+        visible: hasCertificationTrack,
+      },
       { label: 'Profile', to: '/learner/profile', icon: UserRound },
     ],
   },
@@ -119,6 +138,19 @@ export const ADMIN_NAV: NavSection[] = [
     ],
   },
 ]
+
+/** The sections with every item whose `visible` rule fails removed. */
+export function visibleNav(sections: NavSection[], ctx: NavContext): NavSection[] {
+  const keep = (item: NavItem): NavItem | null => {
+    if (item.visible && !item.visible(ctx)) return null
+    if (!item.children) return item
+    return { ...item, children: item.children.flatMap((c) => keep(c) ?? []) }
+  }
+  return sections.map((section) => ({
+    ...section,
+    items: section.items.flatMap((item) => keep(item) ?? []),
+  }))
+}
 
 export const NAV_BY_ROLE: Record<Role, NavSection[]> = {
   learner: LEARNER_NAV,
