@@ -15,6 +15,7 @@ import { assertSubmissionInScope, type Scope } from '@server/middleware/scope.mi
 import { recordAudit } from '@server/modules/audit/audit.service'
 import { notify } from '@server/modules/notifications/notifications.service'
 import { recomputeEnrolment } from '@server/modules/progress/progress.service'
+import { THRESHOLDS } from '@shared/constants'
 import {
   type MarkingCorrectionInput,
   type MarkingDraftInput,
@@ -23,7 +24,7 @@ import {
   rubricFor,
   rubricTotal,
 } from '@shared/schemas/assignment-marking'
-import { and, asc, count, desc, eq, ilike, inArray, or, type SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, ilike, inArray, lt, or, type SQL } from 'drizzle-orm'
 import {
   markingEvents,
   type SubmissionContext,
@@ -89,7 +90,8 @@ export async function queue(scope: Scope, query: MarkingQueueQuery) {
       .innerJoin(profiles, eq(profiles.userId, submissions.learnerId))
       .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
 
-  const [items, totals, statusCounts] = await Promise.all([
+  const overdueBefore = new Date(now().getTime() - THRESHOLDS.markingOverdueDays * 86_400_000)
+  const [items, totals, statusCounts, overdue] = await Promise.all([
     from()
       .where(where)
       .orderBy(
@@ -113,6 +115,19 @@ export async function queue(scope: Scope, query: MarkingQueueQuery) {
       .innerJoin(profiles, eq(profiles.userId, submissions.learnerId))
       .where(base)
       .groupBy(submissions.status),
+    db
+      .select({ total: count() })
+      .from(submissions)
+      .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
+      .innerJoin(programmes, eq(programmes.id, assignments.programmeId))
+      .innerJoin(profiles, eq(profiles.userId, submissions.learnerId))
+      .where(
+        and(
+          base,
+          inArray(submissions.status, ['submitted', 'under_review']),
+          lt(submissions.submittedAt, overdueBefore),
+        ),
+      ),
   ])
 
   const drafted = await db
@@ -131,6 +146,7 @@ export async function queue(scope: Scope, query: MarkingQueueQuery) {
     items,
     total: totals[0]?.total ?? 0,
     statusCounts,
+    overdue: overdue[0]?.total ?? 0,
     draftedIds: new Set(drafted.map((d) => d.objectId)),
   }
 }

@@ -21,6 +21,13 @@ import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-pas
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as LearnerIndexRouteImport } from './routes/learner/index'
 import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
+import { Route as LearnerAssignmentsIndexRouteImport } from './routes/learner/assignments.index'
+import { Route as LearnerAssignmentsCodeRouteImport } from './routes/learner/assignments.$code'
+import { Route as LearnerPracticeIndexRouteImport } from './routes/learner/practice.index'
+import { Route as LearnerPracticeScenarioKeyRouteImport } from './routes/learner/practice.$scenarioKey'
+import { Route as TrainerAssignmentsIndexRouteImport } from './routes/trainer/assignments.index'
+import { Route as TrainerAssignmentsSubmissionIdRouteImport } from './routes/trainer/assignments.$submissionId'
+import { Route as LearnerPracticeAttemptsAttemptIdRouteImport } from './routes/learner/practice.attempts.$attemptId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +89,44 @@ const TrainerIndexRoute = TrainerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TrainerRoute,
 } as any)
+const LearnerAssignmentsIndexRoute = LearnerAssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerAssignmentsCodeRoute = LearnerAssignmentsCodeRouteImport.update({
+  id: '/assignments/$code',
+  path: '/assignments/$code',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerPracticeIndexRoute = LearnerPracticeIndexRouteImport.update({
+  id: '/practice/',
+  path: '/practice/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerPracticeScenarioKeyRoute =
+  LearnerPracticeScenarioKeyRouteImport.update({
+    id: '/practice/$scenarioKey',
+    path: '/practice/$scenarioKey',
+    getParentRoute: () => LearnerRoute,
+  } as any)
+const TrainerAssignmentsIndexRoute = TrainerAssignmentsIndexRouteImport.update({
+  id: '/assignments/',
+  path: '/assignments/',
+  getParentRoute: () => TrainerRoute,
+} as any)
+const TrainerAssignmentsSubmissionIdRoute =
+  TrainerAssignmentsSubmissionIdRouteImport.update({
+    id: '/assignments/$submissionId',
+    path: '/assignments/$submissionId',
+    getParentRoute: () => TrainerRoute,
+  } as any)
+const LearnerPracticeAttemptsAttemptIdRoute =
+  LearnerPracticeAttemptsAttemptIdRouteImport.update({
+    id: '/practice/attempts/$attemptId',
+    path: '/practice/attempts/$attemptId',
+    getParentRoute: () => LearnerRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +141,13 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
+  '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +159,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/learner': typeof LearnerIndexRoute
   '/trainer': typeof TrainerIndexRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/learner/assignments': typeof LearnerAssignmentsIndexRoute
+  '/learner/practice': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +181,13 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/learner/assignments/$code': typeof LearnerAssignmentsCodeRoute
+  '/learner/practice/$scenarioKey': typeof LearnerPracticeScenarioKeyRoute
+  '/trainer/assignments/$submissionId': typeof TrainerAssignmentsSubmissionIdRoute
+  '/learner/assignments/': typeof LearnerAssignmentsIndexRoute
+  '/learner/practice/': typeof LearnerPracticeIndexRoute
+  '/trainer/assignments/': typeof TrainerAssignmentsIndexRoute
+  '/learner/practice/attempts/$attemptId': typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -138,6 +204,13 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/learner/assignments/$code'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
+    | '/learner/assignments/'
+    | '/learner/practice/'
+    | '/trainer/assignments/'
+    | '/learner/practice/attempts/$attemptId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -149,6 +222,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/learner'
     | '/trainer'
+    | '/learner/assignments/$code'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
+    | '/learner/assignments'
+    | '/learner/practice'
+    | '/trainer/assignments'
+    | '/learner/practice/attempts/$attemptId'
   id:
     | '__root__'
     | '/'
@@ -163,6 +243,13 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/learner/assignments/$code'
+    | '/learner/practice/$scenarioKey'
+    | '/trainer/assignments/$submissionId'
+    | '/learner/assignments/'
+    | '/learner/practice/'
+    | '/trainer/assignments/'
+    | '/learner/practice/attempts/$attemptId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -263,6 +350,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrainerIndexRouteImport
       parentRoute: typeof TrainerRoute
     }
+    '/learner/assignments/': {
+      id: '/learner/assignments/'
+      path: '/assignments'
+      fullPath: '/learner/assignments/'
+      preLoaderRoute: typeof LearnerAssignmentsIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/assignments/$code': {
+      id: '/learner/assignments/$code'
+      path: '/assignments/$code'
+      fullPath: '/learner/assignments/$code'
+      preLoaderRoute: typeof LearnerAssignmentsCodeRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/practice/': {
+      id: '/learner/practice/'
+      path: '/practice'
+      fullPath: '/learner/practice/'
+      preLoaderRoute: typeof LearnerPracticeIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/practice/$scenarioKey': {
+      id: '/learner/practice/$scenarioKey'
+      path: '/practice/$scenarioKey'
+      fullPath: '/learner/practice/$scenarioKey'
+      preLoaderRoute: typeof LearnerPracticeScenarioKeyRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/trainer/assignments/': {
+      id: '/trainer/assignments/'
+      path: '/assignments'
+      fullPath: '/trainer/assignments/'
+      preLoaderRoute: typeof TrainerAssignmentsIndexRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/trainer/assignments/$submissionId': {
+      id: '/trainer/assignments/$submissionId'
+      path: '/assignments/$submissionId'
+      fullPath: '/trainer/assignments/$submissionId'
+      preLoaderRoute: typeof TrainerAssignmentsSubmissionIdRouteImport
+      parentRoute: typeof TrainerRoute
+    }
+    '/learner/practice/attempts/$attemptId': {
+      id: '/learner/practice/attempts/$attemptId'
+      path: '/practice/attempts/$attemptId'
+      fullPath: '/learner/practice/attempts/$attemptId'
+      preLoaderRoute: typeof LearnerPracticeAttemptsAttemptIdRouteImport
+      parentRoute: typeof LearnerRoute
+    }
   }
 }
 
@@ -278,10 +414,20 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LearnerRouteChildren {
   LearnerIndexRoute: typeof LearnerIndexRoute
+  LearnerAssignmentsCodeRoute: typeof LearnerAssignmentsCodeRoute
+  LearnerPracticeScenarioKeyRoute: typeof LearnerPracticeScenarioKeyRoute
+  LearnerAssignmentsIndexRoute: typeof LearnerAssignmentsIndexRoute
+  LearnerPracticeIndexRoute: typeof LearnerPracticeIndexRoute
+  LearnerPracticeAttemptsAttemptIdRoute: typeof LearnerPracticeAttemptsAttemptIdRoute
 }
 
 const LearnerRouteChildren: LearnerRouteChildren = {
   LearnerIndexRoute: LearnerIndexRoute,
+  LearnerAssignmentsCodeRoute: LearnerAssignmentsCodeRoute,
+  LearnerPracticeScenarioKeyRoute: LearnerPracticeScenarioKeyRoute,
+  LearnerAssignmentsIndexRoute: LearnerAssignmentsIndexRoute,
+  LearnerPracticeIndexRoute: LearnerPracticeIndexRoute,
+  LearnerPracticeAttemptsAttemptIdRoute: LearnerPracticeAttemptsAttemptIdRoute,
 }
 
 const LearnerRouteWithChildren =
@@ -289,10 +435,14 @@ const LearnerRouteWithChildren =
 
 interface TrainerRouteChildren {
   TrainerIndexRoute: typeof TrainerIndexRoute
+  TrainerAssignmentsSubmissionIdRoute: typeof TrainerAssignmentsSubmissionIdRoute
+  TrainerAssignmentsIndexRoute: typeof TrainerAssignmentsIndexRoute
 }
 
 const TrainerRouteChildren: TrainerRouteChildren = {
   TrainerIndexRoute: TrainerIndexRoute,
+  TrainerAssignmentsSubmissionIdRoute: TrainerAssignmentsSubmissionIdRoute,
+  TrainerAssignmentsIndexRoute: TrainerAssignmentsIndexRoute,
 }
 
 const TrainerRouteWithChildren =

@@ -105,7 +105,7 @@ export async function file(scope: Scope, submissionId: string) {
 // --- Marking -------------------------------------------------------------------------------
 
 export async function queue(viewer: Viewer, scope: Scope, query: MarkingQueueQuery) {
-  const { items, total, statusCounts, draftedIds } = await marking.queue(scope, query)
+  const { items, total, statusCounts, overdue, draftedIds } = await marking.queue(scope, query)
   const countOf = (statuses: string[]) =>
     statusCounts.filter((s) => statuses.includes(s.status)).reduce((sum, s) => sum + s.total, 0)
   return {
@@ -117,6 +117,7 @@ export async function queue(viewer: Viewer, scope: Scope, query: MarkingQueueQue
       returned: countOf(['returned']),
       approved: countOf(['approved']),
       all: countOf(['submitted', 'under_review', 'returned', 'approved']),
+      overdue,
     },
     items: items.map((row) => {
       const open = row.submission.status === 'submitted' || row.submission.status === 'under_review'
