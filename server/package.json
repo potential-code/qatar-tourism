@@ -1,0 +1,23 @@
+{
+  "name": "@workspace/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.1138.0",
+    "@hono/zod-validator": "^0.9.1",
+    "better-auth": "^1.7.5",
+    "drizzle-orm": "^0.45.3",
+    "handlebars": "^4.7.9",
+    "hono": "^4.13.8",
+    "hono-rate-limiter": "^0.5.4",
+    "nodemailer": "^10.0.10",
+    "pdf-lib": "^1.17.1",
+    "pino": "^10.3.1",
+    "postgres": "^3.4.9",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^8.0.2"
+  }
+}

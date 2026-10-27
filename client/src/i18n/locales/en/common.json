@@ -1,0 +1,146 @@
+{
+  "app": {
+    "name": "Project Skeleton"
+  },
+  "nav": {
+    "workspace": "Workspace",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "notes": "Notes",
+    "users": "Users"
+  },
+  "header": {
+    "account": "Account menu",
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out"
+  },
+  "theme": {
+    "toggle": "Change theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Change language",
+    "en": "English",
+    "ar": "العربية"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "actions": "Actions",
+    "openActions": "Open actions",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{pageCount}}",
+    "totalItems": "{{count}} total",
+    "goToDashboard": "Go to dashboard"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "generic": "An unexpected error occurred. Please try again.",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you are looking for does not exist or has moved."
+  },
+  "validation": {
+    "required": "This field is required",
+    "emailInvalid": "Enter a valid email address",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordsMismatch": "Passwords do not match",
+    "titleRequired": "Title is required"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "description": "Enter your email and password to continue.",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "register": "Create one",
+      "failed": "Invalid email or password.",
+      "unverified": "Verify your email address first. We have sent you a new link.",
+      "verified": "Email verified. You can sign in now."
+    },
+    "register": {
+      "title": "Create an account",
+      "description": "Sign up with your name, email and a password.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "login": "Sign in",
+      "failed": "Could not create the account.",
+      "checkEmailTitle": "Check your email",
+      "checkEmailBody": "We sent a verification link to {{email}}. Open it to activate your account."
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "description": "Enter your email and we will send you a reset link.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sentBody": "If an account exists for {{email}}, a reset link is on its way.",
+      "backToLogin": "Back to sign in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "description": "Enter a new password for your account.",
+      "submit": "Update password",
+      "success": "Password updated. Sign in with your new password.",
+      "invalidToken": "This reset link is invalid or has expired.",
+      "requestNew": "Request a new link"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your activity over the last 30 days.",
+    "totalNotes": "Notes (30 days)",
+    "activeDays": "Active days",
+    "busiestDay": "Busiest day",
+    "none": "—",
+    "chartTitle": "Notes per day",
+    "chartDescription": "Notes you created in the last 30 days",
+    "chartSeries": "Notes",
+    "chartEmpty": "No notes in the last 30 days."
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Create, edit and delete your notes.",
+    "new": "New note",
+    "createTitle": "New note",
+    "editTitle": "Edit note",
+    "dialogDescription": "Notes are private to your account.",
+    "fieldTitle": "Title",
+    "fieldBody": "Body",
+    "columnTitle": "Title",
+    "columnUpdated": "Last updated",
+    "empty": "No notes yet.",
+    "emptyCta": "Create your first note",
+    "deleteTitle": "Delete this note?",
+    "deleteBody": "“{{title}}” will be permanently deleted.",
+    "created": "Note created",
+    "updated": "Note updated",
+    "deleted": "Note deleted"
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Everyone with an account.",
+    "columnName": "Name",
+    "columnEmail": "Email",
+    "columnRole": "Role",
+    "columnJoined": "Joined",
+    "empty": "No users yet.",
+    "roles": {
+      "user": "User",
+      "admin": "Admin"
+    }
+  }
+}

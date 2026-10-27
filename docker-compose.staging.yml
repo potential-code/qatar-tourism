@@ -1,0 +1,29 @@
+# Dokploy owns routing, TLS, networks and ports. No ports:, no networks:, no database here.
+# Every value is ${VAR}, injected by Dokploy per environment; only NODE_ENV and PORT are literal.
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      NODE_ENV: staging
+      PORT: "8000"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATABASE_URL: ${DATABASE_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      CLIENT_URL: ${CLIENT_URL}
+      TRUST_PROXY: ${TRUST_PROXY:-true}
+      AWS_REGION: ${AWS_REGION:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL}
+    restart: unless-stopped
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+    restart: unless-stopped

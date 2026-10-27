@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./tokens.css";
+
+@custom-variant dark (&:is(.dark *));
+
+
+:root {
+  --radius: 0.75rem;
+  --background: var(--qt-sand);
+  --foreground: var(--qt-ink);
+  --card: #ffffff;
+  --card-foreground: var(--qt-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--qt-ink);
+  --primary: var(--qt-teal);
+  --primary-foreground: #ffffff;
+  --secondary: var(--qt-maroon);
+  --secondary-foreground: #ffffff;
+  --muted: var(--qt-sand-deep);
+  --muted-foreground: var(--qt-ink-soft);
+  --accent: var(--qt-teal-mist);
+  --accent-foreground: var(--qt-teal-deep);
+  --destructive: var(--qt-danger);
+  --success: var(--qt-success);
+  --warning: var(--qt-warning);
+  --border: var(--qt-stone);
+  --input: var(--qt-stone);
+  --ring: var(--qt-teal-soft);
+  --chart-1: var(--qt-teal);
+  --chart-2: var(--qt-maroon);
+  --chart-3: var(--qt-teal-soft);
+  --chart-4: #c98a9d;
+  --chart-5: var(--qt-ink-muted);
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--qt-ink);
+  --sidebar-primary: var(--qt-teal);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--qt-teal-mist);
+  --sidebar-accent-foreground: var(--qt-teal-deep);
+  --sidebar-border: var(--qt-stone);
+  --sidebar-ring: var(--qt-teal-soft);
+}
+
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-teal: var(--qt-teal);
+  --color-teal-deep: var(--qt-teal-deep);
+  --color-teal-soft: var(--qt-teal-soft);
+  --color-teal-mist: var(--qt-teal-mist);
+  --color-maroon: var(--qt-maroon);
+  --color-maroon-deep: var(--qt-maroon-deep);
+  --color-maroon-mist: var(--qt-maroon-mist);
+  --color-sand: var(--qt-sand);
+  --color-sand-deep: var(--qt-sand-deep);
+  --color-ink: var(--qt-ink);
+  --font-display: var(--qt-font-display);
+  --font-sans: var(--qt-font-sans);
+  --shadow-xs: var(--qt-shadow-xs);
+  --shadow-sm: var(--qt-shadow-sm);
+  --shadow-md: var(--qt-shadow-md);
+  --shadow-lg: var(--qt-shadow-lg);
+  --shadow-glow: var(--qt-shadow-glow);
+  --ease-out: var(--qt-ease-out);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--qt-font-display);
+    letter-spacing: -0.01em;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

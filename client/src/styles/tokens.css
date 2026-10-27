@@ -1,0 +1,47 @@
+/*
+ * Qatar Tourism brand tokens, taken from qatartourism.com (not the brief's provisional palette).
+ * Display: Spectral stands in for the proprietary Orchidea Pro. UI: Jost stands in for VisitQatar/Futura.
+ * See docs/DECISIONS.md → "Brand source".
+ */
+:root {
+  /* Brand palette */
+  --qt-teal: #00627b;
+  --qt-teal-deep: #035367;
+  --qt-teal-soft: #7fb0bc;
+  --qt-teal-mist: #e6f0f2;
+  --qt-maroon: #7d002a;
+  --qt-maroon-deep: #5f0020;
+  --qt-maroon-mist: #f6e8ec;
+  --qt-sand: #faf8f4;
+  --qt-sand-deep: #f1ede6;
+  --qt-stone: #e2e0dc;
+  --qt-ink: #1a1919;
+  --qt-ink-soft: #575654;
+  --qt-ink-muted: #807e7c;
+  --qt-orange: #bf4f00; /* logo accent, use sparingly */
+
+  /* Semantic */
+  --qt-success: #2f7d4f;
+  --qt-warning: #b26a00;
+  --qt-danger: #d92d20;
+  --qt-info: var(--qt-teal);
+
+  /* Typography */
+  --qt-font-display: "Spectral", "Orchidea Pro", Georgia, serif;
+  --qt-font-sans: "Jost", "VisitQatar", Futura, "Trebuchet MS", sans-serif;
+
+  /* Elevation: warm, soft shadows tinted with ink */
+  --qt-shadow-xs: 0 1px 2px rgb(26 25 25 / 0.06);
+  --qt-shadow-sm: 0 2px 6px -1px rgb(26 25 25 / 0.08), 0 1px 2px rgb(26 25 25 / 0.04);
+  --qt-shadow-md: 0 8px 24px -8px rgb(26 25 25 / 0.16), 0 2px 6px rgb(26 25 25 / 0.05);
+  --qt-shadow-lg: 0 24px 48px -16px rgb(26 25 25 / 0.24), 0 6px 14px rgb(26 25 25 / 0.06);
+  --qt-shadow-glow: 0 12px 32px -10px rgb(0 98 123 / 0.45);
+
+  /* Motion (site uses .25s–.5s eases; brief §2 asks 150–400ms for controls) */
+  --qt-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --qt-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --qt-dur-fast: 150ms;
+  --qt-dur-base: 250ms;
+  --qt-dur-slow: 400ms;
+  --qt-dur-reveal: 900ms;
+}
