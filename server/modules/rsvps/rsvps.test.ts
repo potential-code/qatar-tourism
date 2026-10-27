@@ -8,6 +8,7 @@ import {
   expect,
   mock,
   setDefaultTimeout,
+  spyOn,
   test,
 } from 'bun:test'
 import { db } from '@server/db/connection'
@@ -25,6 +26,7 @@ import {
   signInAs,
   T01,
 } from '../sessions/test-support'
+import * as eligibility from './eligibility'
 
 setDefaultTimeout(120_000)
 
@@ -253,5 +255,74 @@ describe('learner reschedule', () => {
     as(OMAR)
     const res = await call('POST', `/api/rsvps/${someone?.id}/cancel`, {})
     expect(res.status).toBe(404)
+  })
+})
+
+describe('concurrent requests from one learner', () => {
+  beforeAll(freshSeed)
+
+  const activeFor = async (learnerId: string) =>
+    (await db.select().from(rsvps).where(eq(rsvps.learnerId, learnerId))).filter(
+      (r) => r.status === 'confirmed' || r.status === 'waitlisted',
+    )
+
+  /**
+   * Widens the race window deterministically: each request waits inside its transaction, after
+   * reading the learner's bookings, until the other one has read them too (or 500 ms passed,
+   * which is what happens when the learner lock correctly makes the second request wait).
+   */
+  function holdAfterReadingBookings() {
+    const original = eligibility.loadLearnerContext
+    let arrived = 0
+    let open: () => void = () => {}
+    const bothRead = new Promise<void>((resolve) => {
+      open = resolve
+    })
+    return spyOn(eligibility, 'loadLearnerContext').mockImplementation(async (...args) => {
+      const ctx = await original(...args)
+      arrived += 1
+      if (arrived >= 2) open()
+      await Promise.race([bothRead, Bun.sleep(500)])
+      return ctx
+    })
+  }
+
+  test('two required-stage bookings at once: only one reservation is created', async () => {
+    as(OMAR)
+    const before = (await activeFor(OMAR[0])).length
+    holdAfterReadingBookings()
+    const results = await Promise.all([
+      call('POST', '/api/rsvps', { sessionId: sessionId('SES-T01-2') }),
+      call('POST', '/api/rsvps', { sessionId: sessionId('SES-T02-3') }),
+    ])
+    expect(results.map((r) => r.status).sort()).toEqual([201, 409])
+    expect((await activeFor(OMAR[0])).length).toBe(before + 1)
+  })
+
+  test('two moves of the same booking at once: one wins, the learner keeps one seat', async () => {
+    as(OMAR)
+    const [booking] = (await activeFor(OMAR[0])).filter((r) => r.status === 'confirmed')
+    const targets = ['SES-T01-2', 'SES-T02-3']
+      .map(sessionId)
+      .filter((id) => id !== booking?.sessionId)
+    const catalogue = await call('GET', '/api/rsvps/catalogue')
+    const another = (
+      catalogue.json.items as {
+        id: string
+        isCompletionGate: boolean
+        eligibility: { state: string }
+      }[]
+    ).find((s) => s.isCompletionGate && s.id !== booking?.sessionId && !targets.includes(s.id))
+    if (another) targets.push(another.id)
+    expect(targets.length).toBeGreaterThanOrEqual(2)
+    const before = (await activeFor(OMAR[0])).length
+    holdAfterReadingBookings()
+    const results = await Promise.all(
+      targets
+        .slice(0, 2)
+        .map((t) => call('POST', '/api/rsvps/move', { rsvpId: booking?.id, toSessionId: t })),
+    )
+    expect(results.filter((r) => r.status === 200)).toHaveLength(1)
+    expect((await activeFor(OMAR[0])).length).toBe(before)
   })
 })
