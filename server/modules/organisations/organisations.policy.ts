@@ -1,7 +1,7 @@
 import { ROLES, type Role } from '@shared/roles'
 
 /**
- * Roles that may reach the organisations module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
+ * Organisation search returns fictional reference data only (brief §4, §15), never learner
+ * records. Any signed-in role may read it: learners for the profile wizard, staff for filters.
  */
-export const organisationsPingRoles: readonly Role[] = ROLES
+export const ORGANISATION_READ_ROLES: readonly Role[] = ROLES

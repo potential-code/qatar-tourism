@@ -1,7 +1,17 @@
-import { ROLES, type Role } from '@shared/roles'
+import { HttpError } from '@server/lib/errors'
+import type { Role } from '@shared/roles'
 
 /**
- * Roles that may reach the profiles module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
+ * Profile access (brief §4, §11 "View profile and learning: learner, own only").
+ *
+ * Own-profile endpoints take no id: the service reads the caller's user id, so one learner can
+ * never address another learner's profile. Trainers and admins have no learner profile and see
+ * learner data through their own scoped modules (reports, rosters).
  */
-export const profilesPingRoles: readonly Role[] = ROLES
+export const OWN_PROFILE_ROLES: readonly Role[] = ['learner']
+
+/** Facilitator quick switch: the demo administrator only (brief §3). */
+export function assertFacilitator(adminId: string | null): asserts adminId is string {
+  if (!adminId)
+    throw HttpError.forbidden('The demo toolbar is available to the demo administrator only')
+}
