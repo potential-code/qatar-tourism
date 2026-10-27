@@ -8,14 +8,15 @@ import {
   expect,
   mock,
   setDefaultTimeout,
+  spyOn,
   test,
 } from 'bun:test'
 import { rm } from 'node:fs/promises'
 import { app } from '@server/app'
 import { db } from '@server/db/connection'
-import { auditEvents, notifications, reviews, submissions } from '@server/db/schema'
+import { assignments, auditEvents, notifications, reviews, submissions } from '@server/db/schema'
 import { reseed } from '@server/db/seed'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { HAS_TEST_DB } from '../../__tests__/helpers/env'
 import { UPLOAD_ROOT } from './assignments.storage'
 import { json, ORIGIN, signInAs } from './assignments.test-helpers'
@@ -365,5 +366,63 @@ describe.skipIf(!HAS_TEST_DB)('marking, notifications and corrections', () => {
       json({ ...corrected, reason: 'Follow-up section was under-marked on first review.' }),
     )
     expect(((await retry.json()) as { unchanged: boolean }).unchanged).toBe(true)
+  })
+})
+
+describe.skipIf(!HAS_TEST_DB)('marking races', () => {
+  test('a draft save racing a finalise never turns the final mark back into a draft', async () => {
+    const [open] = await db
+      .select({ id: submissions.id })
+      .from(submissions)
+      .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
+      .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+      .where(
+        and(
+          eq(assignments.code, 'A-ASSIGN-1'),
+          eq(submissions.status, 'submitted'),
+          isNull(reviews.id),
+        ),
+      )
+      .limit(1)
+    const id = open?.id as string
+    expect(id).toBeDefined()
+    signInAs('user-admin', 'admin')
+
+    // Hold the draft's transaction after its "is it final?" check, until the finalise commits.
+    const original = db.transaction.bind(db)
+    let release: () => void = () => {}
+    const finaliseCommitted = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    let held = false
+    const spy = spyOn(db, 'transaction').mockImplementation((async (...args: unknown[]) => {
+      if (!held) {
+        held = true
+        await finaliseCommitted
+      }
+      return (original as (...a: unknown[]) => unknown)(...args)
+    }) as never)
+
+    const draft = app.request(
+      `/api/assignments/marking/${id}/draft`,
+      json({ breakdown: { discovery: 5 }, feedback: 'Autosaved draft' }),
+    )
+    while (!held) await Bun.sleep(5)
+    const final = await app.request(
+      `/api/assignments/marking/${id}/finalise`,
+      json({
+        breakdown: { discovery: 10, options: 10, escalation: 10, followup: 10 },
+        feedback: 'Please revise the options and the follow-up message.',
+        decision: 'returned',
+      }),
+    )
+    expect(final.status).toBe(200)
+    release()
+    expect((await draft).status).toBe(409)
+    spy.mockRestore()
+
+    const [review] = await db.select().from(reviews).where(eq(reviews.submissionId, id))
+    expect(review?.status).toBe('returned')
+    expect(review?.feedback).toBe('Please revise the options and the follow-up message.')
   })
 })
