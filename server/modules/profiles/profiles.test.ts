@@ -132,7 +132,11 @@ describe('registration with simulated verification (brief §3)', () => {
       .select({ state: notifications.state, channel: notifications.channel })
       .from(notifications)
       .where(eq(notifications.recipientId, id))
-    expect(logged.map((n) => n.state)).toEqual(['simulated', 'simulated'])
+    // In-app notices are delivered in the app; the email is only ever simulated.
+    expect(logged.map((n) => [n.channel, n.state]).sort()).toEqual([
+      ['email', 'simulated'],
+      ['in_app', 'sent'],
+    ])
   })
 
   test('a repeat registration gets a useful message, not a second account', async () => {

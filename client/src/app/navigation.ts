@@ -2,6 +2,7 @@ import type { Role } from '@shared/roles'
 import {
   Award,
   BarChart3,
+  Bell,
   BookOpen,
   CalendarDays,
   ClipboardCheck,
@@ -61,6 +62,7 @@ export const TRAINER_NAV: NavSection[] = [
       { label: 'Assigned learners', to: '/trainer/learners', icon: Users },
       { label: 'Attendance and scores', to: '/trainer/attendance', icon: ClipboardList },
       { label: 'Assignments', to: '/trainer/assignments', icon: FileText },
+      { label: 'Notification log', to: '/trainer/sessions/notification-log', icon: Bell },
       { label: 'Resources', to: '/trainer/resources', icon: FolderOpen },
       { label: 'Profile', to: '/trainer/profile', icon: UserRound },
     ],

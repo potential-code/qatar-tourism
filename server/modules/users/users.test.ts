@@ -94,7 +94,7 @@ describe('create, invite, enrol', () => {
       .where(eq(notifications.eventId, `invite:${createdId}`))
     expect(notes.map((n) => [n.channel, n.state]).sort()).toEqual([
       ['email', 'simulated'],
-      ['in_app', 'simulated'],
+      ['in_app', 'sent'],
     ])
     const events = await db.select().from(auditEvents).where(eq(auditEvents.objectId, createdId))
     expect(events.map((e) => e.action).sort()).toEqual(['user.create', 'user.invite'])
