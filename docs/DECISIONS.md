@@ -138,6 +138,8 @@ AI path generation, role-play, voice and analytics chat use deterministic demo l
 - Trainer T04 is renamed because the brief gives the name "Daniel Costa" to both T04 and learner persona L0004.
 - The fonts are substitutes (see above).
 
+The full, verified list with known gaps is `docs/DEVIATIONS.md`.
+
 ---
 
 # Phase 1 data decisions
