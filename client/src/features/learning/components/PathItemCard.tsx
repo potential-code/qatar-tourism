@@ -95,7 +95,9 @@ export function PathItemCard({
           {item.title}
         </p>
         {compact ? (
-          <p className="text-xs text-muted-foreground">{STATE_LABEL[item.state]}</p>
+          <p aria-hidden className="text-xs text-muted-foreground">
+            {STATE_LABEL[item.state]}
+          </p>
         ) : null}
         {locked && item.lockReason ? (
           <p className="text-xs text-muted-foreground">{item.lockReason}</p>
@@ -109,7 +111,9 @@ export function PathItemCard({
         ) : null}
       </div>
       <div className={cn('hidden shrink-0 items-center gap-3', !compact && 'sm:flex')}>
+        {/* Visual pill only: the state is announced once, by the sr-only text below. */}
         <span
+          aria-hidden
           className={cn(
             'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium',
             item.state === 'completed' && 'bg-teal-mist text-teal-deep',
