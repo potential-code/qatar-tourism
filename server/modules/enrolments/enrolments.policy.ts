@@ -1,7 +1,5 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
-/**
- * Roles that may reach the enrolments module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
- */
-export const enrolmentsPingRoles: readonly Role[] = ROLES
+/** Learners read and create their own enrolments only (brief §3, §11). */
+export const enrolmentsPingRoles: readonly Role[] = ['learner', 'trainer', 'admin']
+export const enrolmentsLearnerRoles: readonly Role[] = ['learner']

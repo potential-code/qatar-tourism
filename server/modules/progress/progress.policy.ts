@@ -1,7 +1,8 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
 /**
- * Roles that may reach the progress module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
+ * Progress endpoints act on the signed-in learner's own enrolments only (brief §11 "Own only").
+ * The learner id always comes from the session, never from the request.
  */
-export const progressPingRoles: readonly Role[] = ROLES
+export const progressPingRoles: readonly Role[] = ['learner', 'trainer', 'admin']
+export const progressLearnerRoles: readonly Role[] = ['learner']
