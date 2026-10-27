@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -271,7 +272,7 @@ export async function getUserDetail(userId: string) {
         })
         .from(submissions)
         .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
-        .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+        .leftJoin(reviews, finalReviewOfSubmission)
         .where(eq(submissions.learnerId, userId))
         .orderBy(desc(submissions.submittedAt)),
       db

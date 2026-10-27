@@ -146,8 +146,16 @@ export type ScoreStatus = (typeof SCORE_STATUSES)[number]
 export const SUBMISSION_STATUSES = ['submitted', 'under_review', 'returned', 'approved'] as const
 export type SubmissionStatus = (typeof SUBMISSION_STATUSES)[number]
 
+/** A trainer's final decision on a submission. */
 export const REVIEW_STATUSES = ['returned', 'approved'] as const
 export type ReviewStatus = (typeof REVIEW_STATUSES)[number]
+
+/**
+ * What a `reviews` row can hold: a saved draft mark (visible to markers only) or a final
+ * decision. Learner views, progress and reports only ever read final rows.
+ */
+export const REVIEW_RECORD_STATUSES = ['draft', ...REVIEW_STATUSES] as const
+export type ReviewRecordStatus = (typeof REVIEW_RECORD_STATUSES)[number]
 
 export const CERTIFICATE_STATUSES = ['issued', 'revoked'] as const
 export type CertificateStatus = (typeof CERTIFICATE_STATUSES)[number]

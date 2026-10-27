@@ -1,4 +1,5 @@
 import type { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -226,7 +227,7 @@ async function loadSubmissions(reader: Reader, enrolmentId: string): Promise<Sub
       reviewedAt: reviews.reviewedAt,
     })
     .from(submissions)
-    .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+    .leftJoin(reviews, finalReviewOfSubmission)
     .where(eq(submissions.enrolmentId, enrolmentId))
     .orderBy(asc(submissions.version))
   return rows.map((row) => ({
@@ -234,7 +235,7 @@ async function loadSubmissions(reader: Reader, enrolmentId: string): Promise<Sub
     status: row.status,
     submittedAt: row.submittedAt,
     review:
-      row.reviewStatus && row.reviewScore !== null && row.reviewedAt
+      row.reviewStatus && row.reviewStatus !== 'draft' && row.reviewScore !== null && row.reviewedAt
         ? { status: row.reviewStatus, score: row.reviewScore, reviewedAt: row.reviewedAt }
         : null,
   }))

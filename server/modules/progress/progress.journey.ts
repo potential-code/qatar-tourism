@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { isFinalReview } from '@server/db/review-filters'
 import {
   assessmentAttempts,
   assessments,
@@ -105,7 +106,7 @@ async function feedbackFor(enrolmentId: string, learnerId: string, programme: Pr
     .from(reviews)
     .innerJoin(submissions, eq(submissions.id, reviews.submissionId))
     .leftJoin(user, eq(user.id, reviews.reviewerId))
-    .where(eq(submissions.enrolmentId, enrolmentId))
+    .where(and(eq(submissions.enrolmentId, enrolmentId), isFinalReview))
     .orderBy(desc(reviews.reviewedAt))
     .limit(3)
 

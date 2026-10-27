@@ -1,4 +1,5 @@
 import { db } from '@server/db/connection'
+import { finalReviewOfSubmission } from '@server/db/review-filters'
 import {
   assignments,
   auditEvents,
@@ -24,7 +25,7 @@ import {
   rubricFor,
   rubricTotal,
 } from '@shared/schemas/assignment-marking'
-import { and, asc, count, desc, eq, ilike, inArray, lt, or, type SQL } from 'drizzle-orm'
+import { and, asc, count, desc, eq, ilike, inArray, lt, ne, or, type SQL } from 'drizzle-orm'
 import {
   markingEvents,
   type SubmissionContext,
@@ -88,7 +89,7 @@ export async function queue(scope: Scope, query: MarkingQueueQuery) {
       .innerJoin(assignments, eq(assignments.id, submissions.assignmentId))
       .innerJoin(programmes, eq(programmes.id, assignments.programmeId))
       .innerJoin(profiles, eq(profiles.userId, submissions.learnerId))
-      .leftJoin(reviews, eq(reviews.submissionId, submissions.id))
+      .leftJoin(reviews, finalReviewOfSubmission)
 
   const overdueBefore = new Date(now().getTime() - THRESHOLDS.markingOverdueDays * 86_400_000)
   const [items, totals, statusCounts, overdue] = await Promise.all([
@@ -130,24 +131,20 @@ export async function queue(scope: Scope, query: MarkingQueueQuery) {
       ),
   ])
 
-  const drafted = await db
-    .select({ objectId: auditEvents.objectId })
-    .from(auditEvents)
-    .where(
-      and(
-        eq(auditEvents.action, 'marking.draft'),
-        inArray(
-          auditEvents.objectId,
-          items.map((i) => i.submission.id),
-        ),
-      ),
-    )
+  const ids = items.map((i) => i.submission.id)
+  const drafted =
+    ids.length === 0
+      ? []
+      : await db
+          .select({ submissionId: reviews.submissionId })
+          .from(reviews)
+          .where(and(eq(reviews.status, 'draft'), inArray(reviews.submissionId, ids)))
   return {
     items,
     total: totals[0]?.total ?? 0,
     statusCounts,
     overdue: overdue[0]?.total ?? 0,
-    draftedIds: new Set(drafted.map((d) => d.objectId)),
+    draftedIds: new Set(drafted.map((d) => d.submissionId)),
   }
 }
 
@@ -177,6 +174,7 @@ export async function detail(scope: Scope, submissionId: string) {
     context,
     versions,
     events,
+    draft: await draftReview(submissionId),
     markerName: marker?.name ?? null,
     isLatest: all[0]?.submission.id === submissionId,
   }
@@ -208,8 +206,21 @@ function assertDecisionFits(context: SubmissionContext, decision: string, total:
   }
 }
 
+/** The final review (returned or approved), ignoring a saved draft. */
 async function existingReview(submissionId: string) {
-  const [row] = await db.select().from(reviews).where(eq(reviews.submissionId, submissionId))
+  const [row] = await db
+    .select()
+    .from(reviews)
+    .where(and(eq(reviews.submissionId, submissionId), ne(reviews.status, 'draft')))
+  return row ?? null
+}
+
+/** The marker's saved draft, if the submission has not been finalised yet. */
+export async function draftReview(submissionId: string) {
+  const [row] = await db
+    .select()
+    .from(reviews)
+    .where(and(eq(reviews.submissionId, submissionId), eq(reviews.status, 'draft')))
   return row ?? null
 }
 
@@ -227,6 +238,16 @@ export async function saveDraft(
   const rubric = rubricFor(context.assignment.code)
   const total = rubricTotal(rubric, input.breakdown)
   const savedAt = now()
+  const draftValues = {
+    reviewerId: actor.viewer.id,
+    rubricScore: total,
+    rubricBreakdown: input.breakdown,
+    feedback: input.feedback ?? '',
+    status: 'draft' as const,
+    draftDecision: input.decision ?? null,
+    reviewedAt: savedAt,
+    updatedAt: savedAt,
+  }
   await db.transaction(async (tx) => {
     if (context.submission.status === 'submitted') {
       await tx
@@ -234,6 +255,10 @@ export async function saveDraft(
         .set({ status: 'under_review', updatedAt: savedAt })
         .where(eq(submissions.id, submissionId))
     }
+    await tx
+      .insert(reviews)
+      .values({ ...draftValues, submissionId, createdAt: savedAt })
+      .onConflictDoUpdate({ target: reviews.submissionId, set: draftValues })
     await recordAudit(
       actor.viewer,
       {
@@ -308,17 +333,21 @@ export async function finalise(
 
   await db.transaction(async (tx) => {
     if (!current) {
-      await tx.insert(reviews).values({
-        submissionId,
+      // A saved draft becomes the final review; otherwise the final review is new.
+      const finalValues = {
         reviewerId: actor.viewer.id,
         rubricScore: total,
         rubricBreakdown: input.breakdown,
         feedback: input.feedback,
         status: input.decision,
+        draftDecision: null,
         reviewedAt,
-        createdAt: reviewedAt,
         updatedAt: reviewedAt,
-      })
+      }
+      await tx
+        .insert(reviews)
+        .values({ ...finalValues, submissionId, createdAt: reviewedAt })
+        .onConflictDoUpdate({ target: reviews.submissionId, set: finalValues })
       await tx
         .update(submissions)
         .set({ status: input.decision, updatedAt: reviewedAt })
