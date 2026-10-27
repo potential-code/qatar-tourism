@@ -176,7 +176,10 @@ export function FilterBar({
           </div>
         </div>
       </div>
-      <ActiveFilters lookups={lookups.data} />
+      <ActiveFilters
+        lookups={lookups.data}
+        scope={lockedProgramme ? `Program ${lockedProgramme}` : undefined}
+      />
     </section>
   )
 }

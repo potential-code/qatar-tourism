@@ -4,8 +4,11 @@ import { Button } from '@/components/ui/button'
 import { useFilterSearch } from '../../hooks/useFilterSearch'
 import { type FilterLookups, filterChips } from '../../utils/filters'
 
-/** Active filters as removable chips, plus Reset filters (brief §12). */
-export function ActiveFilters({ lookups }: { lookups?: FilterLookups }) {
+/**
+ * Active filters as removable chips, plus Reset filters (brief §12). `scope` names a fixed
+ * cohort (a programme report) so "no filters" does not claim the whole Academy.
+ */
+export function ActiveFilters({ lookups, scope }: { lookups?: FilterLookups; scope?: string }) {
   const { filters, setFilters, resetFilters } = useFilterSearch()
   const reduce = useReducedMotion()
   const chips = filterChips(filters, lookups)
@@ -14,7 +17,9 @@ export function ActiveFilters({ lookups }: { lookups?: FilterLookups }) {
     <div className="mt-3 flex min-h-8 flex-wrap items-center gap-2 border-t border-border/60 pt-3">
       <span className="text-xs text-muted-foreground">Active filters:</span>
       {chips.length === 0 ? (
-        <span className="text-xs text-ink">None. Showing the whole Academy.</span>
+        <span className="text-xs text-ink">
+          None. Showing {scope ? `every ${scope} record` : 'the whole Academy'}.
+        </span>
       ) : null}
       <AnimatePresence initial={false}>
         {chips.map((chip) => (
