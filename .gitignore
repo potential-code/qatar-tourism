@@ -6,3 +6,6 @@ dist
 .DS_Store
 *.log
 uploads
+
+# Phase 2 agent worktrees
+.worktrees
