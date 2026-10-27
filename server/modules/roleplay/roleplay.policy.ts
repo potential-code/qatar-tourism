@@ -1,7 +1,8 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
 /**
- * Roles that may reach the roleplay module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
+ * Simulated AI practice is a learner activity on the learner's own enrolments (brief §9, §11
+ * "Own only"). Trainers and admins never call these endpoints; ownership of each attempt and
+ * enrolment is checked in the service, next to the query.
  */
-export const roleplayPingRoles: readonly Role[] = ROLES
+export const PRACTICE_ROLES: readonly Role[] = ['learner']
