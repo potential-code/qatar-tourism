@@ -19,6 +19,8 @@ const testEnv: Record<string, string> = {
   CLIENT_URL: 'http://localhost:5173',
   DEMO_REFERENCE_DATE: '2026-10-27',
   SEED_DEMO_PASSWORD: 'DemoAcademy2026!',
+  // The whole suite shares one client key ('unknown'), so the per-minute brake would trip.
+  API_RATE_LIMIT_PER_MINUTE: '100000',
 }
 
 for (const [key, value] of Object.entries(testEnv)) process.env[key] = value
