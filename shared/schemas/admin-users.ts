@@ -6,17 +6,9 @@ import {
   SENIORITY_LEVELS,
 } from '../constants/enums'
 import { ROLES } from '../roles'
+import { fictionalEmail } from './common'
 
-/** Fictional accounts only (brief §15): every address ends in example.com. */
-const demoEmail = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .email('Enter a valid email address')
-  .refine(
-    (value) => value.endsWith('@example.com'),
-    'Use a fictional address ending in example.com',
-  )
+const demoEmail = fictionalEmail
 
 export const adminUserListQuery = z.object({
   page: z.coerce.number().int().min(1).default(1),

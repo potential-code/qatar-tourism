@@ -105,6 +105,18 @@ function completeBody(organisationId: string) {
 describe('registration with simulated verification (brief §3)', () => {
   const email = `${TEST_EMAIL_PREFIX}register@example.com`
 
+  test('only fictional example.com addresses may register (brief §1 dummy data only)', async () => {
+    const realLooking = `${TEST_EMAIL_PREFIX}register@gmail.com`
+    const res = await call('/api/profiles/register', {
+      body: { name: 'Hessa Al Kuwari', email: realLooking, password: PASSWORD },
+      ip: IP,
+    })
+    expect(res.status).toBe(400)
+    expect(JSON.stringify(await res.json())).toContain('example.com')
+    const [account] = await db.select().from(user).where(eq(user.email, realLooking))
+    expect(account).toBeUndefined()
+  })
+
   test('creates a learner with a draft profile, a default B enrolment and a simulated email', async () => {
     const res = await call('/api/profiles/register', {
       body: { name: 'Hessa Al Kuwari', email, password: PASSWORD, role: 'admin' },

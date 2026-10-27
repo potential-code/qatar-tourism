@@ -7,11 +7,12 @@ import {
   SENIORITY_LEVELS,
   WEEKLY_MINUTES,
 } from '../constants/enums'
+import { fictionalEmail } from './common'
 
 /** Registration (brief §3–4): short initial form, then a three-step profile wizard. */
 export const registerInput = z.object({
   name: z.string().trim().min(2).max(120),
-  email: z.email(),
+  email: fictionalEmail,
   password: z.string().min(8).max(128),
   /** Programme the visitor was viewing; B by default (brief §3). */
   programme: z.enum(['A', 'B', 'C']).default('B'),
