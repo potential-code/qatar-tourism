@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { OverviewPage } from '@/features/learner-home/components/OverviewPage'
+import { programmeSearch } from '@/features/learning/utils/search'
 
 export const Route = createFileRoute('/learner/')({
-  component: () => <PageHeader title="Overview" description="Coming in Phase 2." />,
+  validateSearch: programmeSearch,
+  component: OverviewPage,
 })

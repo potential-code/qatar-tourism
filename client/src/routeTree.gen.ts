@@ -20,7 +20,16 @@ import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as LearnerIndexRouteImport } from './routes/learner/index'
+import { Route as LearnerProgressRouteImport } from './routes/learner/progress'
 import { Route as TrainerIndexRouteImport } from './routes/trainer/index'
+import { Route as CertificatesVerifyIdRouteImport } from './routes/certificates/verify.$id'
+import { Route as LearnerAssessmentsIndexRouteImport } from './routes/learner/assessments/index'
+import { Route as LearnerAssessmentsKindRouteImport } from './routes/learner/assessments/$kind'
+import { Route as LearnerCertificatesIndexRouteImport } from './routes/learner/certificates/index'
+import { Route as LearnerCertificatesCodeRouteImport } from './routes/learner/certificates/$code'
+import { Route as LearnerLearningIndexRouteImport } from './routes/learner/learning/index'
+import { Route as LearnerLearningCodeRouteImport } from './routes/learner/learning/$code'
+import { Route as LearnerLearningPathRouteImport } from './routes/learner/learning/path'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -77,10 +86,56 @@ const LearnerIndexRoute = LearnerIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LearnerRoute,
 } as any)
+const LearnerProgressRoute = LearnerProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => LearnerRoute,
+} as any)
 const TrainerIndexRoute = TrainerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => TrainerRoute,
+} as any)
+const CertificatesVerifyIdRoute = CertificatesVerifyIdRouteImport.update({
+  id: '/certificates/verify/$id',
+  path: '/certificates/verify/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnerAssessmentsIndexRoute = LearnerAssessmentsIndexRouteImport.update({
+  id: '/assessments/',
+  path: '/assessments/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerAssessmentsKindRoute = LearnerAssessmentsKindRouteImport.update({
+  id: '/assessments/$kind',
+  path: '/assessments/$kind',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerCertificatesIndexRoute =
+  LearnerCertificatesIndexRouteImport.update({
+    id: '/certificates/',
+    path: '/certificates/',
+    getParentRoute: () => LearnerRoute,
+  } as any)
+const LearnerCertificatesCodeRoute = LearnerCertificatesCodeRouteImport.update({
+  id: '/certificates/$code',
+  path: '/certificates/$code',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerLearningIndexRoute = LearnerLearningIndexRouteImport.update({
+  id: '/learning/',
+  path: '/learning/',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerLearningCodeRoute = LearnerLearningCodeRouteImport.update({
+  id: '/learning/$code',
+  path: '/learning/$code',
+  getParentRoute: () => LearnerRoute,
+} as any)
+const LearnerLearningPathRoute = LearnerLearningPathRouteImport.update({
+  id: '/learning/path',
+  path: '/learning/path',
+  getParentRoute: () => LearnerRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -93,9 +148,18 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/learner/progress': typeof LearnerProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
+  '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
+  '/learner/learning/$code': typeof LearnerLearningCodeRoute
+  '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
+  '/learner/certificates/': typeof LearnerCertificatesIndexRoute
+  '/learner/learning/': typeof LearnerLearningIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -104,9 +168,18 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
   '/reset-password': typeof authResetPasswordRoute
+  '/learner/progress': typeof LearnerProgressRoute
   '/admin': typeof AdminIndexRoute
   '/learner': typeof LearnerIndexRoute
   '/trainer': typeof TrainerIndexRoute
+  '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
+  '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
+  '/learner/learning/$code': typeof LearnerLearningCodeRoute
+  '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/assessments': typeof LearnerAssessmentsIndexRoute
+  '/learner/certificates': typeof LearnerCertificatesIndexRoute
+  '/learner/learning': typeof LearnerLearningIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,9 +192,18 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/learner/progress': typeof LearnerProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/learner/': typeof LearnerIndexRoute
   '/trainer/': typeof TrainerIndexRoute
+  '/certificates/verify/$id': typeof CertificatesVerifyIdRoute
+  '/learner/assessments/$kind': typeof LearnerAssessmentsKindRoute
+  '/learner/certificates/$code': typeof LearnerCertificatesCodeRoute
+  '/learner/learning/$code': typeof LearnerLearningCodeRoute
+  '/learner/learning/path': typeof LearnerLearningPathRoute
+  '/learner/assessments/': typeof LearnerAssessmentsIndexRoute
+  '/learner/certificates/': typeof LearnerCertificatesIndexRoute
+  '/learner/learning/': typeof LearnerLearningIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,9 +217,18 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/learner/progress'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/certificates/verify/$id'
+    | '/learner/assessments/$kind'
+    | '/learner/certificates/$code'
+    | '/learner/learning/$code'
+    | '/learner/learning/path'
+    | '/learner/assessments/'
+    | '/learner/certificates/'
+    | '/learner/learning/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,9 +237,18 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/reset-password'
+    | '/learner/progress'
     | '/admin'
     | '/learner'
     | '/trainer'
+    | '/certificates/verify/$id'
+    | '/learner/assessments/$kind'
+    | '/learner/certificates/$code'
+    | '/learner/learning/$code'
+    | '/learner/learning/path'
+    | '/learner/assessments'
+    | '/learner/certificates'
+    | '/learner/learning'
   id:
     | '__root__'
     | '/'
@@ -160,9 +260,18 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/(auth)/register'
     | '/(auth)/reset-password'
+    | '/learner/progress'
     | '/admin/'
     | '/learner/'
     | '/trainer/'
+    | '/certificates/verify/$id'
+    | '/learner/assessments/$kind'
+    | '/learner/certificates/$code'
+    | '/learner/learning/$code'
+    | '/learner/learning/path'
+    | '/learner/assessments/'
+    | '/learner/certificates/'
+    | '/learner/learning/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -175,6 +284,7 @@ export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
   authResetPasswordRoute: typeof authResetPasswordRoute
+  CertificatesVerifyIdRoute: typeof CertificatesVerifyIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -256,12 +366,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnerIndexRouteImport
       parentRoute: typeof LearnerRoute
     }
+    '/learner/progress': {
+      id: '/learner/progress'
+      path: '/progress'
+      fullPath: '/learner/progress'
+      preLoaderRoute: typeof LearnerProgressRouteImport
+      parentRoute: typeof LearnerRoute
+    }
     '/trainer/': {
       id: '/trainer/'
       path: '/'
       fullPath: '/trainer/'
       preLoaderRoute: typeof TrainerIndexRouteImport
       parentRoute: typeof TrainerRoute
+    }
+    '/certificates/verify/$id': {
+      id: '/certificates/verify/$id'
+      path: '/certificates/verify/$id'
+      fullPath: '/certificates/verify/$id'
+      preLoaderRoute: typeof CertificatesVerifyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learner/assessments/': {
+      id: '/learner/assessments/'
+      path: '/assessments'
+      fullPath: '/learner/assessments/'
+      preLoaderRoute: typeof LearnerAssessmentsIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/assessments/$kind': {
+      id: '/learner/assessments/$kind'
+      path: '/assessments/$kind'
+      fullPath: '/learner/assessments/$kind'
+      preLoaderRoute: typeof LearnerAssessmentsKindRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/certificates/': {
+      id: '/learner/certificates/'
+      path: '/certificates'
+      fullPath: '/learner/certificates/'
+      preLoaderRoute: typeof LearnerCertificatesIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/certificates/$code': {
+      id: '/learner/certificates/$code'
+      path: '/certificates/$code'
+      fullPath: '/learner/certificates/$code'
+      preLoaderRoute: typeof LearnerCertificatesCodeRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/learning/': {
+      id: '/learner/learning/'
+      path: '/learning'
+      fullPath: '/learner/learning/'
+      preLoaderRoute: typeof LearnerLearningIndexRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/learning/$code': {
+      id: '/learner/learning/$code'
+      path: '/learning/$code'
+      fullPath: '/learner/learning/$code'
+      preLoaderRoute: typeof LearnerLearningCodeRouteImport
+      parentRoute: typeof LearnerRoute
+    }
+    '/learner/learning/path': {
+      id: '/learner/learning/path'
+      path: '/learning/path'
+      fullPath: '/learner/learning/path'
+      preLoaderRoute: typeof LearnerLearningPathRouteImport
+      parentRoute: typeof LearnerRoute
     }
   }
 }
@@ -277,11 +450,27 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LearnerRouteChildren {
+  LearnerProgressRoute: typeof LearnerProgressRoute
   LearnerIndexRoute: typeof LearnerIndexRoute
+  LearnerAssessmentsKindRoute: typeof LearnerAssessmentsKindRoute
+  LearnerCertificatesCodeRoute: typeof LearnerCertificatesCodeRoute
+  LearnerLearningCodeRoute: typeof LearnerLearningCodeRoute
+  LearnerLearningPathRoute: typeof LearnerLearningPathRoute
+  LearnerAssessmentsIndexRoute: typeof LearnerAssessmentsIndexRoute
+  LearnerCertificatesIndexRoute: typeof LearnerCertificatesIndexRoute
+  LearnerLearningIndexRoute: typeof LearnerLearningIndexRoute
 }
 
 const LearnerRouteChildren: LearnerRouteChildren = {
+  LearnerProgressRoute: LearnerProgressRoute,
   LearnerIndexRoute: LearnerIndexRoute,
+  LearnerAssessmentsKindRoute: LearnerAssessmentsKindRoute,
+  LearnerCertificatesCodeRoute: LearnerCertificatesCodeRoute,
+  LearnerLearningCodeRoute: LearnerLearningCodeRoute,
+  LearnerLearningPathRoute: LearnerLearningPathRoute,
+  LearnerAssessmentsIndexRoute: LearnerAssessmentsIndexRoute,
+  LearnerCertificatesIndexRoute: LearnerCertificatesIndexRoute,
+  LearnerLearningIndexRoute: LearnerLearningIndexRoute,
 }
 
 const LearnerRouteWithChildren =
@@ -308,6 +497,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
   authResetPasswordRoute: authResetPasswordRoute,
+  CertificatesVerifyIdRoute: CertificatesVerifyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

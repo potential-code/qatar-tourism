@@ -1,9 +1,17 @@
 import { type AuthEnv, requireAuth, requireRole } from '@server/middleware/auth.middleware'
+import { validate } from '@server/middleware/validate.middleware'
+import { enrolInput } from '@shared/schemas/learning'
 import { Hono } from 'hono'
-import * as enrolmentsController from './enrolments.controller'
-import { enrolmentsPingRoles } from './enrolments.policy'
+import * as controller from './enrolments.controller'
+import { enrolmentsLearnerRoles, enrolmentsPingRoles } from './enrolments.policy'
 
-/** Mounted at /api/enrolments in server/app.ts. Replace `ping` with the module's real endpoints. */
+const learnerOnly = requireRole(...enrolmentsLearnerRoles)
+
+/** Mounted at /api/enrolments. */
 export const enrolmentsRoutes = new Hono<AuthEnv>()
-  .use(requireAuth, requireRole(...enrolmentsPingRoles))
-  .get('/ping', (c) => c.json(enrolmentsController.ping(), 200))
+  .use(requireAuth)
+  .get('/ping', requireRole(...enrolmentsPingRoles), (c) => c.json(controller.ping(), 200))
+  .get('/mine', learnerOnly, async (c) => c.json(await controller.mine(c.var.viewer), 200))
+  .post('/', learnerOnly, validate('json', enrolInput), async (c) =>
+    c.json(await controller.enrol(c.var.viewer, c.req.valid('json').programme), 201),
+  )

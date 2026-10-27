@@ -1,7 +1,5 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
-/**
- * Roles that may reach the scorm module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
- */
-export const scormPingRoles: readonly Role[] = ROLES
+/** The SCORM runtime stores the signed-in learner's own attempt only (brief §8, §11). */
+export const scormPingRoles: readonly Role[] = ['learner', 'trainer', 'admin']
+export const scormLearnerRoles: readonly Role[] = ['learner']
