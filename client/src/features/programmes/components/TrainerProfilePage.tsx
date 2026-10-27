@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { CalendarX, ChevronLeft, Languages } from 'lucide-react'
+import { PhotoPanel } from '@/components/brand'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { DemoBadge } from '@/components/layout'
 import { Reveal } from '@/components/motion'
@@ -20,15 +21,25 @@ export function TrainerProfilePage({ code }: { code: string }) {
   const { data, isPending, isError, error, refetch } = useQuery(trainerQuery(code))
   const missing = isError && (error as { status?: number }).status === 404
   return (
-    <PublicLayout>
-      <div className="mx-auto flex max-w-[1100px] flex-col gap-12 px-4 pt-28 pb-24 md:px-8 md:pt-36">
-        <Link
-          to="/trainers"
-          className="inline-flex w-fit items-center gap-1 text-muted-foreground text-sm hover:text-teal"
-        >
-          <ChevronLeft aria-hidden className="size-4 rtl:-scale-x-100" />
-          All trainers
-        </Link>
+    <PublicLayout overlayHeader>
+      <PhotoPanel
+        src="/images/official/dhow-boat-min.jpg"
+        alt="Traditional dhow boats on Doha bay"
+        fade="bottom"
+        priority
+        className="h-72 bg-ink md:h-96"
+      >
+        <div className="mx-auto flex h-full max-w-[1100px] items-end px-4 pb-32 md:px-8">
+          <Link
+            to="/trainers"
+            className="inline-flex w-fit items-center gap-1 rounded-full text-sm text-white/85 hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/60"
+          >
+            <ChevronLeft aria-hidden className="size-4 rtl:-scale-x-100" />
+            All trainers
+          </Link>
+        </div>
+      </PhotoPanel>
+      <div className="relative z-10 mx-auto -mt-24 flex max-w-[1100px] flex-col gap-12 px-4 pb-24 md:px-8">
         {isPending ? (
           <Skeleton className="h-64 rounded-xl" />
         ) : missing ? (
@@ -45,7 +56,7 @@ export function TrainerProfilePage({ code }: { code: string }) {
           <SectionError what="this trainer" onRetry={() => refetch()} />
         ) : (
           <>
-            <Reveal className="grid gap-8 rounded-xl bg-white p-6 ring-1 ring-ink/5 md:grid-cols-[auto_1fr] md:p-10">
+            <Reveal className="grid gap-8 rounded-xl bg-white p-6 shadow-black/10 shadow-xl ring-1 ring-ink/5 md:grid-cols-[auto_1fr] md:p-10">
               <PersonAvatar
                 name={data.fullName}
                 src={data.avatarPath}

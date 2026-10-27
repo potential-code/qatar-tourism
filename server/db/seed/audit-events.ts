@@ -55,6 +55,23 @@ export function buildSeedAudit(
     })
   }
 
+  for (const request of sessions.lateChangeRequests) {
+    rows.push({
+      id: stableUuid('audit', `change-request:${request.rsvpId}`),
+      actorId: request.learnerId,
+      actorRole: 'learner',
+      actorLabel: request.learnerName,
+      action: 'rsvp.change_requested',
+      objectType: 'rsvp',
+      objectId: request.rsvpId,
+      before: null,
+      after: { sessionId: request.sessionId, sessionCode: request.sessionCode, kind: request.kind },
+      reason: request.reason,
+      outcome: 'allowed',
+      createdAt: request.at,
+    })
+  }
+
   rows.push(
     {
       id: stableUuid('audit', 'export-denied'),

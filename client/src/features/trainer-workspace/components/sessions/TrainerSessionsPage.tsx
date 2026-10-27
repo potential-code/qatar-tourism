@@ -29,6 +29,7 @@ export function TrainerSessionsPage() {
 
   const header = (
     <PageHeader
+      image="trainerSessions"
       title="My sessions"
       description="Create, publish, reschedule and cancel your sessions. Times are Qatar time."
       actions={

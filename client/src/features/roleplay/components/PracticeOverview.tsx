@@ -19,6 +19,7 @@ export function PracticeOverview() {
 
   const header = (
     <PageHeader
+      image="practice"
       title="AI practice"
       description="Practise real visitor conversations by text or voice, then see your score with evidence from what you said. Practice is formative: trainer marks and programme rules decide certification."
       actions={<SimulatedTag label={overview.data?.label ?? 'Simulated AI practice'} />}

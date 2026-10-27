@@ -28,6 +28,7 @@ export function AssignedLearnersPage() {
 
   const header = (
     <PageHeader
+      image="trainerLearners"
       title="Assigned learners"
       description="Learners booked on your sessions. You see their learner ID and display name only."
     />

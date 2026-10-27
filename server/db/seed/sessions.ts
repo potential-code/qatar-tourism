@@ -45,6 +45,17 @@ export type SessionsResult = {
   firstBookedAt: Map<string, Date>
   /** Enrolment ids holding an active RSVP on an upcoming or later session. */
   upcomingBooked: Set<string>
+  /** Pending late change requests (a learner asks the admin to cancel or move a booking). */
+  lateChangeRequests: {
+    rsvpId: string
+    sessionId: string
+    sessionCode: string
+    learnerId: string
+    learnerName: string
+    kind: 'cancel' | 'reschedule'
+    reason: string
+    at: Date
+  }[]
   /** Audit rows for the session events (reschedule, cancel). */
   auditHints: {
     kind: 'reschedule' | 'cancel'
@@ -132,6 +143,7 @@ export function buildSessions(
     firstBookedAt: new Map(),
     upcomingBooked: new Set(),
     auditHints: [],
+    lateChangeRequests: [],
   }
 
   const sessionKey = (trainer: TrainerSeed, slot: 1 | 2 | 3) => `SES-${trainer.code}-${slot}`
@@ -315,7 +327,7 @@ export function buildSessions(
     if (scoreStatus && (attendanceValue === 'attended' || attendanceValue === 'late')) {
       const s = scoreFor()
       total = s.total
-      const finalisedAt = new Date(markedAt.getTime() + rng.int(1, 20) * 3_600_000)
+      const finalisedAt = new Date(markedAt.getTime() + rng.int(10, 55) * 60_000)
       result.scores.push({
         id: stableUuid('score', rsvpId),
         rsvpId,
@@ -633,6 +645,45 @@ export function buildSessions(
 
   // The A trainers with no A completed session in `A_COMPLETED_TRAINERS` have none to fill;
   // T07's completed slot is the cancelled one.
+
+  // Two learners ask the admin to change a booking late (brief §6), so the review queue is
+  // populated. They hold ordinary confirmed seats, never a walkthrough persona's.
+  const LATE_REQUESTS = [
+    {
+      slot: [1, 2],
+      kind: 'cancel',
+      ago: 0.2,
+      reason: 'My shift was moved and I can no longer attend.',
+    },
+    {
+      slot: [2, 2],
+      kind: 'reschedule',
+      ago: 0.45,
+      reason: 'A client meeting overlaps with this session. I would like another date.',
+    },
+  ] as const
+  for (const request of LATE_REQUESTS) {
+    const trainer = trainerByN.get(request.slot[0]) as TrainerSeed
+    const sessionId = sessionIdOf(trainer, request.slot[1])
+    const meta = sessionMeta.get(sessionId) as NonNullable<ReturnType<typeof sessionMeta.get>>
+    const booking = result.rsvps.findLast((r) => {
+      if (r.sessionId !== sessionId || r.status !== 'confirmed') return false
+      const owner = plan.enrolments.find((e) => e.learner.userId === r.learnerId)
+      return owner !== undefined && owner.learner.n > 5
+    })
+    const owner = plan.enrolments.find((e) => e.learner.userId === booking?.learnerId)
+    if (!booking || !owner) throw new Error(`No booking to raise a late request on ${meta.code}`)
+    result.lateChangeRequests.push({
+      rsvpId: booking.id as string,
+      sessionId,
+      sessionCode: meta.code,
+      learnerId: owner.learner.userId,
+      learnerName: owner.learner.fullName,
+      kind: request.kind,
+      reason: request.reason,
+      at: cal.ago(request.ago),
+    })
+  }
 
   function pushNotifications(
     enrolment: EnrolmentPlan,

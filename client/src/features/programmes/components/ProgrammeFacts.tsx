@@ -15,19 +15,19 @@ export function ProgrammeFacts({ programme }: { programme: ProgrammeDetail }) {
     },
   ]
   return (
-    <dl className="grid gap-px overflow-hidden rounded-xl bg-ink/5 ring-1 ring-ink/5 sm:grid-cols-2 lg:grid-cols-5">
+    <dl className="grid gap-px overflow-hidden rounded-xl bg-ink/5 shadow-black/5 shadow-xl ring-1 ring-ink/5 sm:grid-cols-2 lg:grid-cols-5">
       {facts.map((fact) => (
         <div key={fact.label} className="grid content-start gap-2 bg-white p-5">
           <dt className="inline-flex items-center gap-2 text-muted-foreground text-xs">
             <fact.icon aria-hidden className="size-4 text-teal" />
             {fact.label}
           </dt>
-          <dd className="text-sm text-ink">{fact.value}</dd>
+          <dd className="font-medium text-ink">{fact.value}</dd>
         </div>
       ))}
       <div className="grid content-start gap-2 bg-white p-5">
         <dt className="text-muted-foreground text-xs">Certification</dt>
-        <dd className="text-sm text-teal-deep">
+        <dd className="font-medium text-teal-deep">
           <CertificationStatus
             certified={programme.certificationEnabled}
             illustrative={programme.isIllustrative}
