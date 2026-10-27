@@ -14,11 +14,15 @@ const SKELETONS = Array.from({ length: 10 }, (_, i) => `trainer-skeleton-${i}`)
 export function TrainersPage() {
   const { data, isPending, isError, refetch } = useQuery(trainersQuery())
   return (
-    <PublicLayout>
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-10 px-4 pt-32 pb-24 md:px-8 md:pt-40">
-        <PublicPageIntro title="Our trainers">
-          Coaches and facilitators who lead the Academy’s in-person and live-online sessions.
-        </PublicPageIntro>
+    <PublicLayout overlayHeader>
+      <PublicPageIntro
+        title="Our trainers"
+        image="/images/official/tour-operator.jpg"
+        alt="A tour operator welcoming visitors in Qatar"
+      >
+        Coaches and facilitators who lead the Academy’s in-person and live-online sessions.
+      </PublicPageIntro>
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-10 px-4 py-14 md:px-8 md:py-20">
         <DemoBadge className="w-fit" />
         {isPending ? (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">

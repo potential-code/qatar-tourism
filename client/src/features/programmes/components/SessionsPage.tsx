@@ -29,12 +29,16 @@ export function SessionsPage() {
     days.set(day, [...(days.get(day) ?? []), session])
   }
   return (
-    <PublicLayout>
-      <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-4 pt-32 pb-24 md:px-8 md:pt-40">
-        <PublicPageIntro title="Upcoming sessions">
-          Trainer-led sessions in person at the Academy or live online. All times are shown in Qatar
-          time. Sign in to book: eligibility and seats are checked when you book.
-        </PublicPageIntro>
+    <PublicLayout overlayHeader>
+      <PublicPageIntro
+        title="Upcoming sessions"
+        image="/images/official/grid-qatar-national-library-2-7740-wip-5.jpg"
+        alt="Reading hall of the Qatar National Library"
+      >
+        Trainer-led sessions in person at the Academy or live online. All times are shown in Qatar
+        time. Sign in to book: eligibility and seats are checked when you book.
+      </PublicPageIntro>
+      <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-4 py-14 md:px-8 md:py-20">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)}>
             <TabsList aria-label="Filter by programme">
