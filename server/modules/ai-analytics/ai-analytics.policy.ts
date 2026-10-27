@@ -1,7 +1,4 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
-/**
- * Roles that may reach the ai-analytics module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
- */
-export const aiAnalyticsPingRoles: readonly Role[] = ROLES
+/** "Use AI Analytics": admin only, read-only (shared/permissions.ts 'analytics.use'). */
+export const AI_ANALYTICS_ROLES: readonly Role[] = ['admin']

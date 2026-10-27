@@ -1,7 +1,7 @@
-import { ROLES, type Role } from '@shared/roles'
+import type { Role } from '@shared/roles'
 
 /**
- * Roles that may reach the analytics module. Phase 2 replaces this with per-action checks built on
- * `can()` and `accessFor()` from shared/permissions.ts (brief §11).
+ * Academy-wide analytics are admin only (shared/permissions.ts 'analytics.use': trainers have
+ * "No Academy-wide access"). `/ping` stays open to any signed-in role for the Phase 1 stub test.
  */
-export const analyticsPingRoles: readonly Role[] = ROLES
+export const ANALYTICS_ROLES: readonly Role[] = ['admin']
