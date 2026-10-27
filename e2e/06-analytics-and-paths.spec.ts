@@ -14,6 +14,11 @@ test('16–17 min: AI Analytics answers two questions from the real data', async
   await signInAs(page, ACCOUNTS.admin, '/admin/ai-analytics')
   await expect(page.getByText('Demo analytics assistant').first()).toBeVisible()
   const conversation = page.getByRole('region', { name: 'Conversation' })
+  // At least seven supported analytical questions (brief §18).
+  const prompts = conversation
+    .getByRole('region', { name: 'Suggested prompts' })
+    .getByRole('button')
+  expect(await prompts.count()).toBeGreaterThanOrEqual(7)
   await conversation
     .getByRole('button', { name: 'How many learners are in each programme?' })
     .click()

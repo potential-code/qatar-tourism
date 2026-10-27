@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { ACCOUNTS } from './support/env'
 import { switchTo } from './support/toolbar'
-import { pageHeading, signInWithForm } from './support/ui'
+import { pageHeading, signInAs, signInWithForm } from './support/ui'
 
 /**
  * Walkthrough 7–10 minutes (brief §17): Omar books a session, the facilitator switches to the
@@ -104,4 +104,30 @@ test('7–10 min: Omar books, Amal reschedules, Omar sees the change', async ({ 
     }),
   ).toBeVisible()
   await expect(bell).toContainText('No external emails are sent.')
+})
+
+test('9–10 min: cancelling a session keeps its history and tells every learner', async ({
+  page,
+}) => {
+  await signInAs(page, ACCOUNTS.trainer(1), '/trainer/sessions')
+  await page
+    .getByRole('link', { name: /SES-T01-3/ })
+    .first()
+    .click()
+  await page.getByRole('button', { name: 'Cancel session' }).click()
+  const dialog = page.getByRole('dialog', { name: 'Cancel this session?' })
+  await expect(dialog).toContainText('The session and its history are kept.')
+  await expect(
+    dialog.getByText(/\d+ registered learners? will receive an in-app notification/),
+  ).toBeVisible()
+  await dialog.getByLabel('Reason').fill('The trainer is attending an Academy assessment day.')
+  await dialog.getByRole('button', { name: 'Cancel session' }).click()
+
+  // The equivalent §11 modal for a cancellation.
+  const done = page.getByRole('dialog', { name: /^Session cancelled/ })
+  await expect(done).toContainText('In-app notifications have been created for')
+  await expect(done).toContainText('no external emails were sent')
+  await done.getByRole('button', { name: 'Close' }).first().click()
+  await expect(page.getByText('Cancelled', { exact: true }).first()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Reschedule' })).toHaveCount(0)
 })

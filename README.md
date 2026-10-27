@@ -87,20 +87,22 @@ arrive in Mailpit.
 
 All scripts live in the root `package.json` and run from the root.
 
-|                         |                                                                   |
-| ----------------------- | ----------------------------------------------------------------- |
-| `bun run dev`           | API and client together, both watching                            |
-| `bun run build`         | typecheck, bundle the API into `server/dist`, build `client/dist` |
-| `bun run start:server`  | run the built API                                                 |
-| `bun run typecheck`     | `tsc --noEmit` over client, server and shared                     |
-| `bun run test`          | server and client tests (no database needed)                      |
-| `bun run lint`          | Biome lint and format check                                       |
-| `bun run format`        | Biome, fixing what it can                                         |
-| `bun run db:generate`   | write a migration from the schema                                 |
-| `bun run db:migrate`    | apply migrations                                                  |
-| `bun run db:studio`     | Drizzle Studio                                                    |
-| `bun run db:seed`       | seed accounts; refuses to run in production                       |
-| `bun run auth:generate` | regenerate `server/db/schema/auth.ts` from the Better Auth config |
+|                         |                                                                                   |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `bun run dev`           | API and client together, both watching                                            |
+| `bun run build`         | typecheck, bundle the API into `server/dist`, build `client/dist`                 |
+| `bun run start:server`  | run the built API                                                                 |
+| `bun run typecheck`     | `tsc --noEmit` over client, server and shared                                     |
+| `bun run test`          | server and client tests (no database needed)                                      |
+| `bun run test:e2e`      | Playwright walkthrough (brief §17), resets the demo first; needs the dev database |
+| `bun run lint`          | Biome lint and format check                                                       |
+| `bun run format`        | Biome, fixing what it can                                                         |
+| `bun run db:generate`   | write a migration from the schema                                                 |
+| `bun run db:migrate`    | apply migrations                                                                  |
+| `bun run db:studio`     | Drizzle Studio                                                                    |
+| `bun run db:seed`       | seed accounts; refuses to run in production                                       |
+| `bun run db:reset`      | restore the deterministic demo snapshot (same as the admin reset)                 |
+| `bun run auth:generate` | regenerate `server/db/schema/auth.ts` from the Better Auth config                 |
 
 There is no `db:push`, on purpose — see the deployment standard.
 

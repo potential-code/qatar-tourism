@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { apiAs, getJson, ORIGIN_HEADERS } from './support/api'
 import { ACCOUNTS, API_URL } from './support/env'
-import { signInAs } from './support/ui'
+import { signInAs, signInWithForm } from './support/ui'
 
 /**
  * Brief §11 and §18 permissions: portal routes redirect a wrong role, and the API is the real
@@ -17,6 +17,20 @@ test('a learner cannot reach the trainer or admin portals', async ({ page }) => 
   await expect(page).toHaveURL(/\/learner$/)
   await page.goto('/admin/manage/audit')
   await expect(page).toHaveURL(/\/learner$/)
+})
+
+test('the Trainer sign-in mode works but never grants trainer access', async ({ page }) => {
+  await signInWithForm(page, ACCOUNTS.maha, 'trainer')
+  await expect(page).toHaveURL(/\/learner/)
+  await page.goto('/login?mode=trainer')
+  await expect(page).toHaveURL(/\/learner/)
+
+  // Signed out, the connected sign-in options are labelled simulated.
+  await page.context().clearCookies()
+  await page.goto('/login?mode=trainer')
+  await expect(page.getByText('Choosing this mode does not grant trainer access.')).toBeVisible()
+  const sso = page.getByRole('region', { name: 'Or use connected sign-in' })
+  await expect(sso.getByRole('button', { name: /Simulated$/ })).toHaveCount(2)
 })
 
 test('a learner gets 403 from trainer and admin APIs and cannot escalate', async () => {
