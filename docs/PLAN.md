@@ -146,8 +146,8 @@ The lead merges in the order D, B, C, A, E (so learner booking hooks exist befor
 - Policy tests: a learner calling trainer or admin APIs gets 403; Trainer 1 requesting Trainer 2's roster gets 403; a trainer's personal-data export is denied and audited.
 - SCORM: close and reopen resumes; a pass updates progress once.
 - Playwright walkthrough (§17) passes end to end, with a reset between runs reproducing identical charts.
-- Manual demo run on `bun run dev` (client :5173, API :8000) at 390, 768 and 1440 px.
+- Manual demo run at 390, 768 and 1440 px: `bun run dev` (client :5173, API :8000 by default), or on this machine API :8140 and client :5240 (see `README.md` → Ports).
 
 ## Still open (not blocking the build)
 
-Hosting location and demo duration, the trial end date for the deletion plan, Rawzaba's timeline estimate, and real VisitQatar font files if they become available.
+Hosting location and demo duration, the trial end date for the deletion plan, Rawzaba's timeline estimate, and real VisitQatar font files if they become available. Tracked in `docs/OPEN-QUESTIONS.md`.

@@ -33,6 +33,8 @@ Every image, video and package in the demo, with its source. Required for handov
 
 These are used under the brief's instruction to use official Qatar Tourism assets (§2). Confirm usage approval with Potential before external distribution.
 
+**Official photo usage needs Qatar Tourism's confirmation** before the demo is shared outside Potential.com (tracked in `docs/OPEN-QUESTIONS.md`). The logo proportions are preserved; the Visit Qatar identity is not used.
+
 ## Generated
 
 Generated with model `gemini-2.5-flash-image` via the `image-gen` skill on 2026-10-27. All people shown are fictional (AI-generated, not real individuals). Images are 512x512 WebP (quality 85), converted from the generated PNGs.
@@ -60,3 +62,35 @@ Professional photographic head-and-shoulders portrait of ONE single person: %s. 
 | `client/public/images/generated/personas/L0003.webp` | L0003 Leila Rahman  | a South Asian woman in her early 30s with dark hair in a neat bun, wearing a smart black blazer, front office supervisor                                                        | Persona portrait: learner profile, demo toolbar, admin user detail |
 | `client/public/images/generated/personas/L0004.webp` | L0004 Daniel Costa  | a Portuguese man in his early 30s with short brown hair and light stubble, wearing a smart casual navy polo-style knit and light jacket, tour operator staff member             | Persona portrait: learner profile, demo toolbar, admin user detail |
 | `client/public/images/generated/personas/L0005.webp` | L0005 Sara Mansour  | an Arab woman in her late 20s wearing a light grey hijab and a smart dark uniform-style blazer, transport and visitor services staff member                                     | Persona portrait: learner profile, demo toolbar, admin user detail |
+
+## Media (`client/public/media/`)
+
+| File                                           | What it is                                                   | Used by                               |
+| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------- |
+| `c01-welcoming-every-visitor.mp4`              | 1920x1080 H.264 sample video, 1 min 15 s, **no audio track** | C01 Welcoming every visitor           |
+| `c01-welcoming-every-visitor.en.vtt`           | English captions: the brief's §7 C01 narration script        | C01 captions and transcript           |
+| `c01-poster.jpg`                               | Poster frame                                                 | C01 player                            |
+| `c03-clear-and-inclusive-communication.mp4`    | 1920x1080 H.264 sample video, 1 min 2 s, **no audio track**  | C03 Clear and inclusive communication |
+| `c03-clear-and-inclusive-communication.en.vtt` | English captions: original fictional narration               | C03 captions and transcript           |
+| `c03-poster.jpg`                               | Poster frame                                                 | C03 player                            |
+
+**Source of the two videos and posters: not recorded in the repository. To be confirmed by the
+developer before handover** (generated, stock or produced, and under what licence). The
+captions are original demo content: C01 follows the brief's script, C03 is written for this demo.
+
+## Interactive content
+
+| Path                                                                | What it is                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scorm/qta-sample-c04/`                                             | Source of the **SCORM 2004 (4th Edition) sample package** for C04 Recovering a difficult service moment: `imsmanifest.xml`, `index.html`, `runtime.js`, `content.js`, `styles.css`. Original content written for this demo; no authoring tool or third-party package |
+| `client/public/scorm/qta-sample-c04/`                               | The same package copied for serving, by `bun scorm/qta-sample-c04/build.ts`                                                                                                                                                                                          |
+| `client/public/previews/c02-understanding-visitor-needs/index.html` | C02 branching HTML preview, labelled "not a verified SCORM package". Original content (the brief's §8 sample interaction)                                                                                                                                            |
+
+## Fonts
+
+Spectral and Jost, loaded from Google Fonts (SIL Open Font License). Stand-ins for Qatar
+Tourism's commercial Orchidea Pro and VisitQatar fonts. Not bundled in the repository.
+
+## Other
+
+`client/public/favicon.svg`: the generic favicon from the project skeleton (not a Qatar Tourism mark).

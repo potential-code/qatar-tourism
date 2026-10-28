@@ -17,7 +17,7 @@ Qatar Tourism Academy demo: a stateful mockup LMS. Sources of truth, in order:
 | Shared | `shared/` with zod schemas, roles, permissions matrix, constants and curriculum content          |
 | Tests  | `bun test` (server via `app.request`, client via happy-dom); Playwright for the e2e walkthrough  |
 
-Two processes: client on :5173 (nginx :5000 in Docker), API on :8000. The client calls the API through the typed Hono RPC client (`client/src/lib/api.ts`).
+Two processes: client on :5173 (nginx :5000 in Docker), API on :8000. These are the defaults in code. This machine's `.env` uses API :8140 and client :5240 because other projects hold the defaults; `playwright.config.ts` and `e2e/support/env.ts` hard-code 8140/5240. Ports are set by `PORT`, `BETTER_AUTH_URL`, `CLIENT_URL` and `VITE_API_URL` (see `README.md` → Ports). The client calls the API through the typed Hono RPC client (`client/src/lib/api.ts`).
 
 ## Folder map
 
