@@ -129,7 +129,7 @@ event. Learners and trainers get 403.
 **Production guard.** Seeding and reset refuse to run when `NODE_ENV=production` unless
 `ALLOW_DEMO_SEED=true`. Set it only on a hosted demonstration deployment.
 
-Reset does not delete uploaded files under `uploads/`. See `docs/DATA-DELETION.md`.
+Reset also empties the uploaded demo files inside `uploads/`. See `docs/DATA-DELETION.md`.
 
 ## Demo accounts
 
@@ -206,8 +206,9 @@ bun run test:e2e    # end-to-end walkthrough
   API and client itself on 8140 and 5240, or reuses ones already running there. It needs
   `SEED_DEMO_PASSWORD=DemoAcademy2026!`. Set `E2E_SKIP_RESET=1` to skip the first reset while
   iterating on one spec.
-- The specs follow the walkthrough minute by minute (`e2e/01-…` to `e2e/08-…`). The HTML
-  report goes to `e2e/.report`.
+- The specs follow the walkthrough minute by minute (`e2e/01-…` to `e2e/08-…`).
+  `e2e/09-accessibility.spec.ts` runs axe WCAG checks, keyboard paths, captions and reduced
+  motion at 1440, 768 and 390 px. The HTML report goes to `e2e/.report`.
 
 ## Deployment (Docker and Dokploy)
 
@@ -226,19 +227,17 @@ database in compose.
 - `BETTER_AUTH_URL` is the API's public origin. `CLIENT_URL` is the client's.
 - Set `TRUST_PROXY=true` behind Dokploy (compose defaults it to `true`).
 
-**Before a hosted demo.** Three gaps in the deployment files as they stand today:
+**Hosted demo checklist.**
 
-1. The compose files do not pass `SEED_DEMO_PASSWORD`, `ALLOW_DEMO_SEED` or
-   `DEMO_REFERENCE_DATE` to the server. Without `ALLOW_DEMO_SEED=true` and `SEED_DEMO_PASSWORD`,
-   the admin reset fails on the hosted demo. Add them to the server's `environment` block and
-   set them in Dokploy.
-2. The server image bundles only `index.js` and `migrate.js`, not the seed. Seed the hosted
-   database once from a workstation:
-   `DATABASE_URL=<hosted url> SEED_DEMO_PASSWORD=<password> bun run db:seed`. After that the
-   admin reset works from the admin screen (once gap 1 is fixed).
-3. Uploads are written to `/app/uploads` inside the container, which is not a volume. Mount a
-   volume there if uploaded files must survive a redeploy, and check that the non-root `bun`
-   user can write to it.
+1. Both compose files pass `SEED_DEMO_PASSWORD`, `ALLOW_DEMO_SEED` and `DEMO_REFERENCE_DATE`
+   to the server. Set them in Dokploy (`ALLOW_DEMO_SEED=true` on the hosted demo only).
+2. The server image bundles the reset as `dist/reset.js`. Seed the hosted database the first
+   time with `docker compose exec server bun dist/reset.js`. After that the admin reset screen
+   works too.
+3. Uploads are stored on the named `uploads` volume at `/app/uploads`, owned by the non-root
+   `bun` user. They survive a redeploy; a demo reset empties them.
+4. The certificate PDF logo is embedded in the server build, so certificates keep the logo
+   inside the image.
 
 ## Layout
 

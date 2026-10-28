@@ -27,9 +27,9 @@ organisations, 30 sessions, 1,260 enrolments and 120 demonstration certificates,
 progress, attempts, submissions, reviews, notifications and audit events.
 
 **Data created during the trial.** Anyone with the demo URL can register. Public registration
-accepts any email address; it does not require `example.com`. People demonstrating the
-platform should use fictional `example.com` addresses and fictional names, and must not enter
-real personal data. Data entered during the trial is still covered by this plan.
+accepts fictional `example.com` addresses only, and accounts can only be created through the
+Academy's registration route. People demonstrating the platform should still use fictional
+names and must not enter real personal data. Data entered during the trial is still covered by this plan.
 
 ## Where it is stored
 
@@ -66,8 +66,8 @@ reseeds the fictional data.
 - API: `POST /api/demo/reset` with `{ "confirm": true }`, as the admin.
 - Command line: `bun run db:reset`.
 
-**A reset does not delete uploaded files.** It truncates the database only. Remove the uploads
-directory separately (step 2 below).
+**A reset also empties uploaded demo files** inside the uploads directory. At the end of the
+trial, still remove the uploads volume itself (step 2 below).
 
 ## Full deletion (end of trial)
 
