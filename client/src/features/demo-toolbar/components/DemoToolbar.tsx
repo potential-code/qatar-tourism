@@ -67,19 +67,19 @@ export function DemoToolbar() {
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            className="pointer-events-auto h-10 gap-2 rounded-full border border-maroon/25 bg-maroon-deep px-4 text-white shadow-lg hover:bg-maroon"
-            aria-label={`Demo toolbar. Signed in as ${session?.user.name}. Switch demo account`}
-          >
+          {/* Named by its visible text plus hidden context (WCAG 2.5.3 label in name). */}
+          <Button className="pointer-events-auto h-10 gap-2 rounded-full border border-maroon/25 bg-maroon-deep px-4 text-white shadow-lg hover:bg-maroon">
             {switchTo.isPending ? (
               <Loader2 aria-hidden className="animate-spin" />
             ) : (
               <FlaskConical aria-hidden />
             )}
             <span className="font-medium">Demo toolbar</span>
-            <span className="hidden max-w-36 truncate text-white/75 sm:inline">
+            <span className="sr-only">, signed in as </span>
+            <span className="sr-only max-w-36 truncate text-white/75 sm:not-sr-only">
               {session?.user.name}
             </span>
+            <span className="sr-only">. Switch demo account</span>
             <ChevronUp aria-hidden className="size-4" />
           </Button>
         </DropdownMenuTrigger>

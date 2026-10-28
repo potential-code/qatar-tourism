@@ -36,6 +36,8 @@ export function SessionCard({
         'group flex w-full flex-col gap-4 rounded-xl border bg-card p-4 text-start focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:flex-row sm:items-stretch sm:p-5',
         locked && 'bg-card/70',
       )}
+      // Card button: a concise name that starts with the visible title (WCAG 2.5.3).
+      data-a11y-card
       aria-label={`${session.title}, ${session.code}. ${locked ? 'Locked.' : ''} View details`}
     >
       <DateTile iso={session.startsAt} muted={locked} className="hidden sm:flex" />

@@ -27,15 +27,24 @@ export function PortalShell({
 
   return (
     <SidebarProvider>
+      {/* Keyboard users skip the sidebar and header (WCAG 2.4.1), as on the public site. */}
+      <a
+        href="#main"
+        className="sr-only z-50 rounded-full bg-white px-4 py-2 text-ink shadow-md focus:not-sr-only focus:fixed focus:start-4 focus:top-4"
+      >
+        Skip to content
+      </a>
       <PortalSidebar portal={portal} navContext={navContext} />
       <SidebarInset className="min-w-0 bg-sand">
         <PortalHeader notifications={notifications} />
         <motion.main
+          id="main"
+          tabIndex={-1}
           key={pathname}
           initial={reduce ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: easeOut }}
-          className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-8 px-4 py-6 md:px-8 md:py-8"
+          className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-8 px-4 py-6 outline-none md:px-8 md:py-8"
         >
           <Outlet />
         </motion.main>
