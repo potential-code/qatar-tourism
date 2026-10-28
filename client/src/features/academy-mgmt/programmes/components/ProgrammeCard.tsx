@@ -28,7 +28,9 @@ export function ProgrammeCard({
       whileTap={reduce ? undefined : 'press'}
       variants={cardHover}
       className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card text-start focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      aria-label={`Edit ${PROGRAMME_LABELS[programme.code]}: ${programme.title}`}
+      // Card button: a concise name that starts with the visible title (WCAG 2.5.3).
+      data-a11y-card
+      aria-label={`${programme.title}: edit ${PROGRAMME_LABELS[programme.code]}`}
     >
       <div className="relative aspect-[16/8] overflow-hidden bg-teal-mist">
         {programme.cardImagePath ? (

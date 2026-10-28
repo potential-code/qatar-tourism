@@ -146,6 +146,16 @@ describe('credential rate limit', () => {
     expect(handler).toHaveBeenCalledTimes(CREDENTIAL_LIMIT.max)
   })
 
+  test('Better Auth sign-up is not exposed: accounts come from /api/profiles/register', async () => {
+    const handler = spyOn(auth, 'handler').mockImplementation(async () => Response.json({}))
+    const res = await app.request(
+      '/api/auth/sign-up/email',
+      json({ name: 'Real Person', email: 'someone@gmail.com', password: 'Password123!' }),
+    )
+    expect(res.status).toBe(404)
+    expect(handler).not.toHaveBeenCalled()
+  })
+
   test('Better Auth receives our client IP, not the caller-supplied header', async () => {
     const handler = spyOn(auth, 'handler').mockImplementation(async () => Response.json({}))
     await app.request('/api/auth/get-session', { headers: { 'x-client-ip': '6.6.6.6' } })

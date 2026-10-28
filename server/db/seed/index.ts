@@ -202,20 +202,3 @@ export async function reseed(options: SeedOptions & { keepSessionsOf?: string } 
   setClockState({ referenceDate, anchoredAt: now })
   return { referenceDate, anchoredAt: now }
 }
-
-// `bun run db:seed` / `bun run db:reset`
-if (import.meta.main) {
-  const { closeDb } = await import('../connection')
-  try {
-    const { referenceDate } = await reseed()
-    const { db } = await import('../connection')
-    const [meta] = await db.select().from(schema.demoMeta)
-    console.log(`Seeded demo data (reference date ${referenceDate}, version ${SEED_VERSION}).`)
-    console.log(meta?.counts)
-  } catch (error) {
-    console.error('Seed failed:', error instanceof Error ? error.message : error)
-    process.exitCode = 1
-  } finally {
-    await closeDb()
-  }
-}

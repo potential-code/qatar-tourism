@@ -121,7 +121,7 @@ export function HowItWorks() {
             <dl className="grid gap-4">
               {PROGRAMME_REQUIREMENTS.map((row) => (
                 <div key={row.code} className="grid gap-1">
-                  <dt className="font-medium text-teal-soft text-sm">Program {row.code}</dt>
+                  <dt className="font-medium text-teal-mist text-sm">Program {row.code}</dt>
                   <dd className="text-sm text-white/85 leading-relaxed">{row.text}</dd>
                 </div>
               ))}

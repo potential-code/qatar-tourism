@@ -15,7 +15,7 @@ export function BookingPolicyNote({ policy, className }: { policy?: string; clas
         <span className="font-medium">Cancellation and reschedule policy. </span>
         {policy ??
           'Self-service changes until 24 hours before the session. Later changes request admin review.'}{' '}
-        <span className="text-teal-deep/75">
+        <span className="text-teal-deep">
           Illustrative demo default, configurable by the Academy.
         </span>
       </p>

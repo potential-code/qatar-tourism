@@ -4,7 +4,7 @@ import { afterEach, beforeAll, describe, expect, mock, setDefaultTimeout, test }
 import { app } from '@server/app'
 import { auth } from '@server/auth/auth'
 import { db } from '@server/db/connection'
-import { auditEvents, notifications, profiles, session, user } from '@server/db/schema'
+import { auditEvents, enrolments, notifications, profiles, session, user } from '@server/db/schema'
 import { reseed } from '@server/db/seed'
 import { and, eq } from 'drizzle-orm'
 import { CLIENT_ORIGIN } from '../../__tests__/helpers/env'
@@ -100,6 +100,13 @@ describe('create, invite, enrol', () => {
     expect(events.map((e) => e.action).sort()).toEqual(['user.create', 'user.invite'])
     const [created] = await db.select().from(user).where(eq(user.id, createdId))
     expect(created?.role).toBe('learner')
+    // Same starting state as a self-enrolment: a stage and progress are shown at once.
+    const [enrolment] = await db
+      .select({ stage: enrolments.currentStage, progress: enrolments.progressPercent })
+      .from(enrolments)
+      .where(eq(enrolments.learnerId, createdId))
+    expect(enrolment?.stage).toBeTruthy()
+    expect(enrolment?.progress).toBe(0)
   })
 
   test('re-inviting creates no duplicate messages', async () => {
@@ -164,6 +171,39 @@ describe('suspend and reactivate', () => {
       .where(and(eq(auditEvents.objectId, 'user-l0009')))
     expect(events.map((e) => e.action).sort()).toEqual(['user.reactivate', 'user.suspend'])
     expect(events.every((e) => Boolean(e.reason))).toBe(true)
+  })
+
+  test('a suspended learner cannot sign in again until reactivated', async () => {
+    stubSession('admin')
+    const suspend = await app.request(
+      '/api/admin/users/user-l0011/suspend',
+      send('POST', { reason: 'Demo access review' }),
+    )
+    expect(suspend.status).toBe(200)
+    mock.restore()
+
+    const [account] = await db
+      .select({ email: user.email })
+      .from(user)
+      .where(eq(user.id, 'user-l0011'))
+    const signIn = () =>
+      auth.api.signInEmail({
+        body: { email: account?.email ?? '', password: 'DemoAcademy2026!' },
+        asResponse: true,
+      })
+    const blocked = await signIn()
+    expect(blocked.status).toBe(403)
+    expect(await blocked.text()).toContain('suspended')
+    const live = await db.select().from(session).where(eq(session.userId, 'user-l0011'))
+    expect(live).toHaveLength(0)
+
+    stubSession('admin')
+    await app.request(
+      '/api/admin/users/user-l0011/reactivate',
+      send('POST', { reason: 'Review complete' }),
+    )
+    mock.restore()
+    expect((await signIn()).status).toBe(200)
   })
 
   test('a reason is required', async () => {

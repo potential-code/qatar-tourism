@@ -32,16 +32,20 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-10 gap-2 px-1.5" aria-label="Account menu">
-              <PersonAvatar
-                name={session?.user.name}
-                src={session?.user.image}
-                tone="teal"
-                className="size-8"
-              />
-              <span className="hidden max-w-40 truncate text-sm font-medium md:inline">
+            {/* Named by its visible text plus a hidden suffix (WCAG 2.5.3 label in name). */}
+            <Button variant="ghost" className="h-10 gap-2 px-1.5">
+              <span aria-hidden>
+                <PersonAvatar
+                  name={session?.user.name}
+                  src={session?.user.image}
+                  tone="teal"
+                  className="size-8"
+                />
+              </span>
+              <span className="sr-only max-w-40 truncate text-sm font-medium md:not-sr-only">
                 {session?.user.name}
               </span>
+              <span className="sr-only">, account menu</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-56">

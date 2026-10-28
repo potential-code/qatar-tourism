@@ -5,7 +5,7 @@ import {
 } from '@shared/content/assessments'
 import { CircleCheck } from 'lucide-react'
 import { useState } from 'react'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import { cn } from '@/lib/utils'
 
 /** Baseline and parallel post items, one per competency, the correct answer marked (brief §8). */
@@ -14,12 +14,14 @@ export function QuestionBank() {
   return (
     <div className="grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs value={variant} onValueChange={(v) => setVariant(v as AssessmentVariant)}>
-          <TabsList>
-            <TabsTrigger value="baseline">Baseline</TabsTrigger>
-            <TabsTrigger value="post">Post-assessment</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <SegmentedControl
+          aria-label="Question set"
+          value={variant}
+          onValueChange={(v) => setVariant(v as AssessmentVariant)}
+        >
+          <SegmentedControlItem value="baseline">Baseline</SegmentedControlItem>
+          <SegmentedControlItem value="post">Post-assessment</SegmentedControlItem>
+        </SegmentedControl>
         <p className="text-xs text-muted-foreground">
           Version {ASSESSMENT_VERSION}. Five items, 20 points each. Answer order is shuffled for
           learners.

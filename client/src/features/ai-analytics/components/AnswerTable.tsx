@@ -32,7 +32,7 @@ export function AnswerTable({ table, caption }: { table: Table; caption: string 
                   key={c.key}
                   className={cn('px-4 py-2.5', c.numeric ? 'text-end tabular-nums' : 'text-ink')}
                 >
-                  {row[c.key] ?? <span className="text-muted-foreground/60">None</span>}
+                  {row[c.key] ?? <span className="text-muted-foreground">None</span>}
                 </td>
               ))}
             </tr>
