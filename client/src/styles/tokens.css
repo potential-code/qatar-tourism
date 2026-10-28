@@ -21,9 +21,9 @@
   --qt-orange: #bf4f00; /* logo accent, use sparingly */
 
   /* Semantic */
-  --qt-success: #2f7d4f;
-  --qt-warning: #b26a00;
-  --qt-danger: #d92d20;
+  --qt-success: #246b42; /* darkened from #2f7d4f: 4.5:1 text on tinted badges over sand (WCAG AA) */
+  --qt-warning: #8a5300; /* darkened from #b26a00 for AA text contrast */
+  --qt-danger: #b42318; /* darkened from #d92d20 for AA text contrast */
   --qt-info: var(--qt-teal);
 
   /* Typography */
