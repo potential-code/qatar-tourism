@@ -46,6 +46,9 @@ export default defineConfig(({ mode }) => {
   // .env lives at the repository root, shared with the server. Process env (Docker build
   // args, CI) takes precedence over the file.
   const fileEnv = loadEnv(mode, repoRoot, 'VITE_')
+  // The dev server listens on the port in CLIENT_URL, the origin the API's CORS allows.
+  const clientUrl = process.env.CLIENT_URL ?? loadEnv(mode, repoRoot, 'CLIENT_').CLIENT_URL
+  const devPort = Number(clientUrl ? new URL(clientUrl).port : '') || 5173
   try {
     parseClientEnv({ ...fileEnv, ...process.env })
   } catch (error) {
@@ -75,7 +78,7 @@ export default defineConfig(({ mode }) => {
         '@shared': path.resolve(repoRoot, 'shared'),
       },
     },
-    server: { port: 5173 },
+    server: { port: devPort, strictPort: true },
     preview: { port: 5000 },
     build: {
       outDir: path.resolve(clientRoot, 'dist'),
