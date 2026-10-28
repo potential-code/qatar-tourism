@@ -64,6 +64,8 @@ const ADMIN: Target[] = [
   '/admin',
   '/admin/ai-analytics',
   '/admin/reports',
+  '/admin/reports/learners',
+  '/admin/reports/sessions',
   '/admin/manage',
   '/admin/manage/users',
   '/admin/manage/trainers',
@@ -122,12 +124,37 @@ const MOBILE: Target[] = [
   { path: '/trainer/attendance', who: ACCOUNTS.trainer(1) },
 ].map((t) => ({ ...t, width: 390 }))
 
-for (const [group, targets] of Object.entries({ PUBLIC, LEARNER, TRAINER, ADMIN, MOBILE })) {
+/** Tablet width (brief §18 768 px) for the public, learner and trainer screens. */
+const TABLET: Target[] = [
+  { path: '/' },
+  { path: '/sessions' },
+  { path: '/register' },
+  { path: '/learner/learning/C01', who: ACCOUNTS.omar },
+  { path: '/learner/assignments', who: ACCOUNTS.omar },
+  { path: '/trainer/sessions', who: ACCOUNTS.trainer(1) },
+  { path: '/trainer/assignments', who: ACCOUNTS.trainer(1) },
+].map((t) => ({ ...t, width: 768 }))
+
+for (const [group, targets] of Object.entries({
+  PUBLIC,
+  LEARNER,
+  TRAINER,
+  ADMIN,
+  MOBILE,
+  TABLET,
+})) {
   test.describe(`axe: ${group.toLowerCase()}`, () => {
     for (const target of targets) {
       test(target.path, async ({ page }) => {
         const violations = await scan(page, target)
         expect(violations, JSON.stringify(violations, null, 2)).toEqual([])
+        if (target.width) {
+          // Responsive layouts: the page never scrolls sideways (tables scroll in their own box).
+          const overflow = await page.evaluate(
+            () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          )
+          expect(overflow, `horizontal page scroll at ${target.width}px`).toBeLessThanOrEqual(0)
+        }
       })
     }
   })
