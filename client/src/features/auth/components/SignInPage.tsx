@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import { useAppForm } from '@/hooks/useAppForm'
 import { authClient } from '@/lib/auth-client'
 import { useAfterSignIn } from '../hooks/useAfterSignIn'
@@ -93,15 +93,18 @@ export function SignInPage({
     >
       <AuthSwitch active="login" redirect={redirect} />
       <div className="grid gap-5">
-        <Tabs value={mode} onValueChange={(value) => setMode(value as SignInMode)}>
-          <TabsList aria-label="Sign-in mode" className="w-full">
-            {SIGN_IN_MODES.map((m) => (
-              <TabsTrigger key={m} value={m} className="flex-1">
-                {MODE_COPY[m].tab}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <SegmentedControl
+          aria-label="Sign-in mode"
+          value={mode}
+          onValueChange={(value) => setMode(value as SignInMode)}
+          className="w-full"
+        >
+          {SIGN_IN_MODES.map((m) => (
+            <SegmentedControlItem key={m} value={m} className="flex-1">
+              {MODE_COPY[m].tab}
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={mode}

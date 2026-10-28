@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { DemoBadge } from '@/components/layout'
 import { Stagger, StaggerItem } from '@/components/motion'
 import { EmptyState } from '@/components/ui/empty-state'
+import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PublicLayout } from '@/features/public-site/components/PublicLayout'
 import { SectionError } from '@/features/public-site/components/SectionState'
 import { upcomingSessionsQuery } from '../queries/programmes.queries'
@@ -40,14 +40,16 @@ export function SessionsPage() {
       </PublicPageIntro>
       <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-4 py-14 md:px-8 md:py-20">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Tabs value={filter} onValueChange={(value) => setFilter(value as Filter)}>
-            <TabsList aria-label="Filter by programme">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="A">Program A</TabsTrigger>
-              <TabsTrigger value="B">Program B</TabsTrigger>
-              <TabsTrigger value="C">Program C</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <SegmentedControl
+            aria-label="Filter by programme"
+            value={filter}
+            onValueChange={(value) => setFilter(value as Filter)}
+          >
+            <SegmentedControlItem value="all">All</SegmentedControlItem>
+            <SegmentedControlItem value="A">Program A</SegmentedControlItem>
+            <SegmentedControlItem value="B">Program B</SegmentedControlItem>
+            <SegmentedControlItem value="C">Program C</SegmentedControlItem>
+          </SegmentedControl>
           <DemoBadge compact />
         </div>
         {isPending ? (
