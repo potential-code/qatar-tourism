@@ -11,8 +11,8 @@ import {
   test,
 } from 'bun:test'
 import { db } from '@server/db/connection'
-import { certificates } from '@server/db/schema'
-import { asc, eq } from 'drizzle-orm'
+import { auditEvents, certificates } from '@server/db/schema'
+import { and, asc, eq } from 'drizzle-orm'
 import { HAS_TEST_DB } from '../../__tests__/helpers/env'
 import { recomputeEnrolment } from '../progress/progress.service'
 import { ADMIN, call, freshSeed, signInAs } from '../sessions/test-support'
@@ -80,6 +80,26 @@ describe.skipIf(!HAS_TEST_DB)('certificate revocation (brief §6: admin-only, au
     const after = await certificatesOf(cert.enrolmentId)
     expect(after.filter((c) => c.status === 'issued')).toHaveLength(1)
     expect(after).toHaveLength(2)
+
+    // Brief §11: revocation and reissue are audited with the admin's reason.
+    const audited = await db
+      .select({ action: auditEvents.action, reason: auditEvents.reason })
+      .from(auditEvents)
+      .where(and(eq(auditEvents.objectType, 'certificate'), eq(auditEvents.objectId, cert.code)))
+    expect(audited).toContainEqual({
+      action: 'certificate.revoke',
+      reason: 'Issued in error during the demo',
+    })
+    const [reissueEvent] = await db
+      .select({ reason: auditEvents.reason })
+      .from(auditEvents)
+      .where(
+        and(
+          eq(auditEvents.action, 'certificate.reissue'),
+          eq(auditEvents.objectId, reissued.json.code),
+        ),
+      )
+    expect(reissueEvent?.reason).toBe('Corrected after review')
   })
 
   test('two reissues at the same moment get distinct codes (no unique-code collision)', async () => {
