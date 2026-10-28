@@ -11,7 +11,14 @@ import {
   test,
 } from 'bun:test'
 import { db } from '@server/db/connection'
-import { attendance, notifications, rsvps, sessionScores, sessions } from '@server/db/schema'
+import {
+  attendance,
+  auditEvents,
+  notifications,
+  rsvps,
+  sessionScores,
+  sessions,
+} from '@server/db/schema'
 import { rescheduleModalCopy } from '@shared/content/notifications'
 import { and, eq, inArray } from 'drizzle-orm'
 import { ADMIN, call, freshSeed, OMAR, sessionId, signInAs, T01, T03, T05 } from './test-support'
@@ -204,6 +211,22 @@ describe('reschedule (brief §10–11)', () => {
     const history = await call('GET', `/api/sessions/${id}`)
     expect(history.json.rescheduleHistory.length).toBe(2)
     expect(history.json.session.startsAt).toBe(newStart.toISOString())
+
+    // Brief §11: one audit event with before/after and reason, even after the retry (the seed
+    // already holds an earlier reschedule of this session).
+    const audited = await db
+      .select()
+      .from(auditEvents)
+      .where(
+        and(
+          eq(auditEvents.objectId, id),
+          eq(auditEvents.action, 'session.reschedule'),
+          eq(auditEvents.reason, body.reason),
+        ),
+      )
+    expect(audited.length).toBe(1)
+    expect(audited[0]?.before).toMatchObject({ startsAt: oldStart.toISOString() })
+    expect(audited[0]?.after).toMatchObject({ startsAt: newStart.toISOString(), notified: 18 })
   })
 
   test('waitlisted learners receive a separate update', async () => {
@@ -264,6 +287,13 @@ describe('cancel (brief §10)', () => {
       status: 'attended',
     })
     expect(mark.status).toBe(409)
+
+    const audited = await db
+      .select()
+      .from(auditEvents)
+      .where(and(eq(auditEvents.objectId, id), eq(auditEvents.action, 'session.cancel')))
+    expect(audited.length).toBe(1)
+    expect(audited[0]?.reason).toBe(body.reason)
   })
 
   test('admins may manage any trainer’s session', async () => {
