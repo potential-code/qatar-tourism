@@ -61,6 +61,22 @@ export async function lockSession(tx: Tx, id: string) {
   return row
 }
 
+/**
+ * Serialises one learner's booking changes (book, move, cancel) until the transaction ends.
+ * Session row locks alone protect capacity; this protects the learner-level rules (one active
+ * required-stage reservation per programme, no overlapping bookings, one move per booking)
+ * when the same learner sends two requests at once. Taken before any session lock.
+ */
+export async function lockLearnerBookings(tx: Tx, learnerId: string) {
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${`rsvp-learner:${learnerId}`}))`)
+}
+
+/** Re-reads a booking's status under the locks; a concurrent change makes it inactive. */
+export async function currentRsvpStatus(tx: Tx, rsvpId: string) {
+  const [row] = await tx.select({ status: rsvps.status }).from(rsvps).where(eq(rsvps.id, rsvpId))
+  return row?.status ?? null
+}
+
 export async function countActive(executor: Reader, sessionId: string) {
   const [row] = await executor
     .select({

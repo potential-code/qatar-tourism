@@ -11,6 +11,7 @@
  * beside it — never by colour alone.
  */
 import type * as React from 'react'
+import { useId } from 'react'
 import { percent } from '@/lib/analytics/format'
 import { cn } from '@/lib/utils'
 import { STATUS_COLORS, type StatusTone, seriesColor } from './palette'
@@ -40,6 +41,7 @@ export function Meter({ label, value, max, tone, toneLabel, caption, className }
   const fraction = Math.min(Math.max(value / safeMax, 0), 1)
   const resolved = tone ?? toneFor(fraction)
   const accent = seriesColor(0)
+  const labelId = useId()
 
   const fill =
     resolved === 'neutral'
@@ -67,7 +69,9 @@ export function Meter({ label, value, max, tone, toneLabel, caption, className }
       style={style}
     >
       <div className="mb-2 flex items-baseline justify-between gap-3">
-        <span className="text-sm font-medium">{label}</span>
+        <span id={labelId} className="text-sm font-medium">
+          {label}
+        </span>
         <span className="flex items-center gap-2 text-sm tabular-nums">
           {toneLabel ? (
             <span className="text-xs font-medium text-muted-foreground uppercase">{toneLabel}</span>
@@ -81,7 +85,7 @@ export function Meter({ label, value, max, tone, toneLabel, caption, className }
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={safeMax}
-        aria-label={typeof label === 'string' ? label : undefined}
+        aria-labelledby={labelId}
         className="h-2.5 w-full overflow-hidden rounded-full"
         style={{
           backgroundColor: 'color-mix(in oklab, var(--meter-fill) 26%, hsl(var(--card)))',

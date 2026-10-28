@@ -206,6 +206,9 @@ function assertDecisionFits(context: SubmissionContext, decision: string, total:
   }
 }
 
+const alreadyFinal = () =>
+  new HttpError(409, 'ALREADY_FINAL', 'This mark is final. Use Correct mark with a reason.')
+
 /** The final review (returned or approved), ignoring a saved draft. */
 async function existingReview(submissionId: string) {
   const [row] = await db
@@ -232,9 +235,7 @@ export async function saveDraft(
   input: MarkingDraftInput,
 ) {
   const context = await contextInScope(scope, submissionId)
-  if (await existingReview(submissionId)) {
-    throw new HttpError(409, 'ALREADY_FINAL', 'This mark is final. Use Correct mark with a reason.')
-  }
+  if (await existingReview(submissionId)) throw alreadyFinal()
   const rubric = rubricFor(context.assignment.code)
   const total = rubricTotal(rubric, input.breakdown)
   const savedAt = now()
@@ -249,16 +250,22 @@ export async function saveDraft(
     updatedAt: savedAt,
   }
   await db.transaction(async (tx) => {
-    if (context.submission.status === 'submitted') {
-      await tx
-        .update(submissions)
-        .set({ status: 'under_review', updatedAt: savedAt })
-        .where(eq(submissions.id, submissionId))
-    }
-    await tx
+    // Only a draft may be overwritten: a finalise that committed after the check above wins,
+    // and this save is refused (and rolled back) instead of turning the final mark into a draft.
+    const saved = await tx
       .insert(reviews)
       .values({ ...draftValues, submissionId, createdAt: savedAt })
-      .onConflictDoUpdate({ target: reviews.submissionId, set: draftValues })
+      .onConflictDoUpdate({
+        target: reviews.submissionId,
+        set: draftValues,
+        setWhere: eq(reviews.status, 'draft'),
+      })
+      .returning({ id: reviews.id })
+    if (saved.length === 0) throw alreadyFinal()
+    await tx
+      .update(submissions)
+      .set({ status: 'under_review', updatedAt: savedAt })
+      .where(and(eq(submissions.id, submissionId), eq(submissions.status, 'submitted')))
     await recordAudit(
       actor.viewer,
       {
@@ -344,10 +351,17 @@ export async function finalise(
         reviewedAt,
         updatedAt: reviewedAt,
       }
-      await tx
+      const written = await tx
         .insert(reviews)
         .values({ ...finalValues, submissionId, createdAt: reviewedAt })
-        .onConflictDoUpdate({ target: reviews.submissionId, set: finalValues })
+        .onConflictDoUpdate({
+          target: reviews.submissionId,
+          set: finalValues,
+          setWhere: eq(reviews.status, 'draft'),
+        })
+        .returning({ id: reviews.id })
+      // Another marker finalised in between: never overwrite a final mark without a correction.
+      if (written.length === 0) throw alreadyFinal()
       await tx
         .update(submissions)
         .set({ status: input.decision, updatedAt: reviewedAt })

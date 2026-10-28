@@ -1,5 +1,6 @@
 import { CalendarX2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { labelDayButton } from 'react-day-picker'
 import { Calendar } from '@/components/ui/calendar'
 import { EmptyState } from '@/components/ui/empty-state'
 import { qatarDateKey, qatarDateLong } from '@/lib/format/qatar-time'
@@ -50,6 +51,11 @@ export function SessionCalendar({
           modifiersClassNames={{
             hasSession:
               'relative font-semibold text-teal-deep after:absolute after:bottom-1 after:left-1/2 after:size-1 after:-translate-x-1/2 after:rounded-full after:bg-maroon',
+          }}
+          // Screen readers hear which days have sessions, not only the visual dot.
+          labels={{
+            labelDayButton: (date, modifiers, options, dateLib) =>
+              `${labelDayButton(date, modifiers, options, dateLib)}${modifiers.hasSession ? ', has sessions' : ''}`,
           }}
           className="mx-auto"
         />

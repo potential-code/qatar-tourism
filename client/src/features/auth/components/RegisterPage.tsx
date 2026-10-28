@@ -1,3 +1,4 @@
+import { fictionalEmail } from '@shared/schemas/common'
 import { Link, useRouter } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react'
 import { useState } from 'react'
@@ -15,7 +16,7 @@ import { VerifyPanel } from './VerifyPanel'
 
 const schema = z.object({
   name: z.string().trim().min(2, 'Enter your full name'),
-  email: z.email('Enter a valid email address'),
+  email: fictionalEmail,
   password: z.string().min(8, 'Use at least 8 characters'),
 })
 

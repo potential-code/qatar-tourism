@@ -39,7 +39,8 @@ test('7–10 min: Omar books, Amal reschedules, Omar sees the change', async ({ 
   const bookings = page.getByRole('region', { name: 'Your bookings' })
   await expect(bookings.getByRole('heading', { name: SESSION })).toBeVisible()
   await expect(bookings.getByText('Confirmed')).toBeVisible()
-  await expect(bookings.getByText('Thu 29 Oct, 09:00 to 10:00 Qatar time')).toBeVisible()
+  // The date follows the demo reference date (Day +2), so only the time is fixed.
+  await expect(bookings.getByText(/, 09:00 to 10:00 Qatar time/)).toBeVisible()
   await expect(card).toContainText('You are booked')
   await expect(card).toContainText('18')
 

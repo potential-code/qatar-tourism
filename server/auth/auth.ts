@@ -3,10 +3,12 @@ import { db } from '@server/db/connection'
 import * as schema from '@server/db/schema'
 import { logger } from '@server/lib/logger'
 import { CREDENTIAL_LIMIT } from '@server/middleware/rate-limit.middleware'
+import { isSuspended } from '@server/modules/users/suspension.service'
 import { sendResetPasswordEmail, sendVerifyEmail } from '@server/services/email.service'
 import { DEFAULT_ROLE } from '@shared/roles'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { APIError } from 'better-auth/api'
 
 /**
  * Header carrying the client IP resolved by `clientIp()`. The auth route overwrites it on every
@@ -56,6 +58,24 @@ export const auth = betterAuth({
     additionalFields: {
       // input: false — a client can never choose its own role at sign-up or on update.
       role: { type: 'string', input: false, defaultValue: DEFAULT_ROLE },
+    },
+  },
+
+  databaseHooks: {
+    session: {
+      create: {
+        // A suspended account may not start a session by any route: password sign-in, email
+        // verification, the facilitator switch or simulated SSO (all create sessions here).
+        before: async (session) => {
+          if (await isSuspended(session.userId)) {
+            throw new APIError('FORBIDDEN', {
+              code: 'ACCOUNT_SUSPENDED',
+              message: 'This account is suspended. Contact the Academy administrator.',
+            })
+          }
+          return { data: session }
+        },
+      },
     },
   },
 

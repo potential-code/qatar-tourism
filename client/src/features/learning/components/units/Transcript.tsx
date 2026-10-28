@@ -16,7 +16,7 @@ export function Transcript({ text, scenes }: { text: string; scenes?: readonly s
       className="rounded-xl border bg-white px-5"
     >
       <AccordionItem value="transcript" className="border-b-0">
-        <AccordionTrigger className="text-base">
+        <AccordionTrigger headingLevel={2} className="text-base">
           <span className="inline-flex items-center gap-2">
             <FileText aria-hidden className="size-4 text-teal" /> Transcript
           </span>

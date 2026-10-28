@@ -40,7 +40,7 @@ export function RecommendationResult({ data }: { data: Recommendation }) {
         className="relative overflow-hidden rounded-xl bg-teal-deep p-6 text-white shadow-md md:p-8"
       >
         <Quote aria-hidden className="absolute end-6 top-6 size-16 text-white/10" />
-        <figcaption className="mb-3 flex items-center gap-2 text-sm font-medium text-teal-soft">
+        <figcaption className="mb-3 flex items-center gap-2 text-sm font-medium text-teal-mist">
           <Sparkles aria-hidden className="size-4" /> Why we recommend this
         </figcaption>
         <blockquote className="max-w-3xl font-display text-xl leading-relaxed font-light md:text-2xl">

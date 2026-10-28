@@ -8,15 +8,19 @@ import { recordAudit } from '@server/modules/audit/audit.service'
 import type { EnrolmentContext } from '@server/modules/progress/progress.evidence'
 import { baselineAttempt, bestScore, type Evidence } from '@server/modules/progress/progress.rules'
 import { THRESHOLDS } from '@shared/constants'
-import { and, desc, eq, like } from 'drizzle-orm'
+import { and, desc, eq, like, sql } from 'drizzle-orm'
 import { renderCertificatePdf } from './certificate-pdf'
 
-type Executor = Pick<typeof db, 'select' | 'insert' | 'update'>
+type Executor = Pick<typeof db, 'select' | 'insert' | 'update' | 'execute'>
 
 const CODE_PREFIX = 'QTA-DEMO-A-'
 
 /** Next demo certificate code, e.g. QTA-DEMO-A-000121. */
 async function nextCode(run: Executor): Promise<string> {
+  // Serialises code allocation until the caller's transaction ends, so two learners completing
+  // at the same moment cannot both take the same max+1 code (a unique violation would roll back
+  // the unrelated marking, attendance or SCORM write that triggered the issue).
+  await run.execute(sql`select pg_advisory_xact_lock(hashtext('certificates.code'))`)
   const [latest] = await run
     .select({ code: certificates.code })
     .from(certificates)
@@ -38,12 +42,15 @@ export async function issueCertificateIfMissing(
   evidence: Evidence,
 ): Promise<string | null> {
   if (enrolment.programme !== 'A' || !enrolment.certificationEnabled) return null
-  const [existing] = await run
-    .select({ code: certificates.code })
+  const existing = await run
+    .select({ code: certificates.code, status: certificates.status })
     .from(certificates)
-    .where(and(eq(certificates.enrolmentId, enrolment.id), eq(certificates.status, 'issued')))
-    .limit(1)
-  if (existing) return existing.code
+    .where(eq(certificates.enrolmentId, enrolment.id))
+  const issued = existing.find((row) => row.status === 'issued')
+  if (issued) return issued.code
+  // A revoked certificate stays revoked: only an admin reissue (audited) may replace it, never
+  // a later progress recompute.
+  if (existing.length > 0) return null
 
   const [name] = await run
     .select({ fullName: profiles.fullName, userName: user.name })

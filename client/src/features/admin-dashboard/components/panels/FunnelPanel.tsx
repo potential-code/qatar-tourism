@@ -2,7 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { PROGRAMME_LABELS } from '@shared/schemas/admin-labels'
 import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import type { Overview } from '../../queries/analytics.queries'
 import { count, percent } from '../../utils/format'
 import { PanelCard } from '../PanelCard'
@@ -33,18 +33,18 @@ export function FunnelPanel({
       description={active ? NOTES[active.programme] : 'No enrolments in this cohort.'}
       className="col-span-7"
       action={
-        <Tabs
+        <SegmentedControl
+          aria-label="Funnel programme"
           value={active?.programme ?? selected}
           onValueChange={(v) => setSelected(v as ProgrammeCode)}
+          className="rounded-full"
         >
-          <TabsList className="rounded-full">
-            {available.map((code) => (
-              <TabsTrigger key={code} value={code} className="rounded-full px-3 text-xs">
-                {PROGRAMME_LABELS[code]}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+          {available.map((code) => (
+            <SegmentedControlItem key={code} value={code} className="rounded-full px-3 text-xs">
+              {PROGRAMME_LABELS[code]}
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
       }
     >
       <ol className="grid gap-3" aria-label={`${PROGRAMME_LABELS[selected]} funnel`}>

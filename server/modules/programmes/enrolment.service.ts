@@ -33,7 +33,7 @@ export type Executor = typeof db | Tx
 export type Actor = Pick<Viewer, 'id' | 'role' | 'name'>
 
 /** First stage label per programme, matching the seed's `current_stage` values. */
-const FIRST_STAGE: Record<ProgrammeCode, string> = {
+export const FIRST_STAGE: Record<ProgrammeCode, string> = {
   A: 'Onboarding',
   B: 'Onboarding',
   C: 'Sample overview',

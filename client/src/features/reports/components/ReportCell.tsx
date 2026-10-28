@@ -54,7 +54,7 @@ export function formatCell(column: Pick<ReportColumn, 'type'>, value: Value): st
 
 export function ReportCell({ column, value }: { column: ReportColumn; value: Value }) {
   const empty = value === null || value === undefined || value === ''
-  if (empty) return <span className="text-muted-foreground/60">None</span>
+  if (empty) return <span className="text-muted-foreground">None</span>
   if (column.type === 'status')
     return (
       <Badge

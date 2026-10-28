@@ -26,7 +26,9 @@ import type { Actor } from '../sessions/actor'
 import {
   ACTIVE_RSVP,
   countActive,
+  currentRsvpStatus,
   getSessionCard,
+  lockLearnerBookings,
   lockSession,
   selectSessionCards,
   syncCapacityStatus,
@@ -135,6 +137,7 @@ export async function mySessions(userId: string) {
 /** Confirms a seat, or joins the waitlist when the learner asks for it on a full session. */
 export async function book(actor: Actor, input: BookingCreateInput) {
   const result = await db.transaction(async (tx) => {
+    await lockLearnerBookings(tx, actor.id)
     await lockSession(tx, input.sessionId)
     const card = await getSessionCard(input.sessionId, tx)
     const ctx = await loadLearnerContext(tx, actor.id)
@@ -177,6 +180,8 @@ export async function book(actor: Actor, input: BookingCreateInput) {
   return { rsvpId: result.id, status: result.status, waitlistPosition: result.waitlistPosition }
 }
 
+const notActive = () => new HttpError(409, 'NOT_ACTIVE', 'This booking is no longer active.')
+
 async function ownActiveRsvp(actor: Actor, rsvpId: string) {
   const [row] = await db
     .select({ rsvp: rsvps, startsAt: sessions.startsAt, code: sessions.code })
@@ -185,9 +190,7 @@ async function ownActiveRsvp(actor: Actor, rsvpId: string) {
     .where(and(eq(rsvps.id, rsvpId), eq(rsvps.learnerId, actor.id)))
   // Someone else's booking answers exactly like a missing one, so IDs cannot be probed.
   if (!row) throw HttpError.notFound('Booking not found')
-  if (!ACTIVE_RSVP.includes(row.rsvp.status as (typeof ACTIVE_RSVP)[number])) {
-    throw new HttpError(409, 'NOT_ACTIVE', 'This booking is no longer active.')
-  }
+  if (!ACTIVE_RSVP.includes(row.rsvp.status as (typeof ACTIVE_RSVP)[number])) throw notActive()
   return row
 }
 
@@ -198,7 +201,9 @@ export async function cancel(actor: Actor, rsvpId: string, reason: string | unde
     throw refuse('ADMIN_REVIEW_REQUIRED', ADMIN_REVIEW_MESSAGE)
   }
   await db.transaction(async (tx) => {
+    await lockLearnerBookings(tx, actor.id)
     await lockSession(tx, row.rsvp.sessionId)
+    if ((await currentRsvpStatus(tx, rsvpId)) !== row.rsvp.status) throw notActive()
     await tx
       .update(rsvps)
       .set({
@@ -245,8 +250,11 @@ export async function move(actor: Actor, input: BookingMoveInput) {
   }
 
   const created = await db.transaction(async (tx) => {
+    await lockLearnerBookings(tx, actor.id)
     // Lock in a stable order so two opposite moves cannot deadlock.
     for (const id of [row.rsvp.sessionId, input.toSessionId].sort()) await lockSession(tx, id)
+    // A concurrent move or cancel of the same booking committed first: refuse, keep its result.
+    if ((await currentRsvpStatus(tx, row.rsvp.id)) !== row.rsvp.status) throw notActive()
 
     const target = await getSessionCard(input.toSessionId, tx)
     const ctx = await loadLearnerContext(tx, actor.id)

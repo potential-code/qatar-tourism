@@ -1,4 +1,5 @@
 import { auth, CLIENT_IP_HEADER } from '@server/auth/auth'
+import { HttpError } from '@server/lib/errors'
 import { clientIp, credentialRateLimit } from '@server/middleware/rate-limit.middleware'
 import { Hono } from 'hono'
 
@@ -7,8 +8,13 @@ import { Hono } from 'hono'
  * through better-auth's own client. Credential endpoints get the tight limiter first.
  */
 export const authRoutes = new Hono()
+  // Accounts are created only through /api/profiles/register (fictional-address rule, learner
+  // profile, default Program B enrolment) or by an admin. Better Auth's own sign-up endpoint
+  // would skip all of that, so it is not exposed over HTTP; the services call it in-process.
+  .all('/sign-up/*', () => {
+    throw HttpError.notFound()
+  })
   .use('/sign-in/*', credentialRateLimit)
-  .use('/sign-up/*', credentialRateLimit)
   .use('/request-password-reset', credentialRateLimit)
   .use('/reset-password', credentialRateLimit)
   .use('/reset-password/*', credentialRateLimit)

@@ -43,7 +43,7 @@ const templates = {
   resetPassword: loadTemplate('reset-password'),
 }
 
-const APP_NAME = 'Project Skeleton'
+const APP_NAME = 'Qatar Tourism Academy'
 const currentYear = String(new Date().getFullYear())
 
 export function stripHtml(html: string): string {

@@ -16,7 +16,13 @@ export function HeroTrend({ data }: { data: readonly { key: string; value: numbe
   return (
     <div className="h-24 w-full" aria-hidden>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={points} margin={{ top: 6, right: 0, left: 0, bottom: 0 }}>
+        {/* Decorative sparkline (the weekly figures are in the hero's text): not focusable. */}
+        <AreaChart
+          data={points}
+          margin={{ top: 6, right: 0, left: 0, bottom: 0 }}
+          accessibilityLayer={false}
+          tabIndex={-1}
+        >
           <defs>
             <linearGradient id="hero-trend" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="white" stopOpacity={0.35} />

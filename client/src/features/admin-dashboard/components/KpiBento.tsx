@@ -126,6 +126,8 @@ function HeroCard({
       whileHover={reduce ? undefined : { y: -4 }}
       whileTap={reduce ? undefined : { scale: 0.99 }}
       transition={spring}
+      // Card button: a concise name that starts with the visible title (WCAG 2.5.3).
+      data-a11y-card
       aria-label="Unique learners: open the All learners report"
       className="group relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-teal-deep p-7 text-start text-white shadow-[var(--qt-shadow-lg)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
     >

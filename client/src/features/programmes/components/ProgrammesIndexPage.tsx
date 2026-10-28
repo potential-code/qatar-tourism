@@ -31,6 +31,7 @@ export function ProgrammesIndexPage() {
           <SectionError what="the programmes" onRetry={() => refetch()} />
         ) : (
           <Stagger className="grid gap-6 lg:grid-cols-3" stagger={0.1}>
+            <h2 className="sr-only">Programmes</h2>
             {data.map((programme, index) => (
               <StaggerItem key={programme.code}>
                 <ProgrammeCard programme={programme} layout={index === 0 ? 'feature' : 'column'} />

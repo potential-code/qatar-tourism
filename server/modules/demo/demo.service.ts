@@ -6,6 +6,7 @@ import { HttpError } from '@server/lib/errors'
 import { logger } from '@server/lib/logger'
 import type { AuthEnv } from '@server/middleware/auth.middleware'
 import type { Context } from 'hono'
+import { clearUploads } from '../assignments/assignments.storage'
 import { audit } from '../audit/audit.service'
 
 export async function getDemoMeta() {
@@ -31,8 +32,8 @@ export async function loadClock() {
 }
 
 /**
- * Restores the deterministic snapshot: truncates every table, re-runs the seed and keeps the
- * calling administrator's session alive. Audited (the event is written after the re-seed,
+ * Restores the deterministic snapshot: truncates every table, re-runs the seed, empties uploaded
+ * demo files and keeps the calling administrator's session alive. Audited (the event is written after the re-seed,
  * since the old audit trail is part of what a reset replaces).
  */
 export async function resetDemo(c: Context<AuthEnv>) {
@@ -47,6 +48,10 @@ export async function resetDemo(c: Context<AuthEnv>) {
       'The demo data could not be reset. Nothing was changed.',
     )
   }
+  // After the database: a failed reseed leaves the files of the data it kept.
+  await clearUploads().catch((error: unknown) =>
+    logger.error({ err: error }, 'Could not clear demo uploads after a reset'),
+  )
   const meta = await getDemoMeta()
   await audit(c, {
     action: 'demo.reset',
