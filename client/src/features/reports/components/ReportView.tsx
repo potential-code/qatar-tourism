@@ -20,7 +20,7 @@ export function ReportView({ report }: { report: ReportKey }) {
   // A programme report always reads its own programme, whatever filter the URL carries.
   const effective = meta.programme ? { ...search, programme: meta.programme } : search
   const query = useQuery(reportPageQuery(report, effective))
-  const exporter = useExportReport(report, effective, meta.title)
+  const exporter = useExportReport(report, effective)
   const [selected, setSelected] = useState<ReportRow | null>(null)
   const data = query.data
 

@@ -399,3 +399,4 @@ export async function publishPath(pathId: string, input: z.input<typeof publishI
 
 export type PathsList = Awaited<ReturnType<typeof listPaths>>
 export type CatalogueCourse = Awaited<ReturnType<typeof listCatalogue>>[number]
+export type PathDetail = Awaited<ReturnType<typeof getPath>>
