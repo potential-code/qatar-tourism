@@ -8,6 +8,10 @@ import { Toaster } from '@/components/ui/sonner'
 import i18n from '@/i18n'
 import { queryClient } from '@/lib/query-client'
 import { createAppRouter } from '@/router'
+import { bootDemo } from '@/services/boot'
+
+// The demo database (IndexedDB) loads, or is seeded, before anything reads it.
+await bootDemo()
 
 const router = createAppRouter(queryClient)
 

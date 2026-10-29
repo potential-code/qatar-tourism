@@ -1,5 +1,5 @@
 import { keepPreviousData, queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as notifications from '@/services/notifications.service'
 
 export const notificationKeys = {
   all: ['notifications'] as const,
@@ -13,21 +13,21 @@ export type LogFilter = { sessionId?: string; eventId?: string; channel?: 'in_ap
 export const myNotificationsQuery = () =>
   queryOptions({
     queryKey: notificationKeys.mine(),
-    queryFn: () => unwrap(api.notifications.$get()),
+    queryFn: () => notifications.listMine(),
     refetchInterval: 30_000,
   })
 
 export const notificationLogQuery = (filter: LogFilter) =>
   queryOptions({
     queryKey: notificationKeys.log(filter),
-    queryFn: () => unwrap(api.notifications.log.$get({ query: filter })),
+    queryFn: () => notifications.listLog(filter),
     placeholderData: keepPreviousData,
   })
 
 export function useMarkRead() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (ids?: string[]) => unwrap(api.notifications.read.$post({ json: { ids } })),
+    mutationFn: (ids?: string[]) => notifications.markRead(ids),
     onSettled: () => queryClient.invalidateQueries({ queryKey: notificationKeys.mine() }),
   })
 }

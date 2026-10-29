@@ -1,6 +1,7 @@
 import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { authClient, roleOf } from '@/lib/auth-client'
+import { roleOf } from '@/lib/session'
+import * as auth from '@/services/auth.service'
 
 /**
  * The session lives in React Query so route guards (`beforeLoad`) and components read the
@@ -8,11 +9,7 @@ import { authClient, roleOf } from '@/lib/auth-client'
  */
 export const sessionQueryOptions = queryOptions({
   queryKey: ['session'],
-  queryFn: async () => {
-    const { data, error } = await authClient.getSession()
-    if (error) throw new Error(error.message ?? 'Could not load session')
-    return data
-  },
+  queryFn: auth.getSession,
   staleTime: 60_000,
 })
 
@@ -34,7 +31,7 @@ export function useRefreshSession() {
 export function useSignOut() {
   const queryClient = useQueryClient()
   return useCallback(async () => {
-    await authClient.signOut()
+    await auth.signOut()
     // Drop every cached query: the next user must not see the previous user's data.
     queryClient.clear()
   }, [queryClient])

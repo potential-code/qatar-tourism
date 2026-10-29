@@ -8,8 +8,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import { useAppForm } from '@/hooks/useAppForm'
-import { authClient } from '@/lib/auth-client'
+import { ApiError } from '@/lib/api-error'
 import { useAfterSignIn } from '../hooks/useAfterSignIn'
+import { useSignIn } from '../queries/session.queries'
 import { MODE_COPY, SIGN_IN_MODES, type SignInMode } from '../utils/modes'
 import { AuthShell } from './AuthShell'
 import { AuthSwitch } from './AuthSwitch'
@@ -39,6 +40,7 @@ export function SignInPage({
   const [error, setError] = useState<string | null>(null)
   const [unverified, setUnverified] = useState<{ email: string; password: string } | null>(null)
   const afterSignIn = useAfterSignIn()
+  const signIn = useSignIn()
   const copy = MODE_COPY[mode]
 
   const form = useAppForm({
@@ -46,19 +48,17 @@ export function SignInPage({
     validators: { onSubmit: schema },
     onSubmit: async ({ value }) => {
       setError(null)
-      const { error: failure } = await authClient.signIn.email({
-        email: value.email.trim(),
-        password: value.password,
-        rememberMe: remember,
-      })
-      if (failure) {
-        if (failure.status === 403) {
+      try {
+        await signIn.mutateAsync({ email: value.email.trim(), password: value.password })
+      } catch (failure) {
+        const apiError = failure instanceof ApiError ? failure : null
+        if (apiError?.code === 'EMAIL_NOT_VERIFIED') {
           setUnverified({ email: value.email.trim().toLowerCase(), password: value.password })
           return
         }
         setError(
-          failure.status === 429
-            ? 'Too many attempts. Wait a few minutes and try again.'
+          apiError?.code === 'ACCOUNT_SUSPENDED'
+            ? apiError.message
             : 'Email or password is incorrect. Check them and try again, or reset your password.',
         )
         return

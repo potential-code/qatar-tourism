@@ -1,11 +1,12 @@
 import { ROLE_HOME, type Role } from '@shared/roles'
+import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useRefreshSession } from '@/hooks/useSession'
-import { api, unwrap } from '@/lib/api'
-import { roleOf } from '@/lib/auth-client'
 import { safeRedirect } from '@/lib/safe-redirect'
+import { roleOf } from '@/lib/session'
+import { ownProfileStatusQuery } from '../queries/session.queries'
 import { ROLE_LABEL, type SignInMode } from '../utils/modes'
 
 /** Paths a learner may be sent back to after sign-in (the page they were viewing). */
@@ -25,6 +26,7 @@ function learnerTarget(redirect: string | undefined): string | null {
 export function useAfterSignIn() {
   const router = useRouter()
   const refreshSession = useRefreshSession()
+  const queryClient = useQueryClient()
 
   return useCallback(
     async ({ mode, redirect }: { mode?: SignInMode; redirect?: string }) => {
@@ -48,9 +50,9 @@ export function useAfterSignIn() {
         router.history.push(back)
         return
       }
-      const profile = await unwrap(api.profiles.me.$get()).catch(() => null)
-      router.history.push(profile?.status === 'draft' ? '/onboarding' : ROLE_HOME.learner)
+      const status = await queryClient.fetchQuery(ownProfileStatusQuery()).catch(() => null)
+      router.history.push(status === 'draft' ? '/onboarding' : ROLE_HOME.learner)
     },
-    [refreshSession, router],
+    [queryClient, refreshSession, router],
   )
 }

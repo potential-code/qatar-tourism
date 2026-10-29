@@ -1,14 +1,14 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as demo from '@/services/demo.service'
 
 export const demoMetaQuery = () =>
-  queryOptions({ queryKey: ['demo', 'meta'], queryFn: () => unwrap(api.demo.meta.$get()) })
+  queryOptions({ queryKey: ['demo', 'meta'], queryFn: demo.getDemoMeta })
 
 /** Restores the snapshot, then refetches every query: every screen shows the reset data. */
 export function useResetDemo() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: () => unwrap(api.demo.reset.$post({ json: { confirm: true } })),
+    mutationFn: demo.resetDemoData,
     onSuccess: () => client.invalidateQueries(),
   })
 }
