@@ -13,7 +13,7 @@ Qatar Tourism Academy demo: a stateful, frontend-only mockup LMS. There is no ba
 | ------- | ------------------------------------------------------------------------------------------------ |
 | Client  | React 19, Vite, TanStack Router (file routes) / Query / Table / Form, Tailwind 4, shadcn + Radix |
 | Motion  | `motion` (Framer Motion) everywhere; GSAP ScrollTrigger and Lenis on the public site only        |
-| Data    | Browser services over an in-memory demo database, saved to IndexedDB. No server, no database    |
+| Data    | Browser services over an in-memory demo database, saved to IndexedDB. No server, no database     |
 | Shared  | `shared/` with zod schemas, roles, permissions matrix, constants and curriculum content          |
 | Tests   | `bun test` (services and components, happy-dom); Playwright for the e2e walkthrough              |
 | Hosting | One static nginx image (`Dockerfile`, `docker/nginx.conf`)                                       |

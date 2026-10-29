@@ -27,15 +27,15 @@ Built from Potential.com's brief (`docs/brief/BRIEF.txt`, §1–18) and Rawzaba'
 
 ## Handover decisions (brief §18)
 
-| Item                 | Decision                                                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------- |
+| Item                 | Decision                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------- |
 | Stack                | Bun, React 19 + Vite SPA. No backend: browser services over IndexedDB, served as static files |
-| SCORM format         | SCORM 2004 4th Edition sample package (C04), built for this demo, not an Articulate export  |
-| AI mode              | Scripted, deterministic demo logic. No AI model is called. Labelled simulated in the UI     |
-| Speech mode          | Browser speech recognition where available, typed fallback, labelled recorded demonstration |
-| Email mode           | Simulated. Demo emails are written to the notification log. No external email is sent       |
-| Hosting location     | To be confirmed by the client (see `docs/OPEN-QUESTIONS.md`)                                |
-| Demo access duration | To be confirmed by the client (see `docs/OPEN-QUESTIONS.md`)                                |
+| SCORM format         | SCORM 2004 4th Edition sample package (C04), built for this demo, not an Articulate export    |
+| AI mode              | Scripted, deterministic demo logic. No AI model is called. Labelled simulated in the UI       |
+| Speech mode          | Browser speech recognition where available, typed fallback, labelled recorded demonstration   |
+| Email mode           | Simulated. Demo emails are written to the notification log. No external email is sent         |
+| Hosting location     | To be confirmed by the client (see `docs/OPEN-QUESTIONS.md`)                                  |
+| Demo access duration | To be confirmed by the client (see `docs/OPEN-QUESTIONS.md`)                                  |
 
 ## Prerequisites
 
@@ -60,11 +60,11 @@ browser.
 
 Every setting is optional. Copy `.env.example` to `.env` at the repository root to change one.
 
-| Key                        | Purpose                                                                                       |
-| -------------------------- | --------------------------------------------------------------------------------------------- |
-| `CLIENT_PORT`              | Port for `bun run dev`. Default `5173`. A `--port` flag overrides it                          |
-| `VITE_DEMO_REFERENCE_DATE` | `YYYY-MM-DD`. Every "Day +N" in the seed is relative to it. Unset: the fixed date in `shared/constants/demo.ts` |
-| `BASIC_AUTH_USER`, `BASIC_AUTH_PASS`, `BASIC_AUTH` | Docker image only. See Deployment                                          |
+| Key                                                | Purpose                                                                                                         |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `CLIENT_PORT`                                      | Port for `bun run dev`. Default `5173`. A `--port` flag overrides it                                            |
+| `VITE_DEMO_REFERENCE_DATE`                         | `YYYY-MM-DD`. Every "Day +N" in the seed is relative to it. Unset: the fixed date in `shared/constants/demo.ts` |
+| `BASIC_AUTH_USER`, `BASIC_AUTH_PASS`, `BASIC_AUTH` | Docker image only. See Deployment                                                                               |
 
 `VITE_*` values are public: they are compiled into the JavaScript the browser downloads.
 
@@ -130,17 +130,17 @@ For presenting or QA, `/<path>?demo-as=<userId>` opens any page signed in as a s
 
 All scripts run from the repository root.
 
-| Script                | What it does                                                    |
-| --------------------- | --------------------------------------------------------------- |
-| `bun run dev`         | Vite dev server only (port from `CLIENT_PORT`, default 5173)    |
-| `bun run build`       | Typecheck, then build the static site into `client/dist`        |
-| `bun run preview`     | Serve the built site locally (port 5000)                        |
-| `bun run typecheck`   | `tsc --noEmit` over client, shared and e2e                      |
-| `bun run lint`        | Biome lint and format check                                     |
-| `bun run format`      | Biome, fixing what it can                                       |
-| `bun run test`        | Client and shared tests (`bun test`, happy-dom)                 |
-| `bun run test:e2e`    | Playwright walkthrough (brief §17) and accessibility checks     |
-| `bun run scorm:build` | Copy the C04 SCORM package from `scorm/` into `client/public`   |
+| Script                | What it does                                                  |
+| --------------------- | ------------------------------------------------------------- |
+| `bun run dev`         | Vite dev server only (port from `CLIENT_PORT`, default 5173)  |
+| `bun run build`       | Typecheck, then build the static site into `client/dist`      |
+| `bun run preview`     | Serve the built site locally (port 5000)                      |
+| `bun run typecheck`   | `tsc --noEmit` over client, shared and e2e                    |
+| `bun run lint`        | Biome lint and format check                                   |
+| `bun run format`      | Biome, fixing what it can                                     |
+| `bun run test`        | Client and shared tests (`bun test`, happy-dom)               |
+| `bun run test:e2e`    | Playwright walkthrough (brief §17) and accessibility checks   |
+| `bun run scorm:build` | Copy the C04 SCORM package from `scorm/` into `client/public` |
 
 ## Tests
 

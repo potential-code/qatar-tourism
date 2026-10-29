@@ -146,8 +146,8 @@ _Spec: `e2e/04-marking-and-exports.spec.ts`._
    is now Complete.
 4. Demo toolbar → **Daniel Costa**. Assignments → **Visitor service response plan**. Version 1
    was returned for revision at 62/100 with trainer feedback. Paste the response plan and
-   **Submit version 2**. It goes to Rafael Sousa.
-5. Demo toolbar → **Rafael Sousa**. Assignments → Daniel Costa → **Mark version 2**. Score the
+   **Submit version 2**. It goes back to Noura Al Saleh, who marked version 1.
+5. Demo toolbar → **Noura Al Saleh**. Assignments → Daniel Costa → **Mark version 2**. Score the
    four parts (for example 20, 19, 21, 20), write feedback, **Save draft**, then choose
    **Approve** and **Finalise**. The confirmation mentions the simulated demo email.
 6. Demo toolbar → **Daniel Costa**. The assignment shows Approved with the new feedback.
@@ -165,22 +165,25 @@ _Spec: `e2e/04-marking-and-exports.spec.ts`._
 
 _Spec: `e2e/05-certification-and-admin.spec.ts`._
 
-1. Demo toolbar → **Omar Al Safi**. My learning (Program A) → **Practical assignment** →
+1. Demo toolbar → **Omar Al Safi**. My learning (Program A) → **Planning a helpful visitor
+   response** (C05): tick the checklist, write a short plan (at least the minimum words shown)
+   and choose **Mark complete**. It is a required Level 2 unit.
+2. My learning (Program A) → **Practical assignment** →
    Visitor service response plan. Paste the plan and submit. It goes to Amal Al Nouri.
-2. Demo toolbar → **Amal Al Nouri**. Assignments → Omar Al Safi. Score (for example 22, 20,
+3. Demo toolbar → **Amal Al Nouri**. Assignments → Omar Al Safi. Score (for example 22, 20,
    20, 20), feedback, **Approve**, **Finalise**.
-3. Demo toolbar → **Omar Al Safi**. My learning → **Final assessment** ("You need at least 80
+4. Demo toolbar → **Omar Al Safi**. My learning → **Final assessment** ("You need at least 80
    percent."). **Start** and answer all five correctly. "Passed. The pass mark is 80 percent."
-4. **Certificates**: one certificate, QTA-DEMO-A-000121. Open it: the watermarked
+5. **Certificates**: one certificate, QTA-DEMO-A-000121. Open it: the watermarked
    demonstration certificate. **Download PDF**, then **Verification page**.
-5. Demo toolbar → **Academy Admin**. The Dashboard now shows **A certificates issued 121**,
+6. Demo toolbar → **Academy Admin**. The Dashboard now shows **A certificates issued 121**,
    the Program A funnel includes 121, **Unique learners 1,201** and **Enrolments 1,261**
    (the new visitor joined Program B, so B has 661).
-6. Choose the **A certificates issued** card. It opens the Certification report with 121
+7. Choose the **A certificates issued** card. It opens the Certification report with 121
    records. Search QTA-DEMO-A-000121 and open the row: the eligibility evidence reads
    "Foundation quiz 80+, session 70+, assignment 70+, final assessment 100". Download the PDF,
    then **Open learner record**.
-7. Reports → **Program A users**: 420 enrolments. Filter Organisation type = Tour operator; the
+8. Reports → **Program A users**: 420 enrolments. Filter Organisation type = Tour operator; the
    count drops. **Reset filters** returns to 420.
 
 **Evidence to show:** certificate eligibility, updated totals, filtered tables and

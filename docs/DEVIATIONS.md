@@ -20,15 +20,15 @@ at handover.
 
 The demo has no backend. These follow from that choice.
 
-| #   | Area                         | What it means                                                                                                                                                                         |
-| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 9   | No backend                   | No API, database or mail server. Browser services (`client/src/services`) run the business rules over seeded data saved in IndexedDB. Hosting serves static files only                |
-| 10  | Permissions in the browser   | Brief §11 rules are enforced in the browser services and route guards, not on a server. They behave the same in the demo, but anyone with developer tools can change their own copy |
-| 11  | State per browser            | Each browser has its own copy of the data. Learner, trainer and admin views connect within one browser: switch with the demo toolbar or sign out and in. Two people never share state |
-| 12  | Certificate verification     | The public verification page finds seeded certificates and those issued in the same browser. A certificate issued in another browser is not found                                  |
-| 13  | Unsubmitted uploads          | A file chosen for an assignment but not yet submitted is lost on reload. Submitted files are kept in the browser                                                                     |
-| 14  | Seeded files                 | Seeded file submissions are metadata only (name, size, type). No file is stored for them                                                                                             |
-| 15  | Emails and password reset    | Every email, including the password-reset link, is simulated on screen and in the notification log. Nothing is sent                                                                  |
+| #   | Area                       | What it means                                                                                                                                                                         |
+| --- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 9   | No backend                 | No API, database or mail server. Browser services (`client/src/services`) run the business rules over seeded data saved in IndexedDB. Hosting serves static files only                |
+| 10  | Permissions in the browser | Brief §11 rules are enforced in the browser services and route guards, not on a server. They behave the same in the demo, but anyone with developer tools can change their own copy   |
+| 11  | State per browser          | Each browser has its own copy of the data. Learner, trainer and admin views connect within one browser: switch with the demo toolbar or sign out and in. Two people never share state |
+| 12  | Certificate verification   | The public verification page finds seeded certificates and those issued in the same browser. A certificate issued in another browser is not found                                     |
+| 13  | Unsubmitted uploads        | A file chosen for an assignment but not yet submitted is lost on reload. Submitted files are kept in the browser                                                                      |
+| 14  | Seeded files               | Seeded file submissions are metadata only (name, size, type). No file is stored for them                                                                                              |
+| 15  | Emails and password reset  | Every email, including the password-reset link, is simulated on screen and in the notification log. Nothing is sent                                                                   |
 
 ## Known gaps
 
