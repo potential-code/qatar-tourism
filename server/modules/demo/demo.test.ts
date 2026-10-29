@@ -127,7 +127,7 @@ describe('GET /api/demo/meta', () => {
 })
 
 describe('seeded accounts can sign in (Better Auth password hash)', () => {
-  const password = 'DemoAcademy2026!'
+  const password = 'password'
   for (const [role, email] of [
     ['admin', 'admin@example.com'],
     ['trainer', 'trainer04@example.com'],

@@ -64,7 +64,7 @@ Copy `.env.example` to `.env` at the repository root. The server validates it at
 | `AWS_*`, `SES_FROM_EMAIL`      | no           | Amazon SES, used only when `NODE_ENV` is `staging` or `production`                            |
 | `MAILPIT_HOST`, `MAILPIT_PORT` | no           | Local mail transport. Defaults `localhost:1025`                                               |
 | `DEMO_REFERENCE_DATE`          | no           | `YYYY-MM-DD`. Every "Day +N" in the seed is relative to it. Unset: today (Qatar) at seed time |
-| `SEED_DEMO_PASSWORD`           | yes, to seed | One shared password for every seeded account. At least 12 characters                          |
+| `SEED_DEMO_PASSWORD`           | yes, to seed | One shared password for every seeded account. At least 8 characters                           |
 | `ALLOW_DEMO_SEED`              | no           | Must be `true` for seeding or reset to run when `NODE_ENV=production`                         |
 | `TEST_DATABASE_URL`            | for tests    | Throwaway database. The tests truncate it                                                     |
 | `VITE_API_URL`                 | yes          | API origin compiled into the client. The client build fails without it                        |
@@ -134,7 +134,7 @@ Reset also empties the uploaded demo files inside `uploads/`. See `docs/DATA-DEL
 ## Demo accounts
 
 Every seeded account uses the password in `SEED_DEMO_PASSWORD`. The end-to-end suite expects
-`DemoAcademy2026!` (`e2e/support/env.ts`), so use that value if you run it.
+`password` (`e2e/support/env.ts`), so use that value if you run it.
 
 | Account                                                | Role                                     |
 | ------------------------------------------------------ | ---------------------------------------- |
@@ -204,7 +204,7 @@ bun run test:e2e    # end-to-end walkthrough
 - `bun run test:e2e` runs against the **app database**. Its global setup calls the admin
   reset, and the last spec resets again, so the demo ends in its starting state. It starts the
   API and client itself on 8140 and 5240, or reuses ones already running there. It needs
-  `SEED_DEMO_PASSWORD=DemoAcademy2026!`. Set `E2E_SKIP_RESET=1` to skip the first reset while
+  `SEED_DEMO_PASSWORD=password`. Set `E2E_SKIP_RESET=1` to skip the first reset while
   iterating on one spec.
 - The specs follow the walkthrough minute by minute (`e2e/01-…` to `e2e/08-…`).
   `e2e/09-accessibility.spec.ts` runs axe WCAG checks, keyboard paths, captions and reduced

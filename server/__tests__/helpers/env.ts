@@ -18,7 +18,7 @@ const testEnv: Record<string, string> = {
   BETTER_AUTH_URL: 'http://localhost:8000',
   CLIENT_URL: 'http://localhost:5173',
   DEMO_REFERENCE_DATE: '2026-10-27',
-  SEED_DEMO_PASSWORD: 'DemoAcademy2026!',
+  SEED_DEMO_PASSWORD: 'password',
   // The whole suite shares one client key ('unknown'), so the per-minute brake would trip.
   API_RATE_LIMIT_PER_MINUTE: '100000',
 }

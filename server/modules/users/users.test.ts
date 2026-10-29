@@ -188,7 +188,7 @@ describe('suspend and reactivate', () => {
       .where(eq(user.id, 'user-l0011'))
     const signIn = () =>
       auth.api.signInEmail({
-        body: { email: account?.email ?? '', password: 'DemoAcademy2026!' },
+        body: { email: account?.email ?? '', password: 'password' },
         asResponse: true,
       })
     const blocked = await signIn()
@@ -233,7 +233,7 @@ describe('roles', () => {
         body: {
           name: 'Eager Visitor',
           email: 'eager.visitor@example.com',
-          password: 'DemoAcademy2026!',
+          password: 'password',
           role: 'trainer',
         } as never,
       })

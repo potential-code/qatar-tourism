@@ -168,8 +168,8 @@ export type SeedOptions = {
 
 export function seedPassword(explicit?: string): string {
   const password = explicit ?? process.env.SEED_DEMO_PASSWORD
-  if (!password || password.length < 12) {
-    throw new Error('SEED_DEMO_PASSWORD must be set and at least 12 characters. See .env.example.')
+  if (!password || password.length < 8) {
+    throw new Error('SEED_DEMO_PASSWORD must be set and at least 8 characters. See .env.example.')
   }
   return password
 }

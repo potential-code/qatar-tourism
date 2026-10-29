@@ -1,7 +1,7 @@
 /** Shared constants for the e2e walkthrough. */
 export const API_URL = 'http://localhost:8140'
 export const CLIENT_ORIGIN = 'http://localhost:5240'
-export const DEMO_PASSWORD = 'DemoAcademy2026!'
+export const DEMO_PASSWORD = 'password'
 
 export const ACCOUNTS = {
   admin: 'admin@example.com',
