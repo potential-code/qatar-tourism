@@ -3,7 +3,7 @@ import { type DragEvent, useId, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
-import type { UploadState } from '../hooks/useChunkedUpload'
+import type { UploadState } from '../hooks/useFileUpload'
 import type { UploadLimits } from '../types'
 import { formatBytes } from '../utils/files'
 

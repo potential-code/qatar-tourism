@@ -8,8 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { useChunkedUpload } from '../hooks/useChunkedUpload'
 import { useDraftText } from '../hooks/useDraftText'
+import { useFileUpload } from '../hooks/useFileUpload'
 import { useSubmitAssignment } from '../queries/assignments.queries'
 import type { LearnerAssignment, UploadLimits } from '../types'
 import { FileDropzone } from './FileDropzone'
@@ -27,7 +27,7 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
   const latest = versions[0]
   const nextVersion = (latest?.version ?? 0) + 1
   const [text, setText] = useDraftText(`qt-assignment-draft:${assignment.id}:${enrolment.id}`)
-  const uploader = useChunkedUpload(assignment.id)
+  const uploader = useFileUpload(assignment.id)
   const submit = useSubmitAssignment(assignment.id)
   const editorId = useId()
 
