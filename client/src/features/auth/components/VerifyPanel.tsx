@@ -3,13 +3,13 @@ import { type FormEvent, useId, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ApiError } from '@/lib/api'
-import { authClient } from '@/lib/auth-client'
+import { ApiError } from '@/lib/api-error'
 import {
   type SimulatedEmail,
   useResendSimulated,
   useVerifySimulated,
 } from '../queries/auth.queries'
+import { useSignIn } from '../queries/session.queries'
 import { FormAlert } from './FormAlert'
 import { SimulatedInbox } from './SimulatedInbox'
 
@@ -21,12 +21,12 @@ export function VerifyPanel({
   email,
   password,
   initial,
-  rememberMe = true,
   onSignedIn,
 }: {
   email: string
   password: string
   initial: SimulatedEmail | null
+  /** Accepted for the sign-in form; the demo session always persists in this browser. */
   rememberMe?: boolean
   onSignedIn: () => Promise<void>
 }) {
@@ -37,6 +37,7 @@ export function VerifyPanel({
   const [signingIn, setSigningIn] = useState(false)
   const verify = useVerifySimulated()
   const resend = useResendSimulated()
+  const signIn = useSignIn()
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -52,8 +53,11 @@ export function VerifyPanel({
       return
     }
     setSigningIn(true)
-    const { error: signInError } = await authClient.signIn.email({ email, password, rememberMe })
-    if (signInError) {
+    const signedIn = await signIn
+      .mutateAsync({ email, password })
+      .then(() => true)
+      .catch(() => false)
+    if (!signedIn) {
       setSigningIn(false)
       setError('Your email is verified. Sign in with your email and password to continue.')
       return

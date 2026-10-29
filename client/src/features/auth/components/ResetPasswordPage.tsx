@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useAppForm } from '@/hooks/useAppForm'
-import { authClient } from '@/lib/auth-client'
+import { useResetPassword } from '../queries/auth.queries'
 import { AuthShell } from './AuthShell'
 import { FormAlert } from './FormAlert'
 import { PasswordField } from './PasswordField'
@@ -20,17 +20,21 @@ const schema = z
     path: ['confirmPassword'],
   })
 
-/** Better Auth sends the user here with `?token=…`, or `?error=INVALID_TOKEN`. */
+/** The demo reset link opens this page with `?token=…` (or `?error=INVALID_TOKEN`). */
 export function ResetPasswordPage({ token, error }: { token?: string; error?: string }) {
   const navigate = useNavigate()
   const [failed, setFailed] = useState(false)
+  const reset = useResetPassword()
   const form = useAppForm({
     defaultValues: { password: '', confirmPassword: '' },
     validators: { onSubmit: schema },
     onSubmit: async ({ value }) => {
       if (!token) return
-      const result = await authClient.resetPassword({ newPassword: value.password, token })
-      if (result.error) {
+      const ok = await reset
+        .mutateAsync({ newPassword: value.password, token })
+        .then(() => true)
+        .catch(() => false)
+      if (!ok) {
         setFailed(true)
         return
       }

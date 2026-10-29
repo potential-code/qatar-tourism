@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { cn } from '@/lib/utils'
 import { useEnrol } from '../queries/users.queries'
 

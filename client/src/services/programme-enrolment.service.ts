@@ -2,11 +2,11 @@ import type { ProgrammeCode } from '@shared/constants'
 import type { Role } from '@shared/roles'
 import { programmeCodeParam } from '@shared/schemas/profile-account'
 import { ApiError, commit, delay, out, parseInput, requireUser } from './api'
-import { enrol as enrolCore, listOwnEnrolments } from './enrolment/core'
+import { enrol, listOwnEnrolments } from './enrolment/core'
 
 /**
- * Joining a programme from the public site and reading one's own enrolments there (brief §3
- * routing rules), formerly the learner half of server/modules/programmes.
+ * Joining a programme from the public pages (brief §3 routing), formerly the enrolment routes
+ * of server/modules/programmes (programmes.controller + programmes.policy).
  */
 
 /** Only a learner account can enrol itself. Trainers and admins never become learners here. */
@@ -28,21 +28,22 @@ function assertCanSelfEnrol(role: Role, code: ProgrammeCode): void {
   }
 }
 
-/** The signed-in user's programme enrolments for the public pages; empty for staff. */
+/** The signed-in learner's enrolments; empty for staff. */
 export async function listMyEnrolments() {
   await delay()
   const user = requireUser()
-  if (user.role !== 'learner') return out({ items: [] as ReturnType<typeof listOwnEnrolments> })
-  return out({ items: listOwnEnrolments(user.id) })
+  return out(user.role === 'learner' ? listOwnEnrolments(user.id) : [])
 }
 
-/** Join Program A (or B) from the public site (brief §3 routing rules). Idempotent. */
-export async function enrolSelf(code: string) {
+export type OwnEnrolment = Awaited<ReturnType<typeof listMyEnrolments>>[number]
+
+/** Join Program A (or B). Idempotent: a second click returns the existing enrolment. */
+export async function enrolSelf(code: ProgrammeCode) {
   await delay()
   const user = requireUser()
-  const { code: programme } = parseInput(programmeCodeParam, { code }, 'param')
-  assertCanSelfEnrol(user.role, programme)
-  const result = enrolCore(user, user.id, programme)
+  const parsed = parseInput(programmeCodeParam, { code }, 'param').code
+  assertCanSelfEnrol(user.role, parsed)
+  const result = enrol({ id: user.id, role: user.role, name: user.name }, user.id, parsed)
   commit()
-  return out({ programme, ...result })
+  return { programme: parsed, ...result }
 }

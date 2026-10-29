@@ -6,8 +6,7 @@ import type {
   AdminUserUpdateInput,
 } from '@shared/schemas/admin-users'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
-import { toQueryParams } from '../../hub/queries/governance.queries'
+import * as users from '@/services/users.service'
 
 export const userKeys = {
   all: ['admin', 'users'] as const,
@@ -19,29 +18,24 @@ export const userKeys = {
 export const usersListQuery = (q: Partial<AdminUserListQuery>) =>
   queryOptions({
     queryKey: userKeys.list(q),
-    queryFn: () => unwrap(api.admin.users.$get({ query: toQueryParams(q) as never })),
+    queryFn: () => users.listUsers(q),
     placeholderData: (previous) => previous,
   })
 
 export const userDetailQuery = (userId: string) =>
   queryOptions({
     queryKey: userKeys.detail(userId),
-    queryFn: () => unwrap(api.admin.users[':userId'].$get({ param: { userId } })),
+    queryFn: () => users.getUser(userId),
   })
 
 export const userOptionsQuery = () =>
   queryOptions({
     queryKey: userKeys.options(),
-    queryFn: () => unwrap(api.admin.users.options.$get()),
+    queryFn: users.listOptions,
     staleTime: 5 * 60_000,
   })
 
-export type UserDetail = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof userDetailQuery>['queryFn']>>
->
-export type UserListItem = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof usersListQuery>['queryFn']>>
->['items'][number]
+export type { UserDetail, UserListItem } from '@/services/users.service'
 
 /** Every user write refreshes lists, details, the hub and the reports. */
 function useInvalidate() {
@@ -52,7 +46,7 @@ function useInvalidate() {
 export function useCreateLearner() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: AdminUserCreateInput) => unwrap(api.admin.users.$post({ json: input })),
+    mutationFn: (input: AdminUserCreateInput) => users.createLearner(input),
     onSuccess: invalidate,
   })
 }
@@ -60,8 +54,7 @@ export function useCreateLearner() {
 export function useUpdateLearner(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: AdminUserUpdateInput) =>
-      unwrap(api.admin.users[':userId'].$patch({ param: { userId }, json: input })),
+    mutationFn: (input: AdminUserUpdateInput) => users.updateLearner(userId, input),
     onSuccess: invalidate,
   })
 }
@@ -69,7 +62,7 @@ export function useUpdateLearner(userId: string) {
 export function useInvite(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: () => unwrap(api.admin.users[':userId'].invite.$post({ param: { userId } })),
+    mutationFn: () => users.resendInvite(userId),
     onSuccess: invalidate,
   })
 }
@@ -77,10 +70,7 @@ export function useInvite(userId: string) {
 export function useEnrol(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (programme: ProgrammeCode) =>
-      unwrap(
-        api.admin.users[':userId'].enrolments.$post({ param: { userId }, json: { programme } }),
-      ),
+    mutationFn: (programme: ProgrammeCode) => users.enrolLearner(userId, programme),
     onSuccess: invalidate,
   })
 }
@@ -89,11 +79,7 @@ export function useSetSuspended(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({
     mutationFn: ({ suspend, reason }: { suspend: boolean; reason: string }) =>
-      unwrap(
-        suspend
-          ? api.admin.users[':userId'].suspend.$post({ param: { userId }, json: { reason } })
-          : api.admin.users[':userId'].reactivate.$post({ param: { userId }, json: { reason } }),
-      ),
+      suspend ? users.suspendUser(userId, reason) : users.reactivateUser(userId, reason),
     onSuccess: invalidate,
   })
 }
@@ -101,8 +87,7 @@ export function useSetSuspended(userId: string) {
 export function useChangeRole(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: { role: Role; reason: string }) =>
-      unwrap(api.admin.users[':userId'].role.$patch({ param: { userId }, json: input })),
+    mutationFn: (input: { role: Role; reason: string }) => users.changeRole(userId, input),
     onSuccess: invalidate,
   })
 }

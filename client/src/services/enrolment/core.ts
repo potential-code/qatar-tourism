@@ -1,8 +1,9 @@
 import type { LearningGoal, ProgrammeCode } from '@shared/constants'
 import { type RuleDefinition, type RuleProfile, resolvePathRule } from '@shared/content/paths'
-import { ApiError, db, insertRow, nowIso, updateRow, type Viewer } from '../api'
-import { recordAudit } from '../audit.service'
-import { recomputeEnrolment } from '../progress/recompute'
+import { ApiError, db, insertRow, nowIso, updateRow } from '../api'
+import { type AuditActor, recordAudit } from '../audit.service'
+import { findEnrolmentRow } from '../progress/evidence'
+import { recomputeEnrolment } from '../progress.service'
 
 /**
  * Enrolment creation and path assignment for the public journeys (brief §3–4, §14), formerly
@@ -11,11 +12,9 @@ import { recomputeEnrolment } from '../progress/recompute'
  *   - the Program A CTA enrols on A explicitly, never touching an existing B enrolment,
  *   - a profile change OFFERS a revised path; completed unit progress is never deleted.
  *
- * Pure helpers: synchronous, no latency and no access checks. The calling service checks who
- * may do this and calls `commit()` afterwards.
+ * Synchronous helpers with no access checks: the calling service checks who may do this,
+ * and commits.
  */
-
-export type Actor = Pick<Viewer, 'id' | 'role' | 'name'>
 
 /** First stage label per programme, matching the seed's `current_stage` values. */
 export const FIRST_STAGE: Record<ProgrammeCode, string> = {
@@ -44,7 +43,7 @@ export function ruleProfileFor(userId: string): RuleProfile {
 }
 
 /** Published assignment rules for a programme, as the admin path builder last saved them. */
-function rulesFor(code: ProgrammeCode): RuleDefinition[] {
+export function rulesFor(code: ProgrammeCode): RuleDefinition[] {
   const programme = db.programmes.find((p) => p.code === code)
   if (!programme) return []
   return db.assignmentRules
@@ -71,6 +70,7 @@ function rulesFor(code: ProgrammeCode): RuleDefinition[] {
 
 export type PathChoice = {
   pathId: string
+  pathCode: string
   pathVersionId: string | null
   pathName: string
   reason: string
@@ -83,17 +83,64 @@ export function resolvePathFor(userId: string, code: ProgrammeCode): PathChoice 
   if (!path) throw new Error(`Path ${resolution.rule.pathCode} is missing`)
   return {
     pathId: path.id,
+    pathCode: path.code,
     pathVersionId: path.currentVersionId,
     pathName: path.name,
     reason: resolution.reason,
   }
 }
 
-/** The learner's enrolment on a programme (the live row), or null. */
+/** The learner's live enrolment row on a programme, or undefined. */
+export function enrolmentOf(userId: string, code: ProgrammeCode) {
+  return findEnrolmentRow(userId, code)?.row
+}
+
+/**
+ * The learner's enrolment on a programme in the server's `findEnrolment` shape, or null.
+ */
 export function findEnrolment(userId: string, code: ProgrammeCode) {
+  const row = enrolmentOf(userId, code)
+  return row
+    ? {
+        id: row.id,
+        status: row.status,
+        pathId: row.pathId,
+        overrideReason: row.overrideReason,
+        progressPercent: row.progressPercent,
+        startedAt: row.startedAt,
+      }
+    : null
+}
+
+const pathName = (pathId: string | null) =>
+  pathId ? (db.learningPaths.find((p) => p.id === pathId)?.name ?? null) : null
+
+/**
+ * Inserts a new enrolment on the rule-resolved path, in the same starting state as every
+ * other route (first stage, 0%), then recomputes it. No audit: the caller records its own.
+ * 409 PROGRAMME_CLOSED for a programme that is not published.
+ */
+export function createEnrolment(learnerId: string, code: ProgrammeCode) {
   const programme = db.programmes.find((p) => p.code === code)
-  if (!programme) return null
-  return db.enrolments.find((e) => e.learnerId === userId && e.programmeId === programme.id) ?? null
+  if (programme?.status !== 'published') {
+    throw new ApiError(409, 'PROGRAMME_CLOSED', `Program ${code} is not open for enrolment`)
+  }
+  const path = resolvePathFor(learnerId, code)
+  const at = nowIso()
+  const row = insertRow('enrolments', {
+    learnerId,
+    programmeId: programme.id,
+    status: 'not_started',
+    pathId: path.pathId,
+    pathVersionId: path.pathVersionId,
+    assignmentReason: path.reason,
+    currentStage: FIRST_STAGE[code],
+    progressPercent: 0,
+    enrolledAt: at,
+    lastActivityAt: at,
+  })
+  recomputeEnrolment(learnerId, code)
+  return { row, path }
 }
 
 /**
@@ -101,43 +148,20 @@ export function findEnrolment(userId: string, code: ProgrammeCode) {
  * so a second click on "Join Program A" never resets progress. Other enrolments are untouched.
  */
 export function enrol(
-  actor: Actor,
+  actor: AuditActor,
   learnerId: string,
   code: ProgrammeCode,
 ): { enrolmentId: string; created: boolean; pathName: string | null } {
-  const existing = findEnrolment(learnerId, code)
+  const existing = enrolmentOf(learnerId, code)
   if (existing) return { enrolmentId: existing.id, created: false, pathName: null }
-
-  const programme = db.programmes.find((p) => p.code === code)
-  if (programme?.status !== 'published') {
-    throw new ApiError(409, 'PROGRAMME_CLOSED', `Program ${code} is not open for enrolment`)
-  }
-  const path = resolvePathFor(learnerId, code)
-  const timestamp = nowIso()
-  const created = insertRow('enrolments', {
-    learnerId,
-    programmeId: programme.id,
-    status: 'not_started',
-    pathId: path.pathId,
-    pathVersionId: path.pathVersionId,
-    assignmentReason: path.reason,
-    overrideReason: null,
-    overriddenBy: null,
-    currentStage: FIRST_STAGE[code],
-    progressPercent: 0,
-    enrolledAt: timestamp,
-    startedAt: null,
-    completedAt: null,
-    lastActivityAt: timestamp,
-  })
+  const { row, path } = createEnrolment(learnerId, code)
   recordAudit(actor, {
     action: 'enrolment.create',
     objectType: 'enrolment',
-    objectId: created.id,
+    objectId: row.id,
     after: { programme: code, path: path.pathName, reason: path.reason },
   })
-  recomputeEnrolment(learnerId, code)
-  return { enrolmentId: created.id, created: true, pathName: path.pathName }
+  return { enrolmentId: row.id, created: true, pathName: path.pathName }
 }
 
 export type PathRevision = {
@@ -148,9 +172,6 @@ export type PathRevision = {
   reason: string
 }
 
-const pathName = (pathId: string | null) =>
-  pathId ? (db.learningPaths.find((p) => p.id === pathId)?.name ?? null) : null
-
 /**
  * Paths that would change under the learner's current profile (brief §4). Only offered, never
  * applied silently. An administrator override is respected: no offer replaces it.
@@ -158,7 +179,7 @@ const pathName = (pathId: string | null) =>
 export function pendingRevisions(learnerId: string): PathRevision[] {
   const revisions: PathRevision[] = []
   for (const code of ['A', 'B'] as const) {
-    const enrolment = findEnrolment(learnerId, code)
+    const enrolment = enrolmentOf(learnerId, code)
     if (!enrolment || enrolment.overrideReason || enrolment.status === 'completed') continue
     const choice = resolvePathFor(learnerId, code)
     if (choice.pathId === enrolment.pathId) continue
@@ -178,12 +199,12 @@ export function pendingRevisions(learnerId: string): PathRevision[] {
  * the course, so completed units carry over and nothing is deleted. Audited with before/after.
  */
 export function applyRevision(
-  actor: Actor,
+  actor: AuditActor,
   learnerId: string,
   code: ProgrammeCode,
   reasonSuffix: string,
 ) {
-  const enrolment = findEnrolment(learnerId, code)
+  const enrolment = enrolmentOf(learnerId, code)
   if (!enrolment) return null
   const choice = resolvePathFor(learnerId, code)
   if (choice.pathId === enrolment.pathId) return { changed: false, pathName: choice.pathName }

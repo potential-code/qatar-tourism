@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { Field } from '../../hub/components/Field'
 import { OptionSelect, optionsOf } from '../../hub/components/OptionSelect'
 import { useCreateLearner, userOptionsQuery, useUpdateLearner } from '../queries/users.queries'

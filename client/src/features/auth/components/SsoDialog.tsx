@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { useAfterSignIn } from '../hooks/useAfterSignIn'
 import { useSimulatedSso } from '../queries/auth.queries'
 import { FormAlert } from './FormAlert'
