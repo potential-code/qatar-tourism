@@ -1,9 +1,8 @@
 import type { ListQuery } from '@shared/schemas'
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
-import type { InferResponseType } from 'hono/client'
-import { api, unwrap } from '@/lib/api'
+import * as users from '@/services/users.service'
 
-export type AdminUser = InferResponseType<typeof api.admin.users.$get, 200>['items'][number]
+export type AdminUser = users.UserListItem
 
 export const userKeys = {
   all: ['users'] as const,
@@ -13,11 +12,6 @@ export const userKeys = {
 export const adminUsersQuery = (query: ListQuery) =>
   queryOptions({
     queryKey: userKeys.adminList(query),
-    queryFn: () =>
-      unwrap(
-        api.admin.users.$get({
-          query: { page: String(query.page), pageSize: String(query.pageSize) },
-        }),
-      ),
+    queryFn: () => users.listUsers({ page: query.page, pageSize: query.pageSize }),
     placeholderData: keepPreviousData,
   })

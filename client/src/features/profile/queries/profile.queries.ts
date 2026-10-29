@@ -2,15 +2,11 @@ import type { OrganisationType, ProgrammeCode } from '@shared/constants'
 import type { ProfileCompleteInput, ProfileDraftInput } from '@shared/schemas'
 import type { ProfileUpdateInput } from '@shared/schemas/profile-account'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { InferResponseType } from 'hono/client'
-import { api, unwrap } from '@/lib/api'
+import * as organisations from '@/services/organisations.service'
+import * as profiles from '@/services/profiles.service'
 
-export type OwnProfile = InferResponseType<typeof api.profiles.me.$get, 200>
-export type PathRevision = OwnProfile['revisions'][number]
-export type OrganisationOption = InferResponseType<
-  typeof api.organisations.$get,
-  200
->['items'][number]
+export type { OrganisationOption } from '@/services/organisations.service'
+export type { OwnProfile, PathRevision } from '@/services/profiles.service'
 
 export const profileKeys = {
   me: ['profile', 'me'] as const,
@@ -21,18 +17,14 @@ export const profileKeys = {
 export const ownProfileQuery = () =>
   queryOptions({
     queryKey: profileKeys.me,
-    queryFn: () => unwrap(api.profiles.me.$get()),
+    queryFn: profiles.getOwnProfile,
   })
 
 export const organisationsQuery = (q: string, type?: OrganisationType) =>
   queryOptions({
     queryKey: profileKeys.organisations(q, type),
-    queryFn: async () =>
-      (
-        await unwrap(
-          api.organisations.$get({ query: { ...(q ? { q } : {}), ...(type ? { type } : {}) } }),
-        )
-      ).items,
+    queryFn: () =>
+      organisations.searchOrganisations({ ...(q ? { q } : {}), ...(type ? { type } : {}) }),
     staleTime: 5 * 60_000,
   })
 
@@ -48,25 +40,17 @@ function useProfileMutation<TInput, TResult>(fn: (input: TInput) => Promise<TRes
 }
 
 export function useSaveDraft() {
-  return useProfileMutation((input: ProfileDraftInput) =>
-    unwrap(api.profiles.me.draft.$patch({ json: input })),
-  )
+  return useProfileMutation((input: ProfileDraftInput) => profiles.saveDraft(input))
 }
 
 export function useCompleteProfile() {
-  return useProfileMutation((input: ProfileCompleteInput) =>
-    unwrap(api.profiles.me.complete.$post({ json: input })),
-  )
+  return useProfileMutation((input: ProfileCompleteInput) => profiles.completeProfile(input))
 }
 
 export function useUpdateProfile() {
-  return useProfileMutation((input: ProfileUpdateInput) =>
-    unwrap(api.profiles.me.$patch({ json: input })),
-  )
+  return useProfileMutation((input: ProfileUpdateInput) => profiles.updateProfile(input))
 }
 
 export function useAcceptRevision() {
-  return useProfileMutation((programme: ProgrammeCode) =>
-    unwrap(api.profiles.me['path-revision'].$post({ json: { programme } })),
-  )
+  return useProfileMutation((programme: ProgrammeCode) => profiles.acceptRevision(programme))
 }

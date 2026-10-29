@@ -19,7 +19,14 @@ const resetInput = z.object({
   newPassword: z.string().min(8, 'Use at least 8 characters').max(128),
 })
 
-export type ResetEmail = { label: string; to: string; subject: string; body: string; link: string }
+export type ResetEmail = {
+  label: string
+  to: string
+  subject: string
+  body: string
+  link: string
+  token: string
+}
 
 /**
  * Creates a reset link for the address. The visible answer is the same whether or not the
@@ -59,6 +66,7 @@ export async function requestPasswordReset(emailInput: string) {
       subject,
       body,
       link,
+      token,
     } as ResetEmail | null,
   })
 }

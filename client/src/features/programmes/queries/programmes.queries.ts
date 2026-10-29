@@ -1,34 +1,18 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { InferResponseType } from 'hono/client'
-import { api, unwrap } from '@/lib/api'
+import * as catalogue from '@/services/catalogue.service'
+import * as programmeEnrolment from '@/services/programme-enrolment.service'
 
 /** Public catalogue reads (no session needed) and the learner's own enrolments. */
 
-export type PublicProgramme = InferResponseType<
-  typeof api.programmes.public.$get,
-  200
->['items'][number]
-export type ProgrammeDetail = InferResponseType<
-  (typeof api.programmes.public)[':code']['$get'],
-  200
->
-export type PublicSession = InferResponseType<
-  typeof api.programmes.public.sessions.$get,
-  200
->['items'][number]
-export type PublicTrainer = InferResponseType<
-  typeof api.programmes.public.trainers.$get,
-  200
->['items'][number]
-export type TrainerDetail = InferResponseType<
-  (typeof api.programmes.public.trainers)[':code']['$get'],
-  200
->
-export type OwnEnrolment = InferResponseType<
-  typeof api.programmes.me.enrolments.$get,
-  200
->['items'][number]
+export type {
+  ProgrammeDetail,
+  PublicProgramme,
+  PublicSession,
+  PublicTrainer,
+  TrainerDetail,
+} from '@/services/catalogue.service'
+export type { OwnEnrolment } from '@/services/programme-enrolment.service'
 
 export const programmeKeys = {
   all: ['programmes'] as const,
@@ -44,51 +28,48 @@ export const programmeKeys = {
 export const programmesQuery = () =>
   queryOptions({
     queryKey: programmeKeys.list(),
-    queryFn: async () => (await unwrap(api.programmes.public.$get())).items,
+    queryFn: catalogue.listProgrammes,
     staleTime: 5 * 60_000,
   })
 
 export const programmeQuery = (code: ProgrammeCode) =>
   queryOptions({
     queryKey: programmeKeys.detail(code),
-    queryFn: () => unwrap(api.programmes.public[':code'].$get({ param: { code } })),
+    queryFn: () => catalogue.getProgramme(code),
     staleTime: 60_000,
   })
 
 export const upcomingSessionsQuery = (programme?: ProgrammeCode) =>
   queryOptions({
     queryKey: programmeKeys.sessions(programme),
-    queryFn: async () =>
-      (await unwrap(api.programmes.public.sessions.$get({ query: programme ? { programme } : {} })))
-        .items,
+    queryFn: () => catalogue.listUpcomingSessions(programme),
     staleTime: 30_000,
   })
 
 export const trainersQuery = () =>
   queryOptions({
     queryKey: programmeKeys.trainers(),
-    queryFn: async () => (await unwrap(api.programmes.public.trainers.$get())).items,
+    queryFn: catalogue.listTrainers,
     staleTime: 5 * 60_000,
   })
 
 export const trainerQuery = (code: string) =>
   queryOptions({
     queryKey: programmeKeys.trainer(code),
-    queryFn: () => unwrap(api.programmes.public.trainers[':code'].$get({ param: { code } })),
+    queryFn: () => catalogue.getTrainer(code),
     staleTime: 60_000,
   })
 
 export const myEnrolmentsQuery = () =>
   queryOptions({
     queryKey: programmeKeys.mine(),
-    queryFn: async () => (await unwrap(api.programmes.me.enrolments.$get())).items,
+    queryFn: programmeEnrolment.listMyEnrolments,
   })
 
 export function useEnrol() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (code: ProgrammeCode) =>
-      unwrap(api.programmes[':code'].enrol.$post({ param: { code } })),
+    mutationFn: (code: ProgrammeCode) => programmeEnrolment.enrolSelf(code),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: programmeKeys.all }),
   })
 }

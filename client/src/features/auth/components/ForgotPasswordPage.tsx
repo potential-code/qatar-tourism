@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router'
+import { Mail } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
 import { SimulatedTag } from '@/components/layout'
 import { useAppForm } from '@/hooks/useAppForm'
-import { authClient } from '@/lib/auth-client'
+import { type ResetEmail, useRequestPasswordReset } from '../queries/auth.queries'
 import { AuthShell } from './AuthShell'
 import { FormAlert } from './FormAlert'
 
@@ -12,20 +13,20 @@ const schema = z.object({ email: z.email('Enter a valid email address') })
 /** Forgot password. The answer is the same whether or not the account exists. */
 export function ForgotPasswordPage() {
   const [sentTo, setSentTo] = useState<string | null>(null)
+  const [demoEmail, setDemoEmail] = useState<ResetEmail | null>(null)
   const [error, setError] = useState(false)
+  const request = useRequestPasswordReset()
   const form = useAppForm({
     defaultValues: { email: '' },
     validators: { onSubmit: schema },
     onSubmit: async ({ value }) => {
       setError(false)
-      const { error: failure } = await authClient.requestPasswordReset({
-        email: value.email.trim(),
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
-      if (failure) {
+      const result = await request.mutateAsync(value.email.trim()).catch(() => null)
+      if (!result) {
         setError(true)
         return
       }
+      setDemoEmail(result.simulatedEmail)
       setSentTo(value.email.trim())
     },
   })
@@ -47,8 +48,9 @@ export function ForgotPasswordPage() {
           <p className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm">
             <SimulatedTag label="Demo email" />
             Demo accounts use fictional example.com addresses, so no real inbox receives the link.
-            Ask the demo facilitator for the shared demo password.
+            {demoEmail ? ' The demo link is shown below.' : null}
           </p>
+          {demoEmail ? <ResetInbox email={demoEmail} /> : null}
         </div>
       ) : (
         <form
@@ -74,5 +76,36 @@ export function ForgotPasswordPage() {
         Back to sign in
       </Link>
     </AuthShell>
+  )
+}
+
+/** The demo inbox for a reset link: shown on screen instead of sending an email. */
+function ResetInbox({ email }: { email: ResetEmail }) {
+  return (
+    <figure
+      aria-label="Demo email"
+      className="grid gap-3 rounded-xl bg-white p-5 ring-1 ring-ink/5"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="inline-flex items-center gap-2 font-medium text-sm">
+          <Mail aria-hidden className="size-4 text-teal" />
+          Demo inbox
+        </span>
+        <SimulatedTag label="Demo email" />
+      </div>
+      <div className="grid gap-1 border-ink/5 border-t pt-3 text-sm">
+        <p className="text-muted-foreground text-xs">To: {email.to}</p>
+        <p className="font-medium">{email.subject}</p>
+        <p className="text-muted-foreground leading-relaxed">{email.body}</p>
+      </div>
+      <Link
+        to="/reset-password"
+        search={{ token: email.token }}
+        className="w-fit font-medium text-teal-deep underline underline-offset-4"
+      >
+        Open the demo reset link
+      </Link>
+      <figcaption className="text-muted-foreground text-xs">{email.label}.</figcaption>
+    </figure>
   )
 }
