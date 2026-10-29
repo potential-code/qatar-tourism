@@ -85,7 +85,7 @@ export function match(question: string): Match {
   if (
     has(
       q,
-      /\b(email address|emails|e mail|phone|mobile|telephone|qid|passport|national id|identity number|home address|date of birth|password)\b/,
+      /\b(email address(es)?|emails|e mail|phone|mobile|telephone|qid|passport|national id|identity number|home address|date of birth|password)\b/,
     )
   )
     return { kind: 'refused', reason: 'personal' }
