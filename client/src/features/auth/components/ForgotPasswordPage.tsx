@@ -65,14 +65,18 @@ export function ForgotPasswordPage() {
             <FormAlert>We could not send the request. Try again in a few minutes.</FormAlert>
           ) : null}
           <form.AppField name="email" validators={{ onBlur: schema.shape.email }}>
-            {(field) => <field.TextField label="Email" type="email" autoComplete="email" />}
+            {(field) => (
+              <field.TextField label="Email" type="email" autoComplete="email" icon={Mail} />
+            )}
           </form.AppField>
           <form.AppForm>
-            <form.SubmitButton className="h-11 w-full">Create reset link</form.SubmitButton>
+            <form.SubmitButton className="h-12 w-full text-base">
+              Create reset link
+            </form.SubmitButton>
           </form.AppForm>
         </form>
       )}
-      <Link to="/login" className="w-fit text-sm text-teal-deep underline-offset-4 hover:underline">
+      <Link to="/login" className="w-fit text-teal text-sm underline-offset-4 hover:underline">
         Back to sign in
       </Link>
     </AuthShell>

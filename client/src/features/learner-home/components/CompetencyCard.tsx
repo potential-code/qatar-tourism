@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import type { Journey } from '@/features/learning/types'
 import { CompetencyChart } from '@/features/progress/components/CompetencyChart'
 
@@ -8,8 +9,9 @@ export function CompetencyCard({ journey }: { journey: Journey }) {
   return (
     <section
       aria-labelledby="competency-title"
-      className="flex flex-col gap-5 rounded-xl border bg-white p-6 shadow-sm"
+      className="relative isolate overflow-hidden flex flex-col gap-5 rounded-xl border bg-gradient-to-br from-white to-sky-mist p-6"
     >
+      <CornerPattern side="b" />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="competency-title" className="font-display text-2xl font-normal text-ink">

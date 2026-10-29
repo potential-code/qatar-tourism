@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { CalendarPlus } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { DateTile } from '@/features/sessions/components/DateTile'
@@ -15,9 +16,10 @@ export function UpcomingTimeline({ data }: { data: OverviewData }) {
   const reduce = useReducedMotion()
   return (
     <section
-      className="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs md:p-6"
+      className="relative isolate overflow-hidden flex flex-col gap-4 rounded-xl border bg-gradient-to-br from-white to-teal-mist p-5 md:p-6"
       aria-labelledby="upcoming-heading"
     >
+      <CornerPattern side="a" />
       <div className="flex items-center justify-between gap-3">
         <h2 id="upcoming-heading" className="font-display text-2xl font-light text-ink">
           Upcoming sessions

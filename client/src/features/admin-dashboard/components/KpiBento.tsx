@@ -19,7 +19,7 @@ import { HeroTrend } from './charts/HeroTrend'
 type Kpi = {
   key: keyof Overview['kpis']
   icon: LucideIcon
-  tone: 'teal' | 'maroon' | 'neutral'
+  tone: 'teal' | 'maroon' | 'sky' | 'gold' | 'night'
   report: string
   extra?: Record<string, string>
   description: (o: Overview) => string
@@ -31,7 +31,7 @@ const KPIS: Kpi[] = [
   {
     key: 'activeLearners',
     icon: UserCheck,
-    tone: 'teal',
+    tone: 'sky',
     report: 'learners',
     extra: { view: 'active' },
     description: () => 'Learning activity in the last 30 days',
@@ -54,7 +54,7 @@ const KPIS: Kpi[] = [
   {
     key: 'pendingAssessments',
     icon: ClipboardCheck,
-    tone: 'maroon',
+    tone: 'gold',
     report: 'assignments',
     extra: { view: 'pending' },
     description: () => 'Submissions awaiting a trainer mark',
@@ -62,7 +62,7 @@ const KPIS: Kpi[] = [
   {
     key: 'upcomingSessions',
     icon: CalendarClock,
-    tone: 'neutral',
+    tone: 'sky',
     report: 'sessions',
     extra: { view: 'upcoming' },
     description: () => 'Published or full, still ahead',
@@ -70,7 +70,7 @@ const KPIS: Kpi[] = [
   {
     key: 'certificates',
     icon: Award,
-    tone: 'neutral',
+    tone: 'night',
     report: 'certification',
     description: () => 'Program A only. B and C do not certify',
   },

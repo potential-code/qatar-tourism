@@ -28,7 +28,7 @@ export function PanelCard({
     <Reveal
       delay={delay}
       className={cn(
-        'flex min-w-0 flex-col rounded-xl border bg-card p-6 shadow-[var(--qt-shadow-sm)]',
+        'flex min-w-0 flex-col rounded-xl border border-teal-night/8 bg-gradient-to-br from-white via-white to-teal-mist/70 p-6 shadow-[var(--qt-pop)] transition-shadow duration-300 hover:shadow-[var(--qt-pop-hover)]',
         className,
       )}
     >

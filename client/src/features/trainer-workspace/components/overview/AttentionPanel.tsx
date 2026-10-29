@@ -7,6 +7,7 @@ import {
   MessageSquareWarning,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { qatarDateShort } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
 
@@ -88,9 +89,10 @@ export function AttentionPanel({ data }: { data: OverviewData }) {
 
   return (
     <section
-      className="flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-xs md:p-6"
+      className="relative isolate overflow-hidden flex flex-col gap-4 rounded-xl border bg-gradient-to-br from-white to-rose-mist p-5 md:p-6"
       aria-labelledby="attention-heading"
     >
+      <CornerPattern side="b" />
       <h2 id="attention-heading" className="font-display text-2xl font-light text-ink">
         Needs your attention
       </h2>

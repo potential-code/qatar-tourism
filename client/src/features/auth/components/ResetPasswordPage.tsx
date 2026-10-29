@@ -76,7 +76,9 @@ export function ResetPasswordPage({ token, error }: { token?: string; error?: st
             {() => <PasswordField label="Confirm new password" autoComplete="new-password" />}
           </form.AppField>
           <form.AppForm>
-            <form.SubmitButton className="h-11 w-full">Save new password</form.SubmitButton>
+            <form.SubmitButton className="h-12 w-full text-base">
+              Save new password
+            </form.SubmitButton>
           </form.AppForm>
         </form>
       ) : null}

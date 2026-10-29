@@ -30,7 +30,7 @@ export function DemoResetPanel() {
     <section className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-teal-deep to-teal text-white shadow-md">
       <span
         aria-hidden
-        className="pointer-events-none absolute -end-20 -top-24 size-72 rounded-full bg-teal-soft/25 blur-3xl"
+        className="pointer-events-none absolute -end-20 -top-24 size-72 qt-glow text-teal-soft/25"
       />
       <div className="relative grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
         <div className="grid gap-2">

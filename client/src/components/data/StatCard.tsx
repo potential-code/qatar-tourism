@@ -20,13 +20,22 @@ export interface StatCardProps {
   isLoading?: boolean
   /** Makes the whole card a button (e.g. KPI → filtered report, brief §12). */
   onClick?: () => void
-  tone?: 'teal' | 'maroon' | 'neutral'
+  /** Solid brand grounds. Text is white on teal, maroon and night; teal-night on sky and gold (AA). */
+  tone?: 'teal' | 'maroon' | 'neutral' | 'sky' | 'gold' | 'night'
   className?: string
 }
 
 const deltaIcon = { up: ArrowUpRight, down: ArrowDownRight, flat: Minus }
-const deltaTone = { up: 'text-success', down: 'text-destructive', flat: 'text-muted-foreground' }
-const toneAccent = { teal: 'bg-teal', maroon: 'bg-maroon', neutral: 'bg-ink/30' }
+const deltaToneSolid = { up: 'text-white', down: 'text-white', flat: 'text-white/85' }
+const toneSurface = {
+  teal: 'bg-grad-teal text-white',
+  maroon: 'bg-grad-maroon text-white',
+  neutral: 'bg-teal-deep text-white',
+  night: 'bg-grad-night text-white',
+  sky: 'bg-sky text-teal-night',
+  gold: 'bg-gold text-teal-night',
+} as const
+const LIGHT_TONES = ['sky', 'gold']
 
 /** Key-figure tile with count-up value and an accent rule. Lifts on hover when clickable. */
 export function StatCard({
@@ -45,6 +54,8 @@ export function StatCard({
   const reduce = useReducedMotion()
   const DeltaIcon = delta ? deltaIcon[delta.direction] : null
   const interactive = Boolean(onClick)
+  const onLight = LIGHT_TONES.includes(tone)
+  const solidDelta = onLight ? 'text-teal-night' : null
   const Comp = interactive ? motion.button : motion.div
 
   return (
@@ -55,22 +66,36 @@ export function StatCard({
       whileTap={interactive && !reduce ? { scale: 0.985 } : undefined}
       transition={spring}
       className={cn(
-        'group relative flex w-full flex-col overflow-hidden rounded-xl border bg-card p-5 text-start shadow-xs',
+        'group relative isolate flex w-full flex-col overflow-hidden rounded-xl border border-white/10 p-5 text-start shadow-[var(--qt-pop)] transition-shadow duration-300 hover:shadow-[var(--qt-pop-hover)]',
+        toneSurface[tone],
         interactive &&
           'cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
         className,
       )}
     >
-      <span aria-hidden="true" className={cn('absolute inset-y-0 start-0 w-1', toneAccent[tone])} />
+      <span
+        aria-hidden="true"
+        className={cn(
+          'qt-star-tile-dark pointer-events-none absolute -end-6 -top-6 -z-10 size-44 [mask-image:radial-gradient(farthest-side_at_100%_0,black_15%,transparent_100%)] rtl:-start-6 rtl:end-auto rtl:[mask-image:radial-gradient(farthest-side_at_0_0,black_15%,transparent_100%)]',
+          onLight && 'invert opacity-60',
+        )}
+      />
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-sm font-medium">{label}</p>
         {Icon ? (
-          <Icon className="size-5 shrink-0 text-teal/50 transition-colors group-hover:text-teal" />
+          <span
+            className={cn(
+              'grid size-9 shrink-0 place-items-center rounded-full',
+              onLight ? 'bg-teal-night/10' : 'bg-white/15',
+            )}
+          >
+            <Icon className="size-5" />
+          </span>
         ) : null}
       </div>
-      <div className="mt-3 font-display text-3xl leading-none font-normal tabular-nums text-ink md:text-4xl">
+      <div className="mt-3 font-display text-3xl leading-none font-normal tabular-nums md:text-4xl">
         {isLoading ? (
-          <Skeleton className="h-9 w-24" />
+          <Skeleton className={cn('h-9 w-24', onLight ? 'bg-teal-night/15' : 'bg-white/25')} />
         ) : typeof value === 'number' ? (
           <CountUp value={value} suffix={suffix} decimals={decimals} />
         ) : (
@@ -81,7 +106,7 @@ export function StatCard({
         <p
           className={cn(
             'mt-2 flex items-center gap-1 text-xs font-medium',
-            deltaTone[delta.direction],
+            solidDelta ?? deltaToneSolid[delta.direction],
           )}
         >
           {DeltaIcon ? <DeltaIcon className="size-3.5 rtl:-scale-x-100" /> : null}
@@ -90,7 +115,9 @@ export function StatCard({
         </p>
       ) : null}
       {description && !isLoading ? (
-        <p className="mt-2 text-xs text-muted-foreground">{description}</p>
+        <p className={cn('mt-2 text-xs', onLight ? 'text-teal-night' : 'text-white/85')}>
+          {description}
+        </p>
       ) : null}
     </Comp>
   )

@@ -1,69 +1,178 @@
 import { ArrowUpRight } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
-import { SectionHeading } from '@/components/brand'
-import { Reveal, Stagger, StaggerItem } from '@/components/motion'
+import { CornerPattern, Eyebrow, SectionHeading, StarPattern } from '@/components/brand'
+import { CountUp, easeOut, ScrollReveal, SplitWords, TiltCard } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { BENEFITS, type BenefitKey } from '../content/home'
 import { BenefitPreviewDialog } from './BenefitPreviewDialog'
 
 const LAYOUT: Record<BenefitKey, string> = {
-  pace: 'lg:col-span-7 min-h-[340px] lg:min-h-[420px]',
-  ai: 'lg:col-span-5 min-h-[340px] lg:min-h-[420px]',
-  trainers: 'lg:col-span-5 min-h-[340px]',
-  progress: 'lg:col-span-7 min-h-[340px]',
+  pace: 'lg:col-span-7 min-h-[380px] lg:min-h-[460px]',
+  ai: 'lg:col-span-5 min-h-[380px] lg:min-h-[460px]',
+  trainers: 'lg:col-span-5 min-h-[360px]',
+  progress: 'lg:col-span-7 min-h-[360px]',
+}
+
+/** Icon colour per tile: one accent each, so the four read as a set. */
+const ICON: Record<BenefitKey, string> = {
+  pace: 'text-gold-soft',
+  ai: 'text-rose-mist',
+  trainers: 'text-sky',
+  progress: 'text-teal',
 }
 
 const TONE: Record<BenefitKey, string> = {
-  pace: 'text-white',
-  ai: 'bg-teal-deep text-white',
-  trainers: 'text-white',
-  progress: 'bg-white text-ink ring-1 ring-ink/5',
+  pace: 'bg-teal-deep text-white',
+  ai: 'bg-grad-maroon text-white',
+  trainers: 'bg-ink text-white',
+  progress: 'qt-card-elevated text-ink',
 }
 
-/** Visual accent per tile: two photographs, two typographic previews. */
-function TileVisual({ benefitKey, image }: { benefitKey: BenefitKey; image: string | null }) {
-  if (image) {
-    return (
-      <>
-        <img
-          src={image}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-t from-ink/85 via-ink/35 to-ink/5"
-        />
-      </>
-    )
-  }
-  if (benefitKey === 'ai') {
-    return (
-      <blockquote className="font-display text-2xl text-white/95 leading-snug md:text-[1.7rem]">
-        <span aria-hidden className="text-teal-soft">
-          “
-        </span>
-        I booked this experience for today and now I am told it is unavailable. What can you do?
-        <span aria-hidden className="text-teal-soft">
-          ”
-        </span>
-      </blockquote>
-    )
-  }
+/** Photograph tiles: slow zoom on hover, teal or ink wash for legible copy. */
+function PhotoBackdrop({ image, tone }: { image: string; tone: 'teal' | 'ink' }) {
   return (
-    <div className="flex items-end gap-8" aria-hidden>
-      <div className="grid gap-1">
-        <span className="text-muted-foreground text-xs">Baseline</span>
-        <span className="font-display text-5xl text-ink/50 md:text-6xl">40</span>
+    <>
+      <img
+        src={image}
+        alt=""
+        loading="lazy"
+        className="absolute inset-0 -z-20 size-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.07]"
+      />
+      <div
+        aria-hidden
+        className={cn(
+          'absolute inset-0 -z-10 bg-gradient-to-t',
+          tone === 'teal'
+            ? 'from-teal-deep via-teal-deep/55 to-teal-deep/5'
+            : 'from-ink/90 via-ink/40 to-ink/5',
+        )}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 -z-10 h-32 bg-gradient-to-b from-ink/45 to-transparent"
+      />
+    </>
+  )
+}
+
+/** AI tile: the visitor's line arrives as a chat bubble, then the reply starts typing. */
+function ChatPreview() {
+  const reduce = useReducedMotion()
+  const show = (delay: number) => ({
+    initial: reduce ? false : { opacity: 0, y: 14, scale: 0.96 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    viewport: { once: true, amount: 0.6 },
+    transition: { delay, duration: 0.6, ease: easeOut },
+  })
+  return (
+    <div aria-hidden className="grid gap-3">
+      <motion.p
+        {...show(0.2)}
+        className="max-w-[92%] rounded-2xl rounded-ss-sm bg-white/95 px-5 py-4 font-display text-ink text-lg leading-snug shadow-lg md:text-xl"
+      >
+        “I booked this experience for today and now I am told it is unavailable. What can you do?”
+      </motion.p>
+      <motion.div
+        {...show(0.9)}
+        className="ms-auto flex w-fit items-center gap-1.5 rounded-2xl rounded-se-sm bg-white/15 px-4 py-3 ring-1 ring-white/25 backdrop-blur-md"
+      >
+        {[0, 1, 2].map((dot) => (
+          <motion.span
+            key={dot}
+            className="size-2 rounded-full bg-white"
+            animate={reduce ? undefined : { opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
+            transition={{ duration: 1.2, repeat: Number.POSITIVE_INFINITY, delay: dot * 0.18 }}
+          />
+        ))}
+      </motion.div>
+    </div>
+  )
+}
+
+/** Progress tile: the score ring beside baseline and post bars that grow in. Decorative. */
+function ProgressPreview() {
+  const reduce = useReducedMotion()
+  const radius = 44
+  const circumference = 2 * Math.PI * radius
+  const grow = (to: string, delay: number) => ({
+    initial: reduce ? false : { width: '0%' },
+    whileInView: { width: to },
+    viewport: { once: true, amount: 0.6 },
+    transition: { duration: 1.4, ease: easeOut, delay },
+  })
+  return (
+    <div className="grid items-center gap-6 sm:grid-cols-[auto_1fr] md:gap-10" aria-hidden>
+      <div className="relative size-36 shrink-0">
+        <svg viewBox="0 0 100 100" aria-hidden="true" className="size-full -rotate-90">
+          <circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            stroke="var(--qt-sky-mist)"
+            strokeWidth="9"
+          />
+          <motion.circle
+            cx="50"
+            cy="50"
+            r={radius}
+            fill="none"
+            stroke="url(#qt-progress-grad)"
+            strokeWidth="9"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            initial={reduce ? false : { strokeDashoffset: circumference }}
+            whileInView={{ strokeDashoffset: circumference * 0.2 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 1.6, ease: easeOut, delay: 0.2 }}
+          />
+          <defs>
+            <linearGradient id="qt-progress-grad" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stopColor="var(--qt-teal)" />
+              <stop offset="100%" stopColor="var(--qt-sky)" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <span className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="font-display text-4xl text-ink leading-none">
+            <CountUp value={80} duration={1.6} />
+          </span>
+          <span className="mt-1 text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
+            Post score
+          </span>
+        </span>
       </div>
-      <div className="grid gap-1">
-        <span className="text-muted-foreground text-xs">Post-assessment</span>
-        <span className="font-display text-5xl text-teal md:text-6xl">80</span>
+      <div className="grid gap-4 rounded-2xl bg-gradient-to-br from-sky-mist via-teal-mist/60 to-white p-5 ring-1 ring-teal/10 md:p-6">
+        <div className="grid gap-2">
+          <div className="flex items-baseline justify-between text-sm">
+            <span className="text-muted-foreground">Baseline</span>
+            <span className="font-display text-2xl text-ink/55">
+              <CountUp value={40} />
+            </span>
+          </div>
+          <div className="h-2.5 overflow-hidden rounded-full bg-white">
+            <motion.div {...grow('40%', 0.2)} className="h-full rounded-full bg-teal-soft" />
+          </div>
+        </div>
+        <div className="grid gap-2">
+          <div className="flex items-baseline justify-between text-sm">
+            <span className="text-muted-foreground">Post-assessment</span>
+            <span className="font-display text-2xl text-teal">
+              <CountUp value={80} duration={1.6} />
+            </span>
+          </div>
+          <div className="h-2.5 overflow-hidden rounded-full bg-white">
+            <motion.div
+              {...grow('80%', 0.45)}
+              className="h-full rounded-full bg-gradient-to-r from-teal to-sky"
+            />
+          </div>
+        </div>
+        <span className="w-fit rounded-full bg-rose-mist px-3 py-1 font-medium text-maroon text-sm">
+          +40 points
+        </span>
       </div>
-      <span className="mb-2 rounded-full bg-teal-mist px-3 py-1 font-medium text-sm text-teal-deep">
-        +40 points
-      </span>
     </div>
   )
 }
@@ -76,80 +185,135 @@ export function WhatToExpect() {
       id="academy"
       tabIndex={-1}
       aria-labelledby="expect-title"
-      className="scroll-mt-20 bg-sand-deep outline-none"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-grad-night text-white outline-none"
     >
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-12 px-4 py-24 md:px-8 md:py-32">
-        <Reveal>
+      <CornerPattern side="a" tone="dark" />
+      <div
+        aria-hidden
+        className="absolute -top-32 start-1/4 -z-10 size-[520px] qt-glow text-sky/25"
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-40 end-10 -z-10 size-[460px] qt-glow text-rose/20"
+      />
+      <ScrollReveal className="mx-auto flex max-w-[1400px] flex-col gap-14 px-4 py-24 md:px-8 md:py-32">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <SectionHeading
-            title={<span id="expect-title">What to expect</span>}
+            tone="light"
+            eyebrow={
+              <Eyebrow index="02" tone="light">
+                The Academy
+              </Eyebrow>
+            }
+            title={
+              <span id="expect-title">
+                <SplitWords text="What to expect" />
+              </span>
+            }
             description="The Academy brings self-paced learning, realistic practice and trainer-led sessions into one connected journey."
           />
-        </Reveal>
-        <Stagger className="grid gap-5 lg:grid-cols-12" stagger={0.1}>
+          <ul aria-hidden data-reveal className="flex flex-wrap gap-2 lg:justify-end">
+            {BENEFITS.map((benefit) => {
+              const Icon = benefit.icon
+              return (
+                <li
+                  key={benefit.key}
+                  className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm text-white/90 ring-1 ring-white/15 backdrop-blur"
+                >
+                  <Icon
+                    className={cn(
+                      'size-4',
+                      benefit.key === 'progress' ? 'text-sky' : ICON[benefit.key],
+                    )}
+                  />
+                  {benefit.title}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-12">
           {BENEFITS.map((benefit) => {
             const Icon = benefit.icon
+            const light = benefit.key === 'progress'
             return (
-              <StaggerItem key={benefit.key} className={LAYOUT[benefit.key]}>
-                <button
-                  type="button"
-                  onClick={() => setOpen(benefit.key)}
-                  aria-haspopup="dialog"
-                  className={cn(
-                    'group relative isolate flex size-full flex-col justify-between gap-10 overflow-hidden rounded-xl p-7 text-start transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring md:p-9',
-                    TONE[benefit.key],
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <span
+              <div key={benefit.key} data-reveal="card" className={LAYOUT[benefit.key]}>
+                <TiltCard max={4} className="size-full rounded-2xl">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(benefit.key)}
+                    aria-haspopup="dialog"
+                    className={cn(
+                      'group relative isolate flex size-full flex-col justify-between gap-10 overflow-hidden rounded-2xl p-7 text-start shadow-[0_30px_60px_-24px_rgb(0_0_0/0.55)] ring-1 ring-white/10 transition-shadow duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-xl focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring md:p-9',
+                      TONE[benefit.key],
+                    )}
+                  >
+                    {benefit.image ? (
+                      <PhotoBackdrop
+                        image={benefit.image}
+                        tone={benefit.key === 'pace' ? 'teal' : 'ink'}
+                      />
+                    ) : null}
+                    {benefit.key === 'ai' ? (
+                      <div aria-hidden className="absolute inset-0 -z-10 text-white/[0.07]">
+                        <StarPattern size={52} />
+                      </div>
+                    ) : null}
+                    <div
+                      aria-hidden
                       className={cn(
-                        'inline-flex size-11 items-center justify-center rounded-full',
-                        benefit.key === 'progress'
-                          ? 'bg-teal-mist text-teal-deep'
-                          : 'bg-white/15 text-white backdrop-blur-sm',
+                        'pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100',
+                        light ? 'qt-spotlight-ink' : 'qt-spotlight',
                       )}
-                    >
-                      <Icon aria-hidden className="size-5" />
-                    </span>
-                    <span
-                      className={cn(
-                        'inline-flex items-center gap-2 rounded-full py-1 ps-3 pe-1 font-medium text-sm',
-                        benefit.key === 'progress' ? 'text-teal-deep' : 'text-white',
-                      )}
-                    >
-                      Preview
+                    />
+                    <div className="flex items-start justify-between gap-4">
+                      <Icon
+                        aria-hidden
+                        className={cn(
+                          'size-9 drop-shadow-md transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-110',
+                          ICON[benefit.key],
+                        )}
+                        strokeWidth={1.6}
+                      />
                       <span
                         className={cn(
-                          'inline-flex size-7 items-center justify-center rounded-full transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5',
-                          benefit.key === 'progress'
-                            ? 'bg-teal text-white'
-                            : 'bg-white text-teal-deep',
+                          'inline-flex items-center gap-2 rounded-full py-1 ps-4 pe-1 font-medium text-sm shadow-md transition-colors duration-300',
+                          light
+                            ? 'bg-teal-mist text-teal-deep'
+                            : 'bg-white text-ink group-hover:bg-gold-soft',
                         )}
                       >
-                        <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
+                        Preview
+                        <span
+                          className={cn(
+                            'inline-flex size-8 items-center justify-center rounded-full transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5',
+                            light ? 'bg-teal text-white' : 'bg-teal text-white',
+                          )}
+                        >
+                          <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
+                        </span>
                       </span>
-                    </span>
-                  </div>
-                  {benefit.image ? null : <TileVisual benefitKey={benefit.key} image={null} />}
-                  {benefit.image ? (
-                    <TileVisual benefitKey={benefit.key} image={benefit.image} />
-                  ) : null}
-                  <div className="grid max-w-md gap-2">
-                    <h3 className="font-display text-2xl md:text-3xl">{benefit.title}</h3>
-                    <p
-                      className={cn(
-                        'text-base leading-relaxed',
-                        benefit.key === 'progress' ? 'text-muted-foreground' : 'text-white/85',
-                      )}
-                    >
-                      {benefit.body}
-                    </p>
-                  </div>
-                </button>
-              </StaggerItem>
+                    </div>
+                    {benefit.key === 'ai' ? <ChatPreview /> : null}
+                    {benefit.key === 'progress' ? <ProgressPreview /> : null}
+                    <div className="grid max-w-md gap-2">
+                      <h3 className="font-display text-2xl md:text-3xl">{benefit.title}</h3>
+                      <p
+                        className={cn(
+                          'text-base leading-relaxed',
+                          light ? 'text-muted-foreground' : 'text-white/85',
+                        )}
+                      >
+                        {benefit.body}
+                      </p>
+                    </div>
+                  </button>
+                </TiltCard>
+              </div>
             )
           })}
-        </Stagger>
-      </div>
+        </div>
+      </ScrollReveal>
       <BenefitPreviewDialog benefit={open} onClose={() => setOpen(null)} />
     </section>
   )

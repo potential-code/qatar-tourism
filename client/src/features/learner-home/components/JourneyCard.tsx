@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Check, Clock, Lock } from 'lucide-react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { Progress } from '@/components/ui/progress'
 import { StageMap } from '@/features/learning/components/StageMap'
 import type { Journey } from '@/features/learning/types'
@@ -14,8 +15,9 @@ export function JourneyCard({ journey }: { journey: Journey }) {
   return (
     <section
       aria-labelledby="journey-title"
-      className="flex flex-col gap-6 rounded-xl border bg-white p-6 shadow-sm"
+      className="relative isolate overflow-hidden flex flex-col gap-6 rounded-xl border bg-gradient-to-br from-white to-teal-mist p-6"
     >
+      <CornerPattern side="a" />
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 id="journey-title" className="font-display text-2xl font-normal text-ink">

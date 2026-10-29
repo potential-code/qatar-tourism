@@ -1,3 +1,4 @@
+import type { LucideIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -50,9 +51,11 @@ function FieldErrors({ id, messages }: { id: string; messages: string[] }) {
 type TextFieldProps = {
   label: string
   description?: string
+  /** Decorative leading icon inside the input. */
+  icon?: LucideIcon
 } & Pick<ComponentProps<'input'>, 'type' | 'autoComplete' | 'placeholder' | 'autoFocus'>
 
-export function TextField({ label, description, ...inputProps }: TextFieldProps) {
+export function TextField({ label, description, icon: Icon, ...inputProps }: TextFieldProps) {
   const field = useFieldContext<string>()
   const id = useId()
   const messages = useFieldErrors()
@@ -61,16 +64,25 @@ export function TextField({ label, description, ...inputProps }: TextFieldProps)
   return (
     <div className="grid gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input
-        id={id}
-        name={field.name}
-        value={field.state.value}
-        onChange={(event) => field.handleChange(event.target.value)}
-        onBlur={field.handleBlur}
-        aria-invalid={invalid || undefined}
-        aria-describedby={invalid ? `${id}-error` : description ? `${id}-description` : undefined}
-        {...inputProps}
-      />
+      <div className="group/input relative">
+        {Icon ? (
+          <Icon
+            aria-hidden
+            className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within/input:text-teal"
+          />
+        ) : null}
+        <Input
+          id={id}
+          name={field.name}
+          value={field.state.value}
+          onChange={(event) => field.handleChange(event.target.value)}
+          onBlur={field.handleBlur}
+          aria-invalid={invalid || undefined}
+          aria-describedby={invalid ? `${id}-error` : description ? `${id}-description` : undefined}
+          className={cn(Icon && 'ps-10')}
+          {...inputProps}
+        />
+      </div>
       {description && !invalid ? (
         <p id={`${id}-description`} className="text-muted-foreground text-sm">
           {description}
@@ -109,12 +121,20 @@ export function TextareaField({ label, ...textareaProps }: TextareaFieldProps) {
   )
 }
 
-export function SubmitButton({ children, className }: { children: ReactNode; className?: string }) {
+export function SubmitButton({
+  children,
+  className,
+  variant,
+}: {
+  children: ReactNode
+  className?: string
+  variant?: ComponentProps<typeof Button>['variant']
+}) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting} className={cn(className)}>
+        <Button type="submit" disabled={isSubmitting} variant={variant} className={cn(className)}>
           {children}
         </Button>
       )}

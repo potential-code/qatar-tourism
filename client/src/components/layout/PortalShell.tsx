@@ -35,7 +35,7 @@ export function PortalShell({
         Skip to content
       </a>
       <PortalSidebar portal={portal} navContext={navContext} />
-      <SidebarInset className="min-w-0 bg-sand">
+      <SidebarInset className="min-w-0 bg-sand bg-[radial-gradient(60rem_32rem_at_100%_0%,var(--qt-teal-mist),transparent_70%),radial-gradient(50rem_30rem_at_0%_100%,var(--qt-sky-mist),transparent_70%)] bg-fixed">
         <PortalHeader notifications={notifications} />
         <motion.main
           id="main"

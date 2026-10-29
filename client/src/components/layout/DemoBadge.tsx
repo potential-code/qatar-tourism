@@ -5,15 +5,21 @@ import { cn } from '@/lib/utils'
 export function DemoBadge({
   className,
   compact = false,
+  tone = 'light',
 }: {
   className?: string
   compact?: boolean
+  /** `dark` for the deep-teal sidebar ground. */
+  tone?: 'light' | 'dark'
 }) {
   return (
     <div
       role="note"
       className={cn(
-        'flex items-start gap-2 rounded-lg border border-maroon/15 bg-maroon-mist px-3 py-2 text-xs text-maroon-deep',
+        'flex items-start gap-2 rounded-lg border px-3 py-2 text-xs',
+        tone === 'dark'
+          ? 'border-white/25 bg-white/10 text-white'
+          : 'border-maroon/15 bg-maroon-mist text-maroon-deep',
         compact && 'items-center py-1',
         className,
       )}

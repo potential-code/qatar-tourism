@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, History } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { ProgressRing } from '@/components/data/ProgressRing'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { easeOut } from '@/components/motion/variants'
@@ -30,8 +31,9 @@ export function NextActionCard({ journey }: { journey: Journey }) {
       initial={reduce ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: easeOut, delay: 0.15 }}
-      className="relative z-10 mx-3 -mt-16 grid md:-mt-20 gap-6 rounded-xl border bg-white/95 p-5 shadow-lg backdrop-blur md:mx-8 lg:grid-cols-[1fr_auto] lg:items-center md:p-7"
+      className="relative isolate z-10 mx-3 -mt-16 grid md:-mt-20 gap-6 rounded-xl overflow-hidden border border-t-4 border-t-gold bg-white/95 p-5 shadow-lg backdrop-blur md:mx-8 lg:grid-cols-[1fr_auto] lg:items-center md:p-7"
     >
+      <CornerPattern side="b" />
       <div className="flex min-w-0 flex-col gap-3">
         <p className="text-sm font-medium text-maroon">Next action</p>
         {item && next && link ? (

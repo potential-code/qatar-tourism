@@ -1,4 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
+import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { scrollToSection } from '../utils/scroll'
 import type { PublicNavLink } from './nav-links'
@@ -8,40 +9,64 @@ export function NavLink({
   light = false,
   active = false,
   large = false,
+  highlighted = false,
+  onHover,
   onNavigate,
 }: {
   link: PublicNavLink
   light?: boolean
   active?: boolean
   large?: boolean
+  /** Draws the shared sliding pill behind this link (desktop bar). */
+  highlighted?: boolean
+  onHover?: () => void
   onNavigate?: () => void
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   return (
     <Link
-      to={link.to}
+      to="/"
       hash={link.hash}
+      onPointerEnter={onHover}
+      onFocus={onHover}
       onClick={(event) => {
         // Already on the homepage: glide to the section instead of a hard jump.
-        if (link.hash && pathname === '/') {
+        if (pathname === '/') {
           event.preventDefault()
           scrollToSection(link.hash)
         }
         onNavigate?.()
       }}
       className={cn(
-        'relative rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+        'relative isolate rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
         large
-          ? 'block px-2 py-3 font-display text-3xl text-ink hover:text-teal'
-          : 'px-3.5 py-2 font-medium text-sm',
-        !large &&
-          (light
-            ? 'text-white/90 hover:bg-white/10 hover:text-white'
-            : 'text-ink/80 hover:bg-teal-mist hover:text-teal-deep'),
-        !large && active && !light && 'text-teal-deep',
+          ? 'group flex items-baseline justify-between gap-4 border-white/10 border-b px-1 py-4 font-display font-light text-3xl text-white hover:text-gold-soft'
+          : 'px-4 py-2 font-medium text-sm',
+        !large && (light ? 'text-white/90 hover:text-white' : 'text-ink/80 hover:text-teal'),
+        !large && active && (light ? 'text-white' : 'text-teal'),
       )}
     >
+      {highlighted && !large ? (
+        <motion.span
+          layoutId="nav-pill"
+          aria-hidden
+          transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+          className={cn(
+            'absolute inset-0 -z-10 rounded-full',
+            light ? 'bg-white/15 ring-1 ring-white/20' : 'bg-teal-mist',
+          )}
+        />
+      ) : null}
       {link.label}
+      {active && !large ? (
+        <span
+          aria-hidden
+          className={cn(
+            'absolute start-1/2 bottom-0.5 size-1 -translate-x-1/2 rounded-full rtl:translate-x-1/2',
+            light ? 'bg-gold' : 'bg-teal',
+          )}
+        />
+      ) : null}
     </Link>
   )
 }

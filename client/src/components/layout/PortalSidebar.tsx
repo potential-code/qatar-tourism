@@ -34,6 +34,10 @@ function isActive(pathname: string, to: string, exact: boolean) {
     : pathname === to || pathname.startsWith(`${to}/`)
 }
 
+/** Active item: a soft white pill with a gold bar on its start edge (dct-learn's `.ni.on`). */
+const ACTIVE_ITEM =
+  'relative data-[active=true]:font-medium data-[active=true]:before:absolute data-[active=true]:before:inset-y-1.5 data-[active=true]:before:start-0 data-[active=true]:before:w-1 data-[active=true]:before:rounded-full data-[active=true]:before:bg-gold data-[active=true]:[&>svg]:text-gold'
+
 const UNKNOWN_CONTEXT: NavContext = { programmes: null }
 
 /**
@@ -53,15 +57,20 @@ export function PortalSidebar({
 
   return (
     <Sidebar collapsible="icon" variant="sidebar">
+      <div aria-hidden className="qt-sidebar-tile qt-star-tile-dark" />
       <SidebarHeader className="gap-3 px-3 pt-5 pb-3">
         <Link
           to={home as never}
           className="flex h-11 items-center group-data-[collapsible=icon]:h-8"
           aria-label="Academy home"
         >
-          <Logo withAcademy className="h-full group-data-[collapsible=icon]:[&>span]:hidden" />
+          <Logo
+            variant="white"
+            withAcademy
+            className="h-full group-data-[collapsible=icon]:[&>span]:hidden"
+          />
         </Link>
-        <p className="text-xs font-medium tracking-wide text-muted-foreground group-data-[collapsible=icon]:hidden">
+        <p className="text-xs font-semibold tracking-[0.14em] text-gold uppercase group-data-[collapsible=icon]:hidden">
           {PORTAL_LABEL[portal]}
         </p>
       </SidebarHeader>
@@ -80,7 +89,7 @@ export function PortalSidebar({
                         asChild
                         tooltip={item.label}
                         isActive={isActive(pathname, item.to, item.to === home)}
-                        className="data-[active=true]:bg-teal-mist data-[active=true]:text-teal-deep data-[active=true]:font-medium"
+                        className={ACTIVE_ITEM}
                       >
                         <Link to={item.to as never}>
                           {item.icon ? <item.icon aria-hidden /> : null}
@@ -96,7 +105,7 @@ export function PortalSidebar({
         ))}
       </SidebarContent>
       <SidebarFooter className="p-3 group-data-[collapsible=icon]:hidden">
-        <DemoBadge />
+        <DemoBadge tone="dark" />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
@@ -113,7 +122,7 @@ function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
         <CollapsibleTrigger asChild>
           <SidebarMenuButton
             tooltip={item.label}
-            className={open ? 'font-medium text-teal-deep' : undefined}
+            className={open ? 'font-medium text-white' : undefined}
           >
             {item.icon ? <item.icon aria-hidden /> : null}
             <span>{item.label}</span>
@@ -130,7 +139,7 @@ function NestedItem({ item, pathname }: { item: NavItem; pathname: string }) {
                 <SidebarMenuSubButton
                   asChild
                   isActive={isActive(pathname, child.to, child.to === item.to)}
-                  className="data-[active=true]:bg-teal-mist data-[active=true]:text-teal-deep"
+                  className="data-[active=true]:font-medium"
                 >
                   <Link to={child.to as never}>
                     <span>{child.label}</span>
