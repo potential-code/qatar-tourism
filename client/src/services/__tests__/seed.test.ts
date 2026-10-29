@@ -363,7 +363,8 @@ describe('trainers and sessions (brief §16)', () => {
     }
     const upcoming = db.sessions.filter((s) => s.code.endsWith('-2'))
     expect(upcoming).toHaveLength(10)
-    for (const s of upcoming) expect([s.capacity, s.format]).toEqual(expected[s.code] ?? [0, ''])
+    for (const s of upcoming)
+      expect([s.capacity, s.format] as [number, string]).toEqual(expected[s.code] ?? [0, ''])
     expect(db.sessions.find((s) => s.code === 'SES-T01-2')?.room).toBe('Room 1')
     expect(db.sessions.find((s) => s.code === 'SES-T07-2')?.venue).toBe('Demo Training Studio')
   })
