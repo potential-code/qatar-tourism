@@ -26,7 +26,9 @@ async function dashboardNumbers(page: Page) {
   await signInAs(page, ACCOUNTS.admin, '/admin')
   await expect(page.getByRole('button', { name: /^A certificates issued/ })).toBeVisible()
   await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0, { timeout: 15_000 })
-  return page.getByRole('main').textContent()
+  // Chart styles carry React's generated ids (chart-_r_1k_), which differ per render: drop them.
+  const text = await page.getByRole('main').textContent()
+  return text?.replace(/chart-_r_[a-z0-9]+_/g, 'chart') ?? null
 }
 
 test('the named reset restores the snapshot and reproduces identical dashboard numbers', async ({

@@ -18,11 +18,13 @@ export const test = base.extend<
     async ({ browser }, use) => {
       const context = await browser.newContext(CONTEXT_OPTIONS)
       // Belt and braces: start from the seed even if the browser ever reuses storage.
+      // The flag lives in localStorage (shared by every tab of the context), so a tab opened later,
+      // such as the certificate verification page, does not wipe the walkthrough's data.
       await context.addInitScript(() => {
         try {
-          if (sessionStorage.getItem('qta-e2e-cleared')) return
-          sessionStorage.setItem('qta-e2e-cleared', '1')
+          if (localStorage.getItem('qta-e2e-cleared')) return
           localStorage.clear()
+          localStorage.setItem('qta-e2e-cleared', '1')
           indexedDB.deleteDatabase('qta-demo')
         } catch {
           // about:blank has no storage.

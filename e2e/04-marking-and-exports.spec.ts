@@ -48,7 +48,7 @@ test('10–11 min: Amal records attendance and a final passing score for Omar', 
   ).toBeVisible()
 })
 
-test('11–12 min: Daniel resubmits and Rafael approves the revision', async ({ page }) => {
+test('11–12 min: Daniel resubmits and Noura approves the revision', async ({ page }) => {
   await signInAs(page, ACCOUNTS.daniel, '/learner/assignments')
   await page.getByRole('link', { name: 'Visitor service response plan' }).click()
   await expect(page.getByText('Version 1 was returned for revision')).toBeVisible()
@@ -57,10 +57,11 @@ test('11–12 min: Daniel resubmits and Rafael approves the revision', async ({ 
   )
   await page.getByLabel('Your response plan').fill(RESPONSE_PLAN)
   await page.getByRole('button', { name: 'Submit version 2' }).click()
-  await expect(page.getByText('Version 2 is with Rafael Sousa')).toBeVisible()
+  // A revision goes back to the trainer who marked version 1 (Noura Al Saleh, T05, in the seed).
+  await expect(page.getByText('Version 2 is with Noura Al Saleh')).toBeVisible()
 
-  // Rafael Sousa (T04) marks the revision.
-  await signInAs(page, ACCOUNTS.trainer(4), '/trainer/assignments')
+  // Noura Al Saleh (T05) marks the revision.
+  await signInAs(page, ACCOUNTS.trainer(5), '/trainer/assignments')
   await page
     .getByRole('link', { name: /L0004|Daniel Costa/ })
     .first()

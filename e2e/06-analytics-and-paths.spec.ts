@@ -19,6 +19,8 @@ test('16–17 min: AI Analytics answers two questions from the real data', async
   const prompts = conversation
     .getByRole('region', { name: 'Suggested prompts' })
     .getByRole('button')
+  // The prompts load with the assistant: wait for them before counting.
+  await expect(prompts.first()).toBeVisible()
   expect(await prompts.count()).toBeGreaterThanOrEqual(7)
   await conversation
     .getByRole('button', { name: 'How many learners are in each programme?' })

@@ -13,8 +13,20 @@ import { expect, test } from './support/walkthrough'
  */
 test.describe.configure({ mode: 'serial' })
 
-test('13–14 min: Omar submits his assignment and Amal approves it', async ({ page }) => {
-  await signInAs(page, ACCOUNTS.omar, '/learner/learning?programme=A')
+test('13–14 min: Omar plans his response, submits his assignment and Amal approves it', async ({
+  page,
+}) => {
+  // C05 is a required Level 2 unit: the checklist and a draft plan complete it.
+  await signInAs(page, ACCOUNTS.omar, '/learner/learning/C05?programme=A')
+  await expect(page.getByRole('heading', { name: 'Visitor response checklist' })).toBeVisible()
+  const boxes = page.getByRole('checkbox')
+  await expect(boxes).toHaveCount(6)
+  for (const box of await boxes.all()) await box.check()
+  await page.getByLabel('Your notes').fill(RESPONSE_PLAN.split('\n\n')[0] ?? '')
+  await page.getByRole('button', { name: 'Mark complete' }).click()
+  await expect(page.getByText('Unit complete').first()).toBeVisible()
+
+  await page.goto('/learner/learning?programme=A')
   await page.getByRole('link', { name: /Practical assignment/ }).click()
   await expect(page).toHaveURL(/\/learner\/assignments/)
   await page.getByRole('link', { name: 'Visitor service response plan' }).click()
@@ -66,9 +78,13 @@ test('14–15 min: the final assessment unlocks; passing it issues one certifica
   const pdf = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download PDF' }).click()
   expect((await pdf).suggestedFilename()).toMatch(/QTA-DEMO-A-000121.*\.pdf$/)
+  // The verification page opens in a new tab.
+  const opened = page.context().waitForEvent('page')
   await page.getByRole('link', { name: 'Verification page' }).click()
-  await expect(page.getByText('Omar Al Safi').first()).toBeVisible()
-  await expect(page.getByText(/valid|Issued/i).first()).toBeVisible()
+  const verification = await opened
+  await expect(verification.getByText('Omar Al Safi').first()).toBeVisible()
+  await expect(verification.getByText(/valid|Issued/i).first()).toBeVisible()
+  await verification.close()
 })
 
 test('15–16 min: the admin Dashboard and reports show the updated totals', async ({ page }) => {
