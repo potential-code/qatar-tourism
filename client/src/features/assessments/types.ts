@@ -1,7 +1,6 @@
-import type { ApiJson } from '@/features/learning/types'
-import type { api } from '@/lib/api'
+import type * as assessments from '@/services/assessments.service'
 
-export type AssessmentsOverview = ApiJson<(typeof api.assessments)[':programme']['$get']>
-export type AssessmentState = ApiJson<(typeof api.assessments)[':programme'][':kind']['$get']>
+export type AssessmentsOverview = Awaited<ReturnType<typeof assessments.overview>>
+export type AssessmentState = Awaited<ReturnType<typeof assessments.getState>>
 export type AssessmentResult = NonNullable<AssessmentState['lastResult']>
 export type OpenAttempt = NonNullable<AssessmentState['attempt']>

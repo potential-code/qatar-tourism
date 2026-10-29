@@ -6,7 +6,9 @@ import type {
   VideoProgressBody,
 } from '@shared/schemas/learning-engine'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as courses from '@/services/courses.service'
+import * as enrolments from '@/services/enrolments.service'
+import * as progress from '@/services/progress.service'
 
 export const learningKeys = {
   all: ['learning'] as const,
@@ -18,19 +20,19 @@ export const learningKeys = {
 export const enrolmentsQuery = () =>
   queryOptions({
     queryKey: learningKeys.enrolments(),
-    queryFn: () => unwrap(api.enrolments.mine.$get()),
+    queryFn: () => enrolments.listMine(),
   })
 
 export const journeyQuery = (programme: ProgrammeCode) =>
   queryOptions({
     queryKey: learningKeys.journey(programme),
-    queryFn: () => unwrap(api.progress[':programme'].journey.$get({ param: { programme } })),
+    queryFn: () => progress.getJourney(programme),
   })
 
 export const unitQuery = (programme: ProgrammeCode, code: string) =>
   queryOptions({
     queryKey: learningKeys.unit(programme, code),
-    queryFn: () => unwrap(api.courses[':code'].$get({ param: { code }, query: { programme } })),
+    queryFn: () => courses.getUnit(programme, code),
   })
 
 /** Any learning write can move the journey, assessments, progress and certificates. */
@@ -47,7 +49,7 @@ export function useInvalidateLearning() {
 export function useVideoProgress() {
   const invalidate = useInvalidateLearning()
   return useMutation({
-    mutationFn: (body: VideoProgressBody) => unwrap(api.progress.video.$post({ json: body })),
+    mutationFn: (body: VideoProgressBody) => progress.recordVideo(body),
     onSuccess: (result) => {
       if (result.completedNow) void invalidate()
     },
@@ -57,7 +59,7 @@ export function useVideoProgress() {
 export function useBranchingResult() {
   const invalidate = useInvalidateLearning()
   return useMutation({
-    mutationFn: (body: BranchingBody) => unwrap(api.progress.branching.$post({ json: body })),
+    mutationFn: (body: BranchingBody) => progress.recordBranching(body),
     onSuccess: () => void invalidate(),
   })
 }
@@ -65,7 +67,7 @@ export function useBranchingResult() {
 export function useFormativeAnswer() {
   const invalidate = useInvalidateLearning()
   return useMutation({
-    mutationFn: (body: FormativeAnswerBody) => unwrap(api.progress.formative.$post({ json: body })),
+    mutationFn: (body: FormativeAnswerBody) => progress.answerFormative(body),
     onSuccess: () => void invalidate(),
   })
 }
@@ -73,7 +75,7 @@ export function useFormativeAnswer() {
 export function useSaveResource() {
   const invalidate = useInvalidateLearning()
   return useMutation({
-    mutationFn: (body: ResourceBody) => unwrap(api.progress.resource.$post({ json: body })),
+    mutationFn: (body: ResourceBody) => progress.saveResource(body),
     onSuccess: () => void invalidate(),
   })
 }
@@ -81,8 +83,7 @@ export function useSaveResource() {
 export function usePreviewViewed() {
   const invalidate = useInvalidateLearning()
   return useMutation({
-    mutationFn: (programme: ProgrammeCode) =>
-      unwrap(api.progress.preview.$post({ json: { programme } })),
+    mutationFn: (programme: ProgrammeCode) => progress.recordPreviewViewed(programme),
     onSuccess: () => void invalidate(),
   })
 }

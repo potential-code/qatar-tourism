@@ -1,9 +1,9 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { queryOptions } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import { getAttemptHistory } from '@/services/progress.service'
 
 export const historyQuery = (programme: ProgrammeCode) =>
   queryOptions({
     queryKey: ['progress', 'history', programme],
-    queryFn: () => unwrap(api.progress[':programme'].history.$get({ param: { programme } })),
+    queryFn: () => getAttemptHistory(programme),
   })

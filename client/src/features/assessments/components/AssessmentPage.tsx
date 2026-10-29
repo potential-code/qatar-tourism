@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadError } from '@/features/learning/components/LoadError'
 import { WithProgramme } from '@/features/learning/components/WithProgramme'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import {
   type AssessmentKind,
   assessmentStateQuery,
