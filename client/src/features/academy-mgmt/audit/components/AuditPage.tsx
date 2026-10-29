@@ -15,15 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { ManagePage } from '../../hub/components/ManagePage'
 import { OptionSelect } from '../../hub/components/OptionSelect'
 import { Pager } from '../../hub/components/Pager'
 import { ErrorPanel, TableSkeleton } from '../../hub/components/QueryStates'
 import { StatusPill } from '../../hub/components/StatusPill'
 import { TableFrame } from '../../hub/components/TableFrame'
-import { auditQuery, exportAuditCsv } from '../../hub/queries/governance.queries'
-import { downloadResponse } from '../../hub/utils/download'
+import { auditQuery, exportAuditLog } from '../../hub/queries/governance.queries'
 import { qDateTime } from '../../hub/utils/format'
 import { AuditDetailSheet, type AuditRow } from './AuditDetailSheet'
 import { DemoResetPanel } from './DemoResetPanel'
@@ -73,10 +72,7 @@ export function AuditPage() {
   async function runExport() {
     setExporting(true)
     try {
-      const name = await downloadResponse(
-        (await exportAuditCsv(effective)) as unknown as Response,
-        'audit-log.csv',
-      )
+      const name = await exportAuditLog(effective)
       toast.success('Audit log exported', {
         description: `${name} (CSV, UTF-8). Active filters applied; contact details are excluded. The export itself is audited.`,
       })

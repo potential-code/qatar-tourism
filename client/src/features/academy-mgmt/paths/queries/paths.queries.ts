@@ -6,12 +6,10 @@ import type {
   RuleInput,
 } from '@shared/schemas/admin-paths'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { unwrap } from '@/lib/api'
-import { adminApi } from '../../hub/queries/admin-api'
+import * as rules from '@/services/admin/path-rules.service'
+import * as paths from '@/services/admin/paths.service'
 
-/** Learning path builder data (brief §14). The only place this feature calls the API. */
-
-const paths = adminApi.paths
+/** Learning path builder data (brief §14). The only place this feature calls a service. */
 
 export const pathKeys = {
   all: ['admin-paths'] as const,
@@ -24,38 +22,30 @@ export const pathKeys = {
 }
 
 export const pathsListQuery = () =>
-  queryOptions({ queryKey: pathKeys.list(), queryFn: () => unwrap(paths.$get()) })
+  queryOptions({ queryKey: pathKeys.list(), queryFn: () => paths.listPaths() })
 
 export const catalogueQuery = () =>
   queryOptions({
     queryKey: pathKeys.catalogue(),
-    queryFn: () => unwrap(paths.catalogue.$get()),
+    queryFn: () => paths.listCatalogue(),
     staleTime: 5 * 60_000,
   })
 
 export const pathDetailQuery = (pathId: string) =>
-  queryOptions({
-    queryKey: pathKeys.detail(pathId),
-    queryFn: () => unwrap(paths[':pathId'].$get({ param: { pathId } })),
-  })
+  queryOptions({ queryKey: pathKeys.detail(pathId), queryFn: () => paths.getPath(pathId) })
 
 export const experienceQuery = (pathId: string, learnerCode: string, versionId?: string) =>
   queryOptions({
     queryKey: pathKeys.experience(pathId, learnerCode, versionId),
     queryFn: () =>
-      unwrap(
-        paths[':pathId'].experience.$get({
-          param: { pathId },
-          query: { learnerCode, ...(versionId ? { versionId } : {}) },
-        }),
-      ),
+      rules.getExperience(pathId, { learnerCode, ...(versionId ? { versionId } : {}) }),
     retry: false,
   })
 
 export const matchPreviewQuery = (input: MatchPreviewInput) =>
   queryOptions({
     queryKey: pathKeys.preview(input),
-    queryFn: () => unwrap(paths.preview.$post({ json: input })),
+    queryFn: () => rules.previewMatch(input),
     retry: false,
   })
 
@@ -67,7 +57,7 @@ function useInvalidate() {
 export function useCreatePath() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: CreatePathInput) => unwrap(paths.$post({ json: input })),
+    mutationFn: (input: CreatePathInput) => paths.createPath(input),
     onSuccess: invalidate,
   })
 }
@@ -75,42 +65,33 @@ export function useCreatePath() {
 export function useSetDefaultPath() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (pathId: string) =>
-      unwrap(paths[':pathId'].$patch({ param: { pathId }, json: { isDefault: true } })),
+    mutationFn: (pathId: string) => paths.updatePath(pathId, { isDefault: true }),
     onSuccess: invalidate,
   })
 }
 
 export function useStartDraft(pathId: string) {
   const invalidate = useInvalidate()
-  return useMutation({
-    mutationFn: () => unwrap(paths[':pathId'].draft.$post({ param: { pathId } })),
-    onSuccess: invalidate,
-  })
+  return useMutation({ mutationFn: () => paths.startDraft(pathId), onSuccess: invalidate })
 }
 
 export function useSaveDraft(pathId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: DraftItemsInput) =>
-      unwrap(paths[':pathId'].draft.$patch({ param: { pathId }, json: input })),
+    mutationFn: (input: DraftItemsInput) => paths.saveDraft(pathId, input),
     onSuccess: invalidate,
   })
 }
 
 export function useDiscardDraft(pathId: string) {
   const invalidate = useInvalidate()
-  return useMutation({
-    mutationFn: () => unwrap(paths[':pathId'].draft.$delete({ param: { pathId } })),
-    onSuccess: invalidate,
-  })
+  return useMutation({ mutationFn: () => paths.discardDraft(pathId), onSuccess: invalidate })
 }
 
 export function usePublishPath(pathId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: PublishInput) =>
-      unwrap(paths[':pathId'].publish.$post({ param: { pathId }, json: input })),
+    mutationFn: (input: PublishInput) => paths.publishPath(pathId, input),
     onSuccess: invalidate,
   })
 }
@@ -119,9 +100,7 @@ export function useSaveRule() {
   const invalidate = useInvalidate()
   return useMutation({
     mutationFn: ({ id, input }: { id?: string; input: RuleInput }) =>
-      id
-        ? unwrap(paths.rules[':ruleId'].$patch({ param: { ruleId: id }, json: input }))
-        : unwrap(paths.rules.$post({ json: input })),
+      id ? rules.updateRule(id, input) : rules.createRule(input),
     onSuccess: invalidate,
   })
 }
@@ -130,7 +109,7 @@ export function useOverridePath() {
   const invalidate = useInvalidate()
   return useMutation({
     mutationFn: (input: { enrolmentId: string; pathId: string; reason: string }) =>
-      unwrap(paths.override.$post({ json: input })),
+      rules.overridePath(input),
     onSuccess: invalidate,
   })
 }

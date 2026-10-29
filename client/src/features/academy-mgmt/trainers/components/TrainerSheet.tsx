@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { ErrorPanel } from '../../hub/components/QueryStates'
 import { ReasonDialog } from '../../hub/components/ReasonDialog'
 import { StatusPill } from '../../hub/components/StatusPill'

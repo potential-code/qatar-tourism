@@ -1,10 +1,9 @@
 import { queryOptions } from '@tanstack/react-query'
-import type { InferResponseType } from 'hono/client'
-import { api, unwrap } from '@/lib/api'
+import * as analyticsService from '@/services/analytics.service'
+import * as demoService from '@/services/demo.service'
 import { type FilterSearch, toApiFilters } from '../utils/filters'
 
-export type Overview = InferResponseType<typeof api.analytics.overview.$get, 200>
-export type FilterOptions = InferResponseType<(typeof api.analytics)['filter-options']['$get'], 200>
+export type { FilterOptions, Overview } from '@/services/analytics.service'
 
 export const analyticsKeys = {
   all: ['analytics'] as const,
@@ -16,19 +15,19 @@ export const analyticsKeys = {
 export const overviewQuery = (filters: FilterSearch) =>
   queryOptions({
     queryKey: analyticsKeys.overview(filters),
-    queryFn: () => unwrap(api.analytics.overview.$get({ query: toApiFilters(filters) })),
+    queryFn: () => analyticsService.getOverview(toApiFilters(filters)),
     placeholderData: (previous) => previous,
   })
 
 export const filterOptionsQuery = () =>
   queryOptions({
     queryKey: analyticsKeys.options,
-    queryFn: () => unwrap(api.analytics['filter-options'].$get()),
+    queryFn: () => analyticsService.getFilterOptions(),
     staleTime: 5 * 60_000,
   })
 
 export const demoMetaQuery = () =>
   queryOptions({
     queryKey: analyticsKeys.meta,
-    queryFn: () => unwrap(api.demo.meta.$get()),
+    queryFn: () => demoService.getDemoMeta(),
   })

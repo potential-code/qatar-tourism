@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { Field } from '../../hub/components/Field'
 import { useCreateTrainer, useUpdateTrainer } from '../queries/trainers.queries'
 
