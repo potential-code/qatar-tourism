@@ -19,6 +19,33 @@
   --qt-ink-soft: #575654;
   --qt-ink-muted: #807e7c;
   --qt-orange: #bf4f00; /* logo accent, use sparingly */
+  --qt-maroon-bright: #9a0f3d;
+  /* Secondary accents, all taken from qatartourism.com's stylesheet (used sparingly there). */
+  --qt-gold: #cdb97e; /* sand gold: hairlines and accents on dark grounds, never text on light */
+  --qt-gold-soft: #e9dfc0;
+  --qt-gold-deep: #8a6d2b; /* gold that holds 3:1 on white, for icons and large numerals */
+  --qt-lagoon: #308195; /* mid teal between teal and sky, from the site */
+  --qt-sky: #74aed1;
+  --qt-sky-mist: #e3f0f7;
+  --qt-rose: #c4899d;
+  --qt-rose-mist: #f4e5ea;
+  --qt-teal-night: #083640;
+
+  /* Brand gradients */
+  --qt-grad-maroon: linear-gradient(
+    135deg,
+    var(--qt-maroon-bright) 0%,
+    var(--qt-maroon) 45%,
+    var(--qt-maroon-deep) 100%
+  );
+  --qt-grad-teal: linear-gradient(135deg, var(--qt-teal) 0%, var(--qt-teal-deep) 100%);
+  --qt-grad-night: linear-gradient(
+    160deg,
+    #054554 0%,
+    var(--qt-teal-deep) 45%,
+    var(--qt-teal-night) 100%
+  );
+  --qt-grad-lagoon: linear-gradient(135deg, var(--qt-teal) 0%, #308195 50%, var(--qt-sky) 100%);
 
   /* Semantic */
   --qt-success: #246b42; /* darkened from #2f7d4f: 4.5:1 text on tinted badges over sand (WCAG AA) */
@@ -36,6 +63,14 @@
   --qt-shadow-md: 0 8px 24px -8px rgb(26 25 25 / 0.16), 0 2px 6px rgb(26 25 25 / 0.05);
   --qt-shadow-lg: 0 24px 48px -16px rgb(26 25 25 / 0.24), 0 6px 14px rgb(26 25 25 / 0.06);
   --qt-shadow-glow: 0 12px 32px -10px rgb(0 98 123 / 0.45);
+  --qt-shadow-xl:
+    0 40px 80px -24px rgb(26 25 25 / 0.32), 0 16px 32px -12px rgb(26 25 25 / 0.12),
+    0 2px 6px rgb(26 25 25 / 0.05);
+  --qt-shadow-maroon: 0 14px 34px -10px rgb(125 0 42 / 0.55), 0 4px 10px -2px rgb(125 0 42 / 0.25);
+  --qt-shadow-inset: inset 0 1px 2px rgb(26 25 25 / 0.06), inset 0 0 0 1px rgb(26 25 25 / 0.04);
+  --qt-shadow-card:
+    0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 40px -18px rgb(26 25 25 / 0.22),
+    0 4px 12px -4px rgb(26 25 25 / 0.06);
 
   /* Motion (site uses .25s–.5s eases; brief §2 asks 150–400ms for controls) */
   --qt-ease-out: cubic-bezier(0.22, 1, 0.36, 1);

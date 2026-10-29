@@ -18,6 +18,9 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        /** Brand call to action: maroon gradient with a warm glow. */
+        maroon:
+          "bg-grad-maroon text-white shadow-[var(--qt-shadow-maroon)] ring-1 ring-white/10 ring-inset hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_20px_40px_-12px_rgb(125_0_42/0.6)]",
         /** For use over photography (hero, photo panels). */
         glass: "border border-white/40 bg-white/10 text-white backdrop-blur-md hover:-translate-y-0.5 hover:bg-white/20",
       },

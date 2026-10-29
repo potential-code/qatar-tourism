@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { MessageSquareQuote } from 'lucide-react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -13,8 +14,9 @@ export function FeedbackCard({ journey }: { journey: Journey }) {
   return (
     <section
       aria-labelledby="feedback-title"
-      className="flex flex-col gap-5 rounded-xl border bg-white p-6 shadow-sm"
+      className="relative isolate overflow-hidden flex flex-col gap-5 rounded-xl border bg-gradient-to-br from-white to-gold-soft/60 p-6"
     >
+      <CornerPattern side="a" />
       <h2 id="feedback-title" className="font-display text-2xl font-normal text-ink">
         Trainer feedback
       </h2>

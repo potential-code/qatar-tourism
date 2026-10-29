@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils'
 interface SectionHeadingProps {
   title: ReactNode
   description?: ReactNode
+  /** Small label above the title (see `Eyebrow`). */
+  eyebrow?: ReactNode
   align?: 'start' | 'center'
   tone?: 'ink' | 'light'
   className?: string
@@ -13,6 +15,7 @@ interface SectionHeadingProps {
 export function SectionHeading({
   title,
   description,
+  eyebrow,
   align = 'start',
   tone = 'ink',
   className,
@@ -25,6 +28,7 @@ export function SectionHeading({
         className,
       )}
     >
+      {eyebrow ? <div data-reveal>{eyebrow}</div> : null}
       <h2
         className={cn(
           'font-display text-3xl leading-[1.1] font-light md:text-5xl',
@@ -35,6 +39,7 @@ export function SectionHeading({
       </h2>
       {description ? (
         <p
+          data-reveal
           className={cn(
             'max-w-[65ch] text-base leading-relaxed md:text-lg',
             tone === 'light' ? 'text-white/85' : 'text-muted-foreground',

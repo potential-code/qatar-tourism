@@ -1,5 +1,7 @@
 import { THRESHOLDS } from '@shared/constants'
+import { cn } from '@/lib/utils'
 import type { ProgrammeDetail } from '../queries/programmes.queries'
+import { accent } from '../tone'
 
 type Rules = Record<string, unknown>
 
@@ -51,13 +53,14 @@ export function CompletionRules({ programme }: { programme: ProgrammeDetail }) {
     ]
     return (
       <section
-        className="overflow-x-auto rounded-xl bg-white ring-1 ring-ink/5"
+        className="qt-card-elevated overflow-x-auto rounded-[1.5rem]"
+        data-reveal="card"
         aria-label="Program A completion rules"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable table region must be reachable by keyboard (docs/CONVENTIONS.md)
         tabIndex={0}
       >
         <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-sand text-start text-muted-foreground text-xs">
+          <thead className="bg-grad-teal text-start text-white/85 text-xs uppercase tracking-[0.12em]">
             <tr>
               <th scope="col" className="p-4 text-start font-medium">
                 Level and stage
@@ -71,10 +74,19 @@ export function CompletionRules({ programme }: { programme: ProgrammeDetail }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map(([stage, activity, outcome]) => (
-              <tr key={stage} className="border-ink/5 border-t align-top">
+            {rows.map(([stage, activity, outcome], index) => (
+              <tr
+                key={stage}
+                className="border-ink/5 border-t align-top transition-colors duration-300 hover:bg-teal-mist/40"
+              >
                 <th scope="row" className="p-4 text-start font-medium">
-                  {stage}
+                  <span className="flex items-start gap-3">
+                    <span
+                      aria-hidden
+                      className={cn('mt-1.5 size-2.5 shrink-0 rounded-full', accent(index).bar)}
+                    />
+                    {stage}
+                  </span>
                 </th>
                 <td className="p-4 text-muted-foreground">{activity}</td>
                 <td className="p-4">{outcome}</td>
@@ -94,18 +106,32 @@ export function CompletionRules({ programme }: { programme: ProgrammeDetail }) {
       'Complete the post-assessment.',
     ]
     return (
-      <div className="grid gap-4 rounded-xl bg-white p-6 ring-1 ring-ink/5">
-        <ol className="grid gap-3">
+      <div className="grid gap-6">
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item, index) => (
-            <li key={item} className="flex gap-3 text-sm">
-              <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-teal-mist font-medium text-teal-deep text-xs">
-                {index + 1}
+            <li
+              key={item}
+              data-reveal="card"
+              className="group qt-card-elevated relative grid content-start gap-4 overflow-hidden rounded-[1.5rem] p-6 text-sm leading-relaxed transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 motion-reduce:hover:transform-none"
+            >
+              <span
+                aria-hidden
+                className={cn('absolute inset-x-0 top-0 h-1.5', accent(index).bar)}
+              />
+              <span
+                aria-hidden
+                className={cn('font-display font-light text-5xl leading-none', accent(index).icon)}
+              >
+                {String(index + 1).padStart(2, '0')}
               </span>
               {item}
             </li>
           ))}
         </ol>
-        <p className="text-muted-foreground text-sm">
+        <p
+          data-reveal
+          className="max-w-4xl rounded-2xl bg-white/70 p-5 text-muted-foreground text-sm ring-1 ring-ink/5"
+        >
           No minimum post score blocks completion. Below {review} percent we suggest a review.
           Practice scores are tracked separately from knowledge assessment scores. Program B issues
           no certificate, including after excellent scores. These are illustrative settings an
@@ -115,7 +141,7 @@ export function CompletionRules({ programme }: { programme: ProgrammeDetail }) {
     )
   }
   return (
-    <p className="rounded-xl bg-white p-6 text-sm ring-1 ring-ink/5">
+    <p data-reveal="card" className="qt-card-elevated rounded-[1.5rem] p-6 text-sm">
       Sample overview only: viewing the preview completes it. Seeded reporting shows how a third
       programme would appear to administrators. There is no certificate.
     </p>

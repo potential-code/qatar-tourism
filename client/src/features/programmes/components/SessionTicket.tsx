@@ -6,6 +6,53 @@ import type { PublicSession } from '../queries/programmes.queries'
 import { dateChip, formatLabel, QATAR_TIME_LABEL, sessionTimeRange } from '../utils/format'
 import { SeatsMeter } from './SeatsMeter'
 
+const ACCENT = {
+  teal: 'bg-teal-mist text-teal-deep',
+  /* Homepage tones: solid brand colours, raised. */
+  'solid-teal': 'w-[4.5rem] rounded-xl bg-grad-teal text-white shadow-glow',
+  'solid-maroon':
+    'w-[4.5rem] rounded-xl bg-grad-maroon text-white shadow-[var(--qt-shadow-maroon)]',
+  'solid-sky': 'w-[4.5rem] rounded-xl bg-sky text-teal-night shadow-md',
+  'solid-gold': 'w-[4.5rem] rounded-xl bg-gold text-teal-night shadow-md',
+} as const
+
+/** Homepage date blocks tip and grow when their ticket is hovered (ticket carries `group`). */
+const SOLID_MOTION =
+  'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-3 group-hover:scale-110'
+
+export type SessionAccent = keyof typeof ACCENT
+
+/** Each ticket carries its accent: the date block colour, a matching wash and hover glow. */
+const TICKET_TONES: { accent: SessionAccent; wash: string }[] = [
+  {
+    accent: 'solid-teal',
+    wash: 'bg-gradient-to-br from-teal-mist via-white to-white hover:shadow-[0_30px_60px_-26px_rgb(0_98_123/0.5)]',
+  },
+  {
+    accent: 'solid-maroon',
+    wash: 'bg-gradient-to-br from-rose-mist via-white to-white hover:shadow-[0_30px_60px_-26px_rgb(125_0_42/0.45)]',
+  },
+  {
+    accent: 'solid-sky',
+    wash: 'bg-gradient-to-br from-sky-mist via-white to-white hover:shadow-[0_30px_60px_-26px_rgb(116_174_209/0.7)]',
+  },
+  {
+    accent: 'solid-gold',
+    wash: 'bg-gradient-to-br from-gold-soft/70 via-white to-white hover:shadow-[0_30px_60px_-26px_rgb(205_185_126/0.8)]',
+  },
+]
+
+/** Ticket tone for the nth ticket in a list (cycles teal, maroon, sky, gold). */
+export function ticketTone(index: number) {
+  return (
+    TICKET_TONES[index % TICKET_TONES.length] ?? (TICKET_TONES[0] as (typeof TICKET_TONES)[number])
+  )
+}
+
+/** Classes for a showcase ticket: raised, washed in its tone, lifting on hover. */
+export const SHOWCASE_TICKET =
+  'group h-full rounded-2xl shadow-card ring-1 ring-ink/5 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 motion-reduce:hover:transform-none'
+
 /**
  * One upcoming session (brief §2): format, Qatar time, trainer, capacity and the booking action.
  * `action` is the sign-in-to-book link, chosen by the caller from the visitor's session.
@@ -13,10 +60,13 @@ import { SeatsMeter } from './SeatsMeter'
 export function SessionTicket({
   session,
   action,
+  accent = 'teal',
   className,
 }: {
   session: PublicSession
   action: React.ReactNode
+  /** Date block colour; the homepage cycles the solid brand tones. */
+  accent?: SessionAccent
   className?: string
 }) {
   const chip = dateChip(session.startsAt)
@@ -29,7 +79,13 @@ export function SessionTicket({
         className,
       )}
     >
-      <div className="flex w-16 flex-col items-center justify-center rounded-lg bg-teal-mist py-3 text-teal-deep">
+      <div
+        className={cn(
+          'flex w-16 flex-col items-center justify-center rounded-lg py-3',
+          ACCENT[accent],
+          accent !== 'teal' && SOLID_MOTION,
+        )}
+      >
         <span className="text-xs uppercase">{chip.weekday}</span>
         <span className="font-display text-3xl leading-none">{chip.day}</span>
         <span className="text-xs">{chip.month}</span>

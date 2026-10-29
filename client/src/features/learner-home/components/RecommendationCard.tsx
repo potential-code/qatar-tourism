@@ -18,7 +18,7 @@ export function RecommendationCard({ journey }: { journey: Journey }) {
       initial="rest"
       whileHover={reduce ? undefined : 'hover'}
       variants={cardHover}
-      className="group grid overflow-hidden rounded-xl border bg-white sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+      className="group grid overflow-hidden rounded-xl border bg-gradient-to-r from-white to-gold-soft/60 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
     >
       <div className="relative aspect-[16/9] overflow-hidden sm:aspect-auto">
         <img

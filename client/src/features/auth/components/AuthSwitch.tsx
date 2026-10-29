@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
+import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 
-/** The clear split between Sign in and Create account (brief §3). */
+/** The clear split between Sign in and Create account (brief §3), with a sliding teal pill. */
 export function AuthSwitch({
   active,
   redirect,
@@ -13,17 +14,29 @@ export function AuthSwitch({
 }) {
   const item = (on: boolean) =>
     cn(
-      'flex-1 rounded-full px-4 py-2 text-center font-medium text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
-      on ? 'bg-white text-ink shadow-sm' : 'text-muted-foreground hover:text-ink',
+      'relative isolate flex-1 rounded-full px-4 py-2.5 text-center font-medium text-sm transition-colors duration-300 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50',
+      on ? 'text-white' : 'text-ink/75 hover:text-teal',
     )
+  const pill = (
+    <motion.span
+      layoutId="auth-switch-pill"
+      aria-hidden
+      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+      className="absolute inset-0 -z-10 rounded-full bg-grad-teal shadow-glow"
+    />
+  )
   return (
-    <nav aria-label="Account" className="flex rounded-full bg-sand-deep p-1">
+    <nav
+      aria-label="Account"
+      className="flex rounded-full bg-sand-deep p-1.5 shadow-[var(--qt-shadow-inset)]"
+    >
       <Link
         to="/login"
         search={{ redirect }}
         aria-current={active === 'login' ? 'page' : undefined}
         className={item(active === 'login')}
       >
+        {active === 'login' ? pill : null}
         Sign in
       </Link>
       <Link
@@ -32,6 +45,7 @@ export function AuthSwitch({
         aria-current={active === 'register' ? 'page' : undefined}
         className={item(active === 'register')}
       >
+        {active === 'register' ? pill : null}
         Create account
       </Link>
     </nav>

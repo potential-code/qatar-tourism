@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { SectionHeading } from '@/components/brand'
-import { Reveal, Stagger, StaggerItem } from '@/components/motion'
+import { CornerPattern, Eyebrow, SectionHeading } from '@/components/brand'
+import { ScrollReveal, SplitWords } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ProgrammeCard } from '@/features/programmes/components/ProgrammeCard'
+import { ProgrammeShowcaseCard } from '@/features/programmes/components/ProgrammeShowcaseCard'
 import { programmesQuery } from '@/features/programmes/queries/programmes.queries'
 import { SectionError } from './SectionState'
 
-/** "Find your next learning journey" (brief §2): A as the feature card, B and C beside it. */
+/**
+ * "Find your next learning journey" (brief §2): the three programmes side by side as equals,
+ * each in its own brand colour, on a warm ground with soft teal, sky and rose light.
+ */
 export function ProgrammesSection() {
   const { data, isPending, isError, refetch } = useQuery(programmesQuery())
   return (
@@ -14,36 +17,53 @@ export function ProgrammesSection() {
       id="programmes"
       tabIndex={-1}
       aria-labelledby="programmes-title"
-      className="scroll-mt-20 outline-none"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-sand outline-none"
     >
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-12 px-4 py-24 md:px-8 md:py-32">
-        <Reveal>
+      <CornerPattern side="b" />
+      <div
+        aria-hidden
+        className="absolute -start-40 top-1/4 -z-10 size-[460px] qt-glow text-sky/20"
+      />
+      <div
+        aria-hidden
+        className="absolute end-1/4 -bottom-40 -z-10 size-[420px] qt-glow text-rose/15"
+      />
+
+      <ScrollReveal className="mx-auto flex max-w-[1400px] flex-col gap-14 px-4 py-24 md:px-8 md:py-32">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
-            title={<span id="programmes-title">Find your next learning journey</span>}
+            eyebrow={<Eyebrow index="01">Programmes</Eyebrow>}
+            title={
+              <span id="programmes-title">
+                <SplitWords text="Find your next learning journey" />
+              </span>
+            }
             description="Three programmes, each with a different shape. Start where your role and goals point you, and add another programme at any time."
           />
-        </Reveal>
+          <div aria-hidden data-reveal className="hidden items-center gap-2 lg:flex">
+            <span className="size-3 rounded-full bg-teal" />
+            <span className="size-3 rounded-full bg-maroon" />
+            <span className="size-3 rounded-full bg-sky" />
+          </div>
+        </div>
         {isPending ? (
-          <div className="grid gap-6 lg:grid-cols-12">
-            <Skeleton className="h-[640px] rounded-xl lg:col-span-7 lg:row-span-2" />
-            <Skeleton className="h-[300px] rounded-xl lg:col-span-5" />
-            <Skeleton className="h-[300px] rounded-xl lg:col-span-5" />
+          <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-[620px] rounded-[1.75rem]" />
+            ))}
           </div>
         ) : isError ? (
           <SectionError what="the programmes" onRetry={() => refetch()} />
         ) : (
-          <Stagger className="grid gap-6 lg:grid-cols-12" stagger={0.12}>
-            {data.map((programme, index) => (
-              <StaggerItem
-                key={programme.code}
-                className={index === 0 ? 'lg:col-span-7 lg:row-span-2' : 'lg:col-span-5'}
-              >
-                <ProgrammeCard programme={programme} layout={index === 0 ? 'feature' : 'row'} />
-              </StaggerItem>
+          <ScrollReveal className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+            {data.map((programme) => (
+              <div key={programme.code} data-reveal="card" className="h-full">
+                <ProgrammeShowcaseCard programme={programme} />
+              </div>
             ))}
-          </Stagger>
+          </ScrollReveal>
         )}
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

@@ -27,6 +27,7 @@ export function OverviewStats({ stats }: { stats: OverviewData['stats'] }) {
         label="Attendance outstanding"
         value={stats.attendanceOutstanding}
         icon={ClipboardList}
+        tone="gold"
         description={`${stats.draftScores} scores saved as draft`}
         onClick={() => navigate({ to: '/trainer/attendance' })}
       />
@@ -34,7 +35,7 @@ export function OverviewStats({ stats }: { stats: OverviewData['stats'] }) {
         label="Marking queue"
         value={stats.markingQueue}
         icon={FileText}
-        tone="neutral"
+        tone="sky"
         description="Assignment submissions to review"
         onClick={() => navigate({ to: '/trainer/assignments' as never })}
       />

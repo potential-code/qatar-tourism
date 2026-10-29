@@ -70,6 +70,16 @@
   --color-maroon: var(--qt-maroon);
   --color-maroon-deep: var(--qt-maroon-deep);
   --color-maroon-mist: var(--qt-maroon-mist);
+  --color-maroon-bright: var(--qt-maroon-bright);
+  --color-gold: var(--qt-gold);
+  --color-gold-soft: var(--qt-gold-soft);
+  --color-sky: var(--qt-sky);
+  --color-gold-deep: var(--qt-gold-deep);
+  --color-lagoon: var(--qt-lagoon);
+  --color-sky-mist: var(--qt-sky-mist);
+  --color-rose: var(--qt-rose);
+  --color-rose-mist: var(--qt-rose-mist);
+  --color-teal-night: var(--qt-teal-night);
   --color-sand: var(--qt-sand);
   --color-sand-deep: var(--qt-sand-deep);
   --color-ink: var(--qt-ink);
@@ -80,6 +90,10 @@
   --shadow-md: var(--qt-shadow-md);
   --shadow-lg: var(--qt-shadow-lg);
   --shadow-glow: var(--qt-shadow-glow);
+  --shadow-xl: var(--qt-shadow-xl);
+  --shadow-maroon: var(--qt-shadow-maroon);
+  --shadow-inset: var(--qt-shadow-inset);
+  --shadow-card: var(--qt-shadow-card);
   --ease-out: var(--qt-ease-out);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -125,4 +139,241 @@
     }
   }
   /* biome-ignore-end lint/complexity/noImportantStyles: end of reduced-motion override */
+}
+
+/* Brand surfaces and effects shared by the public site and account pages. */
+@layer utilities {
+  .bg-grad-maroon {
+    background-image: var(--qt-grad-maroon);
+  }
+  .bg-grad-teal {
+    background-image: var(--qt-grad-teal);
+  }
+  .bg-grad-night {
+    background-image: var(--qt-grad-night);
+  }
+  .bg-grad-lagoon {
+    background-image: var(--qt-grad-lagoon);
+  }
+  /* Raised white card: inner top highlight plus a soft, deep drop shadow. */
+  .qt-card-elevated {
+    background-color: #fff;
+    box-shadow: var(--qt-shadow-card);
+    border: 1px solid rgb(26 25 25 / 0.05);
+  }
+  /* Film grain over dark brand grounds, so flat gradients feel printed rather than digital. */
+  /* The host must be positioned (relative, absolute or fixed). */
+  .qt-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* No blend mode: blended overlays repaint (and flicker) under scroll-driven transforms. */
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .text-gradient-maroon {
+    background-image: var(--qt-grad-maroon);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Cursor-following light; the element sets --mx / --my from pointer position. */
+  .qt-spotlight {
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgb(255 255 255 / 0.16),
+      transparent 60%
+    );
+  }
+  .qt-spotlight-ink {
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgb(125 0 42 / 0.07),
+      transparent 60%
+    );
+  }
+}
+
+@keyframes qt-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes qt-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes qt-scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(200%);
+  }
+}
+
+/*
+ * Account forms: taller fields, inset depth and a maroon focus glow. Scoped to the auth card so
+ * portal forms keep the standard input.
+ */
+.qt-auth-form [data-slot="input"] {
+  height: 3rem;
+  border-radius: 0.875rem;
+  border-color: rgb(26 25 25 / 0.1);
+  background-color: #fdfcfa;
+  box-shadow: var(--qt-shadow-inset);
+  font-size: 0.95rem;
+  transition:
+    border-color var(--qt-dur-base) var(--qt-ease-out),
+    box-shadow var(--qt-dur-base) var(--qt-ease-out),
+    background-color var(--qt-dur-base) var(--qt-ease-out);
+}
+.qt-auth-form [data-slot="input"]:hover {
+  border-color: rgb(0 98 123 / 0.35);
+}
+.qt-auth-form [data-slot="input"]:focus-visible {
+  background-color: #fff;
+  border-color: var(--qt-teal);
+  box-shadow:
+    0 0 0 4px rgb(0 98 123 / 0.14),
+    0 10px 24px -12px rgb(0 98 123 / 0.5);
+}
+.qt-auth-form [data-slot="input"][aria-invalid="true"] {
+  border-color: var(--qt-danger);
+  animation: qt-shake 0.4s var(--qt-ease-out) 1;
+}
+.qt-auth-form [data-slot="label"] {
+  transition: color var(--qt-dur-base) var(--qt-ease-out);
+}
+.qt-auth-form .grid:focus-within > [data-slot="label"] {
+  color: var(--qt-teal);
+}
+
+/*
+ * Islamic star tile (same lattice as dct-learn), in brand teal for light grounds and white for
+ * dark ones. `CornerPattern` places it in two opposite corners, fading towards the centre.
+ */
+.qt-star-tile {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2796%27%20height%3D%2796%27%20viewBox%3D%270%200%2096%2096%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%2300627B%27%20stroke-opacity%3D%27.22%27%20stroke-width%3D%271%27%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2736%27%20height%3D%2736%27/%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2736%27%20height%3D%2736%27%20transform%3D%27rotate%2845%2048%2048%29%27/%3E%3Cpath%20d%3D%27M48%2022.5V0M48%2073.5V96M22.5%2048H0M73.5%2048H96%27/%3E%3Cpath%20d%3D%27M0%2012L12%200M84%200L96%2012M96%2084L84%2096M12%2096L0%2084%27/%3E%3Cpath%20d%3D%27M12%200L30%2030M84%200L66%2030M96%2012L66%2030M96%2084L66%2066M84%2096L66%2066M12%2096L30%2066M0%2084L30%2066M0%2012L30%2030%27/%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%275%27/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 96px 96px;
+}
+.qt-star-tile-dark {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2796%27%20height%3D%2796%27%20viewBox%3D%270%200%2096%2096%27%3E%3Cg%20fill%3D%27none%27%20stroke%3D%27%23FFFFFF%27%20stroke-opacity%3D%27.2%27%20stroke-width%3D%271%27%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2736%27%20height%3D%2736%27/%3E%3Crect%20x%3D%2730%27%20y%3D%2730%27%20width%3D%2736%27%20height%3D%2736%27%20transform%3D%27rotate%2845%2048%2048%29%27/%3E%3Cpath%20d%3D%27M48%2022.5V0M48%2073.5V96M22.5%2048H0M73.5%2048H96%27/%3E%3Cpath%20d%3D%27M0%2012L12%200M84%200L96%2012M96%2084L84%2096M12%2096L0%2084%27/%3E%3Cpath%20d%3D%27M12%200L30%2030M84%200L66%2030M96%2012L66%2030M96%2084L66%2066M84%2096L66%2066M12%2096L30%2066M0%2084L30%2066M0%2012L30%2030%27/%3E%3Ccircle%20cx%3D%2748%27%20cy%3D%2748%27%20r%3D%275%27/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 96px 96px;
+}
+
+/*
+ * Signed-in portals (learner, trainer, admin). Ideas borrowed from dct-learn's portal.css, in this
+ * project's palette: a deep-teal sidebar with the star tile peeking from the bottom, and "pop-out"
+ * cards whose shadow is tinted with teal-night.
+ */
+:root {
+  --qt-pop: 0 1px 2px rgb(8 54 64 / 0.06), 0 14px 32px -16px rgb(8 54 64 / 0.28);
+  --qt-pop-hover: 0 1px 2px rgb(8 54 64 / 0.06), 0 22px 44px -18px rgb(8 54 64 / 0.36);
+}
+
+/* Sidebar tokens are re-pointed for dark ground; every shadcn sidebar part then follows. */
+[data-sidebar="sidebar"] {
+  --sidebar: var(--qt-teal-deep);
+  --sidebar-foreground: rgb(255 255 255 / 0.9);
+  --sidebar-accent: rgb(255 255 255 / 0.12);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.16);
+  --sidebar-ring: var(--qt-gold);
+  isolation: isolate;
+  color: var(--sidebar-foreground);
+  background: var(--qt-grad-night);
+}
+[data-slot="sidebar-inner"] {
+  position: relative;
+  overflow: hidden;
+}
+/* The star tile fills the sidebar and is masked so it shows mainly toward the bottom. */
+.qt-sidebar-tile {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 0.3) 0%,
+    rgb(0 0 0 / 0.12) 38%,
+    #000 100%
+  );
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.3) 0%, rgb(0 0 0 / 0.12) 38%, #000 100%);
+}
+[data-sidebar="sidebar"] [data-slot="sidebar-group-label"] {
+  color: rgb(255 255 255 / 0.78);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+}
+[data-sidebar="sidebar"] [data-slot="sidebar-content"] {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+[data-slot="sidebar-rail"]:hover::after {
+  background: rgb(255 255 255 / 0.3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .qt-lift {
+    transition:
+      transform 0.3s var(--qt-ease-out, ease-out),
+      box-shadow 0.3s;
+  }
+  .qt-lift:hover {
+    transform: translateY(-4px);
+  }
+}
+.qt-lift:hover {
+  box-shadow: var(--qt-pop-hover);
+}
+
+/*
+ * Hand-built "rounded-xl border bg-card" panels across the portals share the card's pop-out
+ * shadow. Dashed (empty-state) panels and portalled overlays are left alone.
+ */
+#main
+  .rounded-xl:is(.bg-card, .bg-white):not(
+    [class*="border-dashed"],
+    [class*="shadow-md"],
+    [class*="shadow-lg"]
+  ) {
+  border-color: rgb(8 54 64 / 0.08);
+  box-shadow: var(--qt-pop);
+  transition: box-shadow 0.3s;
+}
+#main
+  .rounded-xl:is(.bg-card, .bg-white):not(
+    [class*="border-dashed"],
+    [class*="shadow-md"],
+    [class*="shadow-lg"]
+  ):hover {
+  box-shadow: var(--qt-pop-hover);
+}
+
+/*
+ * Soft colour glow behind a section. A radial gradient in `currentColor` (set with text-*),
+ * instead of a heavily blurred circle: filter blur on large layers is GPU-expensive, and under
+ * scroll it can push Chrome to drop tiles, so content flickers in and out.
+ */
+.qt-glow {
+  background: radial-gradient(closest-side, currentColor, transparent);
 }

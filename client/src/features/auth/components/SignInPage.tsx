@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { GraduationCap, Info } from 'lucide-react'
+import { GraduationCap, Info, Mail } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -97,10 +97,22 @@ export function SignInPage({
           aria-label="Sign-in mode"
           value={mode}
           onValueChange={(value) => setMode(value as SignInMode)}
-          className="w-full"
+          className="h-12 w-full rounded-xl bg-sand-deep p-1.5 shadow-[var(--qt-shadow-inset)]"
         >
           {SIGN_IN_MODES.map((m) => (
-            <SegmentedControlItem key={m} value={m} className="flex-1">
+            <SegmentedControlItem
+              key={m}
+              value={m}
+              className="relative isolate h-full flex-1 rounded-lg text-ink/75 transition-colors duration-300 hover:text-teal data-[state=checked]:bg-transparent data-[state=checked]:text-teal data-[state=checked]:shadow-none"
+            >
+              {mode === m ? (
+                <motion.span
+                  layoutId="sign-in-mode-pill"
+                  aria-hidden
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                  className="absolute inset-0 -z-10 rounded-lg bg-white shadow-md ring-1 ring-teal/10"
+                />
+              ) : null}
               {MODE_COPY[m].tab}
             </SegmentedControlItem>
           ))}
@@ -114,7 +126,9 @@ export function SignInPage({
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="grid gap-2"
           >
-            <h1 className="font-display font-light text-4xl">{copy.title}</h1>
+            <h1 className="font-display font-light text-4xl text-ink md:text-[2.75rem]">
+              {copy.title}
+            </h1>
             <p className="text-muted-foreground">{copy.description}</p>
             {copy.note ? (
               <p className="flex gap-2 rounded-lg bg-teal-mist p-3 text-sm text-teal-deep">
@@ -139,7 +153,9 @@ export function SignInPage({
         ) : null}
         {error ? <FormAlert>{error}</FormAlert> : null}
         <form.AppField name="email" validators={{ onBlur: schema.shape.email }}>
-          {(field) => <field.TextField label="Email" type="email" autoComplete="email" />}
+          {(field) => (
+            <field.TextField label="Email" type="email" autoComplete="email" icon={Mail} />
+          )}
         </form.AppField>
         <form.AppField name="password" validators={{ onBlur: schema.shape.password }}>
           {() => <PasswordField autoComplete="current-password" />}
@@ -155,12 +171,15 @@ export function SignInPage({
               Remember me
             </Label>
           </div>
-          <Link to="/forgot-password" className="text-teal-deep underline-offset-4 hover:underline">
+          <Link
+            to="/forgot-password"
+            className="font-medium text-teal underline-offset-4 hover:underline"
+          >
             Forgot password?
           </Link>
         </div>
         <form.AppForm>
-          <form.SubmitButton className="h-11 w-full">Sign in</form.SubmitButton>
+          <form.SubmitButton className="h-12 w-full text-base">Sign in</form.SubmitButton>
         </form.AppForm>
       </form>
 

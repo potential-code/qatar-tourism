@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, LockKeyhole } from 'lucide-react'
 import { useId, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,7 +33,11 @@ export function PasswordField({
   return (
     <div className="grid gap-2">
       <Label htmlFor={id}>{label}</Label>
-      <div className="relative">
+      <div className="group/input relative">
+        <LockKeyhole
+          aria-hidden
+          className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within/input:text-teal"
+        />
         <Input
           id={id}
           name={field.name}
@@ -44,14 +48,14 @@ export function PasswordField({
           onBlur={field.handleBlur}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? `${id}-error` : hint ? `${id}-hint` : undefined}
-          className="h-11 pe-12"
+          className="h-11 ps-10 pe-12"
         />
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? 'Hide password' : 'Show password'}
           aria-pressed={visible}
-          className="absolute end-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-ink focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="absolute end-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-teal-mist hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           {visible ? (
             <EyeOff aria-hidden className="size-4" />

@@ -1,5 +1,6 @@
 import { SectionHeading } from '@/components/brand'
-import { Reveal } from '@/components/motion'
+import { cn } from '@/lib/utils'
+import { accent } from '../tone'
 import { IllustrativeTag } from './IllustrativeTag'
 
 const WORKSHEET = [
@@ -37,17 +38,26 @@ export function SamplePreview() {
           description="C07 Telling a concise destination story, preview, 5 minutes. A fictional worksheet that shows how the sample programme would work."
         />
       </div>
-      <Reveal className="grid gap-4 md:grid-cols-2">
-        {WORKSHEET.map((row) => (
+      <div className="grid gap-5 md:grid-cols-2">
+        {WORKSHEET.map((row, index) => (
           <div
             key={row.label}
-            className="grid gap-2 rounded-xl border border-teal/20 border-dashed bg-white p-6"
+            data-reveal="card"
+            className={cn(
+              'grid gap-2 rounded-[1.5rem] border border-teal/25 border-dashed bg-gradient-to-br via-white to-white p-6 shadow-card',
+              accent(index).mist,
+            )}
           >
-            <p className="font-display text-xl">{row.label}</p>
+            <p className="flex items-center gap-3 font-display text-xl">
+              <span aria-hidden className={cn('font-display text-2xl', accent(index).icon)}>
+                {index + 1}
+              </span>
+              {row.label}
+            </p>
             <p className="text-muted-foreground text-sm">{row.prompt}</p>
           </div>
         ))}
-      </Reveal>
+      </div>
     </section>
   )
 }

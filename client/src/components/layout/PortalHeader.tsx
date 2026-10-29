@@ -21,7 +21,15 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
   const navigate = useNavigate()
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b bg-sand/85 px-4 backdrop-blur-md md:px-6">
+    <header className="sticky top-0 z-20 isolate flex h-16 shrink-0 items-center gap-3 overflow-hidden border-b border-teal/10 bg-white/80 px-4 backdrop-blur-md md:px-6">
+      <div
+        aria-hidden
+        className="qt-star-tile pointer-events-none absolute inset-y-0 end-0 -z-10 w-2/3 opacity-70 [mask-image:linear-gradient(to_left,black,transparent)] rtl:[mask-image:linear-gradient(to_right,black,transparent)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-teal via-sky to-gold"
+      />
       <SidebarTrigger className="-ms-1" />
       <DemoBadge compact className="hidden sm:flex" />
       <div className="ms-auto flex items-center gap-2">

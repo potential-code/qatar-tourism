@@ -45,7 +45,12 @@ export function HeroSlide({
     <motion.div
       aria-hidden={!active}
       initial={false}
-      animate={{ opacity: active ? 1 : 0 }}
+      // Hidden slides go `visibility: hidden` once faded, so the browser stops compositing them.
+      animate={
+        active
+          ? { opacity: 1, visibility: 'visible' }
+          : { opacity: 0, transitionEnd: { visibility: 'hidden' } }
+      }
       transition={{ duration: reduce ? 0 : 1.4, ease: [0.22, 1, 0.36, 1] }}
       className="absolute inset-0"
     >
@@ -55,7 +60,7 @@ export function HeroSlide({
         alt={active ? alt : ''}
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
-        className="size-full origin-center object-cover will-change-transform"
+        className="size-full origin-center object-cover"
       />
     </motion.div>
   )

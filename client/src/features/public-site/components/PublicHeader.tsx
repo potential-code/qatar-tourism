@@ -1,129 +1,190 @@
 import { ROLE_HOME } from '@shared/roles'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Menu } from 'lucide-react'
-import { motion, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react'
+import { ArrowUpRight, Menu } from 'lucide-react'
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import { useState } from 'react'
-import { Logo } from '@/components/brand'
+import { Logo, StarPattern } from '@/components/brand'
+import { Magnetic } from '@/components/motion'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useSession } from '@/hooks/useSession'
 import { cn } from '@/lib/utils'
+import { useActiveSection } from '../hooks/useActiveSection'
 import { NavLink } from './NavLink'
 import { NAV_LINKS } from './nav-links'
 
+const ease = [0.22, 1, 0.36, 1] as const
+
 /**
  * Public header (brief §2): logo, Academy, Programmes, How it works, Upcoming sessions, Sign in,
- * Create account. No language control: English is the only language. Transparent over the hero,
- * solid once the page scrolls.
+ * Create account. No language control: English is the only language. Transparent over the hero;
+ * once the page scrolls it condenses into a floating glass bar, steps aside while you read
+ * downwards and returns as soon as you scroll up. A teal-to-maroon hairline tracks reading progress.
  */
 export function PublicHeader({ overlay = false }: { overlay?: boolean }) {
-  const { scrollY } = useScroll()
+  const { scrollY, scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 })
   const reduce = useReducedMotion()
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
+  const [hovered, setHovered] = useState<string | null>(null)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { session, role } = useSession()
-  useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 48))
+  const activeSection = useActiveSection(pathname === '/')
+
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const previous = scrollY.getPrevious() ?? 0
+    setScrolled(y > 48)
+    // Only hide once well past the hero's top, and never under reduced motion.
+    setHidden(!reduce && y > 480 && y > previous + 4)
+    if (y < previous - 4) setHidden(false)
+  })
 
   const light = overlay && !scrolled && !open
   return (
     <motion.header
       initial={reduce ? false : { y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        'fixed inset-x-0 top-0 z-40 transition-colors duration-300',
-        light ? 'bg-transparent' : 'border-ink/5 border-b bg-sand/90 backdrop-blur-md',
-      )}
+      animate={{ y: hidden && !open ? '-120%' : 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease }}
+      className="fixed inset-x-0 top-0 z-40"
     >
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center gap-6 px-4 md:h-[72px] md:px-8">
-        <Link to="/" aria-label="Qatar Tourism Academy home" className="shrink-0 rounded-md">
-          <Logo variant={light ? 'white' : 'color'} withAcademy className="h-9 md:h-10" />
-        </Link>
-        <nav aria-label="Main" className="ms-auto hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <NavLink
-              key={link.label}
-              link={link}
-              light={light}
-              active={!link.hash && pathname === link.to}
-            />
-          ))}
-        </nav>
-        <div className="ms-auto flex items-center gap-2 lg:ms-2">
-          {session && role ? (
-            <Button asChild size="sm" variant={light ? 'glass' : 'default'}>
-              <Link to={ROLE_HOME[role] as never}>Go to my portal</Link>
-            </Button>
-          ) : (
-            <>
-              <Button
-                asChild
-                size="sm"
-                variant="ghost"
-                className={cn(
-                  'hidden sm:inline-flex',
-                  light && 'text-white hover:bg-white/15 hover:text-white',
-                )}
-              >
-                <Link to="/login">Sign in</Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                variant={light ? 'glass' : 'default'}
-                className="hidden sm:inline-flex"
-              >
-                <Link to="/register">Create account</Link>
-              </Button>
-            </>
+      <motion.div
+        aria-hidden
+        style={{ scaleX: progress }}
+        className="absolute inset-x-0 top-0 h-[3px] origin-left bg-gradient-to-r from-teal via-sky to-maroon rtl:origin-right"
+      />
+      <div
+        className={cn(
+          'mx-auto transition-[max-width,padding,margin] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          scrolled ? 'mt-3 max-w-[1180px] px-3 md:px-4' : 'mt-0 max-w-[1400px] px-0',
+        )}
+      >
+        <div
+          className={cn(
+            'relative flex items-center gap-6 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+            scrolled
+              ? 'h-14 rounded-full bg-sand/92 ps-4 pe-2 shadow-lg ring-1 ring-ink/5 backdrop-blur-sm md:h-16 md:ps-6'
+              : cn(
+                  'h-16 px-4 md:h-[72px] md:px-8',
+                  !overlay && 'border-ink/5 border-b bg-sand/90 backdrop-blur-md',
+                ),
           )}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  'lg:hidden',
-                  light && 'text-white hover:bg-white/15 hover:text-white',
-                )}
-                aria-label="Open menu"
-              >
-                <Menu aria-hidden />
+        >
+          {light ? (
+            <span
+              aria-hidden
+              className="absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent md:inset-x-8"
+            />
+          ) : null}
+          <Link to="/" aria-label="Qatar Tourism Academy home" className="shrink-0 rounded-md">
+            <Logo
+              variant={light ? 'white' : 'color'}
+              withAcademy
+              className={cn('transition-all duration-500', scrolled ? 'h-8 md:h-9' : 'h-9 md:h-10')}
+            />
+          </Link>
+          <nav
+            aria-label="Main"
+            onPointerLeave={() => setHovered(null)}
+            onBlur={() => setHovered(null)}
+            className="ms-auto hidden items-center gap-0.5 lg:flex"
+          >
+            {NAV_LINKS.map((link) => (
+              <NavLink
+                key={link.label}
+                link={link}
+                light={light}
+                active={pathname === '/' && activeSection === link.hash}
+                highlighted={hovered === link.label}
+                onHover={() => setHovered(link.label)}
+              />
+            ))}
+          </nav>
+          <div className="ms-auto flex items-center gap-2 lg:ms-2">
+            {session && role ? (
+              <Button asChild size="sm" variant={light ? 'glass' : 'default'}>
+                <Link to={ROLE_HOME[role] as never}>Go to my portal</Link>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[86vw] max-w-sm bg-sand p-0">
-              <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="flex h-full flex-col gap-8 p-6 pt-16">
-                <nav aria-label="Main" className="grid gap-1">
-                  {NAV_LINKS.map((link, index) => (
-                    <motion.div
-                      key={link.label}
-                      initial={reduce ? false : { opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.06 * index, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                      <NavLink link={link} large onNavigate={() => setOpen(false)} />
-                    </motion.div>
-                  ))}
-                </nav>
-                {session ? null : (
-                  <div className="mt-auto grid gap-3">
-                    <Button asChild size="lg">
-                      <Link to="/register" onClick={() => setOpen(false)}>
-                        Create account
-                      </Link>
-                    </Button>
-                    <Button asChild size="lg" variant="outline">
-                      <Link to="/login" onClick={() => setOpen(false)}>
-                        Sign in
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    'hidden sm:inline-flex',
+                    light
+                      ? 'text-white hover:bg-white/15 hover:text-white'
+                      : 'hover:bg-teal-mist hover:text-teal',
+                  )}
+                >
+                  <Link to="/login">Sign in</Link>
+                </Button>
+                <Magnetic strength={0.25} className="hidden sm:inline-flex">
+                  <Button asChild size="sm" className="h-9 px-4">
+                    <Link to="/register">Create account</Link>
+                  </Button>
+                </Magnetic>
+              </>
+            )}
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    'lg:hidden',
+                    light && 'text-white hover:bg-white/15 hover:text-white',
+                  )}
+                  aria-label="Open menu"
+                >
+                  <Menu aria-hidden />
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="right"
+                className="qt-grain w-[88vw] max-w-sm overflow-hidden border-none bg-grad-night p-0 text-white [&>button]:text-white"
+              >
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <StarPattern className="text-white/[0.06]" size={72} />
+                <div className="relative flex h-full flex-col gap-8 p-6 pt-16">
+                  <Logo variant="white" withAcademy className="h-9 w-fit" />
+                  <nav aria-label="Main" className="grid">
+                    {NAV_LINKS.map((link, index) => (
+                      <motion.div
+                        key={link.label}
+                        initial={reduce ? false : { opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.08 + 0.06 * index, duration: 0.5, ease }}
+                      >
+                        <NavLink link={link} large onNavigate={() => setOpen(false)} />
+                      </motion.div>
+                    ))}
+                  </nav>
+                  {session ? null : (
+                    <div className="mt-auto grid gap-3">
+                      <Button
+                        asChild
+                        size="lg"
+                        className="bg-white text-teal-deep hover:bg-sky-mist"
+                      >
+                        <Link to="/register" onClick={() => setOpen(false)}>
+                          Create account
+                          <ArrowUpRight aria-hidden className="rtl:-scale-x-100" />
+                        </Link>
+                      </Button>
+                      <Button asChild size="lg" variant="glass">
+                        <Link to="/login" onClick={() => setOpen(false)}>
+                          Sign in
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </motion.header>

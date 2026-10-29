@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { FlaskConical } from 'lucide-react'
-import { Logo } from '@/components/brand'
+import { CornerPattern, Logo } from '@/components/brand'
 
 const COLUMNS = [
   {
@@ -32,7 +32,12 @@ const COLUMNS = [
 /** Footer with the required demonstration notice (brief §2, docs/ARCHITECTURE.md). */
 export function PublicFooter() {
   return (
-    <footer className="bg-teal-deep text-white">
+    <footer className="qt-grain relative isolate overflow-hidden bg-grad-night text-white">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent"
+      />
+      <CornerPattern side="a" tone="dark" />
       <div className="mx-auto grid max-w-[1400px] gap-12 px-4 py-16 md:px-8 lg:grid-cols-[1.2fr_2fr]">
         <div className="grid content-start gap-5">
           <Logo variant="white" withAcademy className="h-10" />
@@ -44,14 +49,14 @@ export function PublicFooter() {
         <div className="grid gap-10 sm:grid-cols-3">
           {COLUMNS.map((column) => (
             <nav key={column.title} aria-label={column.title} className="grid content-start gap-3">
-              <p className="font-display text-lg">{column.title}</p>
+              <p className="font-display text-gold-soft text-lg">{column.title}</p>
               {column.links.map((link) => (
                 <Link
                   key={link.label}
                   to={link.to as never}
                   params={'code' in link ? ({ code: link.code } as never) : undefined}
                   search={'mode' in link ? ({ mode: link.mode } as never) : undefined}
-                  className="w-fit text-sm text-white/75 transition-colors hover:text-white"
+                  className="w-fit text-sm text-white/75 transition-all duration-300 hover:translate-x-1 hover:text-white rtl:hover:-translate-x-1"
                 >
                   {link.label}
                 </Link>

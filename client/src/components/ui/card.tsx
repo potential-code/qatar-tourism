@@ -1,12 +1,22 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * White "pop-out" card (dct-learn's `.pcard`): hairline border and a teal-night tinted drop shadow.
+ * Static cards only deepen their shadow on hover; pass `interactive` for cards that act as links
+ * or buttons and they also lift (the lift is dropped under prefers-reduced-motion).
+ */
+function Card({
+  className,
+  interactive = false,
+  ...props
+}: React.ComponentProps<"div"> & { interactive?: boolean }) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
+        "flex flex-col gap-6 rounded-xl border border-teal-night/8 bg-card py-6 text-card-foreground shadow-[var(--qt-pop)] transition-shadow duration-300 hover:shadow-[var(--qt-pop-hover)]",
+        interactive && "qt-lift",
         className
       )}
       {...props}

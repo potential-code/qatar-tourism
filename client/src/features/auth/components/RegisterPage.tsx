@@ -1,6 +1,6 @@
 import { fictionalEmail } from '@shared/schemas/common'
 import { Link, useRouter } from '@tanstack/react-router'
-import { Sparkles } from 'lucide-react'
+import { Mail, Sparkles, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
 import { useAppForm } from '@/hooks/useAppForm'
@@ -114,7 +114,9 @@ export function RegisterPage({
     >
       <AuthSwitch active="register" redirect={redirect} programme={programme} />
       <div className="grid gap-2">
-        <h1 className="font-display font-light text-4xl">Create your account</h1>
+        <h1 className="font-display font-light text-4xl text-ink md:text-[2.75rem]">
+          Create your account
+        </h1>
         <p className="text-muted-foreground">
           Registration is open to everyone and creates a learner account.
         </p>
@@ -151,7 +153,7 @@ export function RegisterPage({
           </FormAlert>
         ) : null}
         <form.AppField name="name" validators={{ onBlur: schema.shape.name }}>
-          {(field) => <field.TextField label="Full name" autoComplete="name" />}
+          {(field) => <field.TextField label="Full name" autoComplete="name" icon={UserRound} />}
         </form.AppField>
         <form.AppField name="email" validators={{ onBlur: schema.shape.email }}>
           {(field) => (
@@ -159,6 +161,7 @@ export function RegisterPage({
               label="Email"
               type="email"
               autoComplete="email"
+              icon={Mail}
               description="Use a fictional address ending in example.com for this demonstration."
             />
           )}
@@ -167,7 +170,7 @@ export function RegisterPage({
           {() => <PasswordField autoComplete="new-password" hint="At least 8 characters." />}
         </form.AppField>
         <form.AppForm>
-          <form.SubmitButton className="h-11 w-full">Create account</form.SubmitButton>
+          <form.SubmitButton className="h-12 w-full text-base">Create account</form.SubmitButton>
         </form.AppForm>
         <p className="text-muted-foreground text-xs leading-relaxed">
           Next you will verify your email in a simulated step and complete a short profile. Your

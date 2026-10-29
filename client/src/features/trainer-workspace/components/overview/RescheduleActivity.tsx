@@ -1,4 +1,5 @@
 import { History } from 'lucide-react'
+import { CornerPattern } from '@/components/brand/CornerPattern'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { OverviewData } from '../../types'
 
@@ -7,9 +8,10 @@ export function RescheduleActivity({ data }: { data: OverviewData }) {
   if (data.reschedules.length === 0) return null
   return (
     <section
-      className="flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-xs md:p-6"
+      className="relative isolate overflow-hidden flex flex-col gap-3 rounded-xl border bg-gradient-to-br from-white to-sky-mist p-5 md:p-6"
       aria-labelledby="resched-heading"
     >
+      <CornerPattern side="a" />
       <h2
         id="resched-heading"
         className="flex items-center gap-2 font-display text-2xl font-light text-ink"
