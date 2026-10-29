@@ -1,36 +1,13 @@
 import { RSVP_STATUSES } from '@shared/constants'
 import { sessionIdParam } from '@shared/schemas/admin-catalogue'
-import { changeRequestDecisionInput } from '@shared/schemas/booking-rsvp'
-import type { z } from 'zod'
-import {
-  ApiError,
-  commit,
-  db,
-  delay,
-  findOr404,
-  indexBy,
-  nowIso,
-  out,
-  parseInput,
-  requireRole,
-  updateRow,
-} from '../api'
-import { audit } from '../audit.service'
-import { changeDecisionMessage } from '../notifications/copy'
-import { notify } from '../notifications.service'
-import { promoteFromWaitlist, renumberWaitlist, syncCapacityStatus } from './sessions/seats'
+import { db, delay, findOr404, indexBy, out, parseInput, requireRole } from '../api'
+import type { listChangeRequests } from '../rsvps.service'
 
 /**
  * Session management (brief §14), formerly /api/admin/sessions. Admin only. Editing,
  * rescheduling and cancelling reuse the trainer scheduling flow (sessions service); the one
- * write here is the decision on a learner's late change request (brief §6), audited and notified.
+ * late change requests (brief §6) are decided in the rsvps service and re-exported here.
  */
-
-const REQUESTED = 'rsvp.change_requested'
-const DECIDED = { approved: 'rsvp.change_approved', declined: 'rsvp.change_declined' } as const
-const DECIDED_ACTIONS: readonly string[] = Object.values(DECIDED)
-
-type RequestAfter = { sessionId?: string; sessionCode?: string; kind?: 'cancel' | 'reschedule' }
 
 const newestFirst = (a: { createdAt: string }, b: { createdAt: string }) =>
   b.createdAt.localeCompare(a.createdAt)
@@ -150,114 +127,8 @@ export async function getSession(sessionId: string) {
   })
 }
 
-/** Late change requests (brief §6), newest first, with any decision already taken. */
-export async function listChangeRequests() {
-  await delay()
-  requireRole('admin')
-  const requests = db.auditEvents
-    .filter((e) => e.action === REQUESTED)
-    .sort(newestFirst)
-    .slice(0, 100)
-  const sessions = indexBy(db.sessions, (s) => s.id)
-  const profiles = indexBy(db.profiles, (p) => p.userId)
-  const rsvps = indexBy(db.rsvps, (r) => r.id)
-  const decisions = db.auditEvents.filter((e) => DECIDED_ACTIONS.includes(e.action))
-
-  const items = requests.flatMap((request) => {
-    const booking = request.objectId ? rsvps.get(request.objectId) : undefined
-    const session = booking ? sessions.get(booking.sessionId) : undefined
-    if (!booking || !session) return []
-    const profile = profiles.get(booking.learnerId)
-    const decision = decisions.find((d) => d.objectId === request.objectId)
-    const after = (request.after ?? {}) as RequestAfter
-    return [
-      {
-        rsvpId: booking.id,
-        requestedAt: request.createdAt,
-        kind: after.kind ?? 'reschedule',
-        reason: request.reason,
-        learner: { code: profile?.learnerCode ?? 'Unknown', name: profile?.fullName ?? 'Learner' },
-        session: {
-          id: session.id,
-          code: session.code,
-          title: session.title,
-          startsAt: session.startsAt,
-        },
-        bookingStatus: booking.status,
-        decision: decision
-          ? {
-              outcome: decision.action === DECIDED.approved ? 'approved' : 'declined',
-              at: decision.createdAt,
-              by: decision.actorLabel,
-              note: decision.reason,
-            }
-          : null,
-      },
-    ]
-  })
-  return out({ items })
-}
-
-/**
- * Approves or declines a late change request. Approving releases the seat (the learner can
- * then rebook) and fills it from the waitlist; declining keeps the booking. Either way the
- * learner is told, and the decision is a second audit event beside the request.
- */
-export async function decideChangeRequest(
-  rsvpId: string,
-  input: z.input<typeof changeRequestDecisionInput>,
-) {
-  await delay()
-  const viewer = requireRole('admin')
-  const data = parseInput(changeRequestDecisionInput, input)
-  const request = db.auditEvents.find((e) => e.action === REQUESTED && e.objectId === rsvpId)
-  if (!request) throw ApiError.notFound('Change request not found')
-  if (db.auditEvents.some((e) => DECIDED_ACTIONS.includes(e.action) && e.objectId === rsvpId))
-    throw ApiError.conflict('ALREADY_DECIDED', 'This change request has already been decided.')
-  const rsvp = findOr404(db.rsvps, (r) => r.id === rsvpId, 'Booking not found')
-  const session = findOr404(db.sessions, (s) => s.id === rsvp.sessionId, 'Booking not found')
-  const fullName = db.profiles.find((p) => p.userId === rsvp.learnerId)?.fullName ?? null
-
-  const kind = ((request.after ?? {}) as RequestAfter).kind ?? 'reschedule'
-  const note = data.note?.trim() || null
-  const previous = rsvp.status
-  const release =
-    data.decision === 'approved' && (previous === 'confirmed' || previous === 'waitlisted')
-
-  if (release) {
-    updateRow(rsvp, {
-      status: 'cancelled',
-      waitlistPosition: null,
-      cancelledReason: 'Released by the Academy after a late change request',
-    })
-    if (previous === 'confirmed') promoteFromWaitlist(session.id, viewer.id)
-    else renumberWaitlist(session.id)
-    syncCapacityStatus(session.id)
-  }
-  audit({
-    action: DECIDED[data.decision],
-    objectType: 'rsvp',
-    objectId: rsvpId,
-    before: { status: previous },
-    after: { decision: data.decision, kind, status: release ? 'cancelled' : previous },
-    reason: note,
-  })
-  notify({
-    eventId: `evt-change-decision-${rsvpId}`,
-    kind: 'booking_change_decision',
-    recipientIds: [rsvp.learnerId],
-    ...changeDecisionMessage(
-      fullName?.split(' ')[0] ?? 'there',
-      session.title,
-      kind,
-      data.decision,
-      note,
-    ),
-    actorId: viewer.id,
-  })
-  commit()
-  return { rsvpId, decision: data.decision, released: release, decidedAt: nowIso() }
-}
+/** Late change requests (brief §6) live with the bookings they release. */
+export { decideChangeRequest, listChangeRequests } from '../rsvps.service'
 
 export type SessionItem = Awaited<ReturnType<typeof listSessions>>['items'][number]
 export type ChangeRequest = Awaited<ReturnType<typeof listChangeRequests>>['items'][number]
