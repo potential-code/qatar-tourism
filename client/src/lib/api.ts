@@ -4,6 +4,10 @@ import { hc } from 'hono/client'
 import type { ResponseFormat } from 'hono/types'
 import type { SuccessStatusCode } from 'hono/utils/http-status'
 import { env } from '@/config/env'
+import { ApiError } from '@/lib/api-error'
+
+/** Moved to lib/api-error.ts; re-exported while features still import it from here. */
+export { ApiError }
 
 /**
  * Typed RPC client for the Hono API.
@@ -13,21 +17,6 @@ import { env } from '@/config/env'
  * hence `credentials: 'include'` on a cross-origin API.
  */
 export const api = hc<AppType>(env.VITE_API_URL, { init: { credentials: 'include' } }).api
-
-/** The API's error shape: `{ error: { code, message, details? } }`. */
-export class ApiError extends Error {
-  readonly status: number
-  readonly code: string
-  readonly details: unknown
-
-  constructor(status: number, code: string, message: string, details?: unknown) {
-    super(message)
-    this.name = 'ApiError'
-    this.status = status
-    this.code = code
-    this.details = details
-  }
-}
 
 type AnyClientResponse = ClientResponse<unknown, number, ResponseFormat>
 
