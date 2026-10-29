@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ItemIcon } from '@/features/learning/components/ItemIcon'
 import { minutesLabel } from '@/features/learning/utils/format'
 import { KIND_LABEL } from '@/features/learning/utils/itemLink'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { useAcceptPath } from '../queries/ai-path.queries'
 import type { Recommendation } from '../types'
 

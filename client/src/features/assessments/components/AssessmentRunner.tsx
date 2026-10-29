@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import {
   type AssessmentKind,
   useSaveAnswer,

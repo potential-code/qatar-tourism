@@ -1,18 +1,13 @@
 import type { ProgrammeCode } from '@shared/constants'
-import type { api } from '@/lib/api'
+import type { Unit } from '@/services/courses.service'
+import type * as enrolments from '@/services/enrolments.service'
+import type { getJourney } from '@/services/progress.service'
 
-/** The success JSON of a typed RPC call. */
-export type ApiJson<T> = T extends (...args: never[]) => Promise<infer R>
-  ? R extends { json: () => Promise<infer J> }
-    ? J
-    : never
-  : never
-
-export type Journey = ApiJson<(typeof api.progress)[':programme']['journey']['$get']>
+export type Journey = Awaited<ReturnType<typeof getJourney>>
 export type JourneyItem = Journey['items'][number]
-export type Enrolments = ApiJson<(typeof api.enrolments.mine)['$get']>
+export type Enrolments = Awaited<ReturnType<typeof enrolments.listMine>>
 export type EnrolmentSummary = Enrolments['items'][number]
-export type Unit = ApiJson<(typeof api.courses)[':code']['$get']>
+export type { Unit }
 export type UnitContent = Unit['content']
 
 export type { ProgrammeCode }

@@ -1,47 +1,32 @@
 import { queryOptions, useMutation } from '@tanstack/react-query'
-import { env } from '@/config/env'
-import { ApiError, api, unwrap } from '@/lib/api'
+import { downloadBlob } from '@/lib/download'
+import * as certificates from '@/services/certificates.service'
 
 export const myCertificatesQuery = () =>
   queryOptions({
     queryKey: ['certificates', 'mine'],
-    queryFn: () => unwrap(api.certificates.mine.$get()),
+    queryFn: () => certificates.listMine(),
   })
 
 export const certificateQuery = (code: string) =>
   queryOptions({
     queryKey: ['certificates', 'detail', code],
-    queryFn: () => unwrap(api.certificates[':code'].$get({ param: { code } })),
+    queryFn: () => certificates.getCertificate(code),
   })
 
 export const verifyQuery = (code: string) =>
   queryOptions({
     queryKey: ['certificates', 'verify', code],
-    queryFn: () => unwrap(api.certificates.verify[':code'].$get({ param: { code } })),
+    queryFn: () => certificates.verify(code),
     retry: false,
   })
 
-/** Downloads the watermarked PDF with the session cookie and saves it. */
+/** Draws the watermarked PDF in the browser and saves it. */
 export function useDownloadCertificate() {
   return useMutation({
     mutationFn: async (code: string) => {
-      const res = await fetch(
-        `${env.VITE_API_URL}/api/certificates/${encodeURIComponent(code)}/pdf`,
-        {
-          credentials: 'include',
-        },
-      )
-      if (!res.ok)
-        throw new ApiError(res.status, 'DOWNLOAD_FAILED', 'The certificate could not be downloaded')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `${code}.pdf`
-      document.body.append(link)
-      link.click()
-      link.remove()
-      window.setTimeout(() => URL.revokeObjectURL(url), 2_000)
+      const { blob, filename } = await certificates.certificatePdf(code)
+      downloadBlob(blob, filename)
     },
   })
 }

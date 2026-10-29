@@ -1,4 +1,3 @@
-import type { ApiJson } from '@/features/learning/types'
-import type { api } from '@/lib/api'
+import type { CertificateView } from '@/services/certificates.service'
 
-export type CertificateDetail = ApiJson<(typeof api.certificates)[':code']['$get']>
+export type CertificateDetail = CertificateView

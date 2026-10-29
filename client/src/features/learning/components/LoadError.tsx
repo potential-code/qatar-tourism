@@ -1,7 +1,7 @@
 import { RefreshCw, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 
 /** Error state with the API's message and a retry (CONVENTIONS: every data view has one). */
 export function LoadError({
