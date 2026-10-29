@@ -1,39 +1,40 @@
-# Dokploy owns routing, TLS, networks and ports. No ports:, no networks:, no database here.
-# Every value is ${VAR}, injected by Dokploy per environment; only NODE_ENV and PORT are literal.
+# Production stack for Dokploy: one static nginx container, no backend and no database (the
+# mockup keeps its demo data in each visitor's browser).
+#
+# Dokploy: Create Service > Compose, point it at this file, then add a domain for service
+# `web`, container port 80. Do not add `ports:`: Traefik reaches the container over
+# dokploy-network.
+#
+# Set BASIC_AUTH_USER and BASIC_AUTH_PASS in Dokploy > Environment. If either is missing the
+# site answers 503 (fail closed). /healthz is always open.
+#
+# To run it outside Dokploy:
+#   docker network create dokploy-network        # once
+#   BASIC_AUTH_USER=demo BASIC_AUTH_PASS=change-me docker compose up --build
+
 services:
-  server:
+  web:
     build:
       context: .
-      dockerfile: server/Dockerfile
-    environment:
-      NODE_ENV: production
-      PORT: "8000"
-      LOG_LEVEL: ${LOG_LEVEL:-info}
-      DATABASE_URL: ${DATABASE_URL}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
-      CLIENT_URL: ${CLIENT_URL}
-      TRUST_PROXY: ${TRUST_PROXY:-true}
-      AWS_REGION: ${AWS_REGION:-}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
-      SES_FROM_EMAIL: ${SES_FROM_EMAIL}
-      # Demo data: the admin reset (POST /api/demo/reset) and `bun dist/reset.js` need these.
-      SEED_DEMO_PASSWORD: ${SEED_DEMO_PASSWORD}
-      ALLOW_DEMO_SEED: ${ALLOW_DEMO_SEED:-}
-      DEMO_REFERENCE_DATE: ${DEMO_REFERENCE_DATE:-}
-    volumes:
-      # Learner assignment uploads survive container rebuilds; the demo reset empties them.
-      - uploads:/app/uploads
-    restart: unless-stopped
-
-  client:
-    build:
-      context: .
-      dockerfile: client/Dockerfile
+      dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL}
+        VITE_DEMO_REFERENCE_DATE: ${VITE_DEMO_REFERENCE_DATE:-}
+    environment:
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:-}
+      BASIC_AUTH_PASS: ${BASIC_AUTH_PASS:-}
+      BASIC_AUTH: ${BASIC_AUTH:-}
+    expose:
+      - "80"
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - dokploy-network
 
-volumes:
-  uploads:
+networks:
+  # Created by Dokploy on the host. Traefik only routes to containers on it.
+  dokploy-network:
+    external: true

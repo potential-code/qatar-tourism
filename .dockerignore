@@ -1,6 +1,8 @@
 node_modules
+**/node_modules
 **/dist
 .git
+.worktrees
 .env
 .env.*
 !.env.example
@@ -8,3 +10,5 @@ node_modules
 .DS_Store
 docs/
 .claude/
+e2e/.results
+e2e/.report

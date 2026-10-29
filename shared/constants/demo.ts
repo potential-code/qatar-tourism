@@ -1,7 +1,7 @@
 /**
  * The frontend-only demo (no server, no database). Every "Day +N" offset in the seed is relative
  * to the reference date, read in Qatar time. A build may override it with
- * `VITE_DEMO_REFERENCE_DATE` (see client/src/mocks/reference.ts).
+ * `VITE_DEMO_REFERENCE_DATE` (see client/src/mocks/seed/reference-date.ts).
  */
 export const DEMO_REFERENCE_DATE = '2026-10-27'
 
