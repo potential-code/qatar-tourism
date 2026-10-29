@@ -1,6 +1,6 @@
 import type { PracticeAttemptInput, PracticeTurnInput } from '@shared/schemas/practice-roleplay'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as roleplay from '@/services/roleplay.service'
 
 export const roleplayKeys = {
   all: ['roleplay'] as const,
@@ -13,39 +13,37 @@ export const roleplayKeys = {
 export const practiceOverviewQuery = () =>
   queryOptions({
     queryKey: roleplayKeys.overview(),
-    queryFn: () => unwrap(api.roleplay.overview.$get()),
+    queryFn: () => roleplay.getOverview(),
   })
 
 export const practiceAttemptsQuery = (scenarioKey?: string) =>
   queryOptions({
     queryKey: roleplayKeys.attempts(scenarioKey),
-    queryFn: () =>
-      unwrap(api.roleplay.attempts.$get({ query: scenarioKey ? { scenarioKey } : {} })),
+    queryFn: () => roleplay.listAttempts(scenarioKey),
   })
 
 export const practiceAttemptQuery = (id: string) =>
   queryOptions({
     queryKey: roleplayKeys.attempt(id),
-    queryFn: () => unwrap(api.roleplay.attempts[':id'].$get({ param: { id } })),
+    queryFn: () => roleplay.getAttempt(id),
   })
 
 export const demonstrationQuery = (key: string) =>
   queryOptions({
     queryKey: roleplayKeys.demonstration(key),
-    queryFn: () => unwrap(api.roleplay.scenarios[':key'].demonstration.$get({ param: { key } })),
+    queryFn: () => roleplay.getDemonstration(key),
     staleTime: Number.POSITIVE_INFINITY,
   })
 
 /** The scripted visitor's next line. Not cached: each call answers the conversation so far. */
 export function requestVisitorTurn(input: PracticeTurnInput) {
-  return unwrap(api.roleplay.turn.$post({ json: input }))
+  return roleplay.nextTurn(input)
 }
 
 export function useSubmitAttempt() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (input: PracticeAttemptInput) =>
-      unwrap(api.roleplay.attempts.$post({ json: input })),
+    mutationFn: (input: PracticeAttemptInput) => roleplay.createAttempt(input),
     onSuccess: (attempt) => {
       queryClient.setQueryData(roleplayKeys.attempt(attempt.id), attempt)
       return queryClient.invalidateQueries({ queryKey: roleplayKeys.all })
