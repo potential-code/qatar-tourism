@@ -3,7 +3,7 @@ import { type ErrorComponentProps, Link, useRouter } from '@tanstack/react-route
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 
 /** Router-wide error boundary. Shows the API's message for API errors, a generic one otherwise. */
 export function RouteError({ error }: ErrorComponentProps) {

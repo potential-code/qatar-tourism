@@ -1,8 +1,6 @@
 {
-  // One config for the whole repository. Client, server and shared are type-checked as one
-  // program so the client can import the server's route types (`import type { AppType }`)
-  // without codegen. Runtime separation is enforced by the builds, not by this file:
-  // client/vite.config.ts refuses to load any module under server/.
+  // One config for the whole repository: client, shared and e2e are type-checked as one
+  // program.
   "compilerOptions": {
     "target": "ES2023",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
@@ -19,8 +17,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
-    // Type-only imports are erased verbatim, so `import type { AppType }` from the client can
-    // never pull server code into the browser bundle.
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
@@ -32,10 +28,9 @@
     // No baseUrl: removed in TypeScript 7. Every path is relative to this file.
     "paths": {
       "@/*": ["./client/src/*"],
-      "@server/*": ["./server/*"],
       "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["client", "server", "shared", "e2e", "drizzle.config.ts", "playwright.config.ts"],
-  "exclude": ["node_modules", "**/dist", "server/db/migrations"]
+  "include": ["client", "shared", "e2e", "playwright.config.ts"],
+  "exclude": ["node_modules", "**/dist"]
 }

@@ -8,38 +8,25 @@
     "bun": ">=1.4.0"
   },
   "workspaces": [
-    "client",
-    "server"
+    "client"
   ],
   "scripts": {
-    "dev": "concurrently -n server,client -c green,blue \"bun run dev:server\" \"bun run dev:client\"",
-    "dev:server": "bun run --watch server/index.ts",
-    "dev:client": "cd client && bunx --bun vite --host 0.0.0.0",
-    "build": "bun run typecheck && bun run build:server && bun run build:client",
-    "build:server": "bun run server/build.ts",
+    "dev": "cd client && bunx --bun vite --host 0.0.0.0",
+    "build": "bun run typecheck && bun run build:client",
     "build:client": "cd client && NODE_ENV=production bunx --bun vite build",
-    "start:server": "bun server/dist/index.js",
+    "preview": "cd client && bunx --bun vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "test": "bun run test:server && bun run test:client",
-    "test:server": "bun test ./server ./shared",
-    "test:client": "bun test --preload ./client/test/setup.ts ./client",
+    "test": "bun test --preload ./client/test/setup.ts ./client ./shared",
     "test:e2e": "playwright test",
+    "scorm:build": "bun scorm/qta-sample-c04/build.ts",
     "lint": "biome check .",
-    "format": "biome check --write .",
-    "db:generate": "bunx --bun drizzle-kit generate --config ./drizzle.config.ts",
-    "db:migrate": "bunx --bun drizzle-kit migrate --config ./drizzle.config.ts",
-    "db:studio": "bunx --bun drizzle-kit studio --config ./drizzle.config.ts",
-    "db:seed": "bun run server/db/reset.ts",
-    "db:reset": "bun run server/db/reset.ts",
-    "auth:generate": "bunx --bun @better-auth/cli generate --config server/auth/auth.ts --output server/db/schema/auth.ts -y"
+    "format": "biome check --write ."
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "^2.5.14",
     "@playwright/test": "^1.64.1",
     "@types/bun": "^1.4.2",
-    "concurrently": "^10.0.5",
-    "drizzle-kit": "^0.31.11",
     "typescript": "^7.0.2"
   }
 }

@@ -2,8 +2,7 @@
 // client needs are declared here instead.
 
 interface ImportMetaEnv {
-  readonly VITE_API_URL?: string
-  /** YYYY-MM-DD: overrides DEMO_REFERENCE_DATE for the seeded dataset. */
+  /** YYYY-MM-DD: overrides the fixed DEMO_REFERENCE_DATE for the seeded dataset. */
   readonly VITE_DEMO_REFERENCE_DATE?: string
 }
 

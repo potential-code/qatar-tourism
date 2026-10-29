@@ -1,11 +1,16 @@
 import { z } from 'zod'
 
 /**
- * Schema for the SPA's build-time environment. Shared by the runtime check (config/env.ts)
- * and the build (vite.config.ts), so a bad value fails `vite build` instead of shipping.
+ * Schema for the SPA's build-time environment, checked by vite.config.ts so a bad value fails
+ * `vite build` instead of shipping. Every key is optional: the mockup runs with no settings.
  */
 export const clientEnvSchema = z.object({
-  VITE_API_URL: z.url({ protocol: /^https?$/ }).transform((url) => url.replace(/\/+$/, '')),
+  /** YYYY-MM-DD. Moves every "Day +N" in the seed; unset keeps the fixed reference date. */
+  VITE_DEMO_REFERENCE_DATE: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional()
+    .or(z.literal('').transform(() => undefined)),
 })
 
 export type ClientEnv = z.infer<typeof clientEnvSchema>
