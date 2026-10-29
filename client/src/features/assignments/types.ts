@@ -1,7 +1,6 @@
-import type { InferResponseType } from 'hono/client'
-import type { api } from '@/lib/api'
+import type { MyAssignments } from '@/services/assignments.service'
 
-export type MyAssignments = InferResponseType<typeof api.assignments.mine.$get, 200>
+export type { MyAssignments }
 export type LearnerAssignment = MyAssignments['items'][number]
 export type AssignmentVersion = LearnerAssignment['versions'][number]
 export type VersionReview = NonNullable<AssignmentVersion['review']>

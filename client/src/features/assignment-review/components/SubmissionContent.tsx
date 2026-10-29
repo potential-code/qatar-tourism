@@ -1,14 +1,17 @@
 import { ScrollText } from 'lucide-react'
 import { FileChip } from '@/features/assignments/components/FileChip'
-import { fileUrl } from '@/features/assignments/utils/files'
+import { useSubmissionFileUrl } from '@/features/assignments/hooks/useSubmissionFileUrl'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import type { MarkingDetail } from '../types'
 
 /** The learner's work for the version being marked, with the brief to mark against. */
 export function SubmissionContent({ detail }: { detail: MarkingDetail }) {
   const version = detail.current
+  const stored = Boolean(version?.file?.stored)
+  const preview = useSubmissionFileUrl(version?.id ?? '', stored)
   if (!version) return null
-  const isVideo = version.file?.mimeType === 'video/mp4' && version.file.stored
+  const isVideo = version.file?.mimeType === 'video/mp4' && preview.url
+  const isPdf = version.file?.mimeType === 'application/pdf' && preview.url
   return (
     <section
       aria-labelledby="submission-heading"
@@ -35,7 +38,14 @@ export function SubmissionContent({ detail }: { detail: MarkingDetail }) {
           controls
           preload="metadata"
           className="aspect-video w-full rounded-lg bg-ink"
-          src={fileUrl(version.id, true)}
+          src={preview.url ?? undefined}
+        />
+      ) : null}
+      {isPdf ? (
+        <iframe
+          title={`Preview of ${version.file?.name ?? 'the submitted file'}`}
+          src={preview.url ?? undefined}
+          className="h-[32rem] w-full rounded-lg border bg-white"
         />
       ) : null}
       {version.file ? <FileChip submissionId={version.id} file={version.file} /> : null}

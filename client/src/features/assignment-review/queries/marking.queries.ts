@@ -5,7 +5,7 @@ import type {
   MarkingQueueQuery,
 } from '@shared/schemas/assignment-marking'
 import { keepPreviousData, queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as marking from '@/services/assignments.marking.service'
 
 export const markingKeys = {
   all: ['marking'] as const,
@@ -16,25 +16,14 @@ export const markingKeys = {
 export const markingQueueQuery = (query: MarkingQueueQuery) =>
   queryOptions({
     queryKey: markingKeys.queue(query),
-    queryFn: () =>
-      unwrap(
-        api.assignments.marking.$get({
-          query: {
-            status: query.status,
-            programme: query.programme,
-            search: query.search || undefined,
-            page: String(query.page),
-            pageSize: String(query.pageSize),
-          },
-        }),
-      ),
+    queryFn: () => marking.getQueue({ ...query, search: query.search || undefined }),
     placeholderData: keepPreviousData,
   })
 
 export const markingDetailQuery = (id: string) =>
   queryOptions({
     queryKey: markingKeys.detail(id),
-    queryFn: () => unwrap(api.assignments.marking[':id'].$get({ param: { id } })),
+    queryFn: () => marking.getDetail(id),
   })
 
 function useInvalidate() {
@@ -45,8 +34,7 @@ function useInvalidate() {
 export function useSaveDraft(id: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: MarkingDraftInput) =>
-      unwrap(api.assignments.marking[':id'].draft.$post({ param: { id }, json: input })),
+    mutationFn: (input: MarkingDraftInput) => marking.saveDraft(id, input),
     onSuccess: invalidate,
   })
 }
@@ -54,8 +42,7 @@ export function useSaveDraft(id: string) {
 export function useFinalise(id: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: MarkingFinalInput) =>
-      unwrap(api.assignments.marking[':id'].finalise.$post({ param: { id }, json: input })),
+    mutationFn: (input: MarkingFinalInput) => marking.finalise(id, input),
     onSuccess: invalidate,
   })
 }
@@ -63,8 +50,7 @@ export function useFinalise(id: string) {
 export function useCorrect(id: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: MarkingCorrectionInput) =>
-      unwrap(api.assignments.marking[':id'].correct.$post({ param: { id }, json: input })),
+    mutationFn: (input: MarkingCorrectionInput) => marking.correct(id, input),
     onSuccess: invalidate,
   })
 }
