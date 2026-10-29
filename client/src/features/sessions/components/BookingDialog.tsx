@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { useBookSession } from '../queries/sessions.queries'
 import type { CatalogueSession } from '../types'
 import { BookingPolicyNote } from './BookingPolicyNote'

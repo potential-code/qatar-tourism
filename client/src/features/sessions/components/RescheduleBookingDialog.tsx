@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import { useMoveBooking } from '../queries/sessions.queries'
