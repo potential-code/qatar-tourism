@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { qDate } from '../../hub/utils/format'
 import { demoMetaQuery, useResetDemo } from '../queries/demo.queries'
 

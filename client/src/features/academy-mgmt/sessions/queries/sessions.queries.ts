@@ -1,44 +1,32 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { unwrap } from '@/lib/api'
-import { adminApi } from '../../hub/queries/admin-api'
+import * as sessions from '@/services/admin/sessions.service'
+
+export type { ChangeRequest, SessionItem } from '@/services/admin/sessions.service'
 
 export const adminSessionsQuery = () =>
   queryOptions({
     queryKey: ['admin', 'sessions', 'list'],
-    queryFn: () => unwrap(adminApi.sessions.$get()),
+    queryFn: () => sessions.listSessions(),
   })
 
 export const adminSessionDetailQuery = (sessionId: string) =>
   queryOptions({
     queryKey: ['admin', 'sessions', 'detail', sessionId],
-    queryFn: () => unwrap(adminApi.sessions[':sessionId'].$get({ param: { sessionId } })),
+    queryFn: () => sessions.getSession(sessionId),
   })
-
-export type SessionItem = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof adminSessionsQuery>['queryFn']>>
->['items'][number]
 
 export const changeRequestsQuery = () =>
   queryOptions({
     queryKey: ['admin', 'sessions', 'change-requests'],
-    queryFn: () => unwrap(adminApi.sessions['change-requests'].$get()),
+    queryFn: () => sessions.listChangeRequests(),
   })
-
-export type ChangeRequest = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof changeRequestsQuery>['queryFn']>>
->['items'][number]
 
 /** Approve or decline a late change request; refreshes the requests and the session list. */
 export function useDecideChangeRequest() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (input: { rsvpId: string; decision: 'approved' | 'declined'; note?: string }) =>
-      unwrap(
-        adminApi.sessions['change-requests'][':rsvpId'].$post({
-          param: { rsvpId: input.rsvpId },
-          json: { decision: input.decision, note: input.note },
-        }),
-      ),
+      sessions.decideChangeRequest(input.rsvpId, { decision: input.decision, note: input.note }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] }),
   })
 }

@@ -4,8 +4,9 @@ import type {
   AdminTrainerUpdateInput,
 } from '@shared/schemas/admin-trainers'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { unwrap } from '@/lib/api'
-import { adminApi } from '../../hub/queries/admin-api'
+import * as trainers from '@/services/admin/trainers.service'
+
+export type { TrainerDetail, TrainerListItem } from '@/services/admin/trainers.service'
 
 export const trainerKeys = {
   all: ['admin', 'trainers'] as const,
@@ -14,20 +15,13 @@ export const trainerKeys = {
 }
 
 export const trainersQuery = () =>
-  queryOptions({ queryKey: trainerKeys.list(), queryFn: () => unwrap(adminApi.trainers.$get()) })
+  queryOptions({ queryKey: trainerKeys.list(), queryFn: () => trainers.listTrainers() })
 
 export const trainerDetailQuery = (trainerId: string) =>
   queryOptions({
     queryKey: trainerKeys.detail(trainerId),
-    queryFn: () => unwrap(adminApi.trainers[':trainerId'].$get({ param: { trainerId } })),
+    queryFn: () => trainers.getTrainer(trainerId),
   })
-
-export type TrainerListItem = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof trainersQuery>['queryFn']>>
->['items'][number]
-export type TrainerDetail = Awaited<
-  ReturnType<NonNullable<ReturnType<typeof trainerDetailQuery>['queryFn']>>
->
 
 function useInvalidate() {
   const client = useQueryClient()
@@ -37,8 +31,7 @@ function useInvalidate() {
 export function useCreateTrainer() {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: AdminTrainerCreateInput) =>
-      unwrap(adminApi.trainers.$post({ json: input })),
+    mutationFn: (input: AdminTrainerCreateInput) => trainers.createTrainer(input),
     onSuccess: invalidate,
   })
 }
@@ -46,8 +39,7 @@ export function useCreateTrainer() {
 export function useUpdateTrainer(trainerId: string) {
   const invalidate = useInvalidate()
   return useMutation({
-    mutationFn: (input: AdminTrainerUpdateInput) =>
-      unwrap(adminApi.trainers[':trainerId'].$patch({ param: { trainerId }, json: input })),
+    mutationFn: (input: AdminTrainerUpdateInput) => trainers.updateTrainer(trainerId, input),
     onSuccess: invalidate,
   })
 }
@@ -56,9 +48,7 @@ export function useSetTrainerProgrammes(trainerId: string) {
   const invalidate = useInvalidate()
   return useMutation({
     mutationFn: (input: { programmes: ProgrammeCode[]; reason: string }) =>
-      unwrap(
-        adminApi.trainers[':trainerId'].programmes.$put({ param: { trainerId }, json: input }),
-      ),
+      trainers.setTrainerProgrammes(trainerId, input),
     onSuccess: invalidate,
   })
 }

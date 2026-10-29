@@ -1,7 +1,7 @@
 import type { AdminAuditQuery } from '@shared/schemas/admin-governance'
 import { queryOptions } from '@tanstack/react-query'
-import { unwrap } from '@/lib/api'
-import { adminApi } from './admin-api'
+import { downloadCsv } from '@/lib/download'
+import * as governance from '@/services/admin/governance.service'
 
 export const governanceKeys = {
   all: ['admin', 'governance'] as const,
@@ -12,25 +12,25 @@ export const governanceKeys = {
 }
 
 export const hubOverviewQuery = () =>
-  queryOptions({
-    queryKey: governanceKeys.overview(),
-    queryFn: () => unwrap(adminApi.governance.overview.$get()),
-  })
+  queryOptions({ queryKey: governanceKeys.overview(), queryFn: () => governance.getHubOverview() })
 
 export const permissionsQuery = () =>
   queryOptions({
     queryKey: governanceKeys.permissions(),
-    queryFn: () => unwrap(adminApi.governance.permissions.$get()),
+    queryFn: () => governance.getPermissions(),
     staleTime: 5 * 60_000,
   })
 
 export const integrationsQuery = () =>
   queryOptions({
     queryKey: governanceKeys.integrations(),
-    queryFn: () => unwrap(adminApi.governance.integrations.$get()),
+    queryFn: () => governance.listIntegrations(),
   })
 
-/** Query params as strings for the RPC client (empty values dropped). */
+/**
+ * Query params as strings (empty values dropped). Still used by the users feature's queries
+ * until that feature moves to its service.
+ */
 export function toQueryParams(query: Record<string, string | number | undefined>) {
   return Object.fromEntries(
     Object.entries(query)
@@ -39,14 +39,21 @@ export function toQueryParams(query: Record<string, string | number | undefined>
   )
 }
 
+/** Drops unset filters, so cache keys and service input stay minimal. */
+const defined = (query: Partial<AdminAuditQuery>): Partial<AdminAuditQuery> =>
+  Object.fromEntries(Object.entries(query).filter(([, v]) => v !== undefined && v !== ''))
+
 export const auditQuery = (query: Partial<AdminAuditQuery>) =>
   queryOptions({
-    queryKey: governanceKeys.audit(query),
-    queryFn: () => unwrap(adminApi.governance.audit.$get({ query: toQueryParams(query) as never })),
+    queryKey: governanceKeys.audit(defined(query)),
+    queryFn: () => governance.listAudit(defined(query)),
     placeholderData: (previous) => previous,
   })
 
-export async function exportAuditCsv(query: Partial<AdminAuditQuery>) {
-  const { page: _page, pageSize: _size, ...filters } = query
-  return adminApi.governance.audit.export.$get({ query: toQueryParams(filters) as never })
+/** Builds the audit CSV for the active filters (audited by the service) and saves it. */
+export async function exportAuditLog(query: Partial<AdminAuditQuery>) {
+  const { page: _page, pageSize: _size, ...filters } = defined(query)
+  const result = await governance.exportAuditCsv(filters)
+  downloadCsv(result.csv, result.filename)
+  return result.filename
 }
