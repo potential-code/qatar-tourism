@@ -1,4 +1,5 @@
 import type { UserRow } from '@shared/types/db'
+import { flush } from '@/mocks/db'
 import { ApiError, commit, db } from '../api'
 
 /**
@@ -20,10 +21,16 @@ export function isSuspended(userId: string): boolean {
 export function startSession(user: UserRow, facilitatorId: string | null = null): void {
   if (isSuspended(user.id)) throw new ApiError(403, 'ACCOUNT_SUSPENDED', SUSPENDED_MESSAGE)
   db.session = { userId: user.id, facilitatorId }
-  commit()
+  saveNow()
 }
 
 export function endSession(): void {
   db.session = null
+  saveNow()
+}
+
+/** Session changes are saved at once, so a reload straight after signing in keeps the session. */
+function saveNow(): void {
   commit()
+  void flush()
 }

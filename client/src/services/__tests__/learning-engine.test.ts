@@ -110,22 +110,22 @@ describe('learner scope', () => {
 describe('joining a programme (brief §3 routing)', () => {
   test('only a learner may enrol; A keeps B and is idempotent; C refuses', async () => {
     actAs(db, null)
-    await expect(programmeEnrolment.enrolSelf('a')).rejects.toMatchObject({ status: 401 })
+    await expect(programmeEnrolment.enrolSelf('A')).rejects.toMatchObject({ status: 401 })
     actAs(db, 'user-t01')
-    await expect(programmeEnrolment.enrolSelf('a')).rejects.toMatchObject({ status: 403 })
+    await expect(programmeEnrolment.enrolSelf('A')).rejects.toMatchObject({ status: 403 })
 
     actAs(db, MAHA)
     const bBefore = findEnrolment(MAHA, 'B')?.id
-    const first = await programmeEnrolment.enrolSelf('a')
+    const first = await programmeEnrolment.enrolSelf('A')
     expect(first).toMatchObject({ programme: 'A', created: true })
     expect((await programmeEnrolment.enrolSelf('A')).created).toBe(false)
     expect(findEnrolment(MAHA, 'B')?.id).toBe(bBefore as string)
-    await expect(programmeEnrolment.enrolSelf('c')).rejects.toMatchObject({
+    await expect(programmeEnrolment.enrolSelf('C')).rejects.toMatchObject({
       status: 409,
       code: 'PROGRAMME_ILLUSTRATIVE',
     })
     const mine = await programmeEnrolment.listMyEnrolments()
-    expect(mine.items.map((e) => e.programme)).toEqual(['A', 'B'])
+    expect(mine.map((e) => e.programme)).toEqual(['A', 'B'])
     expect(
       db.auditEvents.filter((e) => e.action === 'enrolment.create' && e.actorId === MAHA),
     ).toHaveLength(1)
