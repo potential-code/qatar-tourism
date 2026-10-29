@@ -1,7 +1,7 @@
-import { expect, test } from '@playwright/test'
-import { ACCOUNTS } from './support/env'
+import { ACCOUNTS, EMAILS } from './support/env'
 import { switchTo } from './support/toolbar'
 import { pageHeading, signInAs, signInWithForm } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 7–10 minutes (brief §17): Omar books a session, the facilitator switches to the
@@ -22,7 +22,7 @@ const SESSION_CODE = 'SES-T01-2'
 
 test('7–10 min: Omar books, Amal reschedules, Omar sees the change', async ({ page }) => {
   // The presenter signs in once as the demo administrator and uses the demo toolbar.
-  await signInWithForm(page, ACCOUNTS.admin, 'admin')
+  await signInWithForm(page, EMAILS.admin, 'admin')
   await expect(page).toHaveURL(/\/admin/)
   await switchTo(page, 'Omar Al Safi', /\/learner/)
 

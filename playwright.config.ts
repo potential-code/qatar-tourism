@@ -1,16 +1,14 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
+import { CLIENT_PORT, CLIENT_URL, CONTEXT_OPTIONS } from './e2e/support/env'
 
 /**
- * End-to-end walkthrough (brief §17) against a real API and client. The global setup resets the
- * demo through the admin reset endpoint, so every run starts from the same snapshot. Specs run
- * in file order on one worker: the walkthrough is a single connected story.
+ * End-to-end walkthrough (brief §17) against the frontend-only mockup. One web server: Vite.
+ * The demo data lives in the browser, so each run's fresh browser context starts from the seed.
+ * Specs run in file order on one worker: the walkthrough (01 to 06, 08) is one connected story
+ * in one shared browser context (see e2e/support/walkthrough.ts).
  */
-const API_URL = 'http://localhost:8140'
-const CLIENT_URL = 'http://localhost:5240'
-
 export default defineConfig({
   testDir: './e2e',
-  globalSetup: './e2e/global-setup.ts',
   fullyParallel: false,
   workers: 1,
   retries: 0,
@@ -19,33 +17,18 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'e2e/.report' }]],
   outputDir: 'e2e/.results',
   use: {
-    baseURL: CLIENT_URL,
-    timezoneId: 'Asia/Qatar',
-    locale: 'en-GB',
-    reducedMotion: 'reduce',
+    ...CONTEXT_OPTIONS,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     actionTimeout: 15_000,
   },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } },
-    },
-  ],
-  webServer: [
-    {
-      command: 'bun run server/index.ts',
-      url: `${API_URL}/api/health`,
-      reuseExistingServer: true,
-      timeout: 60_000,
-      env: { API_RATE_LIMIT_PER_MINUTE: '5000', CREDENTIAL_RATE_LIMIT: '1000' },
-    },
-    {
-      command: 'cd client && bunx --bun vite --host 0.0.0.0 --port 5240 --strictPort',
-      url: CLIENT_URL,
-      reuseExistingServer: true,
-      timeout: 60_000,
-    },
-  ],
+  projects: [{ name: 'chromium' }],
+  webServer: {
+    command: `cd client && bunx --bun vite --host 127.0.0.1 --port ${CLIENT_PORT} --strictPort`,
+    url: CLIENT_URL,
+    reuseExistingServer: false,
+    // Piped, not ignored: with its output ignored the Vite dev server never starts listening here.
+    stdout: 'pipe',
+    timeout: 60_000,
+  },
 })

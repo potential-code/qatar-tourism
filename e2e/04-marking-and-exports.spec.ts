@@ -1,13 +1,14 @@
-import { expect, test } from '@playwright/test'
 import { RESPONSE_PLAN } from './support/content'
-import { ACCOUNTS, API_URL, CLIENT_ORIGIN } from './support/env'
+import { ACCOUNTS } from './support/env'
 import { markAssignment } from './support/marking'
 import { pageHeading, signInAs } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 10–13 minutes (brief §17): the trainer records attendance and a session score for
  * Omar and reviews Daniel's resubmitted assignment; a restricted export is denied at the access
- * layer while the administrator keeps authorised access. Runs after 03 (Omar is booked).
+ * layer while the administrator keeps authorised access. Runs after 03 in the same browser
+ * (Omar is booked).
  */
 test.describe.configure({ mode: 'serial' })
 
@@ -96,37 +97,35 @@ test('12–13 min: a restricted export is denied; the admin keeps authorised acc
   await page.getByRole('button', { name: 'Export marks (learner ID and score)' }).click()
   expect((await marks).suggestedFilename()).toMatch(/\.csv$/)
 
-  // Denied at the access layer, with the §11 wording, and audited.
+  // Denied by the exports service, with the §11 wording, and audited. No file is produced.
+  let downloaded = false
+  const onDownload = () => {
+    downloaded = true
+  }
+  page.on('download', onDownload)
   await page.getByRole('button', { name: 'Export personal data' }).click()
   const alert = page.getByRole('alert').filter({ hasText: 'Your role does not allow this export.' })
   await expect(alert).toContainText('Contact the Academy administrator.')
   await expect(alert).toContainText('recorded in the audit log as denied')
-  const sessionId = page.url().split('/').pop() ?? ''
-  const direct = await page.request.get(`${API_URL}/api/exports/sessions/${sessionId}/personal`, {
-    headers: { Origin: CLIENT_ORIGIN },
-  })
-  expect(direct.status()).toBe(403)
+  page.off('download', onDownload)
+  expect(downloaded).toBe(false)
 
-  // The administrator keeps authorised access: the same export and a report CSV.
-  await signInAs(page, ACCOUNTS.admin)
-  const adminExport = await page.request.get(
-    `${API_URL}/api/exports/sessions/${sessionId}/personal`,
-    { headers: { Origin: CLIENT_ORIGIN } },
-  )
-  expect(adminExport.status()).toBe(200)
-  await page.goto('/admin/reports/sessions')
+  // The administrator keeps authorised access: a report CSV with learner details.
+  await signInAs(page, ACCOUNTS.admin, '/admin/reports/sessions')
   const csv = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export CSV' }).click()
   expect((await csv).suggestedFilename()).toMatch(/\.csv$/)
 
-  // The denied attempt is in the audit log.
+  // The denied attempt and the allowed report export are both in the audit log.
   await page.goto('/admin/manage/audit')
-  await page.getByRole('textbox', { name: 'Search the audit log' }).fill('export.personal')
+  const search = page.getByRole('textbox', { name: 'Search the audit log' })
   const events = page.getByRole('region', { name: 'Audit events' })
+  await search.fill('export.personal')
   await expect(
     events.getByRole('row', { name: /Amal Al Nouri trainer export\.personal .*Denied/ }).first(),
   ).toBeVisible()
+  await search.fill('export.report_csv')
   await expect(
-    events.getByRole('row', { name: /Academy Admin admin export\.personal .*Allowed/ }).first(),
+    events.getByRole('row', { name: /Academy Admin admin export\.report_csv .*Allowed/ }).first(),
   ).toBeVisible()
 })

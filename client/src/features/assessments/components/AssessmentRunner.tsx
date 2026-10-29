@@ -144,7 +144,12 @@ export function AssessmentRunner({
           </Button>
         </div>
         {last ? (
-          <Button size="lg" disabled={answered < total || submit.isPending} onClick={finish}>
+          <Button
+            size="lg"
+            // Wait for the last answer to save, or the submit would find it missing.
+            disabled={answered < total || save.isPending || submit.isPending}
+            onClick={finish}
+          >
             {submit.isPending ? 'Submitting' : 'Submit answers'}
           </Button>
         ) : (

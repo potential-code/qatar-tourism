@@ -1,14 +1,15 @@
-import { expect, test } from '@playwright/test'
 import { answerAssessment } from './support/assessments'
 import { RESPONSE_PLAN } from './support/content'
-import { ACCOUNTS, API_URL, CLIENT_ORIGIN } from './support/env'
+import { ACCOUNTS } from './support/env'
 import { markAssignment } from './support/marking'
 import { pageHeading, signInAs } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 13–16 minutes (brief §17): Omar completes every Program A requirement and is
  * issued exactly one certificate; the admin Dashboard and reports show the updated totals.
- * Runs after 03 and 04 (Omar booked, attended and scored 84).
+ * Runs after 03 and 04 in the same browser (Omar booked Amal's session, attended and scored 84),
+ * so Amal is the trainer who marks his assignment.
  */
 test.describe.configure({ mode: 'serial' })
 
@@ -50,11 +51,11 @@ test('14–15 min: the final assessment unlocks; passing it issues one certifica
     name: /Program A: Tourism Service Professional QTA-DEMO-A-000121/,
   })
   await expect(certificate).toBeVisible()
+  // Exactly one certificate: reloading the list does not issue another.
   await expect(page.getByRole('link', { name: /QTA-DEMO-A-/ })).toHaveCount(1)
-  const mine = await page.request.get(`${API_URL}/api/certificates/mine`, {
-    headers: { Origin: CLIENT_ORIGIN },
-  })
-  expect(((await mine.json()) as { items: unknown[] }).items).toHaveLength(1)
+  await page.reload()
+  await expect(certificate).toBeVisible()
+  await expect(page.getByRole('link', { name: /QTA-DEMO-A-/ })).toHaveCount(1)
 
   await certificate.click()
   await expect(

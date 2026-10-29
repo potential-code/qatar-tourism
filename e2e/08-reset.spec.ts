@@ -1,35 +1,16 @@
-import { expect, test } from '@playwright/test'
-import { apiAs, getJson, resetDemo } from './support/api'
-import { ACCOUNTS, API_URL, CLIENT_ORIGIN } from './support/env'
+import type { Page } from '@playwright/test'
+import { ACCOUNTS } from './support/env'
 import { signInAs } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
- * Demonstration resilience (brief §17): the named reset, restricted to the demo administrator,
- * returns the demo to its snapshot, and a reset reproduces identical dashboard numbers.
- * Runs last, so the suite leaves the demo in its starting state.
+ * Demonstration resilience (brief §17): the named reset, run by the demo administrator in the
+ * admin UI, returns this browser's demo data to the snapshot, and running it again reproduces
+ * identical dashboard numbers. Runs after the walkthrough in the same browser, so the reset
+ * undoes Omar's certificate (121 back to 120) and the registered visitor.
  */
-type Overview = {
-  kpis: Record<string, number>
-  distribution: unknown
-  funnels: unknown
-  improvement: unknown
-  attendance: unknown
-  trend: unknown
-}
 
-const comparable = (o: Overview) => ({
-  kpis: o.kpis,
-  distribution: o.distribution,
-  funnels: o.funnels,
-  improvement: o.improvement,
-  attendance: o.attendance,
-  trend: o.trend,
-})
-
-test('the named reset restores the snapshot and reproduces identical dashboard numbers', async ({
-  page,
-}) => {
-  // Through the UI, with confirmation.
+async function resetThroughUi(page: Page) {
   await signInAs(page, ACCOUNTS.admin, '/admin/manage/audit')
   await page.getByRole('button', { name: 'Reset demo data' }).click()
   const confirm = page
@@ -37,30 +18,42 @@ test('the named reset restores the snapshot and reproduces identical dashboard n
     .or(page.getByRole('dialog', { name: 'Reset demo data?' }))
   await expect(confirm).toContainText('resets all fictional demo data to the original snapshot')
   await confirm.getByRole('button', { name: 'Reset demo data' }).click()
-  await expect(page.getByText('Demo data reset')).toBeVisible({ timeout: 60_000 })
+  await expect(page.getByText('Demo data reset').first()).toBeVisible({ timeout: 60_000 })
+}
 
-  const admin = await apiAs(ACCOUNTS.admin)
-  const first = comparable(await getJson<Overview>(admin, '/analytics/overview'))
-  expect(first.kpis).toMatchObject({
-    uniqueLearners: 1200,
-    enrolments: 1260,
-    certificates: 120,
-  })
+/** The admin Dashboard's KPI tiles and charts, as text, once every view has loaded. */
+async function dashboardNumbers(page: Page) {
+  await signInAs(page, ACCOUNTS.admin, '/admin')
+  await expect(page.getByRole('button', { name: /^A certificates issued/ })).toBeVisible()
+  await expect(page.locator('[data-slot="skeleton"]')).toHaveCount(0, { timeout: 15_000 })
+  return page.getByRole('main').textContent()
+}
 
-  await resetDemo(admin)
-  const second = comparable(await getJson<Overview>(admin, '/analytics/overview'))
+test('the named reset restores the snapshot and reproduces identical dashboard numbers', async ({
+  page,
+}) => {
+  // The walkthrough changed the totals in this browser.
+  await signInAs(page, ACCOUNTS.admin, '/admin')
+  await expect(page.getByRole('button', { name: /^A certificates issued 121/ })).toBeVisible()
+
+  await resetThroughUi(page)
+  const first = await dashboardNumbers(page)
+  await expect(page.getByRole('button', { name: /^A certificates issued 120/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Unique learners/ })).toContainText('1,200')
+  await expect(page.getByRole('button', { name: /^Enrolments 1260/ })).toBeVisible()
+
+  await resetThroughUi(page)
+  const second = await dashboardNumbers(page)
   expect(second).toEqual(first)
 
-  // A learner cannot run the reset.
-  const learner = await apiAs(ACCOUNTS.maha)
-  const denied = await learner.post(`${API_URL}/api/demo/reset`, {
-    headers: { Origin: CLIENT_ORIGIN },
-    data: { confirm: true },
-  })
-  expect(denied.status()).toBe(403)
-  await Promise.all([admin.dispose(), learner.dispose()])
-
-  // The dashboard shows the snapshot totals.
-  await page.goto('/admin')
+  // A reload reads the reset data back from IndexedDB.
+  await page.reload()
   await expect(page.getByRole('button', { name: /^A certificates issued 120/ })).toBeVisible()
+})
+
+test('a learner cannot see or reach the reset', async ({ page }) => {
+  await signInAs(page, ACCOUNTS.maha, '/admin/manage/audit')
+  await expect(page).toHaveURL(/\/learner$/)
+  await expect(page.getByRole('button', { name: 'Reset demo data' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /^Demo toolbar/ })).toHaveCount(0)
 })

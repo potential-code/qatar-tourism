@@ -1,16 +1,21 @@
 import { MutationCache, QueryClient } from '@tanstack/react-query'
 import { ApiError } from '@/lib/api-error'
+import { persistNow } from '@/services/api'
 
 /**
  * One client for the app. Every successful mutation also invalidates the whole cache (as
  * wep-mockup does): the mock services are fast, and the learner, trainer and admin views of
  * the same data stay in sync without per-feature invalidation lists. Feature-level
  * `onSuccess` invalidations still run first.
+ *
+ * A mutation settles only once its change is saved to browser storage, so a reload or
+ * navigation straight after an action keeps it (the debounced save alone could be lost).
  */
 export function createQueryClient() {
   const client: QueryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await persistNow()
         void client.invalidateQueries()
       },
     }),

@@ -1,87 +1,89 @@
 import { expect, test } from '@playwright/test'
-import { apiAs, getJson, ORIGIN_HEADERS } from './support/api'
-import { ACCOUNTS, API_URL } from './support/env'
-import { signInAs, signInWithForm } from './support/ui'
+import { ACCOUNTS, EMAILS } from './support/env'
+import { signInAs, signInWithForm, signOut } from './support/ui'
 
 /**
- * Brief §11 and §18 permissions: portal routes redirect a wrong role, and the API is the real
- * check. A learner gets 403 from trainer and admin APIs and cannot escalate their role; Trainer 1
- * gets 403 for Trainer 2's roster, whatever the URL says.
+ * Brief §11 and §18 permissions in the frontend-only mockup. Route guards redirect a wrong
+ * role, and the browser services refuse out-of-scope reads, so a changed URL shows an access
+ * message, never another trainer's learners. The same rules are covered by the service tests
+ * (client/src/services/__tests__, see docs/PERMISSIONS.md). Each test has its own browser, so
+ * it starts from the seed.
  */
-type SessionList = { items: { id: string; code: string }[] }
 
-test('a learner cannot reach the trainer or admin portals', async ({ page }) => {
+test('a learner is sent back to their portal from trainer and admin URLs', async ({ page }) => {
   await signInAs(page, ACCOUNTS.maha, '/trainer')
   await expect(page).toHaveURL(/\/learner$/)
-  await page.goto('/admin/reports/program-a')
-  await expect(page).toHaveURL(/\/learner$/)
-  await page.goto('/admin/manage/audit')
-  await expect(page).toHaveURL(/\/learner$/)
+  for (const path of [
+    '/trainer/attendance',
+    '/trainer/assignments',
+    '/admin',
+    '/admin/users',
+    '/admin/reports/program-a',
+    '/admin/manage/audit',
+  ]) {
+    await page.goto(path)
+    await expect(page, path).toHaveURL(/\/learner$/)
+  }
+  // Nothing on the learner's screens offers trainer or admin tools.
+  await expect(page.getByRole('button', { name: 'Reset demo data' })).toHaveCount(0)
 })
 
 test('the Trainer sign-in mode works but never grants trainer access', async ({ page }) => {
-  await signInWithForm(page, ACCOUNTS.maha, 'trainer')
+  await signInWithForm(page, EMAILS.maha, 'trainer')
   await expect(page).toHaveURL(/\/learner/)
   await page.goto('/login?mode=trainer')
   await expect(page).toHaveURL(/\/learner/)
 
   // Signed out, the connected sign-in options are labelled simulated.
-  await page.context().clearCookies()
+  await signOut(page)
   await page.goto('/login?mode=trainer')
   await expect(page.getByText('Choosing this mode does not grant trainer access.')).toBeVisible()
   const sso = page.getByRole('region', { name: 'Or use connected sign-in' })
   await expect(sso.getByRole('button', { name: /Simulated$/ })).toHaveCount(2)
 })
 
-test('a learner gets 403 from trainer and admin APIs and cannot escalate', async () => {
-  const admin = await apiAs(ACCOUNTS.admin)
-  const sessions = await getJson<SessionList>(admin, '/sessions')
-  const t01 = sessions.items.find((s) => s.code === 'SES-T01-2')
-  expect(t01).toBeDefined()
+test('the facilitator switch is for the demo administrator only', async ({ page }) => {
+  // A learner signed in with the form has no demo toolbar.
+  await signInWithForm(page, EMAILS.maha)
+  await expect(page).toHaveURL(/\/learner/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Demo toolbar/ })).toHaveCount(0)
 
-  const learner = await apiAs(ACCOUNTS.maha)
-  for (const path of [
-    `/attendance/sessions/${t01?.id}/roster`,
-    `/exports/sessions/${t01?.id}/marks`,
-    '/assignments/marking',
-    '/admin/users',
-    '/analytics/overview',
-    '/reports/program-a',
-    '/audit',
-  ]) {
-    const response = await learner.get(`${API_URL}/api${path}`, { headers: ORIGIN_HEADERS })
-    expect(response.status(), path).toBe(403)
-  }
-  const escalate = await learner.patch(`${API_URL}/api/admin/users/user-l0001/role`, {
-    headers: ORIGIN_HEADERS,
-    data: { role: 'admin', reason: 'Trying to escalate' },
-  })
-  expect(escalate.status()).toBe(403)
-  const me = await getJson<{ role?: string; user?: { role?: string } }>(learner, '/me')
-  expect(me.user?.role ?? me.role).toBe('learner')
-  await Promise.all([admin.dispose(), learner.dispose()])
+  // A trainer has none either.
+  await signInWithForm(page, EMAILS.trainer(1), 'trainer')
+  await expect(page).toHaveURL(/\/trainer/)
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Demo toolbar/ })).toHaveCount(0)
+
+  // The administrator has it, and keeps it while viewing as a persona.
+  await signInWithForm(page, EMAILS.admin, 'admin')
+  await expect(page).toHaveURL(/\/admin/)
+  const toolbar = page.getByRole('button', { name: /^Demo toolbar/ })
+  await expect(toolbar).toBeVisible()
+  await toolbar.click()
+  await page.getByRole('menuitem', { name: /^Maha/ }).click()
+  await expect(page).toHaveURL(/\/learner/)
+  await expect(toolbar).toBeVisible()
 })
 
-test("Trainer 1 gets 403 for Trainer 2's roster, in the API and on screen", async ({ page }) => {
-  const admin = await apiAs(ACCOUNTS.admin)
-  const sessions = await getJson<SessionList>(admin, '/sessions')
-  const t02 = sessions.items.find((s) => s.code === 'SES-T02-2')
-  expect(t02).toBeDefined()
-  await admin.dispose()
+test("Trainer 1 sees an access message on Trainer 2's session and roster URLs", async ({
+  page,
+}) => {
+  // Trainer 2 finds the id of one of their own sessions.
+  await signInAs(page, ACCOUNTS.trainer(2), '/trainer/sessions')
+  await page
+    .getByRole('link', { name: /SES-T02-2/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/trainer\/sessions\/[^/]+$/)
+  const sessionId = page.url().split('/').pop() ?? ''
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
-  const trainer = await apiAs(ACCOUNTS.trainer(1))
-  for (const path of [
-    `/attendance/sessions/${t02?.id}/roster`,
-    `/exports/sessions/${t02?.id}/marks`,
-    `/sessions/${t02?.id}`,
-  ]) {
-    const response = await trainer.get(`${API_URL}/api${path}`, { headers: ORIGIN_HEADERS })
-    expect(response.status(), path).toBe(403)
+  // Trainer 1 pastes the same id into both URLs: an access message, never the learners.
+  for (const path of [`/trainer/attendance/${sessionId}`, `/trainer/sessions/${sessionId}`]) {
+    await signInAs(page, ACCOUNTS.trainer(1), path)
+    await expect(page.getByText(/permission|not assigned|access/i).first(), path).toBeVisible()
+    await expect(page.getByRole('table'), path).toHaveCount(0)
+    await expect(page.getByText('Export personal data'), path).toHaveCount(0)
   }
-  await trainer.dispose()
-
-  // Changing the ID in the URL shows an access message, never the other trainer's learners.
-  await signInAs(page, ACCOUNTS.trainer(1), `/trainer/attendance/${t02?.id}`)
-  await expect(page.getByRole('table')).toHaveCount(0)
-  await expect(page.getByText(/permission|not assigned|access/i).first()).toBeVisible()
 })

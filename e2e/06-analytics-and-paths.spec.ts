@@ -1,6 +1,7 @@
-import { expect, type Locator, type Page, test } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 import { ACCOUNTS } from './support/env'
 import { pageHeading, signInAs } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 16–19 minutes (brief §17): two AI Analytics questions answered from actual data,

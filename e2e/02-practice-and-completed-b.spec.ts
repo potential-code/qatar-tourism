@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test'
 import { ACCOUNTS } from './support/env'
 import { pageHeading, signInAs } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 5–7 minutes (brief §17): text practice, then the completed Program B example.

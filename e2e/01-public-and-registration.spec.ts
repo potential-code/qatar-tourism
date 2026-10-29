@@ -1,6 +1,7 @@
-import { expect, type Page, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { answerAssessment } from './support/assessments'
 import { pageHeading } from './support/ui'
+import { expect, test } from './support/walkthrough'
 
 /**
  * Walkthrough 0–5 minutes (brief §17): homepage and A/B/C, then a new visitor registers,

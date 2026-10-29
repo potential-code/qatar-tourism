@@ -88,8 +88,8 @@ async function settle(page: Page) {
 
 async function scan(page: Page, target: Target) {
   if (target.width) await page.setViewportSize({ width: target.width, height: 844 })
-  if (target.who) await signInAs(page, target.who)
-  await page.goto(target.path)
+  if (target.who) await signInAs(page, target.who, target.path)
+  else await page.goto(target.path)
   await settle(page)
   const wcag = await new AxeBuilder({ page }).withTags(TAGS).analyze()
   const structure = await new AxeBuilder({ page }).withRules(STRUCTURE_RULES).analyze()

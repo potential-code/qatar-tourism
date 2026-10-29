@@ -1,6 +1,6 @@
 import type { z } from 'zod'
 import { ApiError } from '@/lib/api-error'
-import { commit, db, newId } from '@/mocks/db'
+import { commit, db, flush, newId } from '@/mocks/db'
 import { type NewRow, withDefaults } from '@/mocks/defaults'
 import type { Row, TableName } from '@/mocks/tables'
 import { nowIso } from './clock'
@@ -108,4 +108,5 @@ export {
   requireUser,
   type Viewer,
 } from './session-context'
-export { commit, db, newId }
+// persistNow writes pending changes to browser storage now; the query client awaits it after each mutation.
+export { commit, db, flush as persistNow, newId }
