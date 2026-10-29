@@ -6,6 +6,7 @@ import * as assessments from '../assessments.service'
 import * as certificates from '../certificates.service'
 import * as courses from '../courses.service'
 import * as enrolments from '../enrolments.service'
+import * as programmeEnrolment from '../programme-enrolment.service'
 import { findEnrolment } from '../progress/evidence'
 import { getAttemptHistory, recomputeEnrolment, saveResource } from '../progress.service'
 import * as scorm from '../scorm.service'
@@ -109,21 +110,21 @@ describe('learner scope', () => {
 describe('joining a programme (brief §3 routing)', () => {
   test('only a learner may enrol; A keeps B and is idempotent; C refuses', async () => {
     actAs(db, null)
-    await expect(enrolments.enrolInProgramme('a')).rejects.toMatchObject({ status: 401 })
+    await expect(programmeEnrolment.enrolSelf('a')).rejects.toMatchObject({ status: 401 })
     actAs(db, 'user-t01')
-    await expect(enrolments.enrolInProgramme('a')).rejects.toMatchObject({ status: 403 })
+    await expect(programmeEnrolment.enrolSelf('a')).rejects.toMatchObject({ status: 403 })
 
     actAs(db, MAHA)
     const bBefore = findEnrolment(MAHA, 'B')?.id
-    const first = await enrolments.enrolInProgramme('a')
+    const first = await programmeEnrolment.enrolSelf('a')
     expect(first).toMatchObject({ programme: 'A', created: true })
-    expect((await enrolments.enrolInProgramme('A')).created).toBe(false)
+    expect((await programmeEnrolment.enrolSelf('A')).created).toBe(false)
     expect(findEnrolment(MAHA, 'B')?.id).toBe(bBefore as string)
-    await expect(enrolments.enrolInProgramme('c')).rejects.toMatchObject({
+    await expect(programmeEnrolment.enrolSelf('c')).rejects.toMatchObject({
       status: 409,
       code: 'PROGRAMME_ILLUSTRATIVE',
     })
-    const mine = await enrolments.listMyProgrammeEnrolments()
+    const mine = await programmeEnrolment.listMyEnrolments()
     expect(mine.items.map((e) => e.programme)).toEqual(['A', 'B'])
     expect(
       db.auditEvents.filter((e) => e.action === 'enrolment.create' && e.actorId === MAHA),
@@ -172,7 +173,7 @@ describe('AI path generator (brief §9)', () => {
       fullName: 'Hessa Al Kuwari',
     })
     actAs(db, user.id)
-    const joined = await enrolments.enrolInProgramme('B')
+    const joined = await programmeEnrolment.enrolSelf('B')
     expect(joined.created).toBe(true)
 
     await expect(aiPath.acceptPath('B')).rejects.toMatchObject({ status: 400 })

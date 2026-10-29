@@ -2,7 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { InferResponseType } from 'hono/client'
 import { api, unwrap } from '@/lib/api'
-import * as enrolments from '@/services/enrolments.service'
+import * as programmeEnrolment from '@/services/programme-enrolment.service'
 
 /** Public catalogue reads (no session needed) and the learner's own enrolments. */
 
@@ -27,7 +27,7 @@ export type TrainerDetail = InferResponseType<
   200
 >
 export type OwnEnrolment = Awaited<
-  ReturnType<typeof enrolments.listMyProgrammeEnrolments>
+  ReturnType<typeof programmeEnrolment.listMyEnrolments>
 >['items'][number]
 
 export const programmeKeys = {
@@ -81,13 +81,13 @@ export const trainerQuery = (code: string) =>
 export const myEnrolmentsQuery = () =>
   queryOptions({
     queryKey: programmeKeys.mine(),
-    queryFn: async () => (await enrolments.listMyProgrammeEnrolments()).items,
+    queryFn: async () => (await programmeEnrolment.listMyEnrolments()).items,
   })
 
 export function useEnrol() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (code: ProgrammeCode) => enrolments.enrolInProgramme(code),
+    mutationFn: (code: ProgrammeCode) => programmeEnrolment.enrolSelf(code),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: programmeKeys.all }),
   })
 }
