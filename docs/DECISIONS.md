@@ -5,6 +5,21 @@ undo; read the entry before you do.
 
 ---
 
+## Frontend-only mockup (supersedes the server entries below)
+
+The demo became a frontend-only mockup, following the `wep-mockup` pattern. The Hono API,
+Better Auth, Drizzle and Postgres were removed. Browser services (`client/src/services`) now run
+the same business rules over a seeded demo database kept in IndexedDB, and the site ships as one
+static nginx image. Reasons: no database or secrets to host for a short trial, nothing to
+delete on a server afterwards, and a reset that is instant and per presenter.
+
+The entries below about two processes, Hono, cookies, migrations, the postgres.js driver and
+server-side seeding describe the earlier build. They are kept as history. The rules they
+protected (permissions checked in one place, the demo clock, a deterministic seed) still hold,
+now in the services. Trade-offs are listed in `docs/DEVIATIONS.md` (rows 9 to 15).
+
+---
+
 ## Two processes, not one meta-framework
 
 The client is a Vite SPA served by nginx. The server is a Hono API on Bun. They are separate

@@ -3,25 +3,30 @@
 The connected demonstration from brief §17. Each step matches a Playwright spec in `e2e/`, so
 the same story is tested on every run. Times are a guide.
 
-All accounts use the shared demo password (`SEED_DEMO_PASSWORD`). Account list: `README.md` →
-Demo accounts.
+All accounts use the password `password`. Account list: `README.md` → Demo accounts.
+
+**Use one browser window for the whole demo.** The demo data lives in that browser (IndexedDB).
+Learner, trainer and admin views connect because they share it: switch roles with the **Demo
+toolbar**, never with a second browser or a private window, which would start from the seed.
 
 ## Before you start
 
 1. **Reset the demo.** Sign in as `admin@example.com`, open Academy Management → **Audit and
-   demo reset**, choose **Reset demo data** and confirm. Or run `bun run db:reset`.
+   demo reset**, choose **Reset demo data** and confirm. Clearing the site data in the browser
+   does the same.
 2. **Check the dashboard.** `/admin` should show 1,200 unique learners, 1,260 enrolments and
    120 A certificates issued.
-3. **Leave `DEMO_REFERENCE_DATE` unset** for a live demo. The reference date is then the reset
-   day, so "Day +2" sessions are two days ahead of today. The examples below assume a reference
-   date of Tuesday 27 October 2026, so Day +2 is Thursday 29 October.
+3. **The reference date** is fixed (`shared/constants/demo.ts`, Tuesday 27 October 2026), so
+   every browser shows the same dataset and Day +2 is Thursday 29 October. A build can move it
+   with `VITE_DEMO_REFERENCE_DATE`.
 4. **Use Chrome** if you want to show voice practice with speech-to-text.
 5. **Prepare a fresh visitor email** ending in `@example.com` (for example
    `visitor.demo1@example.com`). Reusing one gives the duplicate-account message.
 6. **Have a response plan ready to paste** (300–500 words). A fictional one is in
    `e2e/support/content.ts`.
-7. Keep one browser window. Sign in as the admin; the **Demo toolbar** switches between
-   personas, trainers and the admin without passwords.
+7. Keep one browser window. After the visitor registration (2–5 minutes), sign out and sign in
+   as the admin; the **Demo toolbar** then switches between personas, trainers and the admin
+   without passwords.
 
 **Correct assessment answers** (options are shuffled on screen):
 
@@ -85,7 +90,8 @@ interactive module.
 
 _Spec: `e2e/02-practice-and-completed-b.spec.ts`._
 
-1. Demo toolbar → **Maha Al Nouri**. Open My learning (Program B) → **AI complaint scenario:
+1. Sign out (account menu), then sign in as `admin@example.com` with the Academy admin mode.
+   Demo toolbar → **Maha Al Nouri**. Open My learning (Program B) → **AI complaint scenario:
    Changed booking**.
 2. Note the "Simulated AI practice" label. Choose Text (or Voice in Chrome), then **Start
    conversation**. Reply four to six times: acknowledge, ask a question, verify and offer two
@@ -151,7 +157,7 @@ _Spec: `e2e/04-marking-and-exports.spec.ts`._
      administrator." and notes the attempt is recorded in the audit log as denied.
 8. Demo toolbar → **Academy Admin**. Reports → Sessions and attendance → **Export CSV**
    downloads. Academy Management → Audit and demo reset: search `export.personal`. Amal's
-   attempt shows Denied; the admin's allowed exports show Allowed.
+   attempt shows Denied. Search `export.report_csv`: the admin's report export shows Allowed.
 
 **Evidence to show:** changes propagate, export denied, admin retains authorised access.
 
@@ -216,13 +222,15 @@ _Spec: `e2e/07-permissions.spec.ts`._
   connected sign-in buttons are labelled Simulated.
 - As Amal, open another trainer's session by URL (`/trainer/attendance/<SES-T02-2 id>`): an
   access message, no roster.
+- The demo toolbar is only there for the admin. Signed in with the form as a learner or a
+  trainer, it does not appear.
 
 ## After the demo
 
-Reset again (Audit and demo reset → **Reset demo data**, or `bun run db:reset`). The dashboard
-returns to 1,200 / 1,260 / 120 (`e2e/08-reset.spec.ts` checks that two resets give identical
-numbers). The visitor account you registered is removed by the reset. Uploaded files are not;
-see `docs/DATA-DELETION.md`.
+Reset again (Audit and demo reset → **Reset demo data**). The dashboard returns to 1,200 /
+1,260 / 120 (`e2e/08-reset.spec.ts` checks that two resets give identical numbers). The reset
+also removes the visitor account you registered and any uploaded files. It only affects this
+browser; see `docs/DATA-DELETION.md`.
 
 ## Running the script automatically
 
@@ -230,4 +238,6 @@ see `docs/DATA-DELETION.md`.
 bun run test:e2e
 ```
 
-This resets the demo, runs every step above in order at 1440 px, and resets again at the end.
+This starts its own Vite server and a fresh browser (so it starts from the seed), runs every
+step above in order at 1440 px in one shared browser context, then resets through the admin
+screen and checks that two resets give identical dashboard numbers.
