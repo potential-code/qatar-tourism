@@ -2,8 +2,8 @@ import type { LearningGoal, ProgrammeCode } from '@shared/constants'
 import { type RuleDefinition, type RuleProfile, resolvePathRule } from '@shared/content/paths'
 import { ApiError, db, insertRow, nowIso, updateRow } from '../api'
 import { type AuditActor, recordAudit } from '../audit.service'
-import { recomputeEnrolment } from '../progress.service'
 import { findEnrolmentRow } from '../progress/evidence'
+import { recomputeEnrolment } from '../progress.service'
 
 /**
  * Enrolment creation and path assignment for the public journeys (brief §3–4, §14), formerly
