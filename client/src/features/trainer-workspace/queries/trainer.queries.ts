@@ -2,9 +2,10 @@ import type { SessionStatus } from '@shared/constants'
 import type { SessionScoreInput } from '@shared/schemas/session'
 import type { AttendanceUpdateInput, SessionUpdateInput } from '@shared/schemas/trainer-ops'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, unwrap } from '@/lib/api'
+import * as attendance from '@/services/attendance.service'
+import * as sessions from '@/services/sessions.service'
 
-/** Trainer workspace queries (brief §10–11). The only place this feature calls the API. */
+/** Trainer workspace queries (brief §10–11). The only place this feature calls the services. */
 export const trainerKeys = {
   all: ['trainer'] as const,
   overview: () => [...trainerKeys.all, 'overview'] as const,
@@ -22,58 +23,56 @@ export const trainerKeys = {
 export const overviewQuery = () =>
   queryOptions({
     queryKey: trainerKeys.overview(),
-    queryFn: () => unwrap(api.sessions.overview.$get()),
+    queryFn: () => sessions.getOverview(),
   })
 
 export const trainerSessionsQuery = (status?: SessionStatus) =>
   queryOptions({
     queryKey: trainerKeys.sessions(status),
-    queryFn: () => unwrap(api.sessions.$get({ query: { status } })),
+    queryFn: () => sessions.listSessions(status),
   })
 
 export const sessionDetailQuery = (id: string) =>
   queryOptions({
     queryKey: trainerKeys.session(id),
-    queryFn: () => unwrap(api.sessions[':id'].$get({ param: { id } })),
+    queryFn: () => sessions.getSessionDetail(id),
   })
 
 export const impactQuery = (id: string, startsAt?: string, endsAt?: string) =>
   queryOptions({
     queryKey: trainerKeys.impact(id, startsAt, endsAt),
-    queryFn: () =>
-      unwrap(api.sessions[':id'].impact.$get({ param: { id }, query: { startsAt, endsAt } })),
+    queryFn: () => sessions.getImpact(id, { startsAt, endsAt }),
   })
 
 export const formOptionsQuery = () =>
   queryOptions({
     queryKey: trainerKeys.formOptions(),
-    queryFn: () => unwrap(api.sessions['form-options'].$get()),
+    queryFn: () => sessions.getFormOptions(),
     staleTime: 5 * 60_000,
   })
 
 export const rosterQuery = (sessionId: string) =>
   queryOptions({
     queryKey: trainerKeys.roster(sessionId),
-    queryFn: () =>
-      unwrap(api.attendance.sessions[':sessionId'].roster.$get({ param: { sessionId } })),
+    queryFn: () => attendance.getRoster(sessionId),
   })
 
 export const learnersQuery = () =>
   queryOptions({
     queryKey: trainerKeys.learners(),
-    queryFn: () => unwrap(api.attendance.learners.$get()),
+    queryFn: () => attendance.getAssignedLearners(),
   })
 
 export const profileQuery = () =>
   queryOptions({
     queryKey: trainerKeys.profile(),
-    queryFn: () => unwrap(api.sessions.profile.$get()),
+    queryFn: () => sessions.getTrainerProfile(),
   })
 
 export const resourcesQuery = () =>
   queryOptions({
     queryKey: trainerKeys.resources(),
-    queryFn: () => unwrap(api.sessions.resources.$get()),
+    queryFn: () => sessions.getTrainerResources(),
   })
 
 /** Any trainer write can move counts on several screens, so refresh the whole workspace. */
@@ -90,7 +89,7 @@ export function useCreateSession() {
   const refresh = useRefresh()
   return useMutation({
     mutationFn: (input: { session: SessionUpdateInput; publish: boolean }) =>
-      unwrap(api.sessions.$post({ json: input })),
+      sessions.createSession(input),
     onSuccess: refresh,
   })
 }
@@ -98,8 +97,7 @@ export function useCreateSession() {
 export function useUpdateSession(id: string) {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: (input: SessionUpdateInput) =>
-      unwrap(api.sessions[':id'].$patch({ param: { id }, json: input })),
+    mutationFn: (input: SessionUpdateInput) => sessions.updateSession(id, input),
     onSuccess: refresh,
   })
 }
@@ -107,7 +105,7 @@ export function useUpdateSession(id: string) {
 export function usePublishSession() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: (id: string) => unwrap(api.sessions[':id'].publish.$post({ param: { id } })),
+    mutationFn: (id: string) => sessions.publishSession(id),
     onSuccess: refresh,
   })
 }
@@ -115,7 +113,7 @@ export function usePublishSession() {
 export function useCompleteSession() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: (id: string) => unwrap(api.sessions[':id'].complete.$post({ param: { id } })),
+    mutationFn: (id: string) => sessions.completeSession(id),
     onSuccess: refresh,
   })
 }
@@ -133,8 +131,7 @@ export type RescheduleRequest = {
 export function useRescheduleSession() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: ({ id, ...json }: RescheduleRequest) =>
-      unwrap(api.sessions[':id'].reschedule.$post({ param: { id }, json })),
+    mutationFn: ({ id, ...input }: RescheduleRequest) => sessions.rescheduleSession(id, input),
     onSuccess: refresh,
   })
 }
@@ -142,8 +139,8 @@ export function useRescheduleSession() {
 export function useCancelSession() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: ({ id, ...json }: { id: string; reason: string; idempotencyKey: string }) =>
-      unwrap(api.sessions[':id'].cancel.$post({ param: { id }, json })),
+    mutationFn: ({ id, ...input }: { id: string; reason: string; idempotencyKey: string }) =>
+      sessions.cancelSession(id, input),
     onSuccess: refresh,
   })
 }
@@ -151,8 +148,7 @@ export function useCancelSession() {
 export function useMarkAttendance() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: (input: AttendanceUpdateInput) =>
-      unwrap(api.attendance.mark.$post({ json: input })),
+    mutationFn: (input: AttendanceUpdateInput) => attendance.markAttendance(input),
     onSuccess: refresh,
   })
 }
@@ -160,7 +156,7 @@ export function useMarkAttendance() {
 export function useRecordScore() {
   const refresh = useRefresh()
   return useMutation({
-    mutationFn: (input: SessionScoreInput) => unwrap(api.attendance.score.$post({ json: input })),
+    mutationFn: (input: SessionScoreInput) => attendance.recordScore(input),
     onSuccess: refresh,
   })
 }

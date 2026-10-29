@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { BookingPolicyNote } from '@/features/sessions/components/BookingPolicyNote'
 import { QueryErrorPanel } from '@/features/sessions/components/QueryErrorPanel'
 import { SessionFacts } from '@/features/sessions/components/SessionFacts'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import {
   sessionDetailQuery,
   useCompleteSession,

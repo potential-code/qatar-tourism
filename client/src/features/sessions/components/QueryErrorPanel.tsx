@@ -1,7 +1,7 @@
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 
 /** Error state for a data view: what went wrong, and a retry (brief §17 resilience). */
 export function QueryErrorPanel({

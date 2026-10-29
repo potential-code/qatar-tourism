@@ -3,12 +3,12 @@ import { Download, ShieldAlert } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { ApiError } from '@/lib/api'
+import { ApiError } from '@/lib/api-error'
 import { useSessionExport } from '../../queries/exports.queries'
 
 /**
  * Exports (brief §11). Marks: learner ID and score only, allowed. Personal data: the button is
- * shown on purpose so the demo can prove the API blocks it and records the attempt.
+ * shown on purpose so the demo can prove the service blocks it and records the attempt.
  */
 export function ExportActions({ sessionId }: { sessionId: string }) {
   const exporter = useSessionExport()

@@ -1,32 +1,19 @@
+import type { ExportKind } from '@shared/schemas/trainer-ops'
 import { useMutation } from '@tanstack/react-query'
-import { ApiError, api } from '@/lib/api'
+import { downloadCsv } from '@/lib/download'
+import * as exportsService from '@/services/exports.service'
 
-type ExportKind = 'marks' | 'personal'
-
-/** Calls an export endpoint and hands the CSV to the browser. Errors keep the API's message. */
+/**
+ * Builds a session export and hands the CSV to the browser. A refusal (e.g. the trainer's
+ * personal-data export, brief §11) is an `ApiError` with the service's message.
+ */
 async function downloadExport(sessionId: string, kind: ExportKind) {
-  const endpoint = api.exports.sessions[':sessionId'][kind]
-  const res = await endpoint.$get({ param: { sessionId } })
-  if (!res.ok) {
-    const body = (await res.json().catch(() => null)) as {
-      error?: { code: string; message: string }
-    } | null
-    throw new ApiError(
-      res.status,
-      body?.error?.code ?? 'UNKNOWN',
-      body?.error?.message ?? 'The export failed. Try again.',
-    )
-  }
-  const blob = await res.blob()
-  const name =
-    /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') ?? '')?.[1] ?? `${kind}.csv`
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = name
-  a.click()
-  URL.revokeObjectURL(url)
-  return { rows: Number(res.headers.get('X-Export-Rows') ?? 0), name }
+  const file =
+    kind === 'marks'
+      ? await exportsService.exportSessionMarks(sessionId)
+      : await exportsService.exportSessionPersonal(sessionId)
+  downloadCsv(file.csv, file.filename)
+  return { rows: file.rows, name: file.filename }
 }
 
 export function useSessionExport() {
