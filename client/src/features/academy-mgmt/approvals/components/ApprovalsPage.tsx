@@ -149,9 +149,8 @@ export function ApprovalsPage({
                   <TableHead>Learner</TableHead>
                   <TableHead>Programme or credential</TableHead>
                   <TableHead>Submitted</TableHead>
-                  <TableHead>Reviewer</TableHead>
                   <TableHead>Evidence</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Status and reviewer</TableHead>
                   <TableHead className="pe-6 text-end">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -170,12 +169,13 @@ export function ApprovalsPage({
                         {r.learner.displayId}
                       </span>
                     </TableCell>
-                    <TableCell className="max-w-56 text-sm">{r.target}</TableCell>
-                    <TableCell className="text-sm tabular-nums">
+                    <TableCell className="min-w-44 max-w-56 text-sm whitespace-normal">
+                      {r.target}
+                    </TableCell>
+                    <TableCell className="min-w-28 text-sm whitespace-normal tabular-nums">
                       {qDateTime(r.submittedAt)}
                     </TableCell>
-                    <TableCell className="text-sm">{r.reviewer ?? 'Unassigned'}</TableCell>
-                    <TableCell className="max-w-64 text-sm text-ink-soft">
+                    <TableCell className="min-w-44 max-w-60 text-sm whitespace-normal text-ink-soft">
                       {r.evidence.note}
                       {r.evidence.fileName ? (
                         <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
@@ -188,15 +188,19 @@ export function ApprovalsPage({
                     </TableCell>
                     <TableCell>
                       <StatusPill tone={STATUS[r.status].tone}>{STATUS[r.status].label}</StatusPill>
+                      <span className="mt-1 block text-xs text-ink-soft">
+                        {r.reviewer ?? 'Unassigned'}
+                      </span>
                       {r.decidedAt ? (
                         <span className="mt-1 block text-xs text-muted-foreground tabular-nums">
                           {qDateTime(r.decidedAt)}
                         </span>
                       ) : null}
                     </TableCell>
-                    <TableCell className="pe-6 text-end">
+                    <TableCell className="min-w-44 pe-6 text-end">
                       {r.status === 'pending' || r.status === 'info_requested' ? (
-                        <span className="flex flex-wrap justify-end gap-1.5">
+                        // Stacked, so the three actions fit beside the wrapped text columns.
+                        <span className="grid justify-items-stretch gap-1.5">
                           <Button
                             size="sm"
                             onClick={() => setAction({ kind: 'approve', request: r })}

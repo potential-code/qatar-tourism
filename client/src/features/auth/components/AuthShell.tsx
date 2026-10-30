@@ -95,20 +95,21 @@ export function AuthShell({
           aria-hidden
           className="absolute -bottom-40 -start-40 -z-10 size-[420px] qt-glow text-sky/20"
         />
-        <div className="flex items-center justify-between gap-4">
-          <Link to="/" aria-label={t('shell.home')} className="lg:hidden">
-            <Logo withAcademy className="h-9" />
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          <Link to="/" aria-label={t('shell.home')} className="shrink-0 lg:hidden">
+            <Logo withAcademy className="h-8 sm:h-9" />
           </Link>
-          <LanguageSwitcher className="ms-auto shadow-sm" />
+          <LanguageSwitcher className="ms-auto shrink-0 shadow-sm" />
           <Link
             to="/"
-            className="group inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-ink/70 text-sm shadow-sm ring-1 ring-ink/5 backdrop-blur transition-colors hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-ink/70 text-sm shadow-sm ring-1 ring-ink/5 backdrop-blur transition-colors hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <ChevronLeft
               aria-hidden
               className="size-4 transition-transform group-hover:-translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:translate-x-0.5"
             />
-            {t('shell.back')}
+            {/* Narrow screens keep the arrow only; the label stays the link's accessible name. */}
+            <span className="max-sm:sr-only">{t('shell.back')}</span>
           </Link>
         </div>
         <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center py-10">
