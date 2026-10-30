@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { CalendarClock, History, MapPin, Users, Video } from 'lucide-react'
+import { CalendarClock, History, MapPin, Video } from 'lucide-react'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import {
   Sheet,
@@ -14,15 +14,8 @@ import { ErrorPanel } from '../../hub/components/QueryStates'
 import { StatusPill } from '../../hub/components/StatusPill'
 import { humanise, qDateTime, qTime } from '../../hub/utils/format'
 import { adminSessionDetailQuery, type SessionItem } from '../queries/sessions.queries'
+import { AdminRoster } from './AdminRoster'
 import { CapacityBar } from './CapacityBar'
-
-const ATTEND = {
-  attended: 'good',
-  late: 'warn',
-  absent: 'bad',
-  excused: 'muted',
-  pending: 'info',
-} as const
 
 export function SessionSheet({
   session,
@@ -103,7 +96,7 @@ export function SessionSheet({
                 </div>
               </dl>
               <CapacityBar
-                used={session.confirmed}
+                used={session.confirmed + session.offered}
                 capacity={session.capacity}
                 waitlist={session.waitlisted}
               />
@@ -144,50 +137,7 @@ export function SessionSheet({
                       </ol>
                     )}
                   </section>
-                  <section className="grid gap-2">
-                    <h3 className="flex items-center gap-2 text-sm font-medium text-ink">
-                      <Users className="size-4 text-teal" aria-hidden /> Roster (
-                      {query.data.roster.length})
-                    </h3>
-                    {query.data.roster.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">No bookings yet.</p>
-                    ) : (
-                      <ul className="divide-y rounded-xl border">
-                        {query.data.roster.map((r) => (
-                          <li
-                            key={r.rsvpId}
-                            className="flex items-center justify-between gap-3 px-4 py-2 text-sm"
-                          >
-                            <span>
-                              <span className="font-medium">{r.name}</span>{' '}
-                              <span className="text-xs text-muted-foreground tabular-nums">
-                                {r.learnerCode}
-                              </span>
-                            </span>
-                            <span className="flex gap-1.5">
-                              <StatusPill
-                                tone={
-                                  r.status === 'confirmed'
-                                    ? 'good'
-                                    : r.status === 'waitlisted'
-                                      ? 'warn'
-                                      : 'muted'
-                                }
-                              >
-                                {humanise(r.status)}
-                                {r.waitlistPosition ? ` #${r.waitlistPosition}` : ''}
-                              </StatusPill>
-                              {r.attendance ? (
-                                <StatusPill tone={ATTEND[r.attendance]}>
-                                  {humanise(r.attendance)}
-                                </StatusPill>
-                              ) : null}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </section>
+                  <AdminRoster roster={query.data.roster} />
                 </>
               )}
               <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">

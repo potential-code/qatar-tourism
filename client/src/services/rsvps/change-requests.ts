@@ -5,7 +5,8 @@ import { recordAudit } from '../audit.service'
 import { changeDecisionMessage } from '../notifications/copy'
 import { notify } from '../notifications.service'
 import { syncCapacityStatus } from '../sessions/store'
-import { promoteFromWaitlist, renumberWaitlist } from './waitlist'
+import { closeOpenOffer, offerFreedSeats } from './offers'
+import { renumberWaitlist } from './waitlist'
 
 /**
  * Late change requests (brief §6: changes inside 24 hours need admin review). A request is the
@@ -89,8 +90,10 @@ export function applyChangeRequestDecision(
   const kind = ((request.after ?? {}) as RequestAfter).kind ?? 'reschedule'
   const note = input.note?.trim() || null
   const previous = rsvp.status
+  let offersCreated = 0
   const release =
-    input.decision === 'approved' && (previous === 'confirmed' || previous === 'waitlisted')
+    input.decision === 'approved' &&
+    (previous === 'confirmed' || previous === 'waitlisted' || previous === 'offered')
 
   if (release) {
     updateRow(rsvp, {
@@ -98,8 +101,12 @@ export function applyChangeRequestDecision(
       waitlistPosition: null,
       cancelledReason: 'Released by the Academy after a late change request',
     })
-    if (previous === 'confirmed') promoteFromWaitlist(rsvp.sessionId, actor.id)
-    else renumberWaitlist(rsvp.sessionId)
+    if (previous === 'confirmed' || previous === 'offered') {
+      closeOpenOffer(rsvp.id, 'declined')
+      offersCreated = offerFreedSeats(rsvp.sessionId, actor.id).length
+    } else {
+      renumberWaitlist(rsvp.sessionId)
+    }
     syncCapacityStatus(rsvp.sessionId)
   }
   recordAudit(actor, {
@@ -123,5 +130,5 @@ export function applyChangeRequestDecision(
     ),
     actorId: actor.id,
   })
-  return { rsvpId, decision: input.decision, released: release, decidedAt: nowIso() }
+  return { rsvpId, decision: input.decision, released: release, offersCreated, decidedAt: nowIso() }
 }

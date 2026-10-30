@@ -23,7 +23,7 @@ export type ActiveBooking = {
   isCompletionGate: boolean
   startsAt: number
   endsAt: number
-  status: 'confirmed' | 'waitlisted'
+  status: 'confirmed' | 'waitlisted' | 'offered'
 }
 
 export type LearnerContext = {
@@ -93,7 +93,7 @@ export function loadLearnerContext(userId: string): LearnerContext {
 export type Eligibility =
   | { state: 'bookable' }
   | { state: 'waitlist' }
-  | { state: 'booked'; rsvpId: string; status: 'confirmed' | 'waitlisted' }
+  | { state: 'booked'; rsvpId: string; status: 'confirmed' | 'waitlisted' | 'offered' }
   | { state: 'locked'; code: BookingBlockCode; reason: string }
 
 const lock = (code: BookingBlockCode, reason: string): Eligibility => ({
@@ -160,7 +160,7 @@ export function evaluate(
       `This overlaps your booking for ${clash.sessionTitle} (${clash.sessionCode}).`,
     )
   }
-  if (card.confirmed >= s.capacity) return { state: 'waitlist' }
+  if (card.confirmed + card.offered >= s.capacity) return { state: 'waitlist' }
   return { state: 'bookable' }
 }
 

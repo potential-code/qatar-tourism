@@ -19,7 +19,7 @@ export const adminUserListQuery = z.object({
     .default(25),
   search: z.string().trim().max(100).optional(),
   role: z.enum(ROLES).optional(),
-  status: z.enum(['active', 'suspended', 'invited']).optional(),
+  status: z.enum(['active', 'suspended', 'invited', 'locked']).optional(),
   programme: z.enum(PROGRAMME_CODES).optional(),
 })
 export type AdminUserListQuery = z.infer<typeof adminUserListQuery>

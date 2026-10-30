@@ -3,6 +3,7 @@ import type { Tone } from '../../hub/components/StatusPill'
 export const ACCOUNT_STATUS: Record<string, { label: string; tone: Tone }> = {
   active: { label: 'Active', tone: 'good' },
   invited: { label: 'Invited', tone: 'info' },
+  locked: { label: 'Locked', tone: 'warn' },
   suspended: { label: 'Suspended', tone: 'bad' },
 }
 

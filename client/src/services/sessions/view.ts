@@ -5,7 +5,7 @@ const iso = (value: string) => new Date(value).toISOString()
 /** The wire shape of a session, used by learner and trainer screens alike. */
 export function toSessionView(card: SessionCard) {
   const s = card.session
-  const seatsRemaining = Math.max(0, s.capacity - card.confirmed)
+  const seatsRemaining = Math.max(0, s.capacity - card.confirmed - card.offered)
   return {
     id: s.id,
     code: s.code,
@@ -31,6 +31,7 @@ export function toSessionView(card: SessionCard) {
     capacity: s.capacity,
     confirmed: card.confirmed,
     waitlisted: card.waitlisted,
+    offered: card.offered,
     seatsRemaining,
     venue: s.venue,
     room: s.room,

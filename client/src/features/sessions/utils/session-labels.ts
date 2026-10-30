@@ -26,6 +26,7 @@ export const RSVP_LABEL: Record<string, string> = {
   waitlisted: 'Waitlisted',
   cancelled: 'Cancelled',
   moved: 'Moved',
+  offered: 'Seat offered',
 }
 
 export const PREREQUISITE_LABEL: Record<string, string> = {

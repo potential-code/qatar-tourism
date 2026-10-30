@@ -60,7 +60,13 @@ export function SignInPage({
           setUnverified({ email: value.email.trim().toLowerCase(), password: value.password })
           return
         }
-        setError(apiError?.code === 'ACCOUNT_SUSPENDED' ? apiError.message : t('signIn.invalid'))
+        setError(
+          apiError?.code === 'ACCOUNT_LOCKED'
+            ? t('locked')
+            : apiError?.code === 'ACCOUNT_SUSPENDED'
+              ? apiError.message
+              : t('signIn.invalid'),
+        )
         return
       }
       await afterSignIn({ mode, redirect })

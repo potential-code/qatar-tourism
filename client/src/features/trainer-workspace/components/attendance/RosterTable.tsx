@@ -26,7 +26,7 @@ export function RosterTable({
     >
       <table className="w-full min-w-[760px] text-sm">
         <caption id="roster-caption" className="sr-only">
-          Session roster. Scrolls sideways on small screens.
+          Confirmed session roster. Scrolls sideways on small screens.
         </caption>
         <thead className="bg-sand text-start text-xs text-muted-foreground">
           <tr>

@@ -1,5 +1,6 @@
 import { CalendarDays, List, SearchX } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Reveal } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -10,14 +11,17 @@ import { SessionCalendar } from './SessionCalendar'
 import { SessionCard } from './SessionCard'
 
 type FormatFilter = 'all' | 'in_person' | 'online'
-const FILTERS: { value: FormatFilter; label: string }[] = [
-  { value: 'all', label: 'All formats' },
-  { value: 'in_person', label: 'In person' },
-  { value: 'online', label: 'Live online' },
-]
+const FILTERS: FormatFilter[] = ['all', 'in_person', 'online']
 
 /** Bookable sessions in calendar and list views (brief §6). */
-export function SessionCatalogue({ sessions }: { sessions: CatalogueSession[] }) {
+export function SessionCatalogue({
+  sessions,
+  offerWindowHours,
+}: {
+  sessions: CatalogueSession[]
+  offerWindowHours: number
+}) {
+  const { t } = useTranslation('sessions')
   const [format, setFormat] = useState<FormatFilter>('all')
   const [openId, setOpenId] = useState<string | null>(null)
   const visible = useMemo(
@@ -32,22 +36,22 @@ export function SessionCatalogue({ sessions }: { sessions: CatalogueSession[] })
       <div className="flex flex-wrap items-center justify-between gap-3">
         <TabsList>
           <TabsTrigger value="list">
-            <List aria-hidden /> List
+            <List aria-hidden /> {t('catalogue.list')}
           </TabsTrigger>
           <TabsTrigger value="calendar">
-            <CalendarDays aria-hidden /> Calendar
+            <CalendarDays aria-hidden /> {t('catalogue.calendar')}
           </TabsTrigger>
         </TabsList>
-        <fieldset className="flex flex-wrap gap-1.5" aria-label="Filter by format">
-          {FILTERS.map((f) => (
+        <fieldset className="flex flex-wrap gap-1.5" aria-label={t('catalogue.filter')}>
+          {FILTERS.map((value) => (
             <Button
-              key={f.value}
+              key={value}
               size="sm"
-              variant={format === f.value ? 'default' : 'outline'}
-              aria-pressed={format === f.value}
-              onClick={() => setFormat(f.value)}
+              variant={format === value ? 'default' : 'outline'}
+              aria-pressed={format === value}
+              onClick={() => setFormat(value)}
             >
-              {f.label}
+              {value === 'all' ? t('catalogue.allFormats') : t(`format.${value}`)}
             </Button>
           ))}
         </fieldset>
@@ -56,11 +60,11 @@ export function SessionCatalogue({ sessions }: { sessions: CatalogueSession[] })
         <div className="rounded-xl border border-dashed bg-card/60">
           <EmptyState
             icon={SearchX}
-            title="No sessions match this filter"
-            description="Try another format to see more sessions."
+            title={t('catalogue.noMatchTitle')}
+            description={t('catalogue.noMatchBody')}
             action={
               <Button variant="outline" onClick={() => setFormat('all')}>
-                Show all formats
+                {t('catalogue.showAllFormats')}
               </Button>
             }
           />
@@ -81,7 +85,11 @@ export function SessionCatalogue({ sessions }: { sessions: CatalogueSession[] })
           </TabsContent>
         </>
       )}
-      <BookingDialog session={open} onOpenChange={(next) => !next && setOpenId(null)} />
+      <BookingDialog
+        session={open}
+        offerWindowHours={offerWindowHours}
+        onOpenChange={(next) => !next && setOpenId(null)}
+      />
     </Tabs>
   )
 }

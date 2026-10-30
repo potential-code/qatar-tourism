@@ -1,4 +1,5 @@
 import type { UserRow } from '@shared/types/db'
+import { accountStatusOf } from '@shared/utils/identity'
 import { db, indexBy } from '../api'
 
 /**
@@ -7,13 +8,14 @@ import { db, indexBy } from '../api'
  * copies the result before handing it out.
  */
 
-export type AccountStatus = 'active' | 'suspended' | 'invited'
+export type AccountStatus = 'active' | 'suspended' | 'invited' | 'locked'
 
 const desc = (a: string | null, b: string | null) => (b ?? '').localeCompare(a ?? '')
 
 export function accountStatus(user: UserRow): AccountStatus {
   const profile = db.profiles.find((p) => p.userId === user.id)
   if (profile?.suspended) return 'suspended'
+  if (profile && accountStatusOf(profile) === 'locked') return 'locked'
   return user.emailVerified ? 'active' : 'invited'
 }
 
@@ -39,6 +41,11 @@ function profileOf(userId: string) {
     goals: row.goals,
     status: row.status,
     suspended: row.suspended,
+    /** Active, locked or disabled (SPEC §5), kept apart from approval, certificate and licence state. */
+    accountStatus: accountStatusOf(row),
+    lockReason: row.lockReason,
+    lockedAt: row.lockedAt,
+    lockedBy: row.lockedBy ? (db.users.find((u) => u.id === row.lockedBy)?.name ?? null) : null,
     registeredAt: row.registeredAt,
     lastActivityAt: row.lastActivityAt,
     completeness: row.completeness,

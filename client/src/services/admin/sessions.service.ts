@@ -1,6 +1,7 @@
 import { RSVP_STATUSES } from '@shared/constants'
 import { sessionIdParam } from '@shared/schemas/admin-catalogue'
-import { db, delay, findOr404, indexBy, out, parseInput, requireRole } from '../api'
+import { commit, db, delay, findOr404, indexBy, out, parseInput, requireRole } from '../api'
+import { settleOffers } from '../rsvps/offers'
 import type { listChangeRequests } from '../rsvps.service'
 
 /**
@@ -16,6 +17,7 @@ const newestFirst = (a: { createdAt: string }, b: { createdAt: string }) =>
 export async function listSessions() {
   await delay()
   requireRole('admin')
+  if (settleOffers()) commit()
   const programmes = indexBy(db.programmes, (p) => p.id)
   const trainers = indexBy(db.trainerProfiles, (t) => t.id)
   const items = [...db.sessions]
@@ -50,6 +52,7 @@ export async function listSessions() {
           isCompletionGate: s.isCompletionGate,
           confirmed: count('confirmed'),
           waitlisted: count('waitlisted'),
+          offered: count('offered'),
           cancelledRsvps: count('cancelled'),
           reschedules: db.sessionReschedules.filter((r) => r.sessionId === s.id).length,
           present: records.filter((a) => a.status === 'attended' || a.status === 'late').length,
@@ -68,6 +71,10 @@ export async function getSession(sessionId: string) {
   await delay()
   requireRole('admin')
   parseInput(sessionIdParam, { sessionId }, 'param')
+  if (settleOffers()) commit()
+  const offers = new Map(
+    db.seatOffers.filter((o) => o.status === 'offered').map((o) => [o.rsvpId, o.expiresAt]),
+  )
   const s = findOr404(db.sessions, (row) => row.id === sessionId, 'Session not found')
   const profiles = indexBy(db.profiles, (p) => p.userId)
   const users = indexBy(db.users, (u) => u.id)
@@ -86,6 +93,7 @@ export async function getSession(sessionId: string) {
         name: profile?.fullName ?? '',
         status: r.status,
         waitlistPosition: r.waitlistPosition,
+        offerExpiresAt: offers.get(r.id) ?? null,
         bookedAt: r.bookedAt,
         attendance: attendance.get(r.id)?.status ?? null,
       }
@@ -130,5 +138,6 @@ export async function getSession(sessionId: string) {
 /** Late change requests (brief §6) live with the bookings they release. */
 export { decideChangeRequest, listChangeRequests } from '../rsvps.service'
 
+export type SessionDetail = Awaited<ReturnType<typeof getSession>>
 export type SessionItem = Awaited<ReturnType<typeof listSessions>>['items'][number]
 export type ChangeRequest = Awaited<ReturnType<typeof listChangeRequests>>['items'][number]

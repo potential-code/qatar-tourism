@@ -50,7 +50,7 @@ export function activeBookings(sessionId: string) {
         rsvp: r,
         rsvpId: r.id,
         learnerId: r.learnerId,
-        status: r.status as 'confirmed' | 'waitlisted',
+        status: r.status as 'confirmed' | 'waitlisted' | 'offered',
         position: r.waitlistPosition,
         learnerCode: profile?.learnerCode ?? null,
         fullName: profile?.fullName ?? null,
@@ -159,7 +159,7 @@ export function reschedule(actor: Viewer, scope: Scope, id: string, input: Sessi
 
   const bookings = activeBookings(id)
   const confirmed = bookings.filter((b) => b.status === 'confirmed')
-  const waitlisted = bookings.filter((b) => b.status === 'waitlisted')
+  const waitlisted = bookings.filter((b) => b.status !== 'confirmed')
   const clashing = new Set(
     learnerOverlaps(
       confirmed.map((b) => b.learnerId),
@@ -308,7 +308,7 @@ export function cancelSession(
 
   const bookings = activeBookings(id)
   const confirmed = bookings.filter((b) => b.status === 'confirmed')
-  const waitlisted = bookings.filter((b) => b.status === 'waitlisted')
+  const waitlisted = bookings.filter((b) => b.status !== 'confirmed')
   const previousStatus = session.status
 
   // History is kept: the session and its RSVPs stay, marked cancelled. No attendance or

@@ -12,6 +12,7 @@ import {
   userIdParam,
 } from '@shared/schemas/admin-users'
 import type { UserRow } from '@shared/types/db'
+import { accountStatusOf, learnerDisplayId } from '@shared/utils/identity'
 import type { z } from 'zod'
 import {
   ApiError,
@@ -25,6 +26,7 @@ import {
   nowIso,
   out,
   parseInput,
+  requireCapability,
   requireRole,
   updateRow,
 } from './api'
@@ -74,9 +76,11 @@ export async function listUsers(query: Partial<z.input<typeof adminUserListQuery
     const profile = profiles.get(user.id)
     const status: AccountStatus = profile?.suspended
       ? 'suspended'
-      : user.emailVerified
-        ? 'active'
-        : 'invited'
+      : profile && accountStatusOf(profile) === 'locked'
+        ? 'locked'
+        : user.emailVerified
+          ? 'active'
+          : 'invited'
     const codes = [...(enrolled.get(user.id) ?? [])].sort()
     if (q.role && user.role !== q.role) return []
     if (q.status && status !== q.status) return []
@@ -101,6 +105,7 @@ export async function listUsers(query: Partial<z.input<typeof adminUserListQuery
         role: user.role,
         createdAt: user.createdAt,
         learnerCode: profile?.learnerCode ?? null,
+        learnerDisplayId: profile ? learnerDisplayId(profile.learnerCode) : null,
         organisation: organisation?.name ?? null,
         jobTitle: profile?.jobTitle ?? null,
         lastActivityAt: profile?.lastActivityAt ?? null,
@@ -396,7 +401,11 @@ async function setSuspended(userId: string, suspended: boolean, reasonInput: str
   }
   const wasSuspended = profile.suspended
   // Keep the 29 Oct accountStatus in step: suspending disables, reactivating makes it active.
-  updateRow(profile, { suspended, accountStatus: suspended ? 'disabled' : 'active' })
+  updateRow(profile, {
+    suspended,
+    accountStatus: suspended ? 'disabled' : 'active',
+    ...(suspended ? {} : { lockReason: null, lockedAt: null, lockedBy: null }),
+  })
   // Suspension takes effect at once: a live session is ended.
   const sessionsRevoked = suspended ? revokeSessions(account.id) : 0
   recordAudit(actorOf(admin), {
@@ -417,6 +426,55 @@ export const suspendUser = (userId: string, reason: string) => setSuspended(user
 /** Reactivates a suspended account with a reason. */
 export const reactivateUser = (userId: string, reason: string) =>
   setSuspended(userId, false, reason)
+
+async function setLocked(userId: string, locked: boolean, reasonInput: string) {
+  await delay()
+  // Authorised administrators only (permission `account.lock`); trainers and learners get 403.
+  const admin = requireCapability('account.lock')
+  const account = findUser(userId)
+  const { reason } = parseInput(adminReasonInput, { reason: reasonInput })
+  const profile = db.profiles.find((p) => p.userId === account.id)
+  if (!profile || account.role !== 'learner') {
+    throw ApiError.badRequest('Only learner accounts can be locked or unlocked here')
+  }
+  const current = accountStatusOf(profile)
+  if (current === 'disabled') {
+    throw ApiError.conflict(
+      'ACCOUNT_DISABLED',
+      'This account is disabled. Reactivate it before locking or unlocking.',
+    )
+  }
+  if ((current === 'locked') === locked) {
+    throw ApiError.conflict(
+      locked ? 'ALREADY_LOCKED' : 'NOT_LOCKED',
+      locked ? 'The account is already locked' : 'The account is not locked',
+    )
+  }
+  // Only the account status changes: history, results, credentials and progress are untouched.
+  updateRow(
+    profile,
+    locked
+      ? { accountStatus: 'locked', lockReason: reason, lockedAt: nowIso(), lockedBy: admin.id }
+      : { accountStatus: 'active', lockReason: null, lockedAt: null, lockedBy: null },
+  )
+  const sessionsEnded = locked ? revokeSessions(account.id) : 0
+  recordAudit(actorOf(admin), {
+    action: locked ? 'account.lock' : 'account.unlock',
+    objectType: 'user',
+    objectId: account.id,
+    before: { accountStatus: current },
+    after: { accountStatus: locked ? 'locked' : 'active', sessionsEnded, simulated: true },
+    reason,
+  })
+  commit()
+  return { accountStatus: locked ? ('locked' as const) : ('active' as const), sessionsEnded }
+}
+
+/** Locks a learner account (reason required). Blocks sign-in and ends the live session; records are kept. */
+export const lockAccount = (userId: string, reason: string) => setLocked(userId, true, reason)
+
+/** Unlocks a learner account (reason required). Access returns with progress untouched. */
+export const unlockAccount = (userId: string, reason: string) => setLocked(userId, false, reason)
 
 /**
  * Changes an account's role with a reason. The trainer role needs a trainer profile first

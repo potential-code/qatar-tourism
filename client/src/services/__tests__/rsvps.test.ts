@@ -98,21 +98,26 @@ describe('booking, capacity, duplicates and waitlist', () => {
     expect(full?.status).toBe('full')
   })
 
-  test('cancelling a confirmed seat on a full session promotes the first waitlisted learner', async () => {
+  test('cancelling a confirmed seat on a full session offers the seat to the first waitlisted learner', async () => {
     const roster = rsvpsOn('SES-T03-2')
     const confirmed = roster.find((r) => r.status === 'confirmed')
     const first = roster.find((r) => r.status === 'waitlisted' && r.waitlistPosition === 1)
     expect(confirmed && first).toBeTruthy()
     actAs(db, confirmed?.learnerId as string)
-    await cancelBooking(confirmed?.id as string)
+    const res = await cancelBooking(confirmed?.id as string)
+    expect(res.offersCreated).toBe(1)
 
+    // The seat is reserved, not given away: the learner holds an offer, nobody is promoted.
     const after = rsvpsOn('SES-T03-2')
-    expect(after.find((r) => r.id === first?.id)?.status).toBe('confirmed')
-    expect(after.filter((r) => r.status === 'confirmed')).toHaveLength(20)
+    expect(after.find((r) => r.id === first?.id)?.status).toBe('offered')
+    expect(after.filter((r) => r.status === 'confirmed')).toHaveLength(19)
+    expect(after.filter((r) => r.status === 'offered')).toHaveLength(1)
     expect(after.filter((r) => r.status === 'waitlisted').map((r) => r.waitlistPosition)).toEqual([
       1, 2,
     ])
-    const told = db.notifications.filter((n) => n.eventId === `evt-waitlist-promoted-${first?.id}`)
+    const offer = db.seatOffers.find((o) => o.rsvpId === first?.id)
+    expect(offer?.status).toBe('offered')
+    const told = db.notifications.filter((n) => n.eventId === `evt-seat-offer-${offer?.id}`)
     expect(told).toHaveLength(2)
   })
 })

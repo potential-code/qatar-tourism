@@ -1,1 +1,237 @@
-{}
+{
+  "qatarTime": "Qatar time",
+  "yourTime": "your time",
+  "range": "{{date}}, {{from}} to {{to}} {{zone}}",
+  "program": "Program {{code}}",
+  "close": "Close",
+  "tryAgain": "Try again",
+  "hero": {
+    "title": "My sessions",
+    "introA": "Book a trainer-led session in person or live online, then manage it here. All times are Qatar time.",
+    "introB": "Join optional live clinics with Academy trainers. All times are Qatar time.",
+    "level1Done": "Level 1 complete. You are eligible to book.",
+    "level1Todo": "Finish Level 1 to unlock booking.",
+    "upcoming": "Your upcoming",
+    "open": "Open to book",
+    "next": "Next session",
+    "none": "None booked",
+    "imageAlt": "A tour guide talking with visitors in Doha"
+  },
+  "page": {
+    "loadError": "Your sessions could not be loaded",
+    "loading": "Loading sessions",
+    "error": "This could not be loaded",
+    "connectionError": "The connection to the Academy service failed. Check your network and try again."
+  },
+  "mine": {
+    "heading": "Your bookings",
+    "emptyTitle": "No upcoming sessions yet",
+    "emptyBody": "Book a session below. Your confirmed seat appears here straight away.",
+    "browse": "Browse sessions",
+    "history": "Booking history ({{count}})"
+  },
+  "browse": {
+    "heading": "Book a session",
+    "intro": "Sessions in your programmes, with seats remaining and any prerequisite. A locked session tells you what is missing.",
+    "noProgrammesTitle": "You are not enrolled in a programme yet",
+    "noProgrammesBody": "Enrol in a programme to see its sessions here.",
+    "noSessionsTitle": "No upcoming sessions are open right now",
+    "noSessionsBody": "New sessions are published by Academy trainers. Check back soon.",
+    "showing": "Showing Program {{code}} sessions.",
+    "showAll": "Show all programmes"
+  },
+  "bNotice": {
+    "title": "Program B has no required sessions",
+    "onlyB": "Visitor Service Essentials is completed entirely self-paced, so you never need to book a session to finish it.",
+    "both": "Your Program B journey is self-paced and never waits on a session.",
+    "tail": "The optional clinics below add live practice with a trainer. Booking one does not change your completion requirements."
+  },
+  "catalogue": {
+    "list": "List",
+    "calendar": "Calendar",
+    "filter": "Filter by format",
+    "allFormats": "All formats",
+    "noMatchTitle": "No sessions match this filter",
+    "noMatchBody": "Try another format to see more sessions.",
+    "showAllFormats": "Show all formats"
+  },
+  "format": {
+    "in_person": "In person",
+    "online": "Live online"
+  },
+  "calendar": {
+    "marked": "Marked days have sessions. Dates follow Qatar time.",
+    "hasSessions": ", has sessions",
+    "chooseDay": "Choose a day",
+    "emptyTitle": "No sessions on this day",
+    "emptyBody": "Pick a marked day in the calendar, or switch to the list to see every session."
+  },
+  "card": {
+    "optional": "Optional session",
+    "seatsLeft": "of {{capacity}} seats left",
+    "details": "Details",
+    "aria": "{{title}}, {{code}}. View details",
+    "ariaLocked": "{{title}}, {{code}}. Locked. View details",
+    "fullWaitlist": "Session full — join waitlist"
+  },
+  "location": {
+    "venueTbc": "Venue to be confirmed",
+    "onlineTbc": "Online room to be confirmed",
+    "demoRoom": "Demo meeting room {{ref}}"
+  },
+  "duration": {
+    "minutes": "{{count}} minutes",
+    "oneHour": "1 hour",
+    "hours": "{{count}} hours"
+  },
+  "facts": {
+    "dateTime": "Date and Qatar time",
+    "duration": "Duration",
+    "seats": "Seats",
+    "prerequisite": "Prerequisite",
+    "trainer": "Trainer",
+    "remaining": "{{left}} of {{capacity}} remaining",
+    "full": "Full",
+    "fullWaitlist": "Full, {{count}} on the waitlist",
+    "reserved": "{{count}} reserved by an offer",
+    "none": "None. Optional session",
+    "level1": "Program A Level 1 complete",
+    "simulatedRoom": "Simulated online classroom"
+  },
+  "eligibility": {
+    "open": "Open for booking",
+    "full": "Session full — join waitlist",
+    "booked": "You are booked",
+    "onWaitlist": "You are on the waitlist",
+    "offered": "A seat is offered to you",
+    "locked": "Locked"
+  },
+  "policy": {
+    "title": "Cancellation and reschedule policy.",
+    "default": "Self-service changes until 24 hours before the session. Later changes request admin review.",
+    "note": "Illustrative demo default, configurable by the Academy."
+  },
+  "booking": {
+    "confirm": "Confirm booking",
+    "confirming": "Confirming",
+    "join": "Session full — join waitlist",
+    "joining": "Joining",
+    "confirmed": "Booking confirmed: {{title}}. It is now in My sessions.",
+    "waitlisted": "You are number {{position}} on the waitlist for {{title}}.",
+    "failed": "The booking could not be saved. Try again.",
+    "fullNote": "This session is full. Join the waitlist: when a seat opens, the first eligible approved learner is offered it for {{hours}} hours, and you will be told here and in your notifications."
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "waitlisted": "Waitlist position {{position}}",
+    "offered": "Seat offered",
+    "cancelled": "Cancelled",
+    "moved": "Moved"
+  },
+  "attendance": {
+    "pending": "Pending",
+    "attended": "Attended",
+    "late": "Late",
+    "absent": "Absent",
+    "excused": "Excused"
+  },
+  "myBooking": {
+    "rescheduled": "Rescheduled by your trainer",
+    "movedFrom": "Moved from {{from}}. Reason: {{reason}} If the new time does not work for you, choose another eligible session.",
+    "academyCancelled": "This session was cancelled by the Academy. {{reason}} Your learning progress is saved. Choose another available session below.",
+    "youMoved": "You moved this booking to another session.",
+    "attendance": "Attendance:",
+    "score": "Session score: {{score}}/100",
+    "feedback": "Trainer feedback: {{text}}",
+    "trainerLine": "{{format}}, {{location}}. Trainer: {{name}}",
+    "reschedule": "Reschedule",
+    "cancel": "Cancel booking",
+    "requestChange": "Request a change",
+    "within24": "Starts within 24 hours. Changes need admin review.",
+    "leaveWaitlist": "Leave waitlist",
+    "leaving": "Leaving",
+    "left": "You left the waitlist.",
+    "leaveFailed": "You could not leave the waitlist. Try again.",
+    "waitlistNote": "A waitlisted place is not a booking and is not counted as attending. If a seat opens and you are next, you will be offered it here.",
+    "positionLine": "Your position: {{position}}"
+  },
+  "offer": {
+    "title": "A seat is reserved for you",
+    "body": "A seat opened on this session. Accept it before the offer ends, or it goes to the next learner.",
+    "expires": "Offer ends {{when}}",
+    "hoursLeft": "{{hours}} h {{minutes}} min left",
+    "minutesLeft": "{{minutes}} min left",
+    "expired": "This offer has expired",
+    "accept": "Accept seat",
+    "decline": "Decline",
+    "working": "Saving",
+    "accepted": "Seat accepted. Your booking is confirmed.",
+    "declined": "Offer declined. The seat goes to the next learner.",
+    "failed": "The answer could not be saved. Try again.",
+    "gone": "This offer has expired and the seat has gone to the next learner."
+  },
+  "cancelDialog": {
+    "cancelTitle": "Cancel this booking?",
+    "requestTitle": "Request a change",
+    "cancelBody": "Your seat is released for another learner. You can book another session at any time.",
+    "requestBody": "This session starts within 24 hours, so changes need admin review.",
+    "whatNeed": "What do you need?",
+    "cancelPlace": "Cancel my place",
+    "moveTime": "Move to another time",
+    "reasonOptional": "Reason (optional)",
+    "reasonRequest": "Reason for the request",
+    "reasonShort": "Tell the Academy why you need the change (at least 5 characters).",
+    "keep": "Keep booking",
+    "sending": "Sending",
+    "send": "Send for admin review",
+    "cancelled": "Booking cancelled. The seat has been released.",
+    "cancelledOffer": "Booking cancelled. Seat offer created — demo email and in-app notification added to the notification log.",
+    "already": "You have already asked for a change to this booking. The Academy will follow up.",
+    "requested": "Request sent for admin review. Your booking stays in place until the Academy replies.",
+    "failed": "The change could not be sent. Try again."
+  },
+  "moveDialog": {
+    "title": "Reschedule your booking",
+    "current": "Currently booked: {{title}}, {{when}}.",
+    "none": "There is no other session in this programme right now. Keep your current booking or check again later.",
+    "choose": "Choose a replacement session",
+    "fullBlocked": "Full. Moving needs a confirmed seat.",
+    "haveThis": "You already have this session.",
+    "seatsLeft": "{{count}} seats left",
+    "keep": "Keep current booking",
+    "moving": "Moving",
+    "confirm": "Confirm new session",
+    "moved": "Booking moved. Your new seat is confirmed and the previous seat was released.",
+    "failed": "The move could not be saved. Your current seat is kept."
+  },
+  "requests": {
+    "heading": "Your requests",
+    "intro": "Enrolment and external-certificate requests that need Academy approval.",
+    "empty": "You have no requests at the moment.",
+    "enrolment": "Enrolment in Program {{code}}",
+    "certificate": "External certificate: {{title}}",
+    "submitted": "Submitted {{when}}",
+    "reasonLabel": "Reason from the Academy:",
+    "nextLabel": "Next step:",
+    "state": {
+      "pending": "Pending review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "info_requested": "More information needed"
+    },
+    "next": {
+      "pending": "The Academy is reviewing your request. You do not need to do anything yet.",
+      "approved": "Approved. Your programme is open. Book a session below. A full session puts you on its waitlist.",
+      "rejected": "Fix the issue described above and send a new request.",
+      "info_requested": "Reply with the information the Academy asked for."
+    },
+    "requestA": "Request Program A enrolment",
+    "requestSent": "Request {{code}} sent. It is now Pending review.",
+    "requestFailed": "The request could not be sent. Try again.",
+    "reply": "Reply to the Academy",
+    "replyLabel": "Your reply",
+    "replySend": "Send reply",
+    "replySent": "Reply sent. The request is back in review.",
+    "cancelReply": "Cancel"
+  }
+}

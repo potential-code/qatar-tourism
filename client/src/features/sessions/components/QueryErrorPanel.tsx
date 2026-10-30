@@ -1,4 +1,5 @@
 import { AlertTriangle, RotateCcw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ApiError } from '@/lib/api-error'
@@ -7,26 +8,24 @@ import { ApiError } from '@/lib/api-error'
 export function QueryErrorPanel({
   error,
   onRetry,
-  title = 'This could not be loaded',
+  title,
 }: {
   error: unknown
   onRetry: () => void
   title?: string
 }) {
-  const message =
-    error instanceof ApiError
-      ? error.message
-      : 'The connection to the Academy service failed. Check your network and try again.'
+  const { t } = useTranslation('sessions')
+  const message = error instanceof ApiError ? error.message : t('page.connectionError')
   return (
     <div className="rounded-xl border border-destructive/20 bg-card">
       <EmptyState
         icon={AlertTriangle}
         variant="destructive"
-        title={title}
+        title={title ?? t('page.error')}
         description={message}
         action={
           <Button variant="outline" onClick={onRetry}>
-            <RotateCcw aria-hidden /> Try again
+            <RotateCcw aria-hidden /> {t('tryAgain')}
           </Button>
         }
       />

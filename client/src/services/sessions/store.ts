@@ -9,7 +9,8 @@ import { ApiError, db, updateRow } from '../api'
  * advisory locks are not needed: a check and the write that follows it can never interleave.
  */
 
-export const ACTIVE_RSVP = ['confirmed', 'waitlisted'] as const
+/** `offered` is a waitlisted learner holding a seat offer: the booking is live and the seat reserved. */
+export const ACTIVE_RSVP = ['confirmed', 'waitlisted', 'offered'] as const
 export type ActiveRsvpStatus = (typeof ACTIVE_RSVP)[number]
 
 export const isActiveRsvp = (rsvp: Pick<RsvpRow, 'status'>): boolean =>
@@ -33,26 +34,30 @@ export interface SessionCard {
   programmeTitle: string
   confirmed: number
   waitlisted: number
+  /** Seats reserved by a pending seat offer. They count as occupied. */
+  offered: number
 }
 
-/** Confirmed and waitlisted counts for one session. */
+/** Confirmed, waitlisted and offered (reserved) counts for one session. */
 export function countActive(sessionId: string) {
   let confirmed = 0
   let waitlisted = 0
+  let offered = 0
   for (const r of db.rsvps) {
     if (r.sessionId !== sessionId) continue
     if (r.status === 'confirmed') confirmed += 1
     else if (r.status === 'waitlisted') waitlisted += 1
+    else if (r.status === 'offered') offered += 1
   }
-  return { confirmed, waitlisted }
+  return { confirmed, waitlisted, offered }
 }
 
 /** Seat counts for every session in one pass. */
 function countsBySession() {
-  const counts = new Map<string, { confirmed: number; waitlisted: number }>()
+  const counts = new Map<string, { confirmed: number; waitlisted: number; offered: number }>()
   for (const r of db.rsvps) {
-    if (r.status !== 'confirmed' && r.status !== 'waitlisted') continue
-    const entry = counts.get(r.sessionId) ?? { confirmed: 0, waitlisted: 0 }
+    if (r.status !== 'confirmed' && r.status !== 'waitlisted' && r.status !== 'offered') continue
+    const entry = counts.get(r.sessionId) ?? { confirmed: 0, waitlisted: 0, offered: 0 }
     entry[r.status] += 1
     counts.set(r.sessionId, entry)
   }
@@ -70,7 +75,7 @@ export function selectSessionCards(where: (session: SessionRow) => boolean = () 
     const trainer = trainers.get(session.trainerId)
     const programme = programmes.get(session.programmeId)
     if (!trainer || !programme) continue
-    const count = counts.get(session.id) ?? { confirmed: 0, waitlisted: 0 }
+    const count = counts.get(session.id) ?? { confirmed: 0, waitlisted: 0, offered: 0 }
     cards.push({
       session,
       trainerName: trainer.fullName,
@@ -103,8 +108,9 @@ export function findSession(id: string): SessionRow {
 export function syncCapacityStatus(sessionId: string) {
   const session = findSession(sessionId)
   if (session.status !== 'published' && session.status !== 'full') return session.status
-  const { confirmed } = countActive(sessionId)
-  const next = confirmed >= session.capacity ? 'full' : 'published'
+  // A reserved (offered) seat is occupied, so the session stays full while an offer is open.
+  const { confirmed, offered } = countActive(sessionId)
+  const next = confirmed + offered >= session.capacity ? 'full' : 'published'
   if (next !== session.status) updateRow(session, { status: next })
   return next
 }
