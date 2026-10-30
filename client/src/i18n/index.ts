@@ -1,13 +1,21 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import arAssessments from './locales/ar/assessments.json'
 import arAuth from './locales/ar/auth.json'
 import arCommon from './locales/ar/common.json'
+import arContent from './locales/ar/content.json'
 import arLearner from './locales/ar/learner.json'
 import arPublic from './locales/ar/public.json'
+import arRecord from './locales/ar/record.json'
+import arSessions from './locales/ar/sessions.json'
+import enAssessments from './locales/en/assessments.json'
 import enAuth from './locales/en/auth.json'
 import enCommon from './locales/en/common.json'
+import enContent from './locales/en/content.json'
 import enLearner from './locales/en/learner.json'
 import enPublic from './locales/en/public.json'
+import enRecord from './locales/en/record.json'
+import enSessions from './locales/en/sessions.json'
 
 /**
  * English and Arabic (29 Oct update). Public site, auth and the learner portal follow the
@@ -22,7 +30,16 @@ export const SUPPORTED_LANGUAGES = ['en', 'ar'] as const
 export type Language = (typeof SUPPORTED_LANGUAGES)[number]
 
 /** One namespace per area, so each lane edits its own JSON file. */
-export const NAMESPACES = ['common', 'public', 'auth', 'learner'] as const
+export const NAMESPACES = [
+  'common',
+  'public',
+  'auth',
+  'learner',
+  'record',
+  'sessions',
+  'assessments',
+  'content',
+] as const
 export type Namespace = (typeof NAMESPACES)[number]
 
 export const LANGUAGE_DIRECTION: Record<Language, 'ltr' | 'rtl'> = { en: 'ltr', ar: 'rtl' }
@@ -30,8 +47,26 @@ export const LANGUAGE_DIRECTION: Record<Language, 'ltr' | 'rtl'> = { en: 'ltr', 
 export const LANGUAGE_STORAGE_KEY = 'qta-lang'
 
 export const resources = {
-  en: { common: enCommon, public: enPublic, auth: enAuth, learner: enLearner },
-  ar: { common: arCommon, public: arPublic, auth: arAuth, learner: arLearner },
+  en: {
+    common: enCommon,
+    public: enPublic,
+    auth: enAuth,
+    learner: enLearner,
+    record: enRecord,
+    sessions: enSessions,
+    assessments: enAssessments,
+    content: enContent,
+  },
+  ar: {
+    common: arCommon,
+    public: arPublic,
+    auth: arAuth,
+    learner: arLearner,
+    record: arRecord,
+    sessions: arSessions,
+    assessments: arAssessments,
+    content: arContent,
+  },
 } as const
 
 export const isLanguage = (value: unknown): value is Language =>

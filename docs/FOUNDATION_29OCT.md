@@ -88,7 +88,9 @@ children), `InProgress`.
 
 ## i18n
 
-Languages `en`, `ar`. Namespaces `common` (default), `public`, `auth`, `learner`, one JSON file
+Languages `en`, `ar`. Namespaces `common` (default), `public`, `auth`, `learner`, plus one per
+feature lane: `record` (learner record and certificates), `sessions` (learner booking and waitlist),
+`assessments` (learner assessment taking), `content` (course player and packages). One JSON file
 each under `client/src/i18n/locales/en/` and `ar/`.
 
 - Use `const { t } = useTranslation('public')` then `t('nav.signIn')`. Cross-namespace:
