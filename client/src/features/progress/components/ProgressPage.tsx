@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { CalendarCheck, Gauge, MessagesSquare, TrendingUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { StatCard } from '@/components/data/StatCard'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/motion/Reveal'
@@ -22,12 +23,13 @@ export function ProgressPage() {
 }
 
 function ProgressSkeleton() {
+  const { t } = useTranslation('learner')
   return (
     <div
       className="flex flex-col gap-6"
       role="status"
       aria-busy="true"
-      aria-label="Loading progress"
+      aria-label={t('progress.page.loading')}
     >
       <Skeleton className="h-14 w-64" />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -42,11 +44,12 @@ function ProgressSkeleton() {
 
 function Progress({ ctx }: { ctx: ProgrammeContext }) {
   const journey = useQuery(journeyQuery(ctx.programme))
+  const { t } = useTranslation('learner')
   const header = (
     <PageHeader
       image="progress"
-      title="Progress"
-      description="Knowledge results, practice and trainer-marked work, kept separate so each tells its own story."
+      title={t('progress.page.title')}
+      description={t('progress.page.description')}
       actions={
         <ProgrammeSwitcher
           enrolments={ctx.enrolments}
@@ -67,27 +70,31 @@ function Progress({ ctx }: { ctx: ProgrammeContext }) {
   }
   const data = journey.data
   const { baseline, post, gainPoints } = data.assessments
-  const postLabel = ctx.programme === 'A' ? 'Final' : 'Post'
+  const postLabel = ctx.programme === 'A' ? t('progress.page.final') : t('progress.page.post')
 
   return (
     <div className="flex flex-col gap-8">
       {header}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Programme progress"
+          label={t('progress.page.programmeProgress')}
           value={data.enrolment.progressPercent}
           suffix="%"
           icon={Gauge}
           description={
             data.remainingMinutes > 0
-              ? `About ${minutesLabel(data.remainingMinutes)} remaining`
-              : 'Every required step complete'
+              ? t('progress.page.remaining', { time: minutesLabel(data.remainingMinutes) })
+              : t('progress.page.allDone')
           }
         />
         <StatCard
-          label="Baseline"
+          label={t('progress.page.baseline')}
           value={
-            baseline ? baseline.score : <span className="text-2xl text-muted-foreground">None</span>
+            baseline ? (
+              baseline.score
+            ) : (
+              <span className="text-2xl text-muted-foreground">{t('progress.page.none')}</span>
+            )
           }
           suffix={baseline ? '%' : undefined}
           icon={TrendingUp}
@@ -96,14 +103,21 @@ function Progress({ ctx }: { ctx: ProgrammeContext }) {
         <StatCard
           label={postLabel}
           value={
-            post ? post.score : <span className="text-2xl text-muted-foreground">Not yet</span>
+            post ? (
+              post.score
+            ) : (
+              <span className="text-2xl text-muted-foreground">{t('progress.page.notYet')}</span>
+            )
           }
           suffix={post ? '%' : undefined}
           icon={TrendingUp}
           delta={
             gainPoints !== null
               ? {
-                  value: `${gainPoints >= 0 ? '+' : ''}${gainPoints} percentage points`,
+                  value: t('progress.page.points', {
+                    sign: gainPoints >= 0 ? '+' : '',
+                    n: gainPoints,
+                  }),
                   direction: gainPoints > 0 ? 'up' : gainPoints < 0 ? 'down' : 'flat',
                 }
               : undefined
@@ -111,43 +125,47 @@ function Progress({ ctx }: { ctx: ProgrammeContext }) {
         />
         {ctx.programme === 'A' ? (
           <StatCard
-            label="Trainer session score"
+            label={t('progress.page.sessionScore')}
             value={
               data.session.bestFinalScore ?? (
-                <span className="text-2xl text-muted-foreground">Not yet</span>
+                <span className="text-2xl text-muted-foreground">{t('progress.page.notYet')}</span>
               )
             }
             suffix={data.session.bestFinalScore !== null ? '/100' : undefined}
             icon={CalendarCheck}
             tone="maroon"
-            description="Pass mark 70, attended sessions only"
+            description={t('progress.page.sessionNote')}
           />
         ) : (
           <StatCard
-            label="Practice best"
+            label={t('progress.page.practiceBest')}
             value={
-              data.practice.best ?? <span className="text-2xl text-muted-foreground">None yet</span>
+              data.practice.best ?? (
+                <span className="text-2xl text-muted-foreground">{t('progress.page.noneYet')}</span>
+              )
             }
             suffix={data.practice.best !== null ? '/100' : undefined}
             icon={MessagesSquare}
             tone="maroon"
-            description="Simulated AI practice, formative only"
+            description={t('progress.page.practiceNote')}
           />
         )}
       </div>
 
       {data.gates.length > 0 ? (
         <Reveal className="rounded-xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-5 font-display text-2xl font-normal text-ink">Levels and stages</h2>
+          <h2 className="mb-5 font-display text-2xl font-normal text-ink">
+            {t('learning.page.levelsAndStages')}
+          </h2>
           <StageMap gates={data.gates} />
         </Reveal>
       ) : null}
 
       <Reveal className="rounded-xl border bg-white p-6 shadow-sm">
-        <h2 className="font-display text-2xl font-normal text-ink">Competencies</h2>
-        <p className="mb-5 text-sm text-muted-foreground">
-          Points out of 20 per competency in each knowledge assessment.
-        </p>
+        <h2 className="font-display text-2xl font-normal text-ink">
+          {t('progress.page.competencies')}
+        </h2>
+        <p className="mb-5 text-sm text-muted-foreground">{t('progress.page.competenciesNote')}</p>
         <CompetencyChart
           data={data.competencies}
           postLabel={postLabel}

@@ -1,4 +1,5 @@
 import { RefreshCw, TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ApiError } from '@/lib/api-error'
@@ -7,27 +8,25 @@ import { ApiError } from '@/lib/api-error'
 export function LoadError({
   error,
   onRetry,
-  title = 'This could not be loaded',
+  title,
 }: {
   error: unknown
   onRetry?: () => void
   title?: string
 }) {
-  const message =
-    error instanceof ApiError
-      ? error.message
-      : 'Check your connection and try again. Your progress is saved.'
+  const { t } = useTranslation('learner')
+  const message = error instanceof ApiError ? error.message : t('learning.error.generic')
   return (
     <div role="alert" className="rounded-xl border border-destructive/20 bg-white">
       <EmptyState
         icon={TriangleAlert}
         variant="destructive"
-        title={title}
+        title={title ?? t('learning.error.title')}
         description={message}
         action={
           onRetry ? (
             <Button variant="outline" onClick={onRetry}>
-              <RefreshCw aria-hidden /> Try again
+              <RefreshCw aria-hidden /> {t('learning.error.retry')}
             </Button>
           ) : undefined
         }

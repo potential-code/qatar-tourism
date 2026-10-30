@@ -1,10 +1,12 @@
 import { Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 /** Three-step progress with names; the current step is announced to screen readers. */
 export function WizardProgress({ steps, current }: { steps: readonly string[]; current: number }) {
+  const { t } = useTranslation('learner')
   return (
-    <ol className="grid grid-cols-3 gap-2" aria-label="Profile steps">
+    <ol className="grid grid-cols-3 gap-2" aria-label={t('profile.common.stepsLabel')}>
       {steps.map((label, index) => {
         const n = index + 1
         const done = n < current
@@ -27,7 +29,7 @@ export function WizardProgress({ steps, current }: { steps: readonly string[]; c
             >
               {done ? <Check aria-hidden className="size-3.5 text-teal" /> : null}
               <span className="hidden sm:inline">{label}</span>
-              <span className="sm:hidden">Step {n}</span>
+              <span className="sm:hidden">{t('profile.common.stepN', { n })}</span>
             </span>
           </li>
         )

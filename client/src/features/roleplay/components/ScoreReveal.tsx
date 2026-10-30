@@ -1,5 +1,6 @@
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
 import type { AttemptView } from '../types'
 import { scoreBand } from '../utils/labels'
@@ -12,10 +13,12 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 /** Animated score ring and the brief's summary lines: strength, improve, suggested retry. */
 export function ScoreReveal({ attempt }: { attempt: AttemptView }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const progress = useMotionValue(reduce ? attempt.totalPercent : 0)
   const offset = useTransform(progress, (v) => CIRCUMFERENCE * (1 - v / 100))
   const label = useTransform(progress, (v) => Math.round(v).toString())
   const band = scoreBand(attempt.totalPercent)
+  const dir = i18n.dir()
 
   useEffect(() => {
     if (reduce) {
@@ -31,9 +34,9 @@ export function ScoreReveal({ attempt }: { attempt: AttemptView }) {
   }, [attempt.totalPercent, progress, reduce])
 
   const lines = [
-    { label: 'Strength', text: attempt.strength },
-    { label: 'Improve', text: attempt.improve },
-    { label: 'Suggested retry', text: attempt.retry },
+    { label: t('roleplay.score.strength'), text: attempt.strength },
+    { label: t('roleplay.score.improve'), text: attempt.improve },
+    { label: t('roleplay.score.retry'), text: attempt.retry },
   ]
 
   return (
@@ -69,14 +72,17 @@ export function ScoreReveal({ attempt }: { attempt: AttemptView }) {
         <div
           className="absolute inset-0 flex flex-col items-center justify-center"
           role="img"
-          aria-label={`Score ${attempt.totalPercent} out of 100, ${band.label}`}
+          aria-label={t('roleplay.score.aria', {
+            score: attempt.totalPercent,
+            band: t(`roleplay.bands.${band.key}`),
+          })}
         >
           <motion.span className="font-display text-6xl leading-none font-light tabular-nums text-ink">
             {label}
           </motion.span>
-          <span className="mt-1 text-xs text-muted-foreground">out of 100</span>
+          <span className="mt-1 text-xs text-muted-foreground">{t('roleplay.score.outOf')}</span>
           <span className="mt-2 rounded-full bg-teal-mist px-2.5 py-0.5 text-xs font-medium text-teal-deep">
-            {band.label}
+            {t(`roleplay.bands.${band.key}`)}
           </span>
         </div>
       </div>
@@ -93,7 +99,7 @@ export function ScoreReveal({ attempt }: { attempt: AttemptView }) {
           {lines.map((line, i) => (
             <motion.div
               key={line.label}
-              initial={reduce ? false : { opacity: 0, x: -8 }}
+              initial={reduce ? false : { opacity: 0, x: dir === 'rtl' ? 8 : -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.7 + i * 0.12, duration: 0.45, ease: easeOut }}
               className="grid gap-0.5 sm:grid-cols-[140px_minmax(0,1fr)] sm:gap-3"

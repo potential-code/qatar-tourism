@@ -1,6 +1,7 @@
 import { Keyboard, Mic, RotateCcw, SendHorizontal, Square } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { spring } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -37,6 +38,7 @@ export function VoiceComposer({
   onTypeInstead,
 }: VoiceComposerProps) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   const mic = useMicrophone()
   const speech = useSpeechRecognition()
   const [stage, setStage] = useState<Stage>(mic.permission === 'granted' ? 'ready' : 'intro')
@@ -118,16 +120,13 @@ export function VoiceComposer({
               <Mic aria-hidden className="size-5" />
             </span>
             <div className="grid flex-1 gap-1">
-              <p className="font-medium text-ink">Voice practice uses your microphone</p>
-              <p className="text-sm text-muted-foreground">
-                Nothing is recorded until you press Record. You can check and edit the transcript
-                before sending it.
-              </p>
+              <p className="font-medium text-ink">{t('roleplay.voice.introTitle')}</p>
+              <p className="text-sm text-muted-foreground">{t('roleplay.voice.introBody')}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={allow}>Allow microphone</Button>
+              <Button onClick={allow}>{t('roleplay.voice.allow')}</Button>
               <Button variant="ghost" onClick={onTypeInstead}>
-                <Keyboard aria-hidden /> Type instead
+                <Keyboard aria-hidden /> {t('roleplay.voice.typeInstead')}
               </Button>
             </div>
           </motion.div>
@@ -149,18 +148,13 @@ export function VoiceComposer({
               className="flex size-16 items-center justify-center rounded-full bg-maroon text-white shadow-md transition-colors hover:bg-maroon-deep focus-visible:ring-4 focus-visible:ring-maroon/30 focus-visible:outline-none disabled:opacity-50"
             >
               <Mic aria-hidden className="size-6" />
-              <span className="sr-only">Record your reply</span>
+              <span className="sr-only">{t('roleplay.voice.record')}</span>
             </motion.button>
             <p className="text-sm text-muted-foreground">
-              {disabled
-                ? 'Wait for the visitor to finish.'
-                : 'Press Record, speak your reply, then press Stop.'}
+              {disabled ? t('roleplay.voice.wait') : t('roleplay.voice.pressRecord')}
             </p>
             {!speech.supported ? (
-              <p className="text-xs text-muted-foreground">
-                Speech to text is not available in this browser. After recording, type what you
-                said.
-              </p>
+              <p className="text-xs text-muted-foreground">{t('roleplay.voice.noSpeech')}</p>
             ) : null}
           </motion.div>
         ) : stage === 'recording' ? (
@@ -179,19 +173,19 @@ export function VoiceComposer({
                   animate={reduce ? undefined : { opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1.2, repeat: Number.POSITIVE_INFINITY }}
                 />
-                Recording{' '}
+                {t('roleplay.voice.recording')}{' '}
                 <span className="tabular-nums text-muted-foreground">{clock(seconds)}</span>
               </p>
               <LevelMeter level={mic.level} />
               <Button variant="secondary" onClick={stop}>
-                <Square aria-hidden className="fill-current" /> Stop
+                <Square aria-hidden className="fill-current" /> {t('roleplay.voice.stop')}
               </Button>
             </div>
             <p className="min-h-6 text-sm text-muted-foreground italic" aria-live="polite">
               {draft ||
                 (speech.supported
-                  ? 'Listening...'
-                  : 'Recording. Type what you said after you stop.')}
+                  ? t('roleplay.voice.listening')
+                  : t('roleplay.voice.recordingTypeAfter'))}
             </p>
           </motion.div>
         ) : (
@@ -202,7 +196,7 @@ export function VoiceComposer({
             exit={{ opacity: 0 }}
             className="grid gap-3"
           >
-            <Label htmlFor="voice-transcript">Your transcript (edit before sending)</Label>
+            <Label htmlFor="voice-transcript">{t('roleplay.voice.transcriptLabel')}</Label>
             <Textarea
               id="voice-transcript"
               value={draft}
@@ -211,16 +205,17 @@ export function VoiceComposer({
               rows={3}
               placeholder={
                 speech.supported
-                  ? 'Nothing was heard. Record again or type your reply.'
-                  : 'Type what you said to the visitor.'
+                  ? t('roleplay.voice.nothingHeard')
+                  : t('roleplay.voice.typeWhatSaid')
               }
             />
             <div className="flex flex-wrap justify-end gap-2">
               <Button variant="ghost" onClick={record} disabled={disabled}>
-                <RotateCcw aria-hidden /> Record again
+                <RotateCcw aria-hidden /> {t('roleplay.voice.recordAgain')}
               </Button>
               <Button onClick={send} disabled={disabled || !draft.trim()}>
-                Send reply <SendHorizontal aria-hidden className="rtl:-scale-x-100" />
+                {t('roleplay.voice.sendReply')}{' '}
+                <SendHorizontal aria-hidden className="rtl:-scale-x-100" />
               </Button>
             </div>
           </motion.div>

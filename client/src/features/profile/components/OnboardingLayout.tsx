@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { LogOut } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Logo } from '@/components/brand'
 import { DemoBadge } from '@/components/layout'
 import { Button } from '@/components/ui/button'
@@ -8,13 +9,14 @@ import { useSignOut } from '@/hooks/useSession'
 
 /** Focused frame for onboarding: no portal navigation, just the task and a way out. */
 export function OnboardingLayout({ children, aside }: { children: ReactNode; aside?: ReactNode }) {
+  const { t } = useTranslation('learner')
   const signOut = useSignOut()
   const navigate = useNavigate()
   return (
     <div className="min-h-[100dvh] bg-sand">
       <header className="border-ink/5 border-b bg-sand/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 md:px-8">
-          <Link to="/" aria-label="Qatar Tourism Academy home">
+          <Link to="/" aria-label={t('profile.common.homeLabel')}>
             <Logo withAcademy className="h-9" />
           </Link>
           <div className="flex items-center gap-3">
@@ -28,7 +30,7 @@ export function OnboardingLayout({ children, aside }: { children: ReactNode; asi
               }}
             >
               <LogOut aria-hidden className="rtl:rotate-180" />
-              Sign out
+              {t('profile.common.signOut')}
             </Button>
           </div>
         </div>

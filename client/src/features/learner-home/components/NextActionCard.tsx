@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, History } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern } from '@/components/brand/CornerPattern'
 import { ProgressRing } from '@/components/data/ProgressRing'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
@@ -10,10 +11,12 @@ import { ItemIcon } from '@/features/learning/components/ItemIcon'
 import type { Journey } from '@/features/learning/types'
 import { minutesLabel } from '@/features/learning/utils/format'
 import { itemLink, KIND_LABEL } from '@/features/learning/utils/itemLink'
+import { tr } from '@/i18n/localised'
 
 /** The one thing to do next (brief §5), lifted over the hero, with progress at a glance. */
 export function NextActionCard({ journey }: { journey: Journey }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const programme = journey.enrolment.programme
   const next = journey.nextAction
   const item = next ? journey.items.find((i) => i.id === next.itemId) : undefined
@@ -35,30 +38,32 @@ export function NextActionCard({ journey }: { journey: Journey }) {
     >
       <CornerPattern side="b" />
       <div className="flex min-w-0 flex-col gap-3">
-        <p className="text-sm font-medium text-maroon">Next action</p>
+        <p className="text-sm font-medium text-maroon">{t('home.next.label')}</p>
         {item && next && link ? (
           <>
             <h2
               id="next-action-title"
               className="font-display text-2xl leading-snug font-normal text-ink md:text-3xl"
             >
-              {next.label}
+              {tr(next.label, i18n.language)}
             </h2>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
               {item.kind === 'ai_practice' ? null : (
                 <span className="inline-flex items-center gap-1.5">
                   <ItemIcon kind={item.kind} courseCode={item.courseCode} className="text-teal" />
-                  {KIND_LABEL[item.kind] ?? 'Step'}
+                  {KIND_LABEL[item.kind] ?? t('home.next.step')}
                 </span>
               )}
-              <span>About {minutesLabel(item.estimatedMinutes)}</span>
-              <span>{item.stage}</span>
-              {item.kind === 'ai_practice' ? <SimulatedTag label="Simulated AI practice" /> : null}
+              <span>{t('home.next.about', { time: minutesLabel(item.estimatedMinutes) })}</span>
+              <span>{tr(item.stage, i18n.language)}</span>
+              {item.kind === 'ai_practice' ? (
+                <SimulatedTag label={t('home.next.simulatedPractice')} />
+              ) : null}
             </div>
             <div className="mt-1 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link to={link.to as never} search={link.search as never}>
-                  {item.state === 'in_progress' ? 'Continue' : 'Start'}
+                  {item.state === 'in_progress' ? t('home.next.continue') : t('home.next.start')}
                   <ArrowRight aria-hidden className="rtl:-scale-x-100" />
                 </Link>
               </Button>
@@ -68,7 +73,8 @@ export function NextActionCard({ journey }: { journey: Journey }) {
                     to={itemLink(resumeItem, programme).to as never}
                     search={itemLink(resumeItem, programme).search as never}
                   >
-                    <History aria-hidden /> Resume {resumeItem.title}
+                    <History aria-hidden />{' '}
+                    {t('home.next.resume', { title: tr(resumeItem.title, i18n.language) })}
                   </Link>
                 </Button>
               ) : null}
@@ -80,12 +86,10 @@ export function NextActionCard({ journey }: { journey: Journey }) {
               id="next-action-title"
               className="font-display text-2xl font-normal text-ink md:text-3xl"
             >
-              {journey.complete ? 'Every required step is complete' : 'Waiting on your trainer'}
+              {journey.complete ? t('home.next.completeTitle') : t('home.next.waitingTitle')}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {journey.complete
-                ? 'Your learning summary and results are below.'
-                : 'Your submission is with a trainer. You will see their feedback here as soon as it is marked.'}
+              {journey.complete ? t('home.next.completeBody') : t('home.next.waitingBody')}
             </p>
           </>
         )}
@@ -95,14 +99,14 @@ export function NextActionCard({ journey }: { journey: Journey }) {
           value={journey.enrolment.progressPercent}
           size={92}
           strokeWidth={8}
-          ariaLabel={`Programme progress ${journey.enrolment.progressPercent} percent`}
+          ariaLabel={t('home.next.progressAria', { n: journey.enrolment.progressPercent })}
         >
           <span className="font-display text-2xl text-ink tabular-nums">
             {journey.enrolment.progressPercent}%
           </span>
         </ProgressRing>
         <p className="text-sm text-muted-foreground lg:text-center">
-          {done} of {required.length} required steps
+          {t('home.next.stepsOf', { done, total: required.length })}
         </p>
       </div>
     </motion.section>

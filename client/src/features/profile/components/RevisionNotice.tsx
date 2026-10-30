@@ -1,7 +1,9 @@
 import { Route as RouteIcon } from 'lucide-react'
 import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { tr } from '@/i18n/localised'
 import { type PathRevision, useAcceptRevision } from '../queries/profile.queries'
 
 /**
@@ -9,6 +11,7 @@ import { type PathRevision, useAcceptRevision } from '../queries/profile.queries
  * moves until the learner accepts, and completed work is never deleted.
  */
 export function RevisionNotice({ revisions }: { revisions: PathRevision[] }) {
+  const { t, i18n } = useTranslation('learner')
   const accept = useAcceptRevision()
   const [kept, setKept] = useState<string[]>([])
   const visible = revisions.filter((r) => !kept.includes(r.enrolmentId))
@@ -18,18 +21,25 @@ export function RevisionNotice({ revisions }: { revisions: PathRevision[] }) {
       {visible.map((revision) => (
         <section
           key={revision.enrolmentId}
-          aria-label={`Revised path for Program ${revision.programme}`}
+          aria-label={t('profile.revision.ariaLabel', { programme: revision.programme })}
           className="grid gap-4 rounded-xl border border-teal/25 bg-teal-mist p-5 md:grid-cols-[auto_1fr_auto] md:items-center"
         >
           <RouteIcon aria-hidden className="size-6 text-teal" />
           <div className="grid gap-1 text-sm">
             <p className="font-medium text-teal-deep">
-              A revised path is recommended for Program {revision.programme}
+              {t('profile.revision.title', { programme: revision.programme })}
             </p>
             <p>
-              Your updated profile matches <strong>{revision.suggestedPath}</strong>
-              {revision.currentPath ? ` instead of ${revision.currentPath}` : ''}. Units you have
-              completed stay complete.
+              <Trans
+                t={t}
+                i18nKey="profile.revision.matches"
+                values={{ path: tr(revision.suggestedPath, i18n.language) }}
+                components={{ strong: <strong /> }}
+              />
+              {revision.currentPath
+                ? t('profile.revision.insteadOf', { path: tr(revision.currentPath, i18n.language) })
+                : ''}
+              {t('profile.revision.completedStay')}
             </p>
             <p className="text-muted-foreground text-xs">{revision.reason}</p>
           </div>
@@ -41,21 +51,24 @@ export function RevisionNotice({ revisions }: { revisions: PathRevision[] }) {
                 try {
                   await accept.mutateAsync(revision.programme)
                   toast.success(
-                    `Program ${revision.programme} now follows ${revision.suggestedPath}.`,
+                    t('profile.revision.switched', {
+                      programme: revision.programme,
+                      path: tr(revision.suggestedPath, i18n.language),
+                    }),
                   )
                 } catch {
-                  toast.error('The path could not be changed. Try again.')
+                  toast.error(t('profile.revision.switchFailed'))
                 }
               }}
             >
-              Switch to this path
+              {t('profile.revision.switch')}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setKept((k) => [...k, revision.enrolmentId])}
             >
-              Keep my current path
+              {t('profile.revision.keep')}
             </Button>
           </div>
         </section>

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Bell, BellOff, CheckCheck } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { spring } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -16,6 +17,7 @@ import { myNotificationsQuery, useMarkRead } from '../queries/notifications.quer
  * slot: `<PortalShell portal="learner" notifications={<NotificationBell />} />`.
  */
 export function NotificationBell() {
+  const { t } = useTranslation('learner')
   const reduce = useReducedMotion()
   const [open, setOpen] = useState(false)
   const query = useQuery(myNotificationsQuery())
@@ -29,7 +31,9 @@ export function NotificationBell() {
           variant="ghost"
           size="icon"
           className="relative"
-          aria-label={unread ? `Notifications, ${unread} unread` : 'Notifications'}
+          aria-label={
+            unread ? t('notifications.unreadLabel', { n: unread }) : t('notifications.title')
+          }
         >
           <Bell aria-hidden />
           <AnimatePresence>
@@ -50,15 +54,15 @@ export function NotificationBell() {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        aria-label="Notifications"
+        aria-label={t('notifications.title')}
         align="end"
         className="w-[min(24rem,calc(100vw-2rem))] p-0"
       >
         <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
-          <p className="font-display text-lg text-ink">Notifications</p>
+          <p className="font-display text-lg text-ink">{t('notifications.title')}</p>
           {unread > 0 ? (
             <Button size="xs" variant="ghost" onClick={() => markRead.mutate(undefined)}>
-              <CheckCheck aria-hidden /> Mark all read
+              <CheckCheck aria-hidden /> {t('notifications.markAll')}
             </Button>
           ) : null}
         </div>
@@ -69,14 +73,14 @@ export function NotificationBell() {
           </div>
         ) : query.isError ? (
           <p className="p-4 text-sm text-destructive">
-            Notifications could not be loaded.{' '}
+            {t('notifications.loadFailed')}{' '}
             <button type="button" className="underline" onClick={() => query.refetch()}>
-              Try again
+              {t('notifications.tryAgain')}
             </button>
           </p>
         ) : query.data.items.length === 0 ? (
           <div className="flex flex-col items-center gap-2 p-8 text-center text-sm text-muted-foreground">
-            <BellOff aria-hidden className="size-6" /> You have no notifications yet.
+            <BellOff aria-hidden className="size-6" /> {t('notifications.empty')}
           </div>
         ) : (
           <ScrollArea className="max-h-96">
@@ -94,7 +98,7 @@ export function NotificationBell() {
                     <span className="flex items-start gap-2 font-medium text-ink">
                       {!n.readAt ? (
                         <span className="mt-1.5 size-2 shrink-0 rounded-full bg-maroon">
-                          <span className="sr-only">Unread: </span>
+                          <span className="sr-only">{t('notifications.unread')}</span>
                         </span>
                       ) : null}
                       {n.subject}
@@ -110,7 +114,7 @@ export function NotificationBell() {
           </ScrollArea>
         )}
         <p className="border-t px-4 py-2 text-xs text-muted-foreground">
-          A matching demo email is generated for each message. No external emails are sent.
+          {t('notifications.demoEmail')}
         </p>
       </PopoverContent>
     </Popover>

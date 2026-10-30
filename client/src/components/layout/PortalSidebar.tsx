@@ -1,6 +1,7 @@
 import type { Role } from '@shared/roles'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   NAV_BY_ROLE,
   type NavContext,
@@ -28,6 +29,12 @@ import {
 } from '@/components/ui/sidebar'
 import { DemoBadge } from './DemoBadge'
 
+/** Translated label of a learner item; other portals keep their English label. */
+function useNavLabel() {
+  const { t } = useTranslation('learner')
+  return (item: NavItem) => (item.labelKey ? t(`nav.${item.labelKey}`) : item.label)
+}
+
 function isActive(pathname: string, to: string, exact: boolean) {
   return exact
     ? pathname === to || pathname === `${to}/`
@@ -52,6 +59,8 @@ export function PortalSidebar({
   navContext?: NavContext
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { t } = useTranslation('learner')
+  const navLabel = useNavLabel()
   const sections = visibleNav(NAV_BY_ROLE[portal], navContext)
   const home = sections[0]?.items[0]?.to ?? '/'
 
@@ -62,7 +71,7 @@ export function PortalSidebar({
         <Link
           to={home as never}
           className="flex h-11 items-center group-data-[collapsible=icon]:h-8"
-          aria-label="Academy home"
+          aria-label={t('shell.academyHome')}
         >
           <Logo
             variant="white"
@@ -71,7 +80,7 @@ export function PortalSidebar({
           />
         </Link>
         <p className="text-xs font-semibold tracking-[0.14em] text-gold uppercase group-data-[collapsible=icon]:hidden">
-          {PORTAL_LABEL[portal]}
+          {portal === 'learner' ? t('shell.portalLearner') : PORTAL_LABEL[portal]}
         </p>
       </SidebarHeader>
       <SidebarContent>
@@ -87,13 +96,13 @@ export function PortalSidebar({
                     <SidebarMenuItem key={item.to}>
                       <SidebarMenuButton
                         asChild
-                        tooltip={item.label}
+                        tooltip={navLabel(item)}
                         isActive={isActive(pathname, item.to, item.to === home)}
                         className={ACTIVE_ITEM}
                       >
                         <Link to={item.to as never}>
                           {item.icon ? <item.icon aria-hidden /> : null}
-                          <span>{item.label}</span>
+                          <span>{navLabel(item)}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

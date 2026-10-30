@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Clock } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { cardHover } from '@/components/motion/variants'
 import { Badge } from '@/components/ui/badge'
+import { tr } from '@/i18n/localised'
 import type { ScenarioSummary } from '../types'
 import { COMPETENCY_LABEL, SCENARIO_IMAGE } from '../utils/labels'
 import { DifficultyPips } from './DifficultyPips'
@@ -10,6 +12,7 @@ import { DifficultyPips } from './DifficultyPips'
 /** Scenario in the picker: competency, difficulty, duration and this learner's scores. */
 export function ScenarioCard({ scenario }: { scenario: ScenarioSummary }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   return (
     <motion.article
       initial="rest"
@@ -29,7 +32,7 @@ export function ScenarioCard({ scenario }: { scenario: ScenarioSummary }) {
       <div className="flex flex-col gap-3 p-5">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="border-teal/30 text-teal-deep">
-            {COMPETENCY_LABEL[scenario.competency]}
+            {tr(COMPETENCY_LABEL[scenario.competency], i18n.language)}
           </Badge>
           <DifficultyPips difficulty={scenario.difficulty} />
         </div>
@@ -39,16 +42,16 @@ export function ScenarioCard({ scenario }: { scenario: ScenarioSummary }) {
             params={{ scenarioKey: scenario.key }}
             className="after:absolute after:inset-0 focus-visible:outline-none after:focus-visible:rounded-xl after:focus-visible:ring-[3px] after:focus-visible:ring-ring/50"
           >
-            {scenario.title}
+            {tr(scenario.title, i18n.language)}
           </Link>
         </h3>
         <p className="line-clamp-2 text-sm text-muted-foreground italic">
-          “{scenario.visitorOpening}”
+          “{tr(scenario.visitorOpening, i18n.language)}”
         </p>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-2">
           <dl className="flex gap-5 text-sm">
             <div>
-              <dt className="text-xs text-muted-foreground">Best</dt>
+              <dt className="text-xs text-muted-foreground">{t('roleplay.scenario.best')}</dt>
               <dd className="font-display text-xl tabular-nums text-ink">
                 {scenario.best ? (
                   <>
@@ -56,12 +59,14 @@ export function ScenarioCard({ scenario }: { scenario: ScenarioSummary }) {
                     <span className="text-xs text-muted-foreground">/100</span>
                   </>
                 ) : (
-                  <span className="font-sans text-sm text-muted-foreground">Not yet</span>
+                  <span className="font-sans text-sm text-muted-foreground">
+                    {t('roleplay.scenario.notYet')}
+                  </span>
                 )}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-muted-foreground">Latest</dt>
+              <dt className="text-xs text-muted-foreground">{t('roleplay.scenario.latest')}</dt>
               <dd className="font-display text-xl tabular-nums text-ink">
                 {scenario.latest ? (
                   <>
@@ -69,20 +74,23 @@ export function ScenarioCard({ scenario }: { scenario: ScenarioSummary }) {
                     <span className="text-xs text-muted-foreground">/100</span>
                   </>
                 ) : (
-                  <span className="font-sans text-sm text-muted-foreground">Not yet</span>
+                  <span className="font-sans text-sm text-muted-foreground">
+                    {t('roleplay.scenario.notYet')}
+                  </span>
                 )}
               </dd>
             </div>
           </dl>
           <span className="inline-flex items-center gap-3 text-sm">
             <span className="inline-flex items-center gap-1 text-muted-foreground">
-              <Clock aria-hidden className="size-3.5" /> {scenario.estimatedMinutes} min
+              <Clock aria-hidden className="size-3.5" />{' '}
+              {t('roleplay.scenario.minutes', { n: scenario.estimatedMinutes })}
             </span>
             <span className="inline-flex items-center gap-1 font-medium text-teal">
-              {scenario.attempts > 0 ? 'Practise again' : 'Start'}
+              {scenario.attempts > 0 ? t('roleplay.scenario.again') : t('roleplay.scenario.start')}
               <ArrowRight
                 aria-hidden
-                className="size-4 transition-transform group-hover:translate-x-1 rtl:-scale-x-100"
+                className="size-4 transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
               />
             </span>
           </span>

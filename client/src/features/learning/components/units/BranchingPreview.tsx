@@ -2,9 +2,11 @@ import type { ProgrammeCode } from '@shared/constants'
 import { CheckCircle2, CircleAlert, MessageCircle, RotateCcw } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import { useBranchingResult } from '../../queries/learning.queries'
 import type { UnitContent } from '../../types'
@@ -25,6 +27,8 @@ export function BranchingPreview({
   programme: ProgrammeCode
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
+  const lang = i18n.language
   const preview = content.preview
   const [phase, setPhase] = useState<Phase>('decide')
   const [choices, setChoices] = useState<('A' | 'B' | 'C')[]>([])
@@ -45,7 +49,7 @@ export function BranchingPreview({
   }
   const confirm = (key: 'confirm' | 'leave') => {
     const pick = preview.confirm.find((c) => c.key === key)
-    setConfirmFeedback(pick?.feedback ?? null)
+    setConfirmFeedback(pick ? tr(pick.feedback, i18n.language) : null)
     if (key === 'confirm' && option) {
       result.mutate(
         { programme, choices, optionChosen: option, confirmChoice: 'confirm' },
@@ -66,22 +70,24 @@ export function BranchingPreview({
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge className="bg-maroon text-white">{preview.label}</Badge>
-        <p className="text-xs text-muted-foreground">{preview.formatNote}</p>
+        <Badge className="bg-maroon text-white">{tr(preview.label, lang)}</Badge>
+        <p className="text-xs text-muted-foreground">{tr(preview.formatNote, lang)}</p>
       </div>
       <div className="rounded-xl border bg-white p-5 shadow-sm md:p-7">
         <AnimatePresence mode="wait">
           {phase === 'decide' ? (
             <motion.div key="decide" {...motionProps} className="flex flex-col gap-5">
-              <p className="text-sm text-muted-foreground">{preview.family}</p>
+              <p className="text-sm text-muted-foreground">{tr(preview.family, lang)}</p>
               <figure className="flex gap-3 rounded-xl bg-sand p-4">
                 <MessageCircle aria-hidden className="mt-1 size-5 shrink-0 text-maroon" />
                 <blockquote className="font-display text-xl leading-snug text-ink md:text-2xl">
-                  “{preview.visitorLine}”
+                  “{tr(preview.visitorLine, lang)}”
                 </blockquote>
               </figure>
               <fieldset className="flex flex-col gap-3">
-                <legend className="mb-3 text-sm font-medium text-ink">What do you do?</legend>
+                <legend className="mb-3 text-sm font-medium text-ink">
+                  {t('learning.branching.whatDoYouDo')}
+                </legend>
                 {preview.choices.map((choice) => {
                   const tried = choices.includes(choice.key as 'A' | 'B' | 'C')
                   const isLast = last === choice.key
@@ -103,7 +109,7 @@ export function BranchingPreview({
                       <span className="grid size-7 shrink-0 place-items-center rounded-full border bg-white text-sm font-semibold text-teal-deep">
                         {choice.key}
                       </span>
-                      <span className="pt-0.5 text-ink">{choice.text}</span>
+                      <span className="pt-0.5 text-ink">{tr(choice.text, lang)}</span>
                     </button>
                   )
                 })}
@@ -124,13 +130,17 @@ export function BranchingPreview({
                       )}
                       <span>
                         <span className="font-medium">
-                          {lastChoice.correct ? 'Correct. ' : 'Not quite. '}
+                          {lastChoice.correct
+                            ? t('learning.branching.correct')
+                            : t('learning.branching.notQuite')}
                         </span>
-                        {lastChoice.feedback}
+                        {tr(lastChoice.feedback, lang)}
                       </span>
                     </p>
                     {lastChoice.correct ? (
-                      <Button onClick={() => setPhase('option')}>Continue</Button>
+                      <Button onClick={() => setPhase('option')}>
+                        {t('learning.branching.continue')}
+                      </Button>
                     ) : null}
                   </div>
                 ) : null}
@@ -140,11 +150,8 @@ export function BranchingPreview({
 
           {phase === 'option' ? (
             <motion.div key="option" {...motionProps} className="flex flex-col gap-5">
-              <p className="font-display text-xl text-ink">{preview.next}</p>
-              <p className="text-sm text-muted-foreground">
-                The family is interested in culture and needs step-free access. Both options are
-                verified.
-              </p>
+              <p className="font-display text-xl text-ink">{tr(preview.next, lang)}</p>
+              <p className="text-sm text-muted-foreground">{t('learning.branching.optionIntro')}</p>
               <div className="grid gap-3 md:grid-cols-2">
                 {preview.options.map((o) => (
                   <button
@@ -157,13 +164,13 @@ export function BranchingPreview({
                       option === o.key && 'border-teal bg-teal-mist',
                     )}
                   >
-                    <span className="font-medium text-ink">{o.title}</span>
-                    <span className="text-sm text-muted-foreground">{o.detail}</span>
+                    <span className="font-medium text-ink">{tr(o.title, lang)}</span>
+                    <span className="text-sm text-muted-foreground">{tr(o.detail, lang)}</span>
                   </button>
                 ))}
               </div>
               <Button className="self-start" disabled={!option} onClick={() => setPhase('confirm')}>
-                Offer this option
+                {t('learning.branching.offerOption')}
               </Button>
             </motion.div>
           ) : null}
@@ -171,7 +178,7 @@ export function BranchingPreview({
           {phase === 'confirm' ? (
             <motion.div key="confirm" {...motionProps} className="flex flex-col gap-5">
               <p className="font-display text-xl text-ink">
-                The family chooses it. How do you close the conversation?
+                {t('learning.branching.confirmPrompt')}
               </p>
               <div className="flex flex-col gap-3">
                 {preview.confirm.map((c) => (
@@ -182,7 +189,7 @@ export function BranchingPreview({
                     onClick={() => confirm(c.key)}
                     className="rounded-xl border p-4 text-start text-ink transition-all duration-200 hover:border-teal hover:bg-teal-mist/50 focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none"
                   >
-                    {c.text}
+                    {tr(c.text, lang)}
                   </button>
                 ))}
               </div>
@@ -191,7 +198,7 @@ export function BranchingPreview({
               </p>
               {result.error ? (
                 <p role="alert" className="text-sm text-destructive">
-                  The result could not be saved. Try again.
+                  {t('learning.branching.saveError')}
                 </p>
               ) : null}
             </motion.div>
@@ -200,18 +207,30 @@ export function BranchingPreview({
           {phase === 'done' && result.data ? (
             <motion.div key="done" {...motionProps} className="flex flex-col items-start gap-4">
               <CheckCircle2 aria-hidden className="size-10 text-teal" />
-              <h3 className="font-display text-3xl font-light text-ink">Preview complete</h3>
+              <h3 className="font-display text-3xl font-light text-ink">
+                {t('learning.branching.doneTitle')}
+              </h3>
               <p className="text-muted-foreground">
-                Score {result.data.score} out of 100
+                {t('learning.branching.scoreLine', { score: result.data.score })}
                 {choices.length > 1
-                  ? `, after ${choices.length - 1} ${choices.length === 2 ? 'retry' : 'retries'}`
-                  : ', right first time'}
-                . Your best score is {result.data.bestScore}. Choices recorded: {choices.join(', ')}
-                , then {preview.options.find((o) => o.key === option)?.title.toLowerCase()} and a
-                confirmed next step.
+                  ? t(
+                      choices.length === 2
+                        ? 'learning.branching.afterRetry'
+                        : 'learning.branching.afterRetries',
+                      { n: choices.length - 1 },
+                    )
+                  : t('learning.branching.firstTime')}
+                {t('learning.branching.summary', {
+                  best: result.data.bestScore,
+                  choices: choices.join(', '),
+                  option: tr(
+                    preview.options.find((o) => o.key === option)?.title ?? '',
+                    lang,
+                  ).toLowerCase(),
+                })}
               </p>
               <Button variant="outline" onClick={restart}>
-                <RotateCcw aria-hidden /> Retry the scenario
+                <RotateCcw aria-hidden /> {t('learning.branching.retry')}
               </Button>
             </motion.div>
           ) : null}
@@ -219,7 +238,7 @@ export function BranchingPreview({
       </div>
       {content.bestScore !== null && phase === 'decide' && choices.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          Completed before with a best score of {content.bestScore}. You can retry at any time.
+          {t('learning.branching.bestBefore', { score: content.bestScore })}
         </p>
       ) : null}
     </div>

@@ -1,4 +1,5 @@
 import { CheckCircle2, Circle, Clock3, CornerUpLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import type { Tone } from '../utils/status'
 
@@ -11,6 +12,16 @@ const TONE_CLASS: Record<Tone, string> = {
 
 const TONE_ICON = { neutral: Circle, info: Clock3, warning: CornerUpLeft, success: CheckCircle2 }
 
+/** English status words (utils/status.ts) and their keys, so a label shows in the active language. */
+const LABEL_KEY = {
+  Submitted: 'submitted',
+  'Under review': 'underReview',
+  'Returned for revision': 'returned',
+  Approved: 'approved',
+  'Not started': 'notStarted',
+  'Waiting for your trainer': 'waiting',
+} as const
+
 /** Status as icon plus words, never colour alone. */
 export function StatusPill({
   label,
@@ -21,7 +32,9 @@ export function StatusPill({
   tone: Tone
   className?: string
 }) {
+  const { t } = useTranslation('learner')
   const Icon = TONE_ICON[tone]
+  const key = LABEL_KEY[label as keyof typeof LABEL_KEY]
   return (
     <span
       className={cn(
@@ -31,7 +44,7 @@ export function StatusPill({
       )}
     >
       <Icon aria-hidden className="size-3.5" />
-      {label}
+      {key ? t(`assignments.status.${key}`) : label}
     </span>
   )
 }

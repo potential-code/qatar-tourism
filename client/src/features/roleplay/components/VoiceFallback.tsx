@@ -1,4 +1,5 @@
 import { Keyboard, MicOff, PlayCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
 interface VoiceFallbackProps {
@@ -7,20 +8,19 @@ interface VoiceFallbackProps {
   onTypeInstead: () => void
 }
 
-const COPY = {
-  denied: {
-    title: 'Microphone access is blocked',
-    body: 'Your browser did not allow the microphone. To use voice, allow it from the address bar and reload. You can also watch a recorded demonstration or type your replies.',
-  },
-  unsupported: {
-    title: 'Voice is not available in this browser',
-    body: 'This browser cannot use a microphone here. Watch a recorded demonstration or type your replies instead.',
-  },
-}
-
 /** Actionable fallback when voice cannot run (brief §17: handle denied microphone access). */
 export function VoiceFallback({ reason, onShowDemonstration, onTypeInstead }: VoiceFallbackProps) {
-  const copy = COPY[reason]
+  const { t } = useTranslation('learner')
+  const copy =
+    reason === 'denied'
+      ? {
+          title: t('roleplay.fallback.deniedTitle'),
+          body: t('roleplay.fallback.deniedBody'),
+        }
+      : {
+          title: t('roleplay.fallback.unsupportedTitle'),
+          body: t('roleplay.fallback.unsupportedBody'),
+        }
   return (
     <div
       role="alert"
@@ -34,10 +34,10 @@ export function VoiceFallback({ reason, onShowDemonstration, onTypeInstead }: Vo
         <p className="text-sm text-muted-foreground">{copy.body}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={onShowDemonstration}>
-            <PlayCircle aria-hidden /> Watch recorded demonstration
+            <PlayCircle aria-hidden /> {t('roleplay.fallback.watch')}
           </Button>
           <Button size="sm" onClick={onTypeInstead}>
-            <Keyboard aria-hidden /> Type my replies
+            <Keyboard aria-hidden /> {t('roleplay.fallback.type')}
           </Button>
         </div>
       </div>

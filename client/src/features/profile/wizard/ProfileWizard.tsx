@@ -4,6 +4,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, Loader2, Save } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -18,7 +19,7 @@ import { type FieldErrors, validateStep } from '../utils/validation'
 import { StepGoals } from './StepGoals'
 import { StepLocale } from './StepLocale'
 import { StepWork } from './StepWork'
-import { WHY_WE_ASK, WIZARD_STEPS } from './steps'
+import { WIZARD_STEP_KEYS } from './steps'
 
 type Step = 1 | 2 | 3
 
@@ -28,7 +29,10 @@ type Step = 1 | 2 | 3
  * Program A dashboard for a visitor who came from the Program A call to action.
  */
 export function ProfileWizard() {
+  const { t, i18n } = useTranslation('learner')
   const reduce = useReducedMotion()
+  // Steps slide in from the reading direction's end.
+  const slide = i18n.dir() === 'rtl' ? -24 : 24
   const navigate = useNavigate()
   const { data: profile, isPending, isError, refetch } = useQuery(ownProfileQuery())
   const [draft, setDraft] = useState<ProfileDraft | null>(null)
@@ -71,9 +75,7 @@ export function ProfileWizard() {
       await saveDraft.mutateAsync(draftPayload(draft, (step + 1) as Step))
       goTo((step + 1) as Step)
     } catch (error) {
-      toast.error(
-        error instanceof ApiError ? error.message : 'Your answers could not be saved. Try again.',
-      )
+      toast.error(error instanceof ApiError ? error.message : t('profile.wizard.saveFailed'))
     }
   }
 
@@ -81,10 +83,10 @@ export function ProfileWizard() {
     if (!draft) return
     try {
       await saveDraft.mutateAsync(draftPayload(draft, step))
-      toast.success('Draft saved. You can resume from this step at any time.')
+      toast.success(t('profile.wizard.draftSaved'))
       await navigate({ to: '/learner', search: { profile: 'later' } })
     } catch {
-      toast.error('Your draft could not be saved. Try again.')
+      toast.error(t('profile.wizard.draftFailed'))
     }
   }
 
@@ -101,21 +103,19 @@ export function ProfileWizard() {
     }
     const parsed = profileCompleteInput.safeParse(fullPayload(draft))
     if (!parsed.success) {
-      toast.error('Some answers need attention before you finish.')
+      toast.error(t('profile.wizard.finishAttention'))
       return
     }
     try {
       const result = await complete.mutateAsync(parsed.data)
-      toast.success('Profile complete.')
+      toast.success(t('profile.wizard.complete'))
       await navigate({ to: result.next === 'A' ? ('/learner' as never) : '/onboarding/welcome' })
     } catch (error) {
-      toast.error(
-        error instanceof ApiError ? error.message : 'Your profile could not be saved. Try again.',
-      )
+      toast.error(error instanceof ApiError ? error.message : t('profile.wizard.profileSaveFailed'))
     }
   }
 
-  const meta = WIZARD_STEPS[step - 1] ?? WIZARD_STEPS[0]
+  const stepKey = WIZARD_STEP_KEYS[step - 1] ?? 'work'
   const busy = saveDraft.isPending || complete.isPending
 
   if (isPending || (profile && !draft)) {
@@ -134,9 +134,9 @@ export function ProfileWizard() {
       <OnboardingLayout>
         <EmptyState
           variant="destructive"
-          title="Your profile could not be loaded"
-          description="Check your connection and try again."
-          action={<Button onClick={() => refetch()}>Try again</Button>}
+          title={t('profile.wizard.loadFailedTitle')}
+          description={t('profile.wizard.loadFailedDesc')}
+          action={<Button onClick={() => refetch()}>{t('profile.common.tryAgain')}</Button>}
         />
       </OnboardingLayout>
     )
@@ -146,16 +146,16 @@ export function ProfileWizard() {
       <OnboardingLayout>
         <EmptyState
           variant="success"
-          title="Your profile is complete"
-          description="You can change any answer later from the Profile page in your learner portal."
+          title={t('profile.wizard.completeTitle')}
+          description={t('profile.wizard.completeDesc')}
           action={
             <Button asChild>
-              <Link to="/onboarding/welcome">Continue</Link>
+              <Link to="/onboarding/welcome">{t('profile.wizard.continue')}</Link>
             </Button>
           }
           secondaryAction={
             <Button asChild variant="outline">
-              <Link to={'/learner/profile' as never}>Edit profile</Link>
+              <Link to={'/learner/profile' as never}>{t('profile.wizard.editProfile')}</Link>
             </Button>
           }
         />
@@ -167,20 +167,23 @@ export function ProfileWizard() {
     <OnboardingLayout aside={<WhyWeAskPanel step={step} name={profile.fullName} />}>
       <div className="grid gap-8">
         <div className="grid gap-5">
-          <WizardProgress steps={WIZARD_STEPS.map((s) => s.title)} current={step} />
+          <WizardProgress
+            steps={WIZARD_STEP_KEYS.map((k) => t(`profile.steps.${k}.title`))}
+            current={step}
+          />
           <div className="grid gap-2">
             <p className="text-sm text-teal">
-              Step {step} of 3, {profile.learnerCode}
+              {t('profile.common.stepOf', { step, code: profile.learnerCode })}
             </p>
             <h1
               ref={headingRef}
               tabIndex={-1}
               className="font-display font-light text-4xl outline-none md:text-5xl"
             >
-              {meta.title}
+              {t(`profile.steps.${stepKey}.title`)}
             </h1>
             <p className="text-muted-foreground">
-              {WHY_WE_ASK} {meta.why}
+              {t('profile.whyWeAsk')} {t(`profile.steps.${stepKey}.why`)}
             </p>
           </div>
         </div>
@@ -188,9 +191,9 @@ export function ProfileWizard() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={step}
-            initial={reduce ? false : { opacity: 0, x: 24 }}
+            initial={reduce ? false : { opacity: 0, x: slide }}
             animate={{ opacity: 1, x: 0 }}
-            exit={reduce ? undefined : { opacity: 0, x: -24 }}
+            exit={reduce ? undefined : { opacity: 0, x: -slide }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             {step === 1 ? <StepWork draft={draft} set={set} errors={errors} /> : null}
@@ -201,14 +204,14 @@ export function ProfileWizard() {
 
         {Object.keys(errors).length > 0 ? (
           <p role="alert" className="text-destructive text-sm">
-            Some answers need attention before you continue.
+            {t('profile.wizard.needsAttention')}
           </p>
         ) : null}
 
         <div className="flex flex-col-reverse gap-3 border-ink/10 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
           <Button variant="ghost" onClick={saveForLater} disabled={busy}>
             <Save aria-hidden />
-            Save and finish later
+            {t('profile.wizard.saveLater')}
           </Button>
           <div className="flex gap-3">
             {step > 1 ? (
@@ -219,19 +222,19 @@ export function ProfileWizard() {
                 disabled={busy}
               >
                 <ArrowLeft aria-hidden className="rtl:-scale-x-100" />
-                Back
+                {t('profile.wizard.back')}
               </Button>
             ) : null}
             {step < 3 ? (
               <Button size="lg" onClick={next} disabled={busy} className="flex-1 sm:flex-none">
                 {saveDraft.isPending ? <Loader2 aria-hidden className="animate-spin" /> : null}
-                Continue
+                {t('profile.wizard.continue')}
                 <ArrowRight aria-hidden className="rtl:-scale-x-100" />
               </Button>
             ) : (
               <Button size="lg" onClick={finish} disabled={busy} className="flex-1 sm:flex-none">
                 {complete.isPending ? <Loader2 aria-hidden className="animate-spin" /> : null}
-                Finish my profile
+                {t('profile.wizard.finish')}
               </Button>
             )}
           </div>

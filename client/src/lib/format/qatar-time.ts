@@ -3,19 +3,33 @@
  * Asia/Qatar with a "Qatar time" label). Qatar has no daylight saving, so UTC+3 all year.
  * Brief §6, §10: the default timezone is Asia/Qatar; learner-local time is a secondary hint.
  */
+import i18n from '@/i18n'
+
 export const QATAR_TZ = 'Asia/Qatar'
 export const QATAR_TIME_LABEL = 'Qatar time'
-const LOCALE = 'en-GB'
+
+/** "Qatar time" in the active language. */
+export const qatarTimeLabel = () => i18n.t('time.qatarTime', { ns: 'learner' })
+
+/**
+ * Locale of the active language. Arabic uses ar-QA with Latin digits (`nu-latn`) so dates match
+ * the data tables, which always show Latin digits. Trainer and admin are pinned to English, so
+ * they never reach the Arabic branch.
+ */
+export function activeLocale(): string {
+  return (i18n.resolvedLanguage ?? i18n.language) === 'ar' ? 'ar-QA-u-nu-latn' : 'en-GB'
+}
 
 type Instant = string | Date
 type MaybeInstant = Instant | null | undefined
 
 const cache = new Map<string, Intl.DateTimeFormat>()
 function fmt(options: Intl.DateTimeFormatOptions, timeZone = QATAR_TZ) {
-  const key = `${timeZone}|${JSON.stringify(options)}`
+  const locale = activeLocale()
+  const key = `${locale}|${timeZone}|${JSON.stringify(options)}`
   let formatter = cache.get(key)
   if (!formatter) {
-    formatter = new Intl.DateTimeFormat(LOCALE, { timeZone, ...options })
+    formatter = new Intl.DateTimeFormat(locale, { timeZone, ...options })
     cache.set(key, formatter)
   }
   return formatter
@@ -46,7 +60,7 @@ export function qatarDateTime(
 ) {
   if (!iso) return ''
   const text = `${qatarDate(iso, { year })}, ${qatarTime(iso)}`
-  return label ? `${text} ${QATAR_TIME_LABEL}` : text
+  return label ? `${text} ${qatarTimeLabel()}` : text
 }
 
 /** "Tuesday 27 October 2026" */
@@ -72,12 +86,12 @@ export function qatarDateParts(iso: Instant) {
 
 /** "Tue 29 Oct, 09:00 to 10:00 Qatar time" */
 export function qatarRange(startIso: Instant, endIso: Instant) {
-  return `${qatarDateShort(startIso)}, ${qatarTime(startIso)} to ${qatarTime(endIso)} ${QATAR_TIME_LABEL}`
+  return `${qatarDateShort(startIso)}, ${qatarTimeRange(startIso, endIso)} ${qatarTimeLabel()}`
 }
 
 /** "09:00 to 10:00" */
 export const qatarTimeRange = (startIso: Instant, endIso: Instant) =>
-  `${qatarTime(startIso)} to ${qatarTime(endIso)}`
+  i18n.t('time.range', { ns: 'learner', from: qatarTime(startIso), to: qatarTime(endIso) })
 
 /** YYYY-MM-DD of the instant in Qatar. */
 export function qatarDateKey(iso: Instant) {
@@ -99,15 +113,20 @@ export function learnerLocal(iso: string): string | null {
   const d = new Date(iso)
   const localTime = fmt({ hour: '2-digit', minute: '2-digit', hour12: false }, local).format(d)
   if (localTime === qatarTime(iso)) return null
-  return `${fmt({ weekday: 'short', day: 'numeric', month: 'short' }, local).format(d)}, ${localTime} your time`
+  return i18n.t('time.yourTime', {
+    ns: 'learner',
+    date: fmt({ weekday: 'short', day: 'numeric', month: 'short' }, local).format(d),
+    time: localTime,
+  })
 }
 
 /** "In 2 days", "In 5 hours", "Started" relative to the demo clock. */
 export function relativeTo(iso: string, nowIso: string) {
   const ms = new Date(iso).getTime() - new Date(nowIso).getTime()
-  if (ms <= 0) return 'Started'
+  if (ms <= 0) return i18n.t('time.started', { ns: 'learner' })
   const hours = Math.round(ms / 3_600_000)
-  if (hours < 24) return `In ${hours} hour${hours === 1 ? '' : 's'}`
+  if (hours < 24)
+    return i18n.t(hours === 1 ? 'time.inHour' : 'time.inHours', { ns: 'learner', n: hours })
   const days = Math.round(hours / 24)
-  return `In ${days} day${days === 1 ? '' : 's'}`
+  return i18n.t(days === 1 ? 'time.inDay' : 'time.inDays', { ns: 'learner', n: days })
 }

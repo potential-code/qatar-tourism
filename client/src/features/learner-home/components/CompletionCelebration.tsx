@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { Award, PartyPopper } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { Button } from '@/components/ui/button'
 import type { Journey } from '@/features/learning/types'
@@ -17,6 +18,7 @@ const BURST = Array.from({ length: 14 }, (_, i) => i)
  */
 export function CompletionCelebration({ journey }: { journey: Journey }) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   const programme = journey.enrolment.programme
   const key = `qta.celebrated.${programme}`
   const [burst, setBurst] = useState(false)
@@ -52,7 +54,7 @@ export function CompletionCelebration({ journey }: { journey: Journey }) {
             {BURST.map((i) => (
               <motion.span
                 key={i}
-                className={`absolute top-1/2 left-24 size-2 rounded-full ${i % 3 === 0 ? 'bg-teal-soft' : i % 3 === 1 ? 'bg-white' : 'bg-maroon-mist'}`}
+                className={`absolute top-1/2 start-24 size-2 rounded-full ${i % 3 === 0 ? 'bg-teal-soft' : i % 3 === 1 ? 'bg-white' : 'bg-maroon-mist'}`}
                 initial={{ opacity: 1, x: 0, y: 0, scale: 0.6 }}
                 animate={{
                   opacity: 0,
@@ -70,16 +72,24 @@ export function CompletionCelebration({ journey }: { journey: Journey }) {
         </span>
         <div className="flex max-w-2xl flex-col gap-2">
           <h2 className="font-display text-3xl font-light text-white md:text-4xl">
-            You have completed Program {programme}.
+            {t('home.celebration.title', { programme })}
           </h2>
           <p className="text-white/85">
             {journey.enrolment.completedAt
-              ? `Completed ${qatarDate(journey.enrolment.completedAt, { month: 'long' })}. `
+              ? `${t('home.celebration.completedOn', { date: qatarDate(journey.enrolment.completedAt, { month: 'long' }) })} `
               : ''}
-            {unitsDone} units, {journey.practice.attempts.length} practice{' '}
-            {journey.practice.attempts.length === 1 ? 'conversation' : 'conversations'}
+            {t(
+              journey.practice.attempts.length === 1
+                ? 'home.celebration.summaryOne'
+                : 'home.celebration.summaryMany',
+              { units: unitsDone, n: journey.practice.attempts.length },
+            )}
             {baseline && post
-              ? `, baseline ${baseline.score} to ${programme === 'A' ? 'final' : 'post'} ${post.score} (${(gainPoints ?? 0) >= 0 ? '+' : ''}${gainPoints} percentage points).`
+              ? t(programme === 'A' ? 'home.celebration.gainFinal' : 'home.celebration.gainPost', {
+                  baseline: baseline.score,
+                  post: post.score,
+                  gain: `${(gainPoints ?? 0) >= 0 ? '+' : ''}${gainPoints}`,
+                })
               : '.'}
           </p>
         </div>
@@ -87,20 +97,18 @@ export function CompletionCelebration({ journey }: { journey: Journey }) {
           {programme === 'A' && journey.certificate ? (
             <Button asChild size="lg">
               <Link to="/learner/certificates/$code" params={{ code: journey.certificate.code }}>
-                <Award aria-hidden /> View demonstration certificate
+                <Award aria-hidden /> {t('home.celebration.viewCertificate')}
               </Link>
             </Button>
           ) : null}
           {programme === 'B' ? (
             <Button asChild size="lg" variant="glass">
-              <Link to={'/programmes/A' as never}>
-                Suggested next: Program A, Tourism Service Professional
-              </Link>
+              <Link to={'/programmes/A' as never}>{t('home.celebration.suggestedNext')}</Link>
             </Button>
           ) : null}
           <Button asChild size="lg" variant="glass">
             <Link to="/learner/progress" search={{ programme }}>
-              Learning summary
+              {t('home.celebration.summary')}
             </Link>
           </Button>
         </div>

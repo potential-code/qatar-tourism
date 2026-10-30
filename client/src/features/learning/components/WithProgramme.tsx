@@ -2,6 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { Link } from '@tanstack/react-router'
 import { GraduationCap } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useActiveProgramme } from '../hooks/useActiveProgramme'
@@ -27,6 +28,7 @@ export function WithProgramme({
   children: (context: ProgrammeContext) => ReactNode
   skeleton: ReactNode
 }) {
+  const { t } = useTranslation('learner')
   const active = useActiveProgramme()
   if (active.isLoading) return <>{skeleton}</>
   if (active.error) return <LoadError error={active.error} onRetry={() => void active.refetch()} />
@@ -37,11 +39,11 @@ export function WithProgramme({
         <EmptyState
           icon={GraduationCap}
           size="lg"
-          title="You are not enrolled in a programme yet"
-          description="Program B is open to everyone and starts with a short baseline. Program A adds trainer-led sessions and a demonstration certificate."
+          title={t('learning.notEnrolled.title')}
+          description={t('learning.notEnrolled.description')}
           action={
             <Button asChild>
-              <Link to="/">Explore programmes</Link>
+              <Link to="/">{t('learning.notEnrolled.action')}</Link>
             </Button>
           }
         />

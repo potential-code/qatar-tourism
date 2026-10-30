@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { FileQuestion } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { DemoBadge } from '@/components/layout/DemoBadge'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/motion/Reveal'
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { LoadError } from '@/features/roleplay/components/LoadError'
+import { tr } from '@/i18n/localised'
 import { myAssignmentsQuery } from '../queries/assignments.queries'
 import { ASSIGNMENT_STATE, type AssignmentState } from '../utils/status'
 import { BriefCard } from './BriefCard'
@@ -21,6 +23,7 @@ import { VersionHistory } from './VersionHistory'
 
 /** One assignment: brief, feedback, revision and full version history. */
 export function AssignmentDetail({ code }: { code: string }) {
+  const { t, i18n } = useTranslation('learner')
   const { data, isPending, isError, refetch } = useQuery(myAssignmentsQuery())
 
   if (isPending) {
@@ -35,7 +38,8 @@ export function AssignmentDetail({ code }: { code: string }) {
       </div>
     )
   }
-  if (isError) return <LoadError what="This assignment" onRetry={() => refetch()} />
+  if (isError)
+    return <LoadError what={t('assignments.detail.loadWhat')} onRetry={() => refetch()} />
 
   const item = data.items.find((i) => i.assignment.code === code)
   if (!item) {
@@ -43,11 +47,11 @@ export function AssignmentDetail({ code }: { code: string }) {
       <EmptyState
         className="rounded-xl border bg-card"
         icon={FileQuestion}
-        title="Assignment not found"
-        description="This assignment is not part of your programmes."
+        title={t('assignments.detail.notFoundTitle')}
+        description={t('assignments.detail.notFoundDescription')}
         action={
           <Button asChild>
-            <Link to="/learner/assignments">Back to assignments</Link>
+            <Link to="/learner/assignments">{t('assignments.detail.back')}</Link>
           </Button>
         }
       />
@@ -61,11 +65,14 @@ export function AssignmentDetail({ code }: { code: string }) {
     <div className="flex flex-col gap-6">
       <PageHeader
         breadcrumbs={[
-          { label: 'Assignments', to: '/learner/assignments' },
-          { label: item.assignment.title },
+          { label: t('assignments.detail.crumb'), to: '/learner/assignments' },
+          { label: tr(item.assignment.title, i18n.language) },
         ]}
-        title={item.assignment.title}
-        description={`Program ${item.enrolment.programmeCode}: ${item.enrolment.programmeTitle}`}
+        title={tr(item.assignment.title, i18n.language)}
+        description={t('assignments.detail.programLine', {
+          code: item.enrolment.programmeCode,
+          title: tr(item.enrolment.programmeTitle, i18n.language),
+        })}
         actions={<StatusPill label={state.label} tone={state.tone} />}
       />
       <StateBanner item={item} />
@@ -93,13 +100,13 @@ export function AssignmentDetail({ code }: { code: string }) {
             className="grid gap-4 rounded-xl border bg-card p-5 shadow-xs"
           >
             <h2 id="history-heading" className="font-display text-xl font-light text-ink">
-              Version history
+              {t('assignments.detail.historyTitle')}
             </h2>
             {item.versions.length > 0 ? (
               <VersionHistory versions={item.versions} />
             ) : (
               <p className="text-sm text-muted-foreground">
-                Each version you submit is kept here with its feedback.
+                {t('assignments.detail.historyEmpty')}
               </p>
             )}
           </section>

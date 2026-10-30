@@ -1,6 +1,8 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { spring } from '@/components/motion/variants'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import type { EnrolmentSummary } from '../types'
 
@@ -22,6 +24,7 @@ export function ProgrammeSwitcher({
   className?: string
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const onPhoto = tone === 'photo'
   if (enrolments.length <= 1) {
     const only = enrolments[0]
@@ -34,14 +37,17 @@ export function ProgrammeSwitcher({
           className,
         )}
       >
-        Program {only.programme}: {only.programmeTitle}
+        {t('learning.programme.only', {
+          code: only.programme,
+          title: tr(only.programmeTitle, i18n.language),
+        })}
       </p>
     )
   }
   return (
     <div
       role="radiogroup"
-      aria-label="Programme"
+      aria-label={t('learning.programme.label')}
       className={cn(
         'inline-flex flex-wrap gap-1 rounded-full p-1',
         onPhoto
@@ -82,8 +88,10 @@ export function ProgrammeSwitcher({
               />
             ) : null}
             <span className="whitespace-nowrap">
-              Program {enrolment.programme}
-              <span className="hidden xl:inline">: {enrolment.programmeTitle}</span>
+              {t('learning.programme.name', { code: enrolment.programme })}
+              <span className="hidden xl:inline">
+                : {tr(enrolment.programmeTitle, i18n.language)}
+              </span>
             </span>
           </button>
         )

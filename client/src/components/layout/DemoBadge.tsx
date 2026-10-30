@@ -1,4 +1,5 @@
 import { FlaskConical } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 /** Visible "Demo data" indicator required on every data screen (brief §12, §16). */
@@ -12,6 +13,7 @@ export function DemoBadge({
   /** `dark` for the deep-teal sidebar ground. */
   tone?: 'light' | 'dark'
 }) {
+  const { t } = useTranslation('learner')
   return (
     <div
       role="note"
@@ -26,11 +28,10 @@ export function DemoBadge({
     >
       <FlaskConical aria-hidden className="mt-0.5 size-3.5 shrink-0" />
       {compact ? (
-        <span className="font-medium">Demo data</span>
+        <span className="font-medium">{t('shell.demoData')}</span>
       ) : (
         <span>
-          <span className="font-medium">Demonstration environment.</span> All learner and training
-          data is fictional.
+          <span className="font-medium">{t('shell.demoTitle')}</span> {t('shell.demoBody')}
         </span>
       )}
     </div>

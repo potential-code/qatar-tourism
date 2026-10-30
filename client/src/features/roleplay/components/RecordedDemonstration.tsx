@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { PlayCircle, RotateCcw } from 'lucide-react'
 import { useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -21,6 +22,7 @@ export function RecordedDemonstration({
   onClose: () => void
 }) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   const { data, isPending, isError, refetch } = useQuery(demonstrationQuery(scenarioKey))
   const [shown, setShown] = useState(1)
   const total = data?.transcript.length ?? 0
@@ -33,15 +35,15 @@ export function RecordedDemonstration({
 
   return (
     <section
-      aria-label="Prerecorded demonstration"
+      aria-label={t('roleplay.demo.region')}
       className="flex flex-col overflow-hidden rounded-xl border border-maroon/15 bg-maroon-mist/40"
     >
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-maroon/10 px-4 py-3">
         <div className="flex items-center gap-2">
           <PlayCircle aria-hidden className="size-4 text-maroon" />
-          <h3 className="text-sm font-medium text-maroon-deep">Prerecorded demonstration</h3>
+          <h3 className="text-sm font-medium text-maroon-deep">{t('roleplay.demo.title')}</h3>
         </div>
-        <SimulatedTag label="Recorded demonstration, not your attempt" />
+        <SimulatedTag label={t('roleplay.demo.tag')} />
       </header>
       {isPending ? (
         <div className="grid gap-3 p-5">
@@ -50,9 +52,9 @@ export function RecordedDemonstration({
         </div>
       ) : isError ? (
         <div className="flex items-center justify-between gap-3 p-5 text-sm">
-          <span>The demonstration could not load.</span>
+          <span>{t('roleplay.demo.loadFailed')}</span>
           <Button size="sm" variant="outline" onClick={() => refetch()}>
-            Try again
+            {t('roleplay.demo.retry')}
           </Button>
         </div>
       ) : (
@@ -60,16 +62,16 @@ export function RecordedDemonstration({
           <ChatThread
             transcript={data.transcript.slice(0, shown)}
             typing={shown < total}
-            label="Demonstration conversation"
+            label={t('roleplay.demo.thread')}
           />
         </div>
       )}
       <footer className="flex flex-wrap items-center gap-2 border-t border-maroon/10 px-4 py-3">
         <Button size="sm" variant="ghost" onClick={() => setShown(1)} disabled={!data}>
-          <RotateCcw aria-hidden /> Replay
+          <RotateCcw aria-hidden /> {t('roleplay.demo.replay')}
         </Button>
         <Button size="sm" variant="outline" onClick={onClose}>
-          Practise by typing instead
+          {t('roleplay.demo.typeInstead')}
         </Button>
       </footer>
     </section>

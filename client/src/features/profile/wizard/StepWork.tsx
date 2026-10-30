@@ -1,17 +1,12 @@
 import type { ExperienceBand, JobFunction, OrganisationType, Seniority } from '@shared/constants'
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { describedBy, Field } from '../components/Field'
 import { OptionSelect } from '../components/OptionSelect'
 import { OrganisationPicker } from '../components/OrganisationPicker'
 import type { ProfileDraft } from '../utils/draft'
-import {
-  EXPERIENCE_LABEL,
-  JOB_FUNCTION_LABEL,
-  JOB_TITLE_SUGGESTIONS,
-  ORGANISATION_TYPE_LABEL,
-  SENIORITY_LABEL,
-} from '../utils/options'
+import { JOB_TITLE_SUGGESTIONS, useOptionLabels } from '../utils/options'
 import type { FieldErrors } from '../utils/validation'
 
 export type StepProps = {
@@ -25,6 +20,8 @@ const entries = <K extends string>(labels: Record<K, string>) =>
 
 /** Step 1: work (brief §4 organisation, type, job title and function, seniority, experience). */
 export function StepWork({ draft, set, errors }: StepProps) {
+  const { t } = useTranslation('learner')
+  const labels = useOptionLabels()
   const id = useId()
   const isOther = draft.organisationIsOther
   const typeLocked = !isOther && Boolean(draft.organisationId)
@@ -32,8 +29,8 @@ export function StepWork({ draft, set, errors }: StepProps) {
     <div className="grid gap-6">
       <Field
         id={`${id}-org`}
-        label="Organisation"
-        hint="Search the fictional organisations, or choose Independent professional, Not currently employed or Other."
+        label={t('profile.work.organisation')}
+        hint={t('profile.work.organisationHint')}
         error={errors.organisation}
       >
         <OrganisationPicker
@@ -65,7 +62,11 @@ export function StepWork({ draft, set, errors }: StepProps) {
         />
       </Field>
       {isOther ? (
-        <Field id={`${id}-other`} label="Organisation name" error={errors.organisationOther}>
+        <Field
+          id={`${id}-other`}
+          label={t('profile.work.organisationName')}
+          error={errors.organisationOther}
+        >
           <Input
             id={`${id}-other`}
             value={draft.organisationOther}
@@ -78,27 +79,27 @@ export function StepWork({ draft, set, errors }: StepProps) {
       <div className="grid gap-6 sm:grid-cols-2">
         <Field
           id={`${id}-type`}
-          label="Organisation type"
-          hint={typeLocked ? 'Set by the organisation you chose.' : undefined}
+          label={t('profile.work.organisationType')}
+          hint={typeLocked ? t('profile.work.typeLocked') : undefined}
           error={errors.organisationType}
         >
           <OptionSelect<OrganisationType>
             id={`${id}-type`}
             value={draft.organisationType}
-            options={entries(ORGANISATION_TYPE_LABEL)}
-            placeholder="Choose a type"
+            options={entries(labels.organisationType)}
+            placeholder={t('profile.work.typePlaceholder')}
             onChange={(organisationType) => set({ organisationType })}
             error={errors.organisationType}
             disabled={typeLocked}
           />
         </Field>
-        <Field id={`${id}-title`} label="Job title" error={errors.jobTitle}>
+        <Field id={`${id}-title`} label={t('profile.work.jobTitle')} error={errors.jobTitle}>
           <Input
             id={`${id}-title`}
             list={`${id}-titles`}
             value={draft.jobTitle}
             onChange={(event) => set({ jobTitle: event.target.value })}
-            placeholder="Start typing, for example Front Office Agent"
+            placeholder={t('profile.work.jobTitlePlaceholder')}
             className="h-11 bg-white"
             aria-invalid={errors.jobTitle ? true : undefined}
             aria-describedby={describedBy(`${id}-title`, errors.jobTitle)}
@@ -109,22 +110,26 @@ export function StepWork({ draft, set, errors }: StepProps) {
             ))}
           </datalist>
         </Field>
-        <Field id={`${id}-function`} label="Job function" error={errors.jobFunction}>
+        <Field
+          id={`${id}-function`}
+          label={t('profile.work.jobFunction')}
+          error={errors.jobFunction}
+        >
           <OptionSelect<JobFunction>
             id={`${id}-function`}
             value={draft.jobFunction}
-            options={entries(JOB_FUNCTION_LABEL)}
-            placeholder="Choose a function"
+            options={entries(labels.jobFunction)}
+            placeholder={t('profile.work.functionPlaceholder')}
             onChange={(jobFunction) => set({ jobFunction })}
             error={errors.jobFunction}
           />
         </Field>
-        <Field id={`${id}-seniority`} label="Seniority" error={errors.seniority}>
+        <Field id={`${id}-seniority`} label={t('profile.work.seniority')} error={errors.seniority}>
           <OptionSelect<Seniority>
             id={`${id}-seniority`}
             value={draft.seniority}
-            options={entries(SENIORITY_LABEL)}
-            placeholder="Choose a level"
+            options={entries(labels.seniority)}
+            placeholder={t('profile.work.seniorityPlaceholder')}
             onChange={(seniority) => set({ seniority })}
             error={errors.seniority}
           />
@@ -132,15 +137,15 @@ export function StepWork({ draft, set, errors }: StepProps) {
       </div>
       <Field
         id={`${id}-experience`}
-        label="Experience in visitor-facing roles"
-        hint="We use this to pitch examples at the right level. It is never treated as proof of competence."
+        label={t('profile.work.experience')}
+        hint={t('profile.work.experienceHint')}
         error={errors.experience}
       >
         <OptionSelect<ExperienceBand>
           id={`${id}-experience`}
           value={draft.experience}
-          options={entries(EXPERIENCE_LABEL)}
-          placeholder="Choose your experience"
+          options={entries(labels.experience)}
+          placeholder={t('profile.work.experiencePlaceholder')}
           onChange={(experience) => set({ experience })}
           error={errors.experience}
           hint

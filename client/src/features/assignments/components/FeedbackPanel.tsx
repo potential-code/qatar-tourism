@@ -1,4 +1,5 @@
 import { MessageSquareQuote } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { CountUp } from '@/components/motion/CountUp'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
@@ -14,6 +15,7 @@ interface FeedbackPanelProps {
 
 /** Trainer feedback for one version: mark against the pass mark, rubric and comments. */
 export function FeedbackPanel({ version, review, rubric, passPercent }: FeedbackPanelProps) {
+  const { t } = useTranslation('learner')
   const passed = review.score >= passPercent
   return (
     <section
@@ -23,7 +25,7 @@ export function FeedbackPanel({ version, review, rubric, passPercent }: Feedback
       <div className="grid gap-6 rounded-[calc(1.25rem-0.375rem)] border border-border/60 bg-card p-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <div className="grid content-start gap-3">
           <h2 id={`feedback-${version.id}`} className="text-sm font-medium text-muted-foreground">
-            Trainer feedback on version {version.version}
+            {t('assignments.feedback.title', { version: version.version })}
           </h2>
           <p className="font-display text-6xl leading-none font-light tabular-nums text-ink">
             <CountUp value={review.score} />
@@ -36,8 +38,8 @@ export function FeedbackPanel({ version, review, rubric, passPercent }: Feedback
             )}
           >
             {passed
-              ? `Meets the pass mark of ${passPercent}`
-              : `Below the pass mark of ${passPercent}`}
+              ? t('assignments.feedback.meets', { pass: passPercent })
+              : t('assignments.feedback.below', { pass: passPercent })}
           </p>
           <RubricBreakdown rubric={rubric} breakdown={review.breakdown} />
         </div>
@@ -47,11 +49,14 @@ export function FeedbackPanel({ version, review, rubric, passPercent }: Feedback
             <span>{review.feedback}</span>
           </blockquote>
           <p className="text-sm text-muted-foreground">
-            {review.reviewerName ?? 'Your trainer'}, {qatarDateTime(review.reviewedAt)}
+            {t('assignments.feedback.byLine', {
+              name: review.reviewerName ?? t('assignments.feedback.yourTrainer'),
+              date: qatarDateTime(review.reviewedAt),
+            })}
           </p>
           {version.correctedAt ? (
             <p className="text-xs text-muted-foreground">
-              Your trainer updated this mark on {qatarDateTime(version.correctedAt)}.
+              {t('assignments.feedback.updated', { date: qatarDateTime(version.correctedAt) })}
             </p>
           ) : null}
         </div>

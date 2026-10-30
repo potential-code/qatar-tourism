@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ClipboardCheck, Wand2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
@@ -23,12 +24,13 @@ export function AiPathPage() {
 }
 
 function PathSkeleton() {
+  const { t } = useTranslation('learner')
   return (
     <div
       className="flex flex-col gap-6"
       role="status"
       aria-busy="true"
-      aria-label="Loading recommendation"
+      aria-label={t('aiPath.loading')}
     >
       <Skeleton className="h-56 w-full rounded-xl" />
       <div className="grid gap-4 md:grid-cols-2">
@@ -40,6 +42,7 @@ function PathSkeleton() {
 }
 
 function AiPath({ ctx }: { ctx: ProgrammeContext }) {
+  const { t } = useTranslation('learner')
   const rec = useQuery(recommendationQuery(ctx.programme))
   const [phase, setPhase] = useState<'idle' | 'generating' | 'done'>('idle')
   const shown = phase === 'done' || (phase === 'idle' && rec.data?.accepted)
@@ -47,7 +50,10 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
   return (
     <div className="flex flex-col gap-8">
       <Breadcrumbs
-        items={[{ label: 'My learning', to: '/learner/learning' }, { label: 'Learning path' }]}
+        items={[
+          { label: t('aiPath.myLearning'), to: '/learner/learning' },
+          { label: t('aiPath.breadcrumb') },
+        ]}
       />
       <PhotoPanel
         src={PAGE_IMAGE.aiPath.src}
@@ -64,18 +70,15 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
               tone="photo"
             />
             <SimulatedTag
-              label="Demo mode: scripted recommendation"
+              label={t('aiPath.demoMode')}
               className="border-white/30 bg-white/15 text-white"
             />
           </div>
           <div className="flex max-w-2xl flex-col gap-2">
             <h1 className="font-display text-3xl leading-tight font-light text-white md:text-5xl">
-              Your personalised learning path
+              {t('aiPath.title')}
             </h1>
-            <p className="text-white/85">
-              Built from your profile and baseline, using only administrator-approved courses and
-              paths.
-            </p>
+            <p className="text-white/85">{t('aiPath.subtitle')}</p>
           </div>
         </div>
       </PhotoPanel>
@@ -89,8 +92,8 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
           <EmptyState
             icon={ClipboardCheck}
             size="lg"
-            title="Start with your baseline"
-            description="Five scenario questions show where to begin. The baseline identifies useful learning and is not an entry barrier."
+            title={t('aiPath.startBaseline')}
+            description={t('aiPath.startBaselineDesc')}
             action={
               <Button asChild>
                 <Link
@@ -98,7 +101,7 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
                   params={{ kind: 'pre' }}
                   search={{ programme: ctx.programme }}
                 >
-                  Start pre-assessment
+                  {t('aiPath.startPre')}
                 </Link>
               </Button>
             }
@@ -113,18 +116,15 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
             <RecommendationResult data={rec.data} />
           ) : (
             <div className="flex flex-col items-start gap-4 rounded-xl border border-dashed border-teal/40 bg-teal-mist/40 p-6 md:flex-row md:items-center md:justify-between">
-              <p className="max-w-xl text-ink">
-                Your inputs are ready. The generator matches them against the published path rules
-                and your lowest baseline areas.
-              </p>
+              <p className="max-w-xl text-ink">{t('aiPath.ready')}</p>
               <Button size="lg" onClick={() => setPhase('generating')}>
-                <Wand2 aria-hidden /> Build my learning path
+                <Wand2 aria-hidden /> {t('aiPath.build')}
               </Button>
             </div>
           )}
           {shown && rec.data.accepted ? (
             <Button variant="ghost" className="self-start" onClick={() => setPhase('generating')}>
-              <Wand2 aria-hidden /> Generate again
+              <Wand2 aria-hidden /> {t('aiPath.again')}
             </Button>
           ) : null}
         </>

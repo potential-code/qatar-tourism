@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle2, FileUp, RotateCcw, X } from 'lucide-react'
 import { type DragEvent, useId, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
@@ -19,6 +20,7 @@ const ACCEPT =
 
 /** Drop or choose a PDF, DOCX or MP4, with validation and upload progress (brief §6). */
 export function FileDropzone({ state, limits, onFile, onRemove }: FileDropzoneProps) {
+  const { t } = useTranslation('learner')
   const input = useRef<HTMLInputElement>(null)
   const hintId = useId()
   const [over, setOver] = useState(false)
@@ -31,7 +33,7 @@ export function FileDropzone({ state, limits, onFile, onRemove }: FileDropzonePr
   }
 
   const choose = () => input.current?.click()
-  const hint = `PDF or DOCX up to ${limits.documentMb} MB, or MP4 up to ${limits.videoMb} MB`
+  const hint = t('assignments.dropzone.hint', { doc: limits.documentMb, video: limits.videoMb })
 
   return (
     <div className="grid gap-2">
@@ -64,9 +66,9 @@ export function FileDropzone({ state, limits, onFile, onRemove }: FileDropzonePr
           )}
         >
           <FileUp aria-hidden className="size-6 text-teal" />
-          <p className="text-sm text-ink">Drag a file here, or</p>
+          <p className="text-sm text-ink">{t('assignments.dropzone.drag')}</p>
           <Button type="button" variant="outline" size="sm" onClick={choose}>
-            Choose a file
+            {t('assignments.dropzone.choose')}
           </Button>
           <p id={hintId} className="text-xs text-muted-foreground">
             {hint}
@@ -87,14 +89,16 @@ export function FileDropzone({ state, limits, onFile, onRemove }: FileDropzonePr
               <span className="text-xs text-muted-foreground">
                 {formatBytes(state.file.size)}
                 {state.status === 'uploading'
-                  ? `, uploading ${Math.round(state.progress * 100)}%`
+                  ? t('assignments.dropzone.uploading', {
+                      percent: Math.round(state.progress * 100),
+                    })
                   : ''}
-                {state.status === 'ready' ? ', uploaded and ready to submit' : ''}
+                {state.status === 'ready' ? t('assignments.dropzone.ready') : ''}
               </span>
             </div>
             {state.status === 'error' ? (
               <Button type="button" size="sm" variant="ghost" onClick={() => onFile(state.file)}>
-                <RotateCcw aria-hidden /> Retry
+                <RotateCcw aria-hidden /> {t('assignments.dropzone.retry')}
               </Button>
             ) : null}
             <Button
@@ -102,13 +106,16 @@ export function FileDropzone({ state, limits, onFile, onRemove }: FileDropzonePr
               size="icon-sm"
               variant="ghost"
               onClick={onRemove}
-              aria-label="Remove file"
+              aria-label={t('assignments.dropzone.remove')}
             >
               <X aria-hidden />
             </Button>
           </div>
           {state.status === 'uploading' ? (
-            <Progress value={state.progress * 100} aria-label="Upload progress" />
+            <Progress
+              value={state.progress * 100}
+              aria-label={t('assignments.dropzone.progress')}
+            />
           ) : null}
         </div>
       )}

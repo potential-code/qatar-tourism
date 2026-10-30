@@ -1,10 +1,12 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { easeOut } from '@/components/motion/variants'
 import { ProgrammeSwitcher } from '@/features/learning/components/ProgrammeSwitcher'
 import type { EnrolmentSummary, Journey } from '@/features/learning/types'
 import { PROGRAMME_IMAGE } from '@/features/learning/utils/imagery'
+import { tr } from '@/i18n/localised'
 import { qatarDate } from '@/lib/format/qatar-time'
 
 /** Overview hero: greeting over official photography, with the explicit programme switcher. */
@@ -20,6 +22,7 @@ export function WelcomeHero({
   onProgramme: (programme: ProgrammeCode) => void
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const image = PROGRAMME_IMAGE[programme]
   const { learner, enrolment } = journey
   return (
@@ -46,13 +49,17 @@ export function WelcomeHero({
         />
         <div className="flex max-w-2xl flex-col gap-3">
           <h1 className="font-display text-4xl leading-[1.08] font-light text-white md:text-5xl">
-            Welcome back, {learner.firstName}
+            {t('home.welcome', { name: learner.firstName })}
           </h1>
           <p className="max-w-xl text-base text-white/85 md:text-lg">
             {programme === 'B'
-              ? `Your path: ${enrolment.pathName ?? 'Visitor Service Essentials'}.`
-              : `${enrolment.currentStage}.`}
-            {enrolment.lastActivityAt ? ` Last active ${qatarDate(enrolment.lastActivityAt)}.` : ''}
+              ? t('home.yourPath', {
+                  path: tr(enrolment.pathName ?? 'Visitor Service Essentials', i18n.language),
+                })
+              : `${tr(enrolment.currentStage, i18n.language)}.`}
+            {enrolment.lastActivityAt
+              ? ` ${t('home.lastActive', { date: qatarDate(enrolment.lastActivityAt) })}`
+              : ''}
           </p>
         </div>
       </motion.div>

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 
 const LEVELS = ['Introductory', 'Intermediate', 'Advanced'] as const
@@ -10,6 +12,7 @@ export function DifficultyPips({
   difficulty: string
   className?: string
 }) {
+  const { i18n } = useTranslation('learner')
   const level = Math.max(0, LEVELS.indexOf(difficulty as (typeof LEVELS)[number])) + 1
   return (
     <span
@@ -23,7 +26,7 @@ export function DifficultyPips({
           />
         ))}
       </span>
-      {difficulty}
+      {tr(difficulty, i18n.language)}
     </span>
   )
 }

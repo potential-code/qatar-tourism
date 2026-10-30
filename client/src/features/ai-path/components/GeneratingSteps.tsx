@@ -1,19 +1,18 @@
 import { Check, LoaderCircle } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
 import { cn } from '@/lib/utils'
 
-const STEPS = [
-  'Reading your profile',
-  'Comparing your baseline competencies',
-  'Matching administrator-approved paths',
-  'Checking prerequisites and level gates',
-] as const
+const STEPS = ['profile', 'baseline', 'paths', 'gates'] as const
 
 /** A short, honest generation sequence: each line is a real step of the scripted logic. */
 export function GeneratingSteps({ onDone }: { onDone: () => void }) {
+  const { t, i18n } = useTranslation('learner')
   const reduce = useReducedMotion()
+  // Lines enter from the reading start: the left in English, the right in Arabic.
+  const enterFrom = i18n.dir() === 'rtl' ? 8 : -8
   const [done, setDone] = useState(reduce ? STEPS.length : 0)
 
   useEffect(() => {
@@ -31,10 +30,10 @@ export function GeneratingSteps({ onDone }: { onDone: () => void }) {
       aria-live="polite"
       className="flex flex-col gap-4 rounded-xl border bg-white p-6 shadow-sm md:p-8"
     >
-      <p className="font-display text-2xl text-ink">Building your learning path</p>
+      <p className="font-display text-2xl text-ink">{t('aiPath.building')}</p>
       <div className="h-1 overflow-hidden rounded-full bg-teal-mist">
         <motion.div
-          className="h-full origin-left rounded-full bg-teal"
+          className="h-full origin-left rtl:origin-right rounded-full bg-teal"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: done / STEPS.length }}
           transition={{ duration: 0.45, ease: easeOut }}
@@ -44,7 +43,7 @@ export function GeneratingSteps({ onDone }: { onDone: () => void }) {
         {STEPS.map((step, i) => (
           <motion.li
             key={step}
-            initial={reduce ? false : { opacity: 0, x: -8 }}
+            initial={reduce ? false : { opacity: 0, x: enterFrom }}
             animate={{ opacity: i <= done ? 1 : 0.35, x: 0 }}
             transition={{ duration: 0.3, ease: easeOut }}
             className={cn(
@@ -62,7 +61,7 @@ export function GeneratingSteps({ onDone }: { onDone: () => void }) {
                 />
               ) : null}
             </span>
-            {step}
+            {t(`aiPath.steps.${step}`)}
           </motion.li>
         ))}
       </ol>

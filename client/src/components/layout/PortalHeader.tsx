@@ -1,6 +1,9 @@
+import type { Role } from '@shared/roles'
 import { useNavigate } from '@tanstack/react-router'
 import { Bell, LogOut } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -14,8 +17,18 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useSession, useSignOut } from '@/hooks/useSession'
 import { DemoBadge } from './DemoBadge'
 
-/** Sticky top bar for all portals. `notifications` slot is filled by the notifications feature. */
-export function PortalHeader({ notifications }: { notifications?: React.ReactNode }) {
+/**
+ * Sticky top bar for all portals. `notifications` slot is filled by the notifications feature.
+ * Only the learner portal offers the language switcher: trainer and admin stay English.
+ */
+export function PortalHeader({
+  portal,
+  notifications,
+}: {
+  portal: Role
+  notifications?: React.ReactNode
+}) {
+  const { t } = useTranslation('learner')
   const { session } = useSession()
   const signOut = useSignOut()
   const navigate = useNavigate()
@@ -33,8 +46,9 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
       <SidebarTrigger className="-ms-1" />
       <DemoBadge compact className="hidden sm:flex" />
       <div className="ms-auto flex items-center gap-2">
+        {portal === 'learner' ? <LanguageSwitcher /> : null}
         {notifications ?? (
-          <Button variant="ghost" size="icon" aria-label="Notifications">
+          <Button variant="ghost" size="icon" aria-label={t('shell.notifications')}>
             <Bell aria-hidden />
           </Button>
         )}
@@ -53,7 +67,7 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
               <span className="sr-only max-w-40 truncate text-sm font-medium md:not-sr-only">
                 {session?.user.name}
               </span>
-              <span className="sr-only">, account menu</span>
+              <span className="sr-only">{t('shell.accountMenu')}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-56">
@@ -69,7 +83,7 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
               }}
             >
               <LogOut aria-hidden className="rtl:rotate-180" />
-              Sign out
+              {t('shell.signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
