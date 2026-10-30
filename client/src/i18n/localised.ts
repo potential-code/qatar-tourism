@@ -36,12 +36,21 @@ const STRENGTH: Record<string, string> = {
   'information protection': 'حماية المعلومات',
 }
 const at = (text: string) => tr(text, 'ar')
-const titles = (list: string) =>
-  list
-    .split(/, | and /)
-    .map(at)
-    .join('، ')
-    .replace(/، ([^،]+)$/, ' و$1')
+/**
+ * Translates a list of titles joined by ", " and " and ". A title can itself contain " and "
+ * ("Clear and inclusive communication"), so the longest run of pieces that is a known title wins.
+ */
+const titles = (list: string) => {
+  const pieces = list.split(/(, | and )/)
+  const out: string[] = []
+  for (let i = 0; i < pieces.length; i += 2) {
+    let end = pieces.length - 1
+    while (end > i && !(pieces.slice(i, end + 1).join('') in AR_CURRICULUM)) end -= 2
+    out.push(at(pieces.slice(i, end + 1).join('')))
+    i = end
+  }
+  return out.join('، ').replace(/، ([^،]+)$/, ' و$1')
+}
 const RULES: Rule[] = [
   [/^Continue: (.+)$/, (m) => `تابع: ${at(m[1] as string)}`],
   [/^Start: (.+)$/, (m) => `ابدأ: ${at(m[1] as string)}`],

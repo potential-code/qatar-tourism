@@ -23,7 +23,7 @@ export function MyProgrammesSwitcher() {
     <Select value={programme} onValueChange={(value) => setProgramme(value as ProgrammeCode)}>
       <SelectTrigger
         aria-label={t('switcher.label')}
-        className="h-9 w-auto max-w-44 gap-2 rounded-full bg-white sm:max-w-56"
+        className="h-9 w-auto max-w-28 gap-2 min-[420px]:max-w-44 rounded-full bg-white sm:max-w-56 xl:max-w-80"
       >
         <Layers aria-hidden className="size-4 shrink-0 text-teal" />
         <span className="sr-only md:not-sr-only md:text-muted-foreground">

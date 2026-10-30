@@ -45,6 +45,8 @@ export function useScormRuntime(code: string, programme: ProgrammeCode, packageI
   const launchedAt = useRef(Date.now())
   const packageRef = useRef(packageId)
   const inflight = useRef<Promise<unknown>>(Promise.resolve())
+  // Commits still being stored: "Saved" shows only when the last one is in.
+  const unsaved = useRef(0)
   const [status, setStatus] = useState<LiveStatus | null>(null)
   const { mutateAsync } = commit
 
@@ -77,9 +79,15 @@ export function useScormRuntime(code: string, programme: ProgrammeCode, packageI
         saved: false,
         error: false,
       })
+      unsaved.current += 1
       inflight.current = mutateAsync(body).then(
-        () => setStatus((s) => (s ? { ...s, saving: false, saved: true } : s)),
         () => {
+          unsaved.current -= 1
+          if (unsaved.current > 0) return
+          setStatus((s) => (s ? { ...s, saving: false, saved: true } : s))
+        },
+        () => {
+          unsaved.current -= 1
           setStatus((s) => (s ? { ...s, saving: false, error: true } : s))
           throw new Error('Commit failed')
         },

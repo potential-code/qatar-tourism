@@ -200,7 +200,7 @@ describe('training history', () => {
   test('the same record reads in Arabic', async () => {
     await setAppLanguage('ar')
     renderWithApp(<HistoryTable rows={record.history} />)
-    await screen.findByText('Welcoming every visitor')
+    await screen.findAllByText('الترحيب بكل زائر')
     expect(screen.getByText('مكتمل — بلا شهادة برنامج')).toBeDefined()
     expect(screen.getByText('فيديو')).toBeDefined()
   })

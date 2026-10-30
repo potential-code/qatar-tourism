@@ -1,11 +1,24 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  className,
+  containerProps,
+  ...props
+}: React.ComponentProps<"table"> & {
+  /** Extra props for the scroll container, e.g. `tabIndex` and a label so it can be scrolled by keyboard. */
+  containerProps?: React.ComponentProps<"div">
+}) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      {...containerProps}
+      className={cn(
+        "relative w-full overflow-x-auto",
+        containerProps?.tabIndex === 0 &&
+          "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring",
+        containerProps?.className,
+      )}
     >
       <table
         data-slot="table"

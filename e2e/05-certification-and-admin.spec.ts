@@ -53,10 +53,11 @@ test('14–15 min: the final assessment unlocks; passing it issues one certifica
 }) => {
   await signInAs(page, ACCOUNTS.omar, '/learner/learning?programme=A')
   await page.getByRole('link', { name: /Final assessment/ }).click()
-  await expect(page.getByText('You need at least 80 percent.', { exact: false })).toBeVisible()
+  await expect(page.getByText('You need 80 percent to pass', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: 'Start' }).click()
-  await answerAssessment(page, 'post', 5)
-  await expect(page.getByText('Passed. The pass mark is 80 percent.')).toBeVisible()
+  // Ten questions are drawn at random for the post-assessment: answer every one correctly.
+  await answerAssessment(page, 10)
+  await expect(page.getByText('Passed. The pass requirement is 80 percent.')).toBeVisible()
 
   await page.getByRole('link', { name: 'Certificates', exact: true }).click()
   const certificate = page.getByRole('link', {
@@ -72,11 +73,11 @@ test('14–15 min: the final assessment unlocks; passing it issues one certifica
   await certificate.click()
   await expect(
     page.getByRole('figure', {
-      name: /Demonstration certificate QTA-DEMO-A-000121 for Omar Al Safi/,
+      name: /Sample certificate QTA-DEMO-A-000121 for Omar Al Safi/,
     }),
   ).toBeVisible()
   const pdf = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Download PDF' }).click()
+  await page.getByRole('button', { name: 'Download demo PDF' }).click()
   expect((await pdf).suggestedFilename()).toMatch(/QTA-DEMO-A-000121.*\.pdf$/)
   // The verification page opens in a new tab.
   const opened = page.context().waitForEvent('page')
@@ -89,7 +90,7 @@ test('14–15 min: the final assessment unlocks; passing it issues one certifica
 
 test('15–16 min: the admin Dashboard and reports show the updated totals', async ({ page }) => {
   await signInAs(page, ACCOUNTS.admin, '/admin')
-  const certificates = page.getByRole('button', { name: /^A certificates issued 121/ })
+  const certificates = page.getByRole('button', { name: /^A certificates issued 123/ })
   await expect(certificates).toBeVisible()
   await expect(page.getByRole('list', { name: 'Program A funnel' })).toContainText('121')
   // The visitor registered in 01 joined Program B: unique learners and B enrolments both grew.
@@ -101,7 +102,7 @@ test('15–16 min: the admin Dashboard and reports show the updated totals', asy
   await certificates.click()
   await expect(pageHeading(page)).toHaveText('Certification')
   const table = page.getByRole('region', { name: 'Certification records' })
-  await expect(page.getByText('121', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('125', { exact: true }).first()).toBeVisible()
   await page.getByRole('textbox', { name: 'Search' }).fill('QTA-DEMO-A-000121')
   const row = table.getByRole('row', { name: 'Open details for QTA-DEMO-A-000121' })
   await expect(row).toContainText('L0002')

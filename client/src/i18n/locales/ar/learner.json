@@ -341,7 +341,7 @@
       "optional": "اختياري",
       "tryAgain": "حاول مرة أخرى",
       "signOut": "تسجيل الخروج",
-      "homeLabel": "الصفحة الرئيسية لأكاديمية قطر للسياحة",
+      "homeLabel": "Academy – الصفحة الرئيسية لأكاديمية قطر للسياحة",
       "stepsLabel": "خطوات الملف الشخصي",
       "stepN": "الخطوة {{n}}",
       "stepOf": "الخطوة {{step}} من 3، {{code}}"
@@ -913,7 +913,7 @@
   },
   "shell": {
     "skipToContent": "انتقل إلى المحتوى",
-    "academyHome": "الصفحة الرئيسية للأكاديمية",
+    "academyHome": "Academy – الصفحة الرئيسية للأكاديمية",
     "portalLearner": "المتعلّم",
     "notifications": "الإشعارات",
     "accountMenu": "، قائمة الحساب",

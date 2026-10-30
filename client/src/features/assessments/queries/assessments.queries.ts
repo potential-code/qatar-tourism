@@ -26,8 +26,13 @@ export function useStartAssessment(programme: ProgrammeCode, kind: AssessmentKin
   })
 }
 
+/**
+ * Answers save one after another: a multiple-choice question saves after every tick, and two saves
+ * in flight can land out of order, so a slower, earlier save would overwrite the final choice.
+ */
 export function useSaveAnswer() {
   return useMutation({
+    scope: { id: 'assessment-answers' },
     mutationFn: (input: assessments.SaveAnswerInput) => assessments.saveAnswer(input),
   })
 }

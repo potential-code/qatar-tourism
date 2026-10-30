@@ -1,7 +1,7 @@
 import { type BrowserContextOptions, devices } from '@playwright/test'
 
 /** Shared constants for the e2e walkthrough. The suite runs its own Vite dev server. */
-export const CLIENT_PORT = 5250
+export const CLIENT_PORT = Number(process.env.E2E_PORT ?? 5250)
 export const CLIENT_URL = `http://127.0.0.1:${CLIENT_PORT}`
 export const DEMO_PASSWORD = 'password'
 

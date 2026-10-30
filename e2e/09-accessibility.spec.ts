@@ -16,7 +16,7 @@ const STRUCTURE_RULES = [
   'heading-order',
 ]
 
-type Target = { path: string; who?: string; width?: number }
+type Target = { path: string; who?: string; width?: number; lang?: 'ar' }
 
 const PUBLIC: Target[] = [
   { path: '/' },
@@ -77,7 +77,35 @@ const ADMIN: Target[] = [
   '/admin/manage/roles',
   '/admin/manage/integrations',
   '/admin/manage/audit',
+  // 29 Oct update: content, approvals, certificates and CPD, assessments, records and new reports.
+  '/admin/manage/content',
+  '/admin/manage/approvals',
+  '/admin/manage/certificates',
+  `/admin/manage/users/${ACCOUNTS.mariam}`,
+  '/admin/reports/assessment-results',
+  '/admin/reports/certification',
+  '/admin/reports/approvals',
+  '/admin/reports/waitlist',
+  '/admin/reports/crm-sync',
 ].map((path) => ({ path, who: ACCOUNTS.admin }))
+
+/** The 29 Oct learner screens in English: the unified record and the SCORM/xAPI course players. */
+const LEARNER_RECORD: Target[] = [
+  '/learner/record',
+  '/learner/learning/C08',
+  '/learner/learning/C09',
+].map((path) => ({ path, who: ACCOUNTS.mariam }))
+
+/** The saved Arabic choice (RTL) on the public site and the learner portal. */
+const ARABIC: Target[] = [
+  { path: '/' },
+  { path: '/programmes/A' },
+  { path: '/login' },
+  { path: '/learner', who: ACCOUNTS.mariam },
+  { path: '/learner/record', who: ACCOUNTS.mariam },
+  { path: '/learner/learning/C08', who: ACCOUNTS.mariam },
+  { path: '/learner/assessments', who: ACCOUNTS.mariam },
+].map((t) => ({ ...t, lang: 'ar' as const }))
 
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle')
@@ -88,6 +116,15 @@ async function settle(page: Page) {
 
 async function scan(page: Page, target: Target) {
   if (target.width) await page.setViewportSize({ width: target.width, height: 844 })
+  if (target.lang) {
+    await page.addInitScript((lang) => {
+      try {
+        localStorage.setItem('qta-lang', lang)
+      } catch {
+        // about:blank has no storage.
+      }
+    }, target.lang)
+  }
   if (target.who) await signInAs(page, target.who, target.path)
   else await page.goto(target.path)
   await settle(page)
@@ -140,6 +177,8 @@ for (const [group, targets] of Object.entries({
   LEARNER,
   TRAINER,
   ADMIN,
+  LEARNER_RECORD,
+  ARABIC,
   MOBILE,
   TABLET,
 })) {

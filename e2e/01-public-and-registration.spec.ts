@@ -91,12 +91,14 @@ test('2–5 min: register, profile, baseline and a generated B path', async ({ p
   // Baseline: five questions, no pass mark.
   await page.getByRole('link', { name: 'Start pre-assessment' }).click()
   await page.getByRole('button', { name: 'Start pre-assessment' }).click()
-  await answerAssessment(page, 'baseline', 2)
-  await expect(page.getByText('40', { exact: false }).first()).toBeVisible()
+  // Questions are drawn at random, so the learner's gaps are set by competency: strong on discover
+  // needs and verify information. The score is points-weighted, so it is read from the draw.
+  const baseline = await answerAssessment(page, ['discover_needs', 'verify_information'])
+  await expect(page.getByText(`${baseline.percent}%`, { exact: true }).first()).toBeVisible()
   await page.getByRole('link', { name: 'Build my learning path' }).click()
   await expect(page.getByRole('heading', { name: 'Your personalised learning path' })).toBeVisible()
   await expect(page.getByText('Demo mode: scripted recommendation')).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Baseline 40%' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: `Baseline ${baseline.percent}%` })).toBeVisible()
   await page.getByRole('button', { name: 'Build my learning path' }).click()
   await expect(page.getByRole('figure', { name: 'Why we recommend this' })).toContainText(
     'lowest baseline areas',

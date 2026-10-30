@@ -81,7 +81,7 @@ export function FilterBar({
           allLabel="All programmes"
           value={lockedProgramme ?? filters.programme}
           options={options(PROGRAMME_CODES, PROGRAMME_LABELS)}
-          disabled={Boolean(lockedProgramme)}
+          disabled={Boolean(lockedProgramme) || scope === 'none'}
           onChange={(value) =>
             setFilters({ programme: value as typeof filters.programme, pathId: undefined })
           }

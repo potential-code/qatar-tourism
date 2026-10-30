@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { StatusPill } from '@/features/academy-mgmt/hub/components/StatusPill'
+import { tr } from '@/i18n/localised'
 import type { HistoryResult, HistoryRow } from '@/services/credentials/history'
 import { useRecordFormat } from '../utils/format'
 import { HISTORY_STATUS_TONE } from '../utils/status'
@@ -40,11 +41,11 @@ export function HistoryTable({
   rows: readonly HistoryRow[]
   onOpen?: (row: HistoryRow) => void
 }) {
-  const { t } = useTranslation('record')
+  const { t, i18n } = useTranslation('record')
   const format = useRecordFormat()
   const resultText = useResultText()
   return (
-    <Table>
+    <Table containerProps={{ tabIndex: 0, role: 'region', 'aria-label': t('tabs.history') }}>
       <TableHeader>
         <TableRow>
           <TableHead>{t('history.columns.programme')}</TableHead>
@@ -68,13 +69,13 @@ export function HistoryTable({
                 <button
                   type="button"
                   onClick={() => onOpen(row)}
-                  aria-label={t('history.detail.open', { title: row.title })}
+                  aria-label={t('history.detail.open', { title: tr(row.title, i18n.language) })}
                   className="text-start text-teal-deep underline-offset-4 hover:underline focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  {row.title}
+                  {tr(row.title, i18n.language)}
                 </button>
               ) : (
-                row.title
+                tr(row.title, i18n.language)
               )}
             </TableCell>
             <TableCell className="whitespace-nowrap">{t(`history.mode.${row.mode}`)}</TableCell>

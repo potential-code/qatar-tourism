@@ -9,6 +9,7 @@ import { CpdLedger } from './CpdLedger'
 import { CredentialCard } from './CredentialCard'
 import { HistoryTable } from './HistoryTable'
 import { LicencePanel } from './LicencePanel'
+import { LicenceReviewAction } from './LicenceReviewAction'
 
 /**
  * Read-only "Learning record" for the admin learner detail: the same history, credentials, CPD,
@@ -55,7 +56,12 @@ export function AdminLearnerRecord({ userId }: { userId: string }) {
           </div>
         )}
       </section>
-      <LicencePanel licence={record.licence} />
+      <div className="grid gap-3">
+        <LicencePanel licence={record.licence} />
+        <div className="flex flex-wrap items-center gap-3">
+          <LicenceReviewAction userId={userId} licence={record.licence} />
+        </div>
+      </div>
       <CpdLedger cpd={record.cpd} />
       <section aria-label={t('tabs.external')} className="grid gap-2">
         <h3 className="font-display text-lg text-ink">{t('tabs.external')}</h3>

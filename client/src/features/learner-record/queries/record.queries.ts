@@ -1,3 +1,4 @@
+import type { LicenceStatus } from '@shared/constants'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import { downloadBlob } from '@/lib/download'
 import * as certificates from '@/services/certificates.service'
@@ -91,5 +92,15 @@ export function useDownloadCredentialPdf() {
       const { blob, filename } = await certificates.certificatePdf(code)
       downloadBlob(blob, filename)
     },
+  })
+}
+
+/** Admin: asks the CRM to review a learner's licence status (LMS to CRM, pending until acknowledged). */
+export function useRequestLicenceReview(userId: string) {
+  const refresh = useRefresh()
+  return useMutation({
+    mutationFn: (input: { requestedStatus: LicenceStatus; reason: string }) =>
+      licence.requestLicenceReview(userId, input),
+    onSuccess: refresh,
   })
 }

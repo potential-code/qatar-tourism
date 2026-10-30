@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: {
     command: `cd client && bunx --bun vite --host 127.0.0.1 --port ${CLIENT_PORT} --strictPort`,
     url: CLIENT_URL,
-    reuseExistingServer: false,
+    reuseExistingServer: Boolean(process.env.E2E_REUSE),
     // Piped, not ignored: with its output ignored the Vite dev server never starts listening here.
     stdout: 'pipe',
     timeout: 60_000,

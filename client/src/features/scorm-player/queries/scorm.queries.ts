@@ -12,9 +12,14 @@ export const scormStateQuery = (programme: ProgrammeCode, code: string, packageI
     staleTime: 0,
   })
 
+/**
+ * Commits run one after another: a learner can move between screens faster than a save returns, and
+ * two commits in flight can land out of order, which would store an earlier bookmark last.
+ */
 export function useScormCommit(code: string) {
   const invalidate = useInvalidateLearning()
   return useMutation({
+    scope: { id: `scorm-commit-${code}` },
     mutationFn: (body: ScormCommitBody) => scorm.commit(code, body),
     onSuccess: (result) => {
       if (result.completedNow) void invalidate()

@@ -46,3 +46,15 @@ export async function signInWithForm(page: Page, email: string, mode?: 'trainer'
 export function pageHeading(page: Page) {
   return page.getByRole('heading', { level: 1 })
 }
+
+/** The administrator runs "Reset demo data" in Audit and demo reset and waits for the confirmation. */
+export async function resetDemoThroughUi(page: Page, adminId = 'user-admin') {
+  await signInAs(page, adminId, '/admin/manage/audit')
+  await page.getByRole('button', { name: 'Reset demo data' }).click()
+  const confirm = page
+    .getByRole('alertdialog', { name: 'Reset demo data?' })
+    .or(page.getByRole('dialog', { name: 'Reset demo data?' }))
+  await expect(confirm).toContainText('resets all fictional demo data to the original snapshot')
+  await confirm.getByRole('button', { name: 'Reset demo data' }).click()
+  await expect(page.getByText('Demo data reset').first()).toBeVisible({ timeout: 60_000 })
+}
