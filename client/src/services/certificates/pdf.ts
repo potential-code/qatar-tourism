@@ -22,6 +22,9 @@ export type CertificatePdfInput = {
   completedOnLabel: string
   status: 'issued' | 'revoked'
   verifyUrl: string
+  /** Expiry line and lifecycle wording (29 Oct). Omitted for records with no expiry. */
+  expiresOnLabel?: string | null
+  lifecycleLabel?: string
 }
 
 const PAGE_WIDTH = 841.89
@@ -152,7 +155,7 @@ export async function renderCertificatePdf(input: CertificatePdfInput): Promise<
   }
 
   // Watermark across the design (brief §6), centred on the page.
-  const mark = 'DEMONSTRATION ONLY'
+  const mark = 'SAMPLE — NOT VALID'
   const markSize = 50
   const markWidth = sansBold.widthOfTextAtSize(mark, markSize)
   const angle = 22
@@ -194,10 +197,14 @@ export async function renderCertificatePdf(input: CertificatePdfInput): Promise<
   // Footer facts.
   const facts: [string, string][] = [
     ['Completion date', input.completedOnLabel],
+    ['Expiry date', input.expiresOnLabel ?? 'No expiry'],
     ['Demo certificate ID', input.code],
-    ['Status', input.status === 'issued' ? 'Issued (demo record)' : 'Revoked'],
+    [
+      'Status',
+      input.lifecycleLabel ?? (input.status === 'issued' ? 'Issued (demo record)' : 'Revoked'),
+    ],
   ]
-  const colW = 200
+  const colW = 190
   const startX = (PAGE_WIDTH - colW * facts.length) / 2
   facts.forEach(([label, value], index) => {
     const x = startX + index * colW
@@ -224,7 +231,7 @@ export async function renderCertificatePdf(input: CertificatePdfInput): Promise<
   )
   centred(
     page,
-    `Verify this demo record at ${input.verifyUrl}`,
+    `Dummy verification link (demo status page, not a live register): ${input.verifyUrl}`,
     44,
     sans,
     7.5,

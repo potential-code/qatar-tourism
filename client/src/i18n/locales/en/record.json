@@ -1,1 +1,440 @@
-{}
+{
+  "page": {
+    "title": "My Learning Record",
+    "description": "One record across your programmes: training history, certificates and CPD, and external certificates.",
+    "descriptionWithId": "Learner ID {{id}}. One record across your {{n}} programmes: training history, certificates and CPD, and external certificates."
+  },
+  "switcher": {
+    "label": "My programmes",
+    "option": "Program {{code}}: {{title}}"
+  },
+  "tabs": {
+    "history": "Training History",
+    "certificates": "Certificates and CPD",
+    "external": "External Certificates"
+  },
+  "common": {
+    "programme": "Program {{code}}",
+    "programmeTitle": "Program {{code}}: {{title}}",
+    "loading": "Loading",
+    "loadError": "Your learning record could not be loaded",
+    "cancel": "Cancel",
+    "close": "Close",
+    "submitting": "Submitting"
+  },
+  "history": {
+    "count": "Showing {{shown}} of {{total}} records",
+    "emptyTitle": "No training history yet",
+    "emptyBody": "Courses you start and sessions you book appear here, across all your programmes.",
+    "emptyFilteredTitle": "No records match these filters",
+    "emptyFilteredBody": "Try a different programme, status or date range.",
+    "filters": {
+      "label": "Filter training history",
+      "programme": "Programme",
+      "format": "Learning format",
+      "status": "Status",
+      "from": "From",
+      "to": "To",
+      "all": "All",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "programme": "Programme",
+      "item": "Course or session",
+      "mode": "Delivery mode",
+      "started": "Started",
+      "completed": "Completed",
+      "progress": "Progress",
+      "result": "Result",
+      "status": "Status"
+    },
+    "mode": {
+      "video": "Video",
+      "interactive": "Interactive",
+      "resource": "Reading",
+      "preview": "Preview",
+      "in_person": "In person",
+      "online": "Online session"
+    },
+    "status": {
+      "completed": "Completed",
+      "in_progress": "In progress",
+      "upcoming": "Upcoming",
+      "attended": "Attended",
+      "attendance_pending": "Attendance pending",
+      "absent": "Absent",
+      "waitlisted": "Waitlisted",
+      "cancelled": "Cancelled"
+    },
+    "result": {
+      "score": "{{value}}%",
+      "completed": "Completed",
+      "completedNoCertificate": "Completed — no programme certificate",
+      "attended": "Attended",
+      "none": "—"
+    },
+    "kind": {
+      "pre": "Pre-assessment",
+      "post": "Post-assessment",
+      "formative": "Quiz"
+    },
+    "attendance": {
+      "pending": "Pending",
+      "attended": "Attended",
+      "late": "Late",
+      "absent": "Absent",
+      "excused": "Excused"
+    },
+    "evidence": {
+      "completionStatus": "Completion status",
+      "score": "Score",
+      "minutesSpent": "Time spent",
+      "completedOn": "Completed on",
+      "attendance": "Attendance",
+      "sessionScore": "Session score",
+      "venue": "Venue"
+    },
+    "detail": {
+      "open": "Open details for {{title}}",
+      "attempts": "Assessment attempts",
+      "noAttempts": "No assessment attempts are stored for this programme.",
+      "attemptNo": "attempt {{n}}",
+      "feedback": "Trainer feedback",
+      "noFeedback": "No trainer feedback is stored for this record.",
+      "evidence": "Completion evidence",
+      "noEvidence": "No completion evidence is stored yet.",
+      "minutes": "{{value}} min"
+    }
+  },
+  "credentials": {
+    "title": "Your certificates",
+    "cardLabel": "Certificate {{code}}",
+    "priorCycle": "Previous certification cycle",
+    "programmeBNote": "Program B has no programme certificate. Your completed Program B courses appear in Training History as “Completed — no programme certificate”.",
+    "emptyTitle": "No programme certificate yet",
+    "emptyBody": "A certificate is issued only when every Program A requirement is met. Nothing here replaces a professional licence.",
+    "lifecycle": {
+      "active": "Active",
+      "expiring_soon": "Expiring soon",
+      "expired": "Expired",
+      "revoked": "Revoked",
+      "superseded": "Superseded"
+    },
+    "fields": {
+      "programme": "Programme",
+      "credentialId": "Credential ID",
+      "issued": "Issue date",
+      "expires": "Expiry date",
+      "cpd": "CPD",
+      "verification": "Verification",
+      "nextAction": "Next action"
+    },
+    "verification": {
+      "active": "Verified — demo record",
+      "expiring_soon": "Verified — expires soon",
+      "expired": "Not valid — expired",
+      "revoked": "Not valid — revoked",
+      "superseded": "Replaced by {{code}}"
+    },
+    "nextAction": {
+      "none": "None. Renewal opens when the certificate is close to expiry.",
+      "renewal_due": "Renewal due — {{days}} days left. Start renewal.",
+      "renewal_in_progress": "Renewal in progress. Continue the checklist.",
+      "retraining": "Expired. Start renewal to follow a short retraining path.",
+      "renewed": "Renewed. Use {{code}}.",
+      "revoked": "None. Contact Academy support."
+    },
+    "actions": {
+      "view": "View certificate",
+      "download": "Download demo PDF",
+      "preparing": "Preparing PDF",
+      "downloadFailed": "The PDF could not be downloaded. Try again.",
+      "startRenewal": "Start renewal",
+      "continueRenewal": "Continue renewal"
+    }
+  },
+  "licence": {
+    "title": "Professional licence status",
+    "note": "A separate field from your certificates. A passed exam or a valid certificate does not mean you hold a valid licence.",
+    "source": "Source: CRM (illustrative)",
+    "notTracked": "Not tracked",
+    "pendingRequest": "A change to “{{status}}” was requested on {{date}} and is pending until the CRM acknowledges it.",
+    "status": {
+      "active": "Licence active",
+      "expired": "Licence expired",
+      "suspended": "Licence suspended",
+      "pending": "Licence pending"
+    }
+  },
+  "cpd": {
+    "title": "CPD ledger",
+    "description": "Earned, pending approval and required CPD for the demo cycle. Only earned and approved amounts count towards the target.",
+    "earned": "Earned and approved",
+    "pending": "Pending approval",
+    "required": "Required this cycle",
+    "remaining": "{{value}} {{unit}} still needed to reach the target.",
+    "targetMet": "The CPD target for this cycle is met.",
+    "progressLabel": "{{percent}}% of the CPD target earned",
+    "empty": "No CPD has been recorded yet.",
+    "derived": "(Program B demo rule)",
+    "amount": "{{value}} {{unit}}",
+    "units": {
+      "hours": "hours",
+      "credits": "credits"
+    },
+    "columns": {
+      "activity": "Activity",
+      "source": "Source",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status"
+    },
+    "source": {
+      "academy": "Academy",
+      "external": "External"
+    },
+    "status": {
+      "earned": "Earned",
+      "approved": "Approved",
+      "pending": "Pending approval",
+      "rejected": "Rejected"
+    }
+  },
+  "renewal": {
+    "title": "Certificate renewal",
+    "description": "Complete the checklist to earn a new credential.",
+    "neverExtended": "Renewal never extends your current certificate. A new credential is issued and the old one stays in your record as Superseded.",
+    "notEligible": "Renewal opens when a certificate is expiring soon or has expired.",
+    "startExpiring": "Your certificate is expiring soon. Start the renewal checklist: refresher course, renewal check and the remaining CPD.",
+    "startExpired": "Your certificate has expired. Starting renewal assigns a short retraining path before the refresher course and the renewal check.",
+    "retrainingExpired": "Short retraining path assigned because the certificate expired.",
+    "retrainingFailed": "Short retraining path assigned because the renewal check was not passed. Finish it to try again.",
+    "stepDone": "done",
+    "stepOpen": "to do",
+    "stepLocked": "locked",
+    "steps": {
+      "retraining": {
+        "title": "Short retraining path",
+        "detail": "Three short lessons on service basics, visitor needs and recovery.",
+        "action": "Complete retraining"
+      },
+      "refresher": {
+        "title": "Refresher course",
+        "detail": "A short refresher on the programme essentials. Earns {{value}} {{unit}} of CPD.",
+        "action": "Complete refresher"
+      },
+      "assessment": {
+        "title": "Renewal check",
+        "detail": "Five scenario questions. You need {{percent}}% to pass.",
+        "action": "Start the check"
+      },
+      "cpd": {
+        "title": "Remaining CPD",
+        "done": "The CPD target for this cycle is met.",
+        "todo": "{{value}} {{unit}} still needed.",
+        "how": "Earn it from the refresher course or add an external certificate and wait for approval."
+      }
+    },
+    "check": {
+      "title": "Renewal check",
+      "intro": "Answer every question. The pass mark is {{percent}}% (a demo setting).",
+      "submit": "Submit answers",
+      "unanswered": "Answer all questions before submitting. Still open: {{n}}.",
+      "q1": {
+        "prompt": "A visitor asks for a family activity. What do you do first?",
+        "a": "Recommend the most popular attraction.",
+        "b": "Ask about the family’s interests and practical needs.",
+        "c": "Give them a printed list and move on."
+      },
+      "q2": {
+        "prompt": "A tour is delayed by an hour. How do you recover the moment?",
+        "a": "Say nothing until guests complain.",
+        "b": "Blame the transport company.",
+        "c": "Tell guests early, apologise, explain the new plan and offer an option."
+      },
+      "q3": {
+        "prompt": "A guest shares a passport photo by messaging app. What is right?",
+        "a": "Do not keep it; explain the secure way to share documents.",
+        "b": "Save it to your phone for later.",
+        "c": "Forward it to colleagues who might need it."
+      },
+      "q4": {
+        "prompt": "You are unsure about an opening time. What do you do?",
+        "a": "Give your best guess.",
+        "b": "Check the official source before answering.",
+        "c": "Tell the guest it is probably open."
+      },
+      "q5": {
+        "prompt": "A guest uses a wheelchair. Which approach is best?",
+        "a": "Choose an itinerary for them without asking.",
+        "b": "Assume they will not want activities.",
+        "c": "Ask what access they need and adapt the plan together."
+      }
+    },
+    "checkPassed": "Renewal check passed.",
+    "checkFailed": "Renewal check not passed ({{percent}}%). A short retraining path is assigned.",
+    "retrainingDone": "Retraining path completed.",
+    "refresherDone": "Refresher course completed.",
+    "complete": "Complete renewal and issue new credential",
+    "completeHint": "Finish every step to enable this.",
+    "issued": "Renewal complete. A new credential was issued.",
+    "completedTitle": "Renewed: new credential {{code}}",
+    "completedBody": "Your earlier certificate is kept in your record as Superseded. It was not extended.",
+    "failed": "This step could not be saved. Try again."
+  },
+  "external": {
+    "title": "External certificates",
+    "description": "Certificates you earned elsewhere. Submit one for review; it counts towards your CPD only after it is approved.",
+    "distinct": "External evidence is shown separately and is never an Academy credential.",
+    "add": "Add certificate",
+    "formTitle": "Add an external certificate",
+    "formDescription": "Provide the details and attach the evidence as a PDF. Demo data only.",
+    "emptyTitle": "No external certificates yet",
+    "emptyBody": "Add a certificate from another provider to claim CPD for it.",
+    "claimed": "Claimed",
+    "recognised": "Recognised",
+    "notYet": "Not yet reviewed",
+    "request": "Request",
+    "reviewedOn": "Reviewed on",
+    "reason": "Reviewer note",
+    "noCompetency": "Not specified",
+    "chooseFile": "Choose PDF",
+    "useSample": "Use sample file",
+    "noFile": "No file chosen",
+    "viewEvidence": "Open evidence",
+    "evidenceFailed": "The evidence file could not be opened.",
+    "submit": "Submit for review",
+    "submitted": "Submitted — Pending review. No CPD is added until it is approved.",
+    "submitFailed": "The certificate could not be submitted. Try again.",
+    "pendingNote": "After you submit, this certificate stays Pending review and adds no approved CPD.",
+    "infoLabel": "Your answer to the reviewer",
+    "infoSend": "Send information",
+    "infoSent": "Information sent. The certificate is back in review.",
+    "fields": {
+      "title": "Certificate title",
+      "issuer": "Issuer",
+      "externalRef": "External reference",
+      "issuedOn": "Issue date",
+      "expiresOn": "Expiry date",
+      "claimedAmount": "Claimed CPD amount",
+      "unit": "Unit",
+      "competency": "Related competency",
+      "verificationUrl": "Verification URL",
+      "evidence": "Evidence (PDF)"
+    },
+    "hints": {
+      "optional": "Optional",
+      "evidence": "A PDF up to 5 MB."
+    },
+    "status": {
+      "pending": "Pending review",
+      "verified": "Approved",
+      "rejected": "Rejected",
+      "info_requested": "More information needed"
+    },
+    "next": {
+      "pending": "Wait for the review. No CPD is counted yet.",
+      "verified": "{{value}} {{unit}} of CPD is now in your ledger.",
+      "rejected": "Read the reviewer note. You can submit a corrected certificate.",
+      "info_requested": "Reply to the reviewer below."
+    },
+    "errors": {
+      "required": "This field is required.",
+      "dateFuture": "The issue date cannot be in the future.",
+      "dateOrder": "The expiry date must be after the issue date.",
+      "dateInvalid": "Enter a valid date.",
+      "amount": "Enter an amount above 0 and up to 100.",
+      "unit": "Choose hours or credits.",
+      "url": "Enter a full web address starting with https://.",
+      "duplicate": "You already submitted this certificate (same issuer and reference).",
+      "fileRequired": "Attach the evidence as a PDF.",
+      "fileType": "Only PDF files are accepted.",
+      "fileSize": "The file is larger than 5 MB.",
+      "fileEmpty": "The file is empty.",
+      "fileContent": "This file does not look like a valid PDF."
+    }
+  },
+  "competency": {
+    "discover_needs": "Discovering visitor needs",
+    "verify_information": "Verifying information",
+    "communicate_clearly": "Communicating clearly",
+    "recover_service": "Recovering service",
+    "protect_information": "Protecting information"
+  },
+  "admin": {
+    "title": "Learning record",
+    "description": "Read-only view of learner {{id}} (CRM {{crm}}): the same history, credentials and CPD the learner sees."
+  },
+  "certificate": {
+    "list": {
+      "title": "Certificates",
+      "description": "Watermarked demonstration certificates for the Program A certification track. They are training records, not licences.",
+      "noTrackTitle": "No certification-track enrolment",
+      "noTrackBody": "Certificates appear only for a certification-track programme. Program B builds everyday skills and has no certificate. Program A, Tourism Service Professional, ends with a demonstration certificate.",
+      "aboutA": "About Program A",
+      "onItsWayTitle": "Your certificate is on its way",
+      "onItsWayBody": "The system checks every required condition and issues the demonstration certificate automatically: foundation quiz at least 80, an attended session scored at least 70, an approved assignment at least 70 and a final assessment at least 80.",
+      "continueA": "Continue Program A",
+      "openRecord": "Open My Learning Record",
+      "cardProgramme": "Program A: {{title}}",
+      "cardMeta": "{{code}}, issued {{date}}",
+      "demoOnly": "Demonstration only"
+    },
+    "detail": {
+      "crumb": "Certificates",
+      "title": "Demonstration certificate",
+      "subtitle": "A verifiable demo record. Not a guide licence.",
+      "download": "Download demo PDF",
+      "preparing": "Preparing PDF",
+      "downloadFailed": "The PDF could not be downloaded. Try again.",
+      "verification": "Verification page",
+      "loadError": "This certificate could not be opened",
+      "loading": "Loading certificate",
+      "renewalNote": "Renewal is started from My Learning Record. An expired certificate is never extended.",
+      "openRecord": "Open My Learning Record"
+    },
+    "canvas": {
+      "aria": "Sample certificate {{code}} for {{name}}",
+      "watermark": "SAMPLE — NOT VALID",
+      "academy": "QATAR TOURISM ACADEMY",
+      "heading": "Certificate of training completion",
+      "confirms": "This demonstration record confirms that",
+      "completed": "completed every requirement of",
+      "programme": "Program A: {{title}}",
+      "completionDate": "Completion date",
+      "expiryDate": "Expiry date",
+      "noExpiry": "No expiry",
+      "id": "Demo certificate ID",
+      "status": "Status",
+      "caption": "Training completion certificate for a fictional demonstration. It is not a guide licence, permit or official qualification.",
+      "logoAlt": "Qatar Tourism"
+    },
+    "verify": {
+      "title": "Certificate verification",
+      "homeLabel": "Qatar Tourism Academy home",
+      "checking": "Checking the record",
+      "notFormatTitle": "Not a demo certificate ID",
+      "notFormatBody": "“{{code}}” is not in the QTA-DEMO format.",
+      "notFoundTitle": "No record found",
+      "notFoundBody": "There is no demonstration certificate with ID {{code}}.",
+      "validTitle": "Valid demonstration record",
+      "validBody": "This record exists in the Qatar Tourism Academy demonstration environment.",
+      "expiringTitle": "Valid demonstration record — expires soon",
+      "expiringBody": "This credential expires on {{date}}. Renewal issues a new credential.",
+      "expiredTitle": "This certificate has expired",
+      "expiredBody": "It expired on {{date}} and was not extended.",
+      "supersededTitle": "This certificate was replaced",
+      "supersededBody": "A newer credential replaced it after renewal. The original record is kept.",
+      "revokedTitle": "This certificate was revoked",
+      "revokedBody": "Revoked on {{date}}.",
+      "fields": {
+        "learner": "Learner",
+        "programme": "Programme",
+        "issued": "Issued",
+        "expires": "Expires",
+        "id": "Demo certificate ID"
+      },
+      "disclaimer": "SAMPLE — NOT VALID. A dummy status page for a training completion record with fictional data. It is not a guide licence, permit or official qualification."
+    }
+  }
+}

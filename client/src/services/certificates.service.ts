@@ -17,6 +17,9 @@ import {
 import { recordAudit } from './audit.service'
 import { nextCertificateCode } from './certificates/issue'
 import { renderCertificatePdf } from './certificates/pdf'
+import { emitCertificationEvent } from './credentials/events'
+import { lifecycleOf } from './credentials/lifecycle'
+import { addCredentialCpdLine, newCredentialTerms } from './credentials/rules'
 
 /**
  * Demo certificates (brief §6), formerly server/modules/certificates. Issuing happens in
@@ -38,6 +41,9 @@ function toView(row: CertificateRow) {
     completedAt: enrolment?.completedAt ?? row.issuedAt,
     revokedAt: row.revokedAt,
     evidence: row.evidence,
+    expiresAt: row.expiresAt,
+    lifecycle: lifecycleOf(row),
+    cpdHours: row.cpdHours,
   }
 }
 
@@ -93,6 +99,8 @@ export async function verify(code: string) {
     status: row.status,
     issuedAt: row.issuedAt,
     revokedAt: row.revokedAt,
+    expiresAt: row.expiresAt,
+    lifecycle: lifecycleOf(row),
   })
 }
 
@@ -103,6 +111,14 @@ const dateLabel = (iso: string) =>
     year: 'numeric',
     timeZone: QATAR_TIMEZONE,
   }).format(new Date(iso))
+
+const LIFECYCLE_PDF_LABEL = {
+  active: 'Active (demo record)',
+  expiring_soon: 'Expiring soon',
+  expired: 'Expired',
+  revoked: 'Revoked',
+  superseded: 'Superseded',
+} as const
 
 /** The watermarked PDF for the owner or an admin, as a Blob ready to download. */
 export async function certificatePdf(code: string) {
@@ -116,6 +132,8 @@ export async function certificatePdf(code: string) {
     completedOnLabel: dateLabel(view.completedAt),
     status: view.status,
     verifyUrl: `${origin}/certificates/verify/${view.code}`,
+    expiresOnLabel: view.expiresAt ? dateLabel(view.expiresAt) : null,
+    lifecycleLabel: LIFECYCLE_PDF_LABEL[view.lifecycle],
   })
   return {
     blob: new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'application/pdf' }),
@@ -149,6 +167,7 @@ export async function revoke(code: string, input: { reason: string }) {
     after: { status: 'revoked' },
     reason,
   })
+  emitCertificationEvent('revoked', row)
   commit()
   return out({ code, status: 'revoked' as const })
 }
@@ -164,7 +183,8 @@ export async function reissue(code: string, input: { reason: string }) {
     throw ApiError.badRequest('Revoke the certificate before reissuing it')
   }
   const newCode = nextCertificateCode()
-  insertRow('certificates', {
+  const reissued = insertRow('certificates', {
+    ...newCredentialTerms(),
     code: newCode,
     enrolmentId: row.enrolmentId,
     learnerId: row.learnerId,
@@ -176,6 +196,7 @@ export async function reissue(code: string, input: { reason: string }) {
     reissuedFromId: row.id,
     evidence: row.evidence,
   })
+  addCredentialCpdLine(reissued)
   recordAudit(viewer, {
     action: 'certificate.reissue',
     objectType: 'certificate',

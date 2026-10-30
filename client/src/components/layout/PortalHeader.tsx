@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { MyProgrammesSwitcher } from '@/features/learner-record/components/MyProgrammesSwitcher'
 import { useSession, useSignOut } from '@/hooks/useSession'
 import { DemoBadge } from './DemoBadge'
 
@@ -46,6 +47,7 @@ export function PortalHeader({
       <SidebarTrigger className="-ms-1" />
       <DemoBadge compact className="hidden sm:flex" />
       <div className="ms-auto flex items-center gap-2">
+        {portal === 'learner' ? <MyProgrammesSwitcher /> : null}
         {portal === 'learner' ? <LanguageSwitcher /> : null}
         {notifications ?? (
           <Button variant="ghost" size="icon" aria-label={t('shell.notifications')}>

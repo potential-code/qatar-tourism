@@ -4,6 +4,7 @@ import { accountStatusOf, learnerDisplayId } from '@shared/utils/identity'
 import { z } from 'zod'
 import { ApiError, commit, db, delay, out, parseInput, requireCapability } from './api'
 import { DECIDABLE, type Decision, decideRequest } from './approvals/decide'
+import { review as reviewExternalCertificate } from './external-certificates.service'
 import { settleOffers } from './rsvps/offers'
 import { waitlistEntries } from './rsvps-waitlist.service'
 
@@ -93,6 +94,19 @@ export async function decideApproval(
   const needsReason = body.decision !== 'approve'
   const reason = body.reason?.trim() || null
   if (needsReason) parseInput(adminReasonInput, { reason: reason ?? '' })
+  // External certificates go through the CPD review, which owns the request row, the single
+  // ledger line (no double credit), the audit event and the learner notification.
+  if (request.type === 'external_certificate' && request.externalCertificateId) {
+    const cert = db.externalCertificates.find((c) => c.id === request.externalCertificateId)
+    if (!cert) throw ApiError.notFound('External certificate not found')
+    await reviewExternalCertificate(
+      cert.id,
+      body.decision === 'approve'
+        ? { action: 'approve', recognisedAmount: body.recognisedAmount ?? cert.claimedAmount }
+        : { action: body.decision, reason: reason ?? '' },
+    )
+    return out({ code: request.code, status: request.status, booking: null, note: null })
+  }
   const outcome = decideRequest(admin, request, body.decision, reason, body.recognisedAmount)
   commit()
   return out({ code: request.code, ...outcome })

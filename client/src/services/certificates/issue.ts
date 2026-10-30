@@ -1,6 +1,7 @@
 import { THRESHOLDS } from '@shared/constants'
 import { db, insertRow, nowIso } from '../api'
 import { recordAudit } from '../audit.service'
+import { addCredentialCpdLine, newCredentialTerms } from '../credentials/rules'
 import type { EnrolmentContext } from '../progress/evidence'
 import { baselineAttempt, bestScore, type Evidence } from '../progress/rules'
 
@@ -55,7 +56,8 @@ export function issueCertificateIfMissing(
     rolePlayAttempts: evidence.rolePlayCount,
     checkedBy: 'system',
   }
-  insertRow('certificates', {
+  const created = insertRow('certificates', {
+    ...newCredentialTerms(),
     code,
     enrolmentId: enrolment.id,
     learnerId: enrolment.learnerId,
@@ -65,6 +67,7 @@ export function issueCertificateIfMissing(
     issuedAt: nowIso(),
     evidence: evidenceSummary,
   })
+  addCredentialCpdLine(created)
   recordAudit(null, {
     action: 'certificate.issue',
     objectType: 'certificate',

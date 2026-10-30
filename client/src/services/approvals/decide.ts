@@ -15,12 +15,9 @@ import { getSessionCard, syncCapacityStatus } from '../sessions/store'
  * capacity: a full session puts the learner on its waitlist (offers follow when a seat frees); a
  * session whose prerequisite is unmet leaves the learner enrolled without a booking.
  *
- * External certificate: lane C (credentials and CPD) owns CPD crediting. Until its review
- * service is wired in here, the decision updates the request and the external certificate row,
- * and moves the learner's single ledger line between pending, approved and rejected so nothing
- * is credited twice.
- * TODO(lane C): replace `applyExternalCertificateDecision` with a call into the external review
- * service once it exists, and drop the ledger update below.
+ * External certificate: `approvals.service` routes these to `external-certificates.service`
+ * `review()`, which owns CPD crediting. The fallback below only runs for a request whose
+ * certificate row is missing.
  */
 
 export type Decision = 'approve' | 'reject' | 'request_info'
@@ -67,7 +64,7 @@ function approveEnrolment(request: ApprovalRequestRow): Pick<DecisionOutcome, 'b
   return { booking: waitlisted ? 'waitlisted' : 'confirmed', note: null }
 }
 
-/** Updates the external certificate and its ledger line for a decision. TODO(lane C): see above. */
+/** Fallback: updates the external certificate and its ledger line for a decision. */
 function applyExternalCertificateDecision(
   actor: Viewer,
   cert: ExternalCertificateRow,

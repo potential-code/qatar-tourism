@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AdminLearnerRecord } from '@/features/learner-record/components/AdminLearnerRecord'
 import { ApiError } from '@/lib/api-error'
 import { Field } from '../../hub/components/Field'
 import { ManagePage } from '../../hub/components/ManagePage'
@@ -271,6 +272,7 @@ export function UserDetailPage({ userId }: { userId: string }) {
           </Panel>
         </Reveal>
       </div>
+      {isLearner ? <AdminLearnerRecord userId={userId} /> : null}
 
       {isLearner ? (
         <>
