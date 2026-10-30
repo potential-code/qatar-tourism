@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>تخطيط تجربة الزائر | أكاديمية قطر للسياحة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app">تخطَّ إلى المحتوى</a>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <p class="wordmark">أكاديمية <span>قطر للسياحة</span></p>
+        <div class="topbar__right">
+          <span class="pill">نشاط xAPI • العربية</span>
+          <button type="button" class="btn btn--small btn--ghost" data-exit>حفظ والخروج</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="preview-banner" class="banner" role="note" hidden><strong>وضع المعاينة: لا يوجد اتصال بالأكاديمية.</strong> النشاط يعمل، لكن لا يُسجَّل أي شيء.</div>
+
+    <main class="shell">
+      <div class="intro-head">
+        <h1 class="title">تخطيط تجربة الزائر</h1>
+        <p class="subtitle">نشاط تفاعلي • نحو 6 دقائق • 4 خطوات • العربية</p>
+      </div>
+      <div id="app"></div>
+      <details id="lrs-log" class="log"></details>
+      <p id="live" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
+      <p id="status-line" class="status-line" role="status" hidden></p>
+    </main>
+
+    <script src="qta-xapi.js"></script>
+    <script src="strings.js"></script>
+    <script src="activity.js"></script>
+  </body>
+</html>

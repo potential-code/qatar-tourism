@@ -1,0 +1,10 @@
+{
+  "packageId": "wvq-en-scorm2004",
+  "courseKey": "welcoming-visitors-to-qatar",
+  "language": "en",
+  "direction": "ltr",
+  "format": "SCORM 2004 4th Edition",
+  "version": "1.0",
+  "launch": "index.html",
+  "origin": "Original demonstration content authored for the Qatar Tourism Academy mockup"
+}

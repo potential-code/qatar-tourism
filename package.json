@@ -19,6 +19,7 @@
     "test": "bun test --preload ./client/test/setup.ts ./client ./shared",
     "test:e2e": "playwright test",
     "scorm:build": "bun scorm/qta-sample-c04/build.ts",
+    "content:build": "bun scorm/content-library/build.ts",
     "lint": "biome check .",
     "format": "biome check --write ."
   },

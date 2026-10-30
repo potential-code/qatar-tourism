@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tincan xmlns="http://projecttincan.com/tincan.xsd">
+  <activities>
+    <activity id="https://lrs.demo.invalid/activities/pve-en-xapi" type="http://adlnet.gov/expapi/activities/lesson">
+      <name lang="en">Planning a visitor experience</name>
+      <description lang="en">Interactive activity • about 6 minutes • 4 steps • English</description>
+      <launch lang="en">index.html</launch>
+    </activity>
+  </activities>
+</tincan>

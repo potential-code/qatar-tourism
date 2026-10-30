@@ -1,6 +1,11 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { ASSESSMENT_VERSION } from '@shared/content/assessments'
-import { C01_VIDEO_SCRIPT, COURSES, PROGRAMMES_CONTENT } from '@shared/content/curriculum'
+import {
+  C01_VIDEO_SCRIPT,
+  COURSES,
+  isLibraryCourse,
+  PROGRAMMES_CONTENT,
+} from '@shared/content/curriculum'
 import { ASSIGNMENT_RULES, PATH_DEFINITIONS } from '@shared/content/paths'
 import { stableUuid } from './ids'
 import type { Calendar } from './reference-date'
@@ -134,7 +139,9 @@ export function buildCatalogue(cal: Calendar): Catalogue {
     updatedAt: published,
   }))
 
-  const packages: PackageInsert[] = COURSES.map((c) => ({
+  // Content Library units (C08, C09) have no single current package: their language variants
+  // are seeded in integrations.ts.
+  const packages: PackageInsert[] = COURSES.filter((c) => !isLibraryCourse(c.code)).map((c) => ({
     id: stableUuid('package', `${c.code}:1.0`),
     courseId: ids.course[c.code] as string,
     type: c.packageType,

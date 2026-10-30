@@ -64,9 +64,19 @@ describe('programmes', () => {
 })
 
 describe('courses and assessments', () => {
-  test('lists C01 to C07 with packages', async () => {
+  test('lists C01 to C09 with packages (C08 and C09 are the Content Library units)', async () => {
     const { items } = await listCourses()
-    expect(items.map((c) => c.code)).toEqual(['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07'])
+    expect(items.map((c) => c.code)).toEqual([
+      'C01',
+      'C02',
+      'C03',
+      'C04',
+      'C05',
+      'C06',
+      'C07',
+      'C08',
+      'C09',
+    ])
     expect(items.find((c) => c.code === 'C04')?.packages.length).toBeGreaterThan(0)
   })
 
@@ -201,7 +211,7 @@ describe('governance', () => {
       learners: 1200,
       trainers: 10,
       programmes: 3,
-      courses: 7,
+      courses: 9,
       sessions: 30,
     })
   })

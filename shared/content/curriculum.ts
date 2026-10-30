@@ -1,7 +1,7 @@
 import type { CourseFormat, PackageType, ProgrammeCode } from '../constants/enums'
 
 /**
- * Sample curriculum C01–C07 (brief §7). Original fictional demonstration content: do not
+ * Sample curriculum C01–C07 (brief §7) plus the C08–C09 Content Library units (29 Oct). Original fictional demonstration content: do not
  * present any of it as official Qatar Tourism guidance.
  */
 
@@ -114,7 +114,41 @@ export const COURSES: readonly CourseDefinition[] = [
     packageType: 'html_preview',
     programmes: ['C'],
   },
+  // 29 Oct Content Library units: bilingual packages with their own packageIds per language.
+  {
+    code: 'C08',
+    title: 'Welcoming visitors to Qatar',
+    format: 'interactive',
+    formatLabel: 'SCORM 2004 package (English and Arabic)',
+    durationMinutes: 8,
+    summary:
+      'Five short screens: welcome, visitor needs, a captioned sample video, a service interaction and a knowledge check. Available in English and Arabic.',
+    completionRule: { type: 'module_quiz', minPercent: 67 },
+    completionText:
+      'Visit every screen and pass the three-question knowledge check (2 of 3). Credit counts once in either language.',
+    packageType: 'scorm_2004',
+    programmes: ['A', 'B'],
+  },
+  {
+    code: 'C09',
+    title: 'Planning a visitor experience',
+    format: 'interactive',
+    formatLabel: 'xAPI activity (English and Arabic)',
+    durationMinutes: 6,
+    summary:
+      'Choose a destination for a visitor, respond to a changed plan and complete the activity. Statements go to a simulated learning record store. Available in English and Arabic.',
+    completionRule: { type: 'package_reports_completion' },
+    completionText:
+      'Finish the activity; the package sends a completed statement. Credit counts once in either language.',
+    packageType: 'xapi',
+    programmes: ['A', 'B'],
+  },
 ]
+
+/** Content Library units (29 Oct): optional path items, language variants held in contentPackages. */
+export const LIBRARY_COURSE_CODES = ['C08', 'C09'] as const
+export const isLibraryCourse = (code: string): boolean =>
+  (LIBRARY_COURSE_CODES as readonly string[]).includes(code)
 
 export const COURSE_BY_CODE: Record<string, CourseDefinition> = Object.fromEntries(
   COURSES.map((course) => [course.code, course]),

@@ -1,1 +1,66 @@
-{}
+{
+  "language": {
+    "label": "Content language",
+    "help": "The language of the lesson itself. It does not change the portal.",
+    "portal": "Use my portal language",
+    "en": "English",
+    "ar": "العربية",
+    "versionEn": "English version",
+    "versionAr": "Arabic version",
+    "portalIs": "Portal language: {{language}}"
+  },
+  "position": {
+    "screen": "screen",
+    "step": "step"
+  },
+  "switch": {
+    "title": "Your progress has been saved. Open the {{version}}?",
+    "saving": "Saving your progress…",
+    "mapped": "The {{version}} continues at {{unit}} {{position}} of {{total}}.",
+    "unmapped": "The {{version}} starts at the beginning. Your progress in this version is kept, and your enrolment is not reset.",
+    "credit": "Completion credit counts once for this unit, in either language.",
+    "confirm": "Open the {{version}}",
+    "cancel": "Stay in this version",
+    "error": "Your progress could not be saved, so the version was not changed. Try again."
+  },
+  "player": {
+    "ready": "Ready to launch",
+    "continue": "Continue where you left off",
+    "complete": "Unit complete",
+    "launch": "Launch",
+    "resume": "Resume",
+    "openAgain": "Open again",
+    "restart": "Restart this version",
+    "closeReturn": "Close and return",
+    "returnPath": "Return to my path",
+    "formatScorm": "SCORM 2004 package",
+    "formatXapi": "xAPI activity",
+    "versionLine": "Package {{packageId}}, version {{version}}. Built for this demo, not exported from Articulate.",
+    "completion": "Completion",
+    "success": "Success",
+    "score": "Score",
+    "time": "Time in unit",
+    "position": "Position",
+    "notYet": "Not yet",
+    "start": "Start",
+    "creditOnce": "Completion credit counts once for this unit. You finished it in the {{version}}.",
+    "siblingMapped": "You have progress in the {{from}}. Launching continues at {{unit}} {{position}} of {{total}}.",
+    "siblingUnmapped": "You have progress in the {{from}}. The {{to}} starts at the beginning and that progress is kept.",
+    "captions": "The sample video has no voice track. Captions are available in English and Arabic.",
+    "lrsLabel": "Simulated learning record store",
+    "lrsNote": "Statements from this activity go to a simulated learning record store inside the demo. No network calls are made.",
+    "statementsTitle": "Your recent statements",
+    "noStatements": "No statements yet. Launch the activity to create some.",
+    "colVerb": "Verb",
+    "colActivity": "Activity",
+    "colTime": "Time",
+    "colResult": "Result",
+    "restartTitle": "Restart this version?",
+    "restartBody": "Your saved place and answers in this language version will be cleared and it will start from the beginning. The other language version and any pass you already achieved stay recorded.",
+    "restartConfirm": "Restart from the beginning",
+    "restartError": "Could not restart. Try again.",
+    "passedToast": "Completed. {{title}} is done and your progress is updated.",
+    "iframeTitle": "{{title}} ({{version}})",
+    "loadError": "This unit could not be opened"
+  }
+}

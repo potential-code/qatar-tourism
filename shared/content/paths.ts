@@ -66,6 +66,34 @@ function bCourse(courseCode: string, title: string, note?: string): PathItemDefi
   }
 }
 
+/**
+ * 29 Oct Content Library units, optional extras at the end of every Program A and B path (kept
+ * last so existing item ids and the required-unit maths are unchanged). Learners can open either
+ * language version; credit counts once per unit.
+ */
+function libraryItems(level: number, stage: string): PathItemDefinition[] {
+  return [
+    {
+      kind: 'course',
+      courseCode: 'C08',
+      title: 'Welcoming visitors to Qatar',
+      required: false,
+      level,
+      stage,
+      note: 'English and Arabic',
+    },
+    {
+      kind: 'course',
+      courseCode: 'C09',
+      title: 'Planning a visitor experience',
+      required: false,
+      level,
+      stage,
+      note: 'English and Arabic',
+    },
+  ]
+}
+
 export const PATH_DEFINITIONS: readonly PathDefinition[] = [
   {
     code: 'B-HOTEL',
@@ -88,6 +116,7 @@ export const PATH_DEFINITIONS: readonly PathDefinition[] = [
         stage: 'Visitor Service Essentials',
       },
       postB,
+      ...libraryItems(1, 'Visitor Service Essentials'),
     ],
   },
   {
@@ -112,6 +141,7 @@ export const PATH_DEFINITIONS: readonly PathDefinition[] = [
         stage: 'Visitor Service Essentials',
       },
       postB,
+      ...libraryItems(1, 'Visitor Service Essentials'),
     ],
   },
   {
@@ -135,6 +165,7 @@ export const PATH_DEFINITIONS: readonly PathDefinition[] = [
         stage: 'Visitor Service Essentials',
       },
       postB,
+      ...libraryItems(1, 'Visitor Service Essentials'),
     ],
   },
   {
@@ -222,6 +253,7 @@ export const PATH_DEFINITIONS: readonly PathDefinition[] = [
         level: 2,
         stage: 'Final assessment',
       },
+      ...libraryItems(1, 'Foundation learning'),
     ],
   },
   {

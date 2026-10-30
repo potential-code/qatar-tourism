@@ -1,4 +1,5 @@
 import type { ProgrammeCode } from '@shared/constants'
+import { isLibraryCourse } from '@shared/content/curriculum'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { CheckCircle2, Info, PackageOpen, Play, RotateCcw, X } from 'lucide-react'
@@ -13,6 +14,7 @@ import { useInvalidateLearning } from '@/features/learning/queries/learning.quer
 import { useScormRuntime } from '../hooks/useScormRuntime'
 import { scormStateQuery, useScormRestart } from '../queries/scorm.queries'
 import { secondsLabel } from '../utils/duration'
+import { LibraryScormPlayer } from './LibraryScormPlayer'
 import { ScormStatusLine } from './ScormStatusLine'
 
 /**
@@ -21,6 +23,24 @@ import { ScormStatusLine } from './ScormStatusLine'
  * only: no forms, popups or top navigation) and talks to scorm-again through API_1484_11.
  */
 export function ScormPlayer({
+  code,
+  programme,
+  title,
+}: {
+  code: string
+  programme: ProgrammeCode
+  title: string
+}) {
+  // The English/Arabic Content Library unit has its own player (language control, per-package
+  // bookmarks). C04 keeps the original single-package player below.
+  return isLibraryCourse(code) ? (
+    <LibraryScormPlayer code={code} programme={programme} title={title} />
+  ) : (
+    <SinglePackagePlayer code={code} programme={programme} title={title} />
+  )
+}
+
+function SinglePackagePlayer({
   code,
   programme,
   title,

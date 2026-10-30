@@ -13,15 +13,15 @@ type SettingInsert = SeedRow<'integrationSettings'>
 /**
  * Content Library packages (29 Oct). Lane B authors the real packages and serves them from
  * `client/public/content/<packageId>/index.html`; this seed only reserves the ids and launch URLs.
- * The rows point at existing courses C01 and C02 as placeholders (lane B may repoint `courseId`)
- * and are `isCurrent: false`, so the existing course player ignores them until lane B wires them.
+ * The rows belong to the Content Library units C08 and C09 and are `isCurrent: false`: a unit
+ * resolves its language variants by `courseKey`, not through a single current package.
  */
 export const CONTENT_ITEMS = [
   {
     courseKey: 'welcoming-visitors-to-qatar',
     title: 'Welcoming visitors to Qatar',
     format: 'scorm_2004',
-    course: 'C01',
+    course: 'C08',
     variants: {
       en: 'wvq-en-scorm2004',
       ar: 'wvq-ar-scorm2004',
@@ -32,7 +32,7 @@ export const CONTENT_ITEMS = [
     courseKey: 'planning-a-visitor-experience',
     title: 'Planning a visitor experience',
     format: 'xapi',
-    course: 'C02',
+    course: 'C09',
     variants: {
       en: 'pve-en-xapi',
       ar: 'pve-ar-xapi',

@@ -38,13 +38,15 @@ const newLaunchId = () =>
  * same-origin iframe, finds `API_1484_11` on this window. Every Commit and the Terminate are
  * persisted to the API, which stores the CMI data on `unit_progress` and counts a pass once.
  */
-export function useScormRuntime(code: string, programme: ProgrammeCode) {
+export function useScormRuntime(code: string, programme: ProgrammeCode, packageId?: string) {
   const commit = useScormCommit(code)
   const apiRef = useRef<Scorm2004API | null>(null)
   const launchId = useRef(newLaunchId())
   const launchedAt = useRef(Date.now())
+  const packageRef = useRef(packageId)
+  const inflight = useRef<Promise<unknown>>(Promise.resolve())
   const [status, setStatus] = useState<LiveStatus | null>(null)
-  const { mutate } = commit
+  const { mutateAsync } = commit
 
   const persist = useCallback(
     (api: Scorm2004API) => {
@@ -64,6 +66,7 @@ export function useScormRuntime(code: string, programme: ProgrammeCode) {
         sessionTimeSeconds: Math.round((Date.now() - launchedAt.current) / 1000),
         suspendData: cmi.suspend_data ?? '',
         location: cmi.location ?? '',
+        ...(packageRef.current ? { packageId: packageRef.current } : {}),
       }
       setStatus({
         location: body.location,
@@ -74,17 +77,22 @@ export function useScormRuntime(code: string, programme: ProgrammeCode) {
         saved: false,
         error: false,
       })
-      mutate(body, {
-        onSuccess: () => setStatus((s) => (s ? { ...s, saving: false, saved: true } : s)),
-        onError: () => setStatus((s) => (s ? { ...s, saving: false, error: true } : s)),
-      })
+      inflight.current = mutateAsync(body).then(
+        () => setStatus((s) => (s ? { ...s, saving: false, saved: true } : s)),
+        () => {
+          setStatus((s) => (s ? { ...s, saving: false, error: true } : s))
+          throw new Error('Commit failed')
+        },
+      )
+      inflight.current.catch(() => undefined)
     },
-    [mutate, programme],
+    [mutateAsync, programme],
   )
 
   /** Creates a fresh runtime for one launch, primed with the saved resume data. */
   const start = useCallback(
-    (initial: ScormInitial) => {
+    (initial: ScormInitial, forPackageId?: string) => {
+      packageRef.current = forPackageId ?? packageId
       launchId.current = newLaunchId()
       launchedAt.current = Date.now()
       const api = new Scorm2004API({ lmsCommitUrl: false, autocommit: false, logLevel: 5 })
@@ -104,8 +112,20 @@ export function useScormRuntime(code: string, programme: ProgrammeCode) {
       window.API_1484_11 = api
       setStatus(null)
     },
-    [persist],
+    [persist, packageId],
   )
+
+  /**
+   * Commits the running package's bookmark and waits until it is stored. Used before a language
+   * switch so the saved place is on record. Rejects when the save failed.
+   */
+  const flush = useCallback(async (frame: HTMLIFrameElement | null) => {
+    const content = (
+      frame?.contentWindow as (Window & { QTAContent?: { saveNow: () => unknown } }) | null
+    )?.QTAContent
+    content?.saveNow()
+    await inflight.current
+  }, [])
 
   const stop = useCallback(() => {
     apiRef.current = null
@@ -114,5 +134,5 @@ export function useScormRuntime(code: string, programme: ProgrammeCode) {
 
   useEffect(() => stop, [stop])
 
-  return { start, stop, status, commitError: commit.error, lastCommit: commit.data }
+  return { start, stop, flush, status, commitError: commit.error, lastCommit: commit.data }
 }

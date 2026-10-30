@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tincan xmlns="http://projecttincan.com/tincan.xsd">
+  <activities>
+    <activity id="https://lrs.demo.invalid/activities/pve-ar-xapi" type="http://adlnet.gov/expapi/activities/lesson">
+      <name lang="ar">تخطيط تجربة الزائر</name>
+      <description lang="ar">نشاط تفاعلي • نحو 6 دقائق • 4 خطوات • العربية</description>
+      <launch lang="ar">index.html</launch>
+    </activity>
+  </activities>
+</tincan>
