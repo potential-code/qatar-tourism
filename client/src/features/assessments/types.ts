@@ -4,3 +4,5 @@ export type AssessmentsOverview = Awaited<ReturnType<typeof assessments.overview
 export type AssessmentState = Awaited<ReturnType<typeof assessments.getState>>
 export type AssessmentResult = NonNullable<AssessmentState['lastResult']>
 export type OpenAttempt = NonNullable<AssessmentState['attempt']>
+export type AttemptQuestion = OpenAttempt['questions'][number]
+export type AttemptAvailability = AssessmentState['availability']

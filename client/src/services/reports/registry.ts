@@ -1,4 +1,5 @@
 import type { ReportKey } from '@shared/schemas/admin-reports'
+import { assessmentResultsReport } from './definitions/assessment-results'
 import {
   allLearnersReport,
   attentionReport,
@@ -20,6 +21,7 @@ export const REPORTS: Record<ReportKey, ReportDefinition> = {
   trainers: trainersReport,
   sessions: sessionsReport,
   assessments: assessmentsReport,
+  'assessment-results': assessmentResultsReport,
   assignments: assignmentsReport,
   certification: certificationReport,
   notifications: notificationsReport,

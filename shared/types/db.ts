@@ -353,8 +353,11 @@ export interface AssessmentAnswerRow extends Timestamps {
   id: string
   attemptId: string
   competency: Competency
+  /** The selected option key; several keys joined by a comma for a multiple-choice answer. */
   selectedOption: string
   points: number
+  /** The question answered (QuestionBankRow.questionId). Null for answers on seeded history. */
+  questionId: string | null
 }
 
 export type TranscriptTurn = { speaker: 'visitor' | 'learner'; text: string }

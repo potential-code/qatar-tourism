@@ -51,6 +51,13 @@ export const REPORT_META: Record<
     description: 'Assessment attempts and paired improvement.',
     scope: 'cohort',
   },
+  'assessment-results': {
+    title: 'Assessment results',
+    description:
+      'Pre and post outcomes per learner: attempts, language, pass or fail and best score.',
+    scope: 'cohort',
+    searchHint: 'Learner ID, name, assessment, language',
+  },
   assignments: {
     title: 'Assignments',
     description: 'Practical assignments and short responses.',
@@ -84,6 +91,7 @@ export const REPORT_ORDER: ReportKey[] = [
   'trainers',
   'sessions',
   'assessments',
+  'assessment-results',
   'assignments',
   'certification',
   'notifications',

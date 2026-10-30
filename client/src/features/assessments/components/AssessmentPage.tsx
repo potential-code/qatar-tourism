@@ -1,7 +1,9 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
-import { ClipboardCheck, Lock } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { Save } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { Button } from '@/components/ui/button'
@@ -15,8 +17,10 @@ import {
   useStartAssessment,
 } from '../queries/assessments.queries'
 import type { AssessmentResult } from '../types'
+import { kindLabel } from '../utils/format'
 import { AssessmentResultView } from './AssessmentResultView'
 import { AssessmentRunner } from './AssessmentRunner'
+import { StartPanel } from './StartPanel'
 
 export function AssessmentPage({ kind }: { kind: AssessmentKind }) {
   return (
@@ -27,57 +31,61 @@ export function AssessmentPage({ kind }: { kind: AssessmentKind }) {
 }
 
 function Assessment({ programme, kind }: { programme: ProgrammeCode; kind: AssessmentKind }) {
+  const { t, i18n } = useTranslation('assessments')
   const state = useQuery(assessmentStateQuery(programme, kind))
   const start = useStartAssessment(programme, kind)
   const [fresh, setFresh] = useState<AssessmentResult | null>(null)
   const [retrying, setRetrying] = useState(false)
 
   if (state.isLoading)
-    return <Skeleton className="h-96 w-full rounded-xl" aria-label="Loading assessment" />
+    return <Skeleton className="h-96 w-full rounded-xl" aria-label={t('page.loading')} />
   if (state.error || !state.data) {
     return (
       <LoadError
         error={state.error}
         onRetry={() => void state.refetch()}
-        title="This assessment could not be opened"
+        title={t('page.loadError')}
       />
     )
   }
   const data = state.data
+  const title = kindLabel(t, kind, programme)
   const begin = () =>
-    start.mutate(undefined, {
+    start.mutate(i18n.language, {
       onSuccess: () => {
         setFresh(null)
         setRetrying(false)
       },
-      onError: (e) =>
-        toast.error(e instanceof ApiError ? e.message : 'Could not start. Try again.'),
+      onError: (e) => toast.error(e instanceof ApiError ? e.message : t('page.startFailed')),
     })
 
   const crumbs = (
     <Breadcrumbs
-      items={[{ label: 'Assessments', to: '/learner/assessments' }, { label: data.title }]}
+      items={[{ label: t('page.crumb'), to: '/learner/assessments' }, { label: title }]}
     />
-  )
-  const header = (
-    <div className="flex flex-col gap-2">
-      <h1 className="font-display text-3xl leading-tight font-light text-ink md:text-4xl">
-        {data.title}
-      </h1>
-      <p className="max-w-[70ch] text-muted-foreground">{data.intro}</p>
-    </div>
   )
 
   if (data.attempt) {
     return (
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
         {crumbs}
-        {header}
+        <h1 className="font-display text-3xl leading-tight font-light text-ink md:text-4xl">
+          {title}
+        </h1>
         <AssessmentRunner
+          key={data.attempt.id}
           attempt={data.attempt}
+          availability={data.availability}
           programme={programme}
           kind={kind}
-          title={`${data.title}, version ${data.version}`}
+          title={t('runner.title', { title, version: data.version })}
+          exitAction={
+            <Button asChild variant="ghost">
+              <Link to="/learner/assessments" search={{ programme }}>
+                <Save aria-hidden /> {t('runner.saveExit')}
+              </Link>
+            </Button>
+          }
           onSubmitted={(result) => setFresh(result)}
         />
       </div>
@@ -92,7 +100,7 @@ function Assessment({ programme, kind }: { programme: ProgrammeCode; kind: Asses
         <AssessmentResultView
           result={result}
           programme={programme}
-          canRetry={data.availability.canStart}
+          canRetry={result.canRetry}
           onRetry={begin}
         />
       </div>
@@ -102,38 +110,13 @@ function Assessment({ programme, kind }: { programme: ProgrammeCode; kind: Asses
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       {crumbs}
-      {header}
-      <div className="grid gap-6 rounded-xl border bg-white p-6 shadow-sm md:grid-cols-[1fr_auto] md:items-center md:p-8">
-        <dl className="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <dt className="text-muted-foreground">Questions</dt>
-            <dd className="font-display text-3xl text-ink">5</dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Pass mark</dt>
-            <dd className="font-display text-3xl text-ink">
-              {data.passMark ? `${data.passMark}%` : 'None'}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-muted-foreground">Version</dt>
-            <dd className="font-display text-3xl text-ink">{data.version}</dd>
-          </div>
-        </dl>
-        {data.availability.canStart ? (
-          <Button size="lg" onClick={begin} disabled={start.isPending}>
-            <ClipboardCheck aria-hidden /> {kind === 'pre' ? 'Start pre-assessment' : 'Start'}
-          </Button>
-        ) : (
-          <p className="flex max-w-xs items-start gap-2 text-sm text-muted-foreground">
-            <Lock aria-hidden className="mt-0.5 size-4 shrink-0" /> {data.availability.reason}
-          </p>
-        )}
-      </div>
-      <p className="text-xs text-muted-foreground">
-        Each item is worth 20 points. Answer order is shuffled. Your answers save as you go, so you
-        can leave and come back.
-      </p>
+      <StartPanel
+        data={data}
+        programme={programme}
+        title={title}
+        pending={start.isPending}
+        onStart={begin}
+      />
     </div>
   )
 }

@@ -240,9 +240,11 @@ describe('assessment rules, content and CRM seeds', () => {
     }
   })
 
-  test('the existing ten questions are mapped into the bank', () => {
-    expect(db.questionBank).toHaveLength(10)
-    expect(db.questionBank.every((q) => q.status === 'published' && q.language === 'en')).toBe(true)
+  test('the bank holds 24 shared questions, each with a published English and Arabic variant', () => {
+    expect(db.questionBank).toHaveLength(48)
+    expect(new Set(db.questionBank.map((q) => q.sharedId)).size).toBe(24)
+    expect(db.questionBank.every((q) => q.status === 'published')).toBe(true)
+    expect(db.questionBank.filter((q) => q.language === 'ar')).toHaveLength(24)
   })
 
   test('four content package variants with reserved ids and launch URLs', () => {

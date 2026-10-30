@@ -146,6 +146,7 @@ export const ADMIN_NAV: NavSection[] = [
           { label: 'Trainers', to: '/admin/reports/trainers' },
           { label: 'Sessions and attendance', to: '/admin/reports/sessions' },
           { label: 'Assessments and improvement', to: '/admin/reports/assessments' },
+          { label: 'Assessment Results', to: '/admin/reports/assessment-results' },
           { label: 'Assignments', to: '/admin/reports/assignments' },
           { label: 'Certification', to: '/admin/reports/certification' },
           { label: 'Notifications and exports', to: '/admin/reports/notifications' },

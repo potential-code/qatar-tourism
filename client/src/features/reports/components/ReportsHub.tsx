@@ -29,6 +29,7 @@ const ICONS: Record<string, LucideIcon> = {
   trainers: Presentation,
   sessions: CalendarRange,
   assessments: ClipboardList,
+  'assessment-results': ClipboardList,
   assignments: FileText,
   certification: Award,
   notifications: BellRing,

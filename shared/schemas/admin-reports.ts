@@ -11,6 +11,7 @@ export const REPORT_KEYS = [
   'trainers',
   'sessions',
   'assessments',
+  'assessment-results',
   'assignments',
   'certification',
   'notifications',
