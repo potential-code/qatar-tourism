@@ -31,8 +31,8 @@ export function integrations(e: IntegrationEvidence): Integration[] {
       purpose: 'Link Academy registrations to the customer CRM.',
       state: 'Not connected',
       evidence: [
-        'No CRM endpoint or credentials are configured in this environment.',
-        'Registrations are stored only in the demo data in this browser; nothing is synchronised.',
+        'No live CRM endpoint or credentials are configured in this environment.',
+        'The CRM Integration tab runs a simulated two-way flow on demo data in this browser; nothing leaves it.',
       ],
       intended:
         'On approval, new registrations would create or match a CRM contact and sync programme status.',
@@ -43,8 +43,8 @@ export function integrations(e: IntegrationEvidence): Integration[] {
       purpose: 'Let staff sign in with their organisation identity.',
       state: 'Demo',
       evidence: [
-        'The sign-in screen offers a simulated SSO option, labelled as simulated.',
-        'No identity provider is configured, so no identity is authenticated by Qatar Tourism.',
+        'The sign-in screen offers a simulated SSO option, and the SSO tab runs a mock identity-provider test.',
+        'No identity provider is connected, so no identity is authenticated by Qatar Tourism.',
       ],
       intended:
         'On approval, sign-in would redirect to the approved identity provider and map roles.',

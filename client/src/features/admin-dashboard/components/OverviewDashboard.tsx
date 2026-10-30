@@ -11,10 +11,12 @@ import { FilterBar } from './filters/FilterBar'
 import { KpiBento } from './KpiBento'
 import { PerformanceTable } from './PerformanceTable'
 import { AttendancePanel } from './panels/AttendancePanel'
+import { CrmCard } from './panels/CrmCard'
 import { DistributionPanel } from './panels/DistributionPanel'
 import { FunnelPanel } from './panels/FunnelPanel'
 import { ImprovementPanel } from './panels/ImprovementPanel'
 import { OperationsPanels } from './panels/OperationsPanels'
+import { SecureAccessSummary } from './panels/SecureAccessSummary'
 
 const PROGRAMME_REPORT = { A: 'program-a', B: 'program-b', C: 'program-c' } as const
 
@@ -64,6 +66,10 @@ export function OverviewDashboard() {
                 <AttendancePanel data={data} onOpen={() => openReport('sessions')} />
               </div>
               <OperationsPanels data={data} openReport={openReport} />
+              <div className="grid grid-cols-12 gap-6">
+                <CrmCard />
+                <SecureAccessSummary />
+              </div>
               <PerformanceTable data={data} onOpen={(p) => openReport(PROGRAMME_REPORT[p])} />
               <AttentionTable filters={filters} />
             </>
