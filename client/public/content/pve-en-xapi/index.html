@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Planning a visitor experience | Qatar Tourism Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Skip to content</a>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <p class="wordmark">Qatar Tourism <span>Academy</span></p>
+        <div class="topbar__right">
+          <span class="pill">xAPI activity • English</span>
+          <button type="button" class="btn btn--small btn--ghost" data-exit>Save and exit</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="preview-banner" class="banner" role="note" hidden><strong>Preview mode: no Academy connection.</strong> The activity works, but nothing is recorded.</div>
+
+    <main class="shell">
+      <div class="intro-head">
+        <h1 class="title">Planning a visitor experience</h1>
+        <p class="subtitle">Interactive activity • about 6 minutes • 4 steps • English</p>
+      </div>
+      <div id="app"></div>
+      <details id="lrs-log" class="log"></details>
+      <p id="live" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
+      <p id="status-line" class="status-line" role="status" hidden></p>
+    </main>
+
+    <script src="qta-xapi.js"></script>
+    <script src="strings.js"></script>
+    <script src="activity.js"></script>
+  </body>
+</html>

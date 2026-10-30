@@ -1,6 +1,6 @@
 import { COMPETENCIES, type Competency } from '@shared/constants'
 import { QUESTION_BANK } from '@shared/content/assessments'
-import { COURSE_BY_CODE } from '@shared/content/curriculum'
+import { COURSE_BY_CODE, isLibraryCourse } from '@shared/content/curriculum'
 import { type RuleProfile, resolvePathRule } from '@shared/content/paths'
 import { ROLEPLAY_SCENARIOS } from '@shared/content/scenarios'
 import type { Catalogue } from './catalogue'
@@ -755,7 +755,10 @@ export function buildActivity(
               : 'Level 2: Practical assignment'
     } else if (programme === 'B') {
       const notStarted = stage === 'not_started'
-      const orderedCourses = pathItems.filter((p) => p.kind === 'course' && p.courseCode !== 'C05')
+      const orderedCourses = pathItems.filter(
+        (p) =>
+          p.kind === 'course' && p.courseCode !== 'C05' && !isLibraryCourse(p.courseCode ?? ''),
+      )
       const unitsDone =
         stage === 'b_early' ? r.int(0, 1) : stage === 'b_mid' ? 2 : orderedCourses.length
       const hasAi = ['b_response', 'b_review', 'completed'].includes(stage)

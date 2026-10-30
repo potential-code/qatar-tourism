@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="WVQ-EN-SCORM2004" version="1.0"
+  xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+  xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+  xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+  xmlns:imsss="http://www.imsglobal.org/xsd/imsss"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd
+                      http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd
+                      http://www.adlnet.org/xsd/adlseq_v1p3 adlseq_v1p3.xsd
+                      http://www.adlnet.org/xsd/adlnav_v1p3 adlnav_v1p3.xsd
+                      http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd"
+  xml:lang="en">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="WVQ-EN-SCORM2004-ORG">
+    <organization identifier="WVQ-EN-SCORM2004-ORG">
+      <title>Welcoming visitors to Qatar</title>
+      <item identifier="WVQ-EN-SCORM2004-ITEM" identifierref="WVQ-EN-SCORM2004-RES">
+        <title>Welcoming visitors to Qatar</title>
+        <imsss:sequencing>
+          <imsss:objectives>
+            <imsss:primaryObjective objectiveID="WVQ-EN-SCORM2004-OBJ" satisfiedByMeasure="true">
+              <imsss:minNormalizedMeasure>0.67</imsss:minNormalizedMeasure>
+            </imsss:primaryObjective>
+          </imsss:objectives>
+        </imsss:sequencing>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="WVQ-EN-SCORM2004-RES" type="webcontent" adlcp:scormType="sco" href="index.html">
+      <file href="index.html"/>
+      <file href="styles.css"/>
+      <file href="qta-scorm.js"/>
+      <file href="strings.js"/>
+      <file href="player.js"/>
+      <file href="captions/c01.en.vtt"/>
+      <file href="captions/c01.ar.vtt"/>
+    </resource>
+  </resources>
+</manifest>

@@ -31,7 +31,10 @@ export async function getUnit(programme: ProgrammeCode, code: string) {
   if (!definition) throw ApiError.notFound('Unit not found')
   const course = db.courses.find((c) => c.code === code)
   if (!course) throw ApiError.notFound('Unit not found')
-  const pkg = db.contentPackages.find((p) => p.courseId === course.id && p.isCurrent)
+  // Content Library units (C08, C09) have language variants instead of one current package.
+  const pkg =
+    db.contentPackages.find((p) => p.courseId === course.id && p.isCurrent) ??
+    db.contentPackages.find((p) => p.courseId === course.id && p.language === 'en' && p.packageId)
 
   const { unit } = requireUnitContext(learnerId, programme, code)
   const extra = unit?.extra ?? {}
@@ -86,7 +89,10 @@ export async function getUnit(programme: ProgrammeCode, code: string) {
           attempts: Number(extra.attempts ?? 0),
         }
       case 'C04':
+      case 'C08':
         return { kind: 'scorm' as const }
+      case 'C09':
+        return { kind: 'xapi' as const }
       case 'C05':
         return {
           kind: 'resource' as const,

@@ -1,0 +1,10 @@
+{
+  "packageId": "pve-en-xapi",
+  "courseKey": "planning-a-visitor-experience",
+  "language": "en",
+  "direction": "ltr",
+  "format": "xAPI (tincan.xml)",
+  "version": "1.0",
+  "launch": "index.html",
+  "origin": "Original demonstration content authored for the Qatar Tourism Academy mockup"
+}

@@ -6,6 +6,7 @@ import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScormPlayer } from '@/features/scorm-player/components/ScormPlayer'
+import { XapiPlayer } from '@/features/xapi-player/components/XapiPlayer'
 import { localised, tr } from '@/i18n/localised'
 import { journeyQuery, unitQuery } from '../queries/learning.queries'
 import type { Journey, ProgrammeCode, Unit } from '../types'
@@ -181,6 +182,8 @@ function UnitContentView({
       return <BranchingPreview content={content} programme={programme} />
     case 'scorm':
       return <ScormPlayer code={unit.code} programme={programme} title={unit.title} />
+    case 'xapi':
+      return <XapiPlayer code={unit.code} programme={programme} title={unit.title} />
     case 'resource':
       return <ResourceUnit content={content} programme={programme} completed={completed} />
     case 'session':

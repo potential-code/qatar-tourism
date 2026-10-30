@@ -23,7 +23,7 @@ export function CoursesPage() {
   return (
     <ManagePage
       title="Course and content management"
-      description="Courses C01 to C07 are the units learners progress through. Manage content packages, versions, completion mapping and learner-facing copy."
+      description="Courses C01 to C09 are the units learners progress through. Manage content packages, versions, completion mapping and learner-facing copy."
     >
       {query.isPending ? (
         <CardsSkeleton count={2} className="grid gap-6 xl:grid-cols-[340px_1fr]" />

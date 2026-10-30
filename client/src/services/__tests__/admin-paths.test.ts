@@ -118,7 +118,8 @@ describe('versioning keeps existing learners and completion records', () => {
     const id = pathId('B-HOTEL')
     await startDraft(id)
     const draft = (await getPath(id)).versions.find((v) => v.status === 'draft')
-    expect(draft?.items.length).toBe(7)
+    // Six required items plus the two optional Content Library units (C08, C09).
+    expect(draft?.items.length).toBe(9)
     const items = (draft?.items ?? []).map((item) => ({
       kind: item.kind,
       courseId: item.courseId,

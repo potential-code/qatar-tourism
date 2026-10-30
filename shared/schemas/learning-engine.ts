@@ -9,7 +9,7 @@ import { COMPETENCIES, PROGRAMME_CODES } from '../constants/enums'
 
 export const programmeParam = z.object({ programme: z.enum(PROGRAMME_CODES) })
 
-export const courseCodeParam = z.object({ code: z.string().regex(/^C0[1-7]$/) })
+export const courseCodeParam = z.object({ code: z.string().regex(/^C0[1-9]$/) })
 
 export const programmeQuery = z.object({ programme: z.enum(PROGRAMME_CODES) })
 
@@ -76,6 +76,11 @@ export const scormCommitBody = z.object({
   location: z.string().max(1000).optional(),
   /** One id per launch, so session time adds up across launches without double counting. */
   launchId: z.string().regex(/^[a-zA-Z0-9-]{8,40}$/),
+  /** Content Library units: which language variant (package) this commit belongs to. */
+  packageId: z
+    .string()
+    .regex(/^[a-z0-9-]{3,40}$/)
+    .optional(),
 })
 export type ScormCommitBody = z.infer<typeof scormCommitBody>
 

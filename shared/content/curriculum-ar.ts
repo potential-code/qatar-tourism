@@ -5,6 +5,20 @@
  * register. Demonstration material: final Arabic review is a handover item for Qatar Tourism.
  */
 export const AR_CURRICULUM: Readonly<Record<string, string>> = {
+  // Content Library courses C08 and C09 (29 Oct)
+  'Welcoming visitors to Qatar': 'الترحيب بزوار قطر',
+  'SCORM 2004 package (English and Arabic)': 'حزمة SCORM 2004 (بالإنجليزية والعربية)',
+  'Five short screens: welcome, visitor needs, a captioned sample video, a service interaction and a knowledge check. Available in English and Arabic.':
+    'خمس شاشات قصيرة: الترحيب، واحتياجات الزائر، وفيديو نموذجي مع ترجمة نصية، وتفاعل خدمة، واختبار معرفي. متاحة بالإنجليزية والعربية.',
+  'Visit every screen and pass the three-question knowledge check (2 of 3). Credit counts once in either language.':
+    'تصفّح كل الشاشات واجتز الاختبار المعرفي المكوّن من ثلاثة أسئلة (2 من 3). يُحتسب الإنجاز مرة واحدة بأي من اللغتين.',
+  'Planning a visitor experience': 'التخطيط لتجربة الزائر',
+  'xAPI activity (English and Arabic)': 'نشاط xAPI (بالإنجليزية والعربية)',
+  'Choose a destination for a visitor, respond to a changed plan and complete the activity. Statements go to a simulated learning record store. Available in English and Arabic.':
+    'اختر وجهة لزائر، وتعامل مع تغيّر في الخطة، ثم أكمل النشاط. تُرسل البيانات إلى مخزن سجلات تعلّم تجريبي. متاح بالإنجليزية والعربية.',
+  'Finish the activity; the package sends a completed statement. Credit counts once in either language.':
+    'أكمل النشاط لترسل الحزمة بيان الإكمال. يُحتسب الإنجاز مرة واحدة بأي من اللغتين.',
+  'English and Arabic': 'بالإنجليزية والعربية',
   // Courses C01 to C07
   'Welcoming every visitor': 'الترحيب بكل زائر',
   'Greet, ask a useful question, listen and offer a clear next step.':
