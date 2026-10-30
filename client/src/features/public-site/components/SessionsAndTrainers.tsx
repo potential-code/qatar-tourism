@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, CalendarX } from 'lucide-react'
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern, Eyebrow, SectionHeading } from '@/components/brand'
 import { ScrollReveal, SplitWords } from '@/components/motion'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ const TRAINER_TONES: TrainerTone[] = ['teal', 'maroon', 'sky', 'gold']
 
 /** Sessions and trainers (brief §2, §16): real seeded upcoming sessions and trainer profiles. */
 export function SessionsAndTrainers() {
+  const { t } = useTranslation('public')
   const sessions = useQuery(upcomingSessionsQuery())
   const trainers = useQuery(trainersQuery())
   const strip = useRef<HTMLUListElement>(null)
@@ -47,18 +49,22 @@ export function SessionsAndTrainers() {
         <ScrollReveal className="mx-auto flex max-w-[1400px] flex-col gap-14 px-4 py-24 md:px-8 md:py-32">
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <SectionHeading
-              eyebrow={<Eyebrow index="04">Live learning</Eyebrow>}
+              eyebrow={
+                <Eyebrow className="rtl:tracking-normal" index="04">
+                  {t('sessionsSection.eyebrow')}
+                </Eyebrow>
+              }
               title={
-                <span id="sessions-title">
-                  <SplitWords text="Upcoming sessions and trainers" />
+                <span id="sessions-title" className="rtl:leading-[1.4]">
+                  <SplitWords text={t('sessionsSection.title')} />
                 </span>
               }
-              description="Trainer-led practice in person at the Academy or live online. All trainers and sessions shown are fictional."
+              description={t('sessionsSection.description')}
             />
             <div data-reveal>
               <Button asChild variant="outline" className="group w-fit shrink-0 bg-white/80">
                 <Link to="/sessions">
-                  View all upcoming sessions
+                  {t('sessionsSection.viewAll')}
                   <ArrowRight
                     aria-hidden
                     className="transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
@@ -75,15 +81,15 @@ export function SessionsAndTrainers() {
               ))}
             </div>
           ) : sessions.isError ? (
-            <SectionError what="the upcoming sessions" onRetry={() => sessions.refetch()} />
+            <SectionError what={t('errors.sessions')} onRetry={() => sessions.refetch()} />
           ) : sessions.data.length === 0 ? (
             <EmptyState
               icon={CalendarX}
-              title="No sessions are scheduled right now"
-              description="New sessions appear here as soon as trainers publish them. Self-paced learning is always open."
+              title={t('sessionsSection.emptyTitle')}
+              description={t('sessionsSection.emptyDescription')}
               action={
                 <Button asChild>
-                  <Link to="/programmes">Explore programmes</Link>
+                  <Link to="/programmes">{t('sessionsSection.explore')}</Link>
                 </Button>
               }
             />
@@ -120,10 +126,12 @@ export function SessionsAndTrainers() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="grid gap-3">
               <div data-reveal>
-                <Eyebrow tone="light">The people behind it</Eyebrow>
+                <Eyebrow className="rtl:tracking-normal" tone="light">
+                  {t('sessionsSection.trainersEyebrow')}
+                </Eyebrow>
               </div>
               <h3 className="font-display font-light text-4xl md:text-5xl">
-                <SplitWords text="Meet the trainers" />
+                <SplitWords text={t('sessionsSection.trainersTitle')} />
               </h3>
             </div>
             <div data-reveal className="flex items-center gap-3">
@@ -131,12 +139,12 @@ export function SessionsAndTrainers() {
                 to="/trainers"
                 className="me-2 font-medium text-gold-soft text-sm underline-offset-4 hover:underline"
               >
-                All trainer profiles
+                {t('sessionsSection.allTrainers')}
               </Link>
               <Button
                 variant="glass"
                 size="icon"
-                aria-label="Previous trainers"
+                aria-label={t('sessionsSection.previous')}
                 onClick={() => page(-1)}
                 className="hidden md:inline-flex"
               >
@@ -144,7 +152,7 @@ export function SessionsAndTrainers() {
               </Button>
               <Button
                 size="icon"
-                aria-label="Next trainers"
+                aria-label={t('sessionsSection.next')}
                 onClick={() => page(1)}
                 className="hidden bg-white text-teal-deep hover:bg-gold-soft md:inline-flex"
               >
@@ -159,12 +167,12 @@ export function SessionsAndTrainers() {
               ))}
             </div>
           ) : trainers.isError ? (
-            <SectionError what="the trainer profiles" onRetry={() => trainers.refetch()} />
+            <SectionError what={t('errors.trainerProfiles')} onRetry={() => trainers.refetch()} />
           ) : (
             <ScrollReveal>
               <ul
                 ref={strip}
-                aria-label="Trainers"
+                aria-label={t('sessionsSection.list')}
                 className="-mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-4 pt-4 pb-10 md:-mx-8 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {trainers.data.map((trainer, index) => (

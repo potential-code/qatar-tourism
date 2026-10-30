@@ -11,10 +11,11 @@ import {
   useTransform,
 } from 'motion/react'
 import { type PointerEvent, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame, CornerPattern, Eyebrow, GoldArch } from '@/components/brand'
 import { Magnetic } from '@/components/motion'
 import { Button } from '@/components/ui/button'
-import { HERO, HERO_SLIDES } from '../content/home'
+import { HERO_SLIDES } from '../content/home'
 import { scrollToSection } from '../utils/scroll'
 import { HeroSlide } from './HeroSlide'
 
@@ -22,7 +23,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const SLIDE_MS = 7000
 const ease = [0.22, 1, 0.36, 1] as const
-const ACCENT = 'memorable'
+const trimPunctuation = (word: string) => word.replace(/[.,،!?؟]+$/u, '')
 
 /**
  * Hero (brief §2): headline, body and both buttons verbatim, official photography, pause control.
@@ -32,6 +33,8 @@ const ACCENT = 'memorable'
  */
 export function Hero() {
   const reduce = useReducedMotion() ?? false
+  const { t, i18n } = useTranslation('public')
+  const rtl = i18n.dir() === 'rtl'
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const section = useRef<HTMLElement>(null)
@@ -77,7 +80,10 @@ export function Hero() {
 
   const current = HERO_SLIDES[index] ?? HERO_SLIDES[0]
   const next = HERO_SLIDES[(index + 1) % HERO_SLIDES.length] ?? HERO_SLIDES[0]
-  const words = HERO.headline.split(' ').map((text, position) => ({ text, id: `word-${position}` }))
+  const accentWords = t('hero.accent').split(' ')
+  const words = t('hero.headline')
+    .split(' ')
+    .map((text, position) => ({ text, id: `word-${position}` }))
   return (
     <section
       ref={section}
@@ -90,7 +96,7 @@ export function Hero() {
           <HeroSlide
             key={slide.src}
             src={slide.src}
-            alt={slide.alt}
+            alt={t(`hero.slides.${slide.id}`)}
             active={i === index}
             paused={paused}
             reduce={reduce}
@@ -139,24 +145,28 @@ export function Hero() {
       <div className="mx-auto flex w-full max-w-[1400px] origin-bottom-left flex-col justify-end px-4 pt-32 pb-32 md:px-8 md:pb-36 rtl:origin-bottom-right">
         <div className="flex max-w-[52rem] flex-col gap-7 xl:max-w-[46rem] 2xl:max-w-[52rem]">
           <motion.div
-            initial={reduce ? false : { opacity: 0, x: -16 }}
+            initial={reduce ? false : { opacity: 0, x: rtl ? 16 : -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.7, ease }}
           >
-            <Eyebrow tone="light">Service Excellence Academy</Eyebrow>
+            <Eyebrow className="rtl:tracking-normal" tone="light">
+              {t('hero.eyebrow')}
+            </Eyebrow>
           </motion.div>
           <h1
             id="hero-title"
-            className="font-display font-light text-[2.6rem] text-white leading-[1.04] sm:text-5xl lg:text-[4.6rem]"
+            className="font-display font-light text-[2.6rem] text-white leading-[1.04] rtl:leading-[1.4] sm:text-5xl lg:text-[4.6rem]"
           >
             {words.map((word, i) => {
-              const accent = word.text.toLowerCase().startsWith(ACCENT)
+              const accent = accentWords.includes(trimPunctuation(word.text).toLowerCase())
               return (
                 <span key={word.id}>
                   <span className="inline-block overflow-hidden pb-2 align-bottom">
                     <motion.span
                       className={
-                        accent ? 'inline-block font-normal text-gold-soft italic' : 'inline-block'
+                        accent
+                          ? 'inline-block font-normal text-gold-soft italic rtl:not-italic'
+                          : 'inline-block'
                       }
                       initial={reduce ? false : { y: '105%' }}
                       animate={{ y: 0 }}
@@ -176,7 +186,7 @@ export function Hero() {
             transition={{ delay: 0.85, duration: 0.7, ease }}
             className="max-w-xl border-gold/60 border-s-2 ps-5 text-lg text-white/90 leading-relaxed md:text-xl"
           >
-            {HERO.body}
+            {t('hero.body')}
           </motion.p>
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 16 }}
@@ -190,7 +200,7 @@ export function Hero() {
                 onClick={() => scrollToSection('programmes')}
                 className="group h-14 bg-white px-8 text-base text-teal-deep hover:bg-sky-mist hover:text-teal-night"
               >
-                {HERO.primary}
+                {t('hero.primary')}
                 <span className="inline-flex size-7 items-center justify-center rounded-full bg-teal text-white transition-transform duration-300 group-hover:translate-y-0.5">
                   <ArrowDown aria-hidden className="size-4" />
                 </span>
@@ -203,7 +213,7 @@ export function Hero() {
                 variant="glass"
                 className="h-14 bg-ink/35 px-8 text-base backdrop-blur-none hover:bg-ink/55"
               >
-                <Link to="/register">{HERO.secondary}</Link>
+                <Link to="/register">{t('hero.secondary')}</Link>
               </Button>
             </Magnetic>
           </motion.div>
@@ -213,7 +223,7 @@ export function Hero() {
       <div className="absolute inset-x-0 bottom-0">
         <div className="mx-auto flex max-w-[1400px] items-end justify-between gap-6 px-4 pb-6 md:px-8">
           <div className="hidden items-end gap-5 text-white sm:flex">
-            <p className="font-display text-3xl leading-none tabular-nums" aria-hidden>
+            <p dir="ltr" className="font-display text-3xl leading-none tabular-nums" aria-hidden>
               {String(index + 1).padStart(2, '0')}
               <span className="text-base text-white/50">
                 {' '}
@@ -231,7 +241,7 @@ export function Hero() {
                   className="text-sm text-white/75"
                   aria-hidden
                 >
-                  {current.alt}
+                  {t(`hero.slides.${current.id}`)}
                 </motion.p>
               </AnimatePresence>
               <div className="flex items-center gap-1.5" aria-hidden>
@@ -261,9 +271,9 @@ export function Hero() {
           {reduce ? null : (
             <div
               aria-hidden
-              className="pointer-events-none absolute start-1/2 bottom-6 hidden -translate-x-1/2 flex-col items-center gap-2 text-[0.65rem] text-white/70 uppercase tracking-[0.3em] md:flex rtl:translate-x-1/2"
+              className="pointer-events-none absolute start-1/2 bottom-6 hidden -translate-x-1/2 flex-col items-center gap-2 text-[0.65rem] text-white/70 uppercase tracking-[0.3em] md:flex rtl:translate-x-1/2 rtl:tracking-normal"
             >
-              Scroll
+              {t('hero.scroll')}
               <span className="relative h-10 w-px overflow-hidden bg-white/20">
                 <span
                   className="absolute inset-x-0 top-0 h-1/2 bg-gold"
@@ -285,7 +295,7 @@ export function Hero() {
               ) : (
                 <Pause aria-hidden className="size-3.5" />
               )}
-              {paused ? 'Play background motion' : 'Pause background motion'}
+              {paused ? t('hero.play') : t('hero.pause')}
             </button>
           )}
         </div>

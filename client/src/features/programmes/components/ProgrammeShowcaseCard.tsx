@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight, Clock, Layers, Users } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { programmeSlug } from '../content'
 import type { PublicProgramme } from '../queries/programmes.queries'
 import { PROGRAMME_TONE } from '../tone'
+import { programmeLetter, programmeName, programmeText } from '../utils/copy'
 import { CertificationStatus } from './CertificationStatus'
 import { IllustrativeTag } from './IllustrativeTag'
 
@@ -24,7 +26,9 @@ export function ProgrammeShowcaseCard({
   programme: PublicProgramme
   className?: string
 }) {
+  const { t } = useTranslation('public')
   const tone = PROGRAMME_TONE[programme.code]
+  const text = (field: string) => programmeText(t, programme.code, field)
   return (
     <article className={cn('group relative h-full', className)}>
       <div
@@ -65,46 +69,46 @@ export function ProgrammeShowcaseCard({
           <span
             aria-hidden
             className={cn(
-              'absolute start-6 -bottom-4 font-display font-light text-[7.5rem] text-white leading-none drop-shadow-lg transition-transform duration-700 group-hover:-translate-y-2',
+              'absolute start-6 -bottom-4 font-display font-light text-[7.5rem] text-white leading-none drop-shadow-lg transition-transform duration-700 group-hover:-translate-y-2 rtl:leading-[1.2]',
               EASE,
             )}
           >
-            {programme.code}
+            {programmeLetter(t, programme.code)}
           </span>
           <span className="absolute end-4 top-5 inline-flex items-center rounded-full bg-white/90 px-3.5 py-1.5 font-medium text-ink text-xs shadow-md">
-            Program {programme.code}
+            {programmeName(t, programme.code)}
           </span>
         </div>
 
         <div className="flex flex-1 flex-col gap-5 p-6 md:p-7">
           {programme.isIllustrative ? <IllustrativeTag className="w-fit" /> : null}
           <h3 className="font-display font-normal text-[1.7rem] text-ink leading-tight">
-            {programme.title}
+            {text('title')}
           </h3>
-          <p className="text-muted-foreground text-sm leading-relaxed">{programme.summary}</p>
+          <p className="text-muted-foreground text-sm leading-relaxed">{text('summary')}</p>
           {/* dt/dd groups sit directly in the dl (one wrapping div each), as the spec requires. */}
           <dl className="flex flex-wrap gap-2 text-ink/80 text-sm">
             <div className="flex w-full items-start gap-2 pb-0.5">
-              <dt className="sr-only">Audience</dt>
+              <dt className="sr-only">{t('programme.audience')}</dt>
               <Users aria-hidden className={cn('mt-0.5 size-4 shrink-0', tone.icon)} />
-              <dd>{programme.audience}</dd>
+              <dd>{text('audience')}</dd>
             </div>
             <div
               className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1', tone.chip)}
             >
-              <dt className="sr-only">Format</dt>
+              <dt className="sr-only">{t('programme.format')}</dt>
               <Layers aria-hidden className="size-3.5 shrink-0" />
-              <dd>{programme.formatLabel}</dd>
+              <dd>{text('formatLabel')}</dd>
             </div>
             <div
               className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1', tone.chip)}
             >
-              <dt className="sr-only">Duration</dt>
+              <dt className="sr-only">{t('programme.duration')}</dt>
               <Clock aria-hidden className="size-3.5 shrink-0" />
-              <dd>{programme.durationLabel}</dd>
+              <dd>{text('durationLabel')}</dd>
             </div>
             <div className="mt-0.5 flex w-full items-start gap-2 border-ink/5 border-t pt-3 text-ink">
-              <dt className="sr-only">Certification</dt>
+              <dt className="sr-only">{t('programme.certification')}</dt>
               <dd className={tone.icon}>
                 <CertificationStatus
                   certified={programme.certificationEnabled}
@@ -122,7 +126,7 @@ export function ProgrammeShowcaseCard({
               tone.cta,
             )}
           >
-            View programme
+            {t('programme.viewProgramme')}
             <span
               className={cn(
                 'inline-flex size-9 items-center justify-center rounded-full bg-white/20 transition-transform duration-500 group-hover:rotate-45 rtl:group-hover:-rotate-45',

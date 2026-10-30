@@ -1,7 +1,9 @@
 import { Award, Clock, GraduationCap, Layers, Users } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import type { ProgrammeDetail } from '../queries/programmes.queries'
 import { accent } from '../tone'
+import { programmeText } from '../utils/copy'
 import { CertificationStatus } from './CertificationStatus'
 
 /**
@@ -9,14 +11,30 @@ import { CertificationStatus } from './CertificationStatus'
  * Each fact carries its own accent icon and top rule so the strip reads as a colourful set.
  */
 export function ProgrammeFacts({ programme }: { programme: ProgrammeDetail }) {
+  const { t } = useTranslation('public')
   const facts = [
-    { icon: Users, label: 'Audience', value: programme.audience },
-    { icon: Layers, label: 'Format', value: programme.formatLabel },
-    { icon: Clock, label: 'Duration', value: programme.durationLabel },
+    {
+      icon: Users,
+      label: t('programme.audience'),
+      value: programmeText(t, programme.code, 'audience'),
+    },
+    {
+      icon: Layers,
+      label: t('programme.format'),
+      value: programmeText(t, programme.code, 'formatLabel'),
+    },
+    {
+      icon: Clock,
+      label: t('programme.duration'),
+      value: programmeText(t, programme.code, 'durationLabel'),
+    },
     {
       icon: GraduationCap,
-      label: 'Structure',
-      value: programme.levels > 1 ? `${programme.levels} levels with stages` : 'One stage',
+      label: t('programme.structure'),
+      value:
+        programme.levels > 1
+          ? t('programme.levels', { n: programme.levels })
+          : t('programme.oneStage'),
     },
   ]
   const card =
@@ -29,7 +47,7 @@ export function ProgrammeFacts({ programme }: { programme: ProgrammeDetail }) {
         <div key={fact.label} data-reveal="card" className={card}>
           <span aria-hidden className={cn('absolute inset-x-0 top-0 h-1', accent(index).bar)} />
           <fact.icon aria-hidden className={cn(icon, accent(index).icon)} />
-          <dt className="text-muted-foreground text-xs uppercase tracking-[0.14em]">
+          <dt className="text-muted-foreground text-xs uppercase tracking-[0.14em] rtl:tracking-normal">
             {fact.label}
           </dt>
           <dd className="font-medium text-ink leading-snug">{fact.value}</dd>
@@ -37,7 +55,9 @@ export function ProgrammeFacts({ programme }: { programme: ProgrammeDetail }) {
       ))}
       <div data-reveal="card" className={cn(card, 'bg-grad-teal text-white')}>
         <Award aria-hidden className={cn(icon, 'text-gold-soft')} />
-        <dt className="text-white/75 text-xs uppercase tracking-[0.14em]">Certification</dt>
+        <dt className="text-white/75 text-xs uppercase tracking-[0.14em] rtl:tracking-normal">
+          {t('programme.certification')}
+        </dt>
         <dd className="font-medium">
           <CertificationStatus
             certified={programme.certificationEnabled}

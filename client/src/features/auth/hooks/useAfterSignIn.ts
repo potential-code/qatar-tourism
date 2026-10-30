@@ -2,12 +2,13 @@ import { ROLE_HOME, type Role } from '@shared/roles'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRefreshSession } from '@/hooks/useSession'
 import { safeRedirect } from '@/lib/safe-redirect'
 import { roleOf } from '@/lib/session'
 import { ownProfileStatusQuery } from '../queries/session.queries'
-import { ROLE_LABEL, type SignInMode } from '../utils/modes'
+import type { SignInMode } from '../utils/modes'
 
 /** Paths a learner may be sent back to after sign-in (the page they were viewing). */
 function learnerTarget(redirect: string | undefined): string | null {
@@ -27,6 +28,7 @@ export function useAfterSignIn() {
   const router = useRouter()
   const refreshSession = useRefreshSession()
   const queryClient = useQueryClient()
+  const { t } = useTranslation('auth')
 
   return useCallback(
     async ({ mode, redirect }: { mode?: SignInMode; redirect?: string }) => {
@@ -37,9 +39,7 @@ export function useAfterSignIn() {
         return
       }
       if (mode && mode !== role) {
-        toast.info(
-          `You signed in with a ${ROLE_LABEL[role]} account, so we opened the ${ROLE_LABEL[role]} area. The sign-in mode never changes access.`,
-        )
+        toast.info(t('afterSignIn', { role: t(`roleLabel.${role}`) }))
       }
       if (role !== 'learner') {
         router.history.push(ROLE_HOME[role])
@@ -53,6 +53,6 @@ export function useAfterSignIn() {
       const status = await queryClient.fetchQuery(ownProfileStatusQuery()).catch(() => null)
       router.history.push(status === 'draft' ? '/onboarding' : ROLE_HOME.learner)
     },
-    [queryClient, refreshSession, router],
+    [queryClient, refreshSession, router, t],
   )
 }

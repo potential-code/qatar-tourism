@@ -1,7 +1,8 @@
-import { fictionalEmail } from '@shared/schemas/common'
+import { FICTIONAL_EMAIL_DOMAIN } from '@shared/schemas/common'
 import { Link, useRouter } from '@tanstack/react-router'
 import { Mail, Sparkles, UserRound } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useAppForm } from '@/hooks/useAppForm'
 import { useRefreshSession } from '@/hooks/useSession'
@@ -14,17 +15,22 @@ import { FormAlert } from './FormAlert'
 import { PasswordField } from './PasswordField'
 import { VerifyPanel } from './VerifyPanel'
 
+/** Messages are `auth` translation keys; the field components translate them when shown. */
 const schema = z.object({
-  name: z.string().trim().min(2, 'Enter your full name'),
-  email: fictionalEmail,
-  password: z.string().min(8, 'Use at least 8 characters'),
+  name: z.string().trim().min(2, 'auth:validation.name'),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email('auth:validation.email')
+    .refine(
+      (value) => value.endsWith(`@${FICTIONAL_EMAIL_DOMAIN}`),
+      'auth:validation.fictionalEmail',
+    ),
+  password: z.string().min(8, 'auth:validation.min8'),
 })
 
-const PROGRAMME_NOTE = {
-  A: 'You are joining Program A: Tourism Service Professional. After you verify your email you will confirm your enrolment.',
-  B: 'New accounts start with Program B: Visitor Service Essentials, a personalised, self-paced programme.',
-  C: 'Program C is an illustrative sample. New accounts start with Program B: Visitor Service Essentials.',
-} as const
+const PROGRAMME_NOTE = { A: 'register.noteA', B: 'register.noteB', C: 'register.noteC' } as const
 
 /**
  * Public registration (brief §3–4): always creates a learner. A short form, then the simulated
@@ -37,6 +43,7 @@ export function RegisterPage({
   programme?: 'A' | 'B' | 'C'
   redirect?: string
 }) {
+  const { t } = useTranslation('auth')
   const router = useRouter()
   const refreshSession = useRefreshSession()
   const register = useRegister()
@@ -66,7 +73,7 @@ export function RegisterPage({
         } else {
           setError({
             code: 'UNKNOWN',
-            message: 'Registration failed. Check your connection and try again.',
+            message: t('register.failed'),
           })
         }
       }
@@ -100,30 +107,21 @@ export function RegisterPage({
   return (
     <AuthShell
       image={image}
-      alt={
-        programme === 'A'
-          ? 'A family walking at the National Museum of Qatar'
-          : 'Towers beside a turquoise lagoon in Doha'
-      }
+      alt={programme === 'A' ? t('register.altA') : t('register.altB')}
       caption={
-        <p className="font-display font-light text-3xl leading-snug">
-          Explore flexible learning, practise real situations and progress through a journey shaped
-          around your role.
-        </p>
+        <p className="font-display font-light text-3xl leading-snug">{t('register.caption')}</p>
       }
     >
       <AuthSwitch active="register" redirect={redirect} programme={programme} />
       <div className="grid gap-2">
         <h1 className="font-display font-light text-4xl text-ink md:text-[2.75rem]">
-          Create your account
+          {t('register.title')}
         </h1>
-        <p className="text-muted-foreground">
-          Registration is open to everyone and creates a learner account.
-        </p>
+        <p className="text-muted-foreground">{t('register.intro')}</p>
       </div>
       <p className="flex gap-2 rounded-lg bg-teal-mist p-3.5 text-sm text-teal-deep">
         <Sparkles aria-hidden className="mt-0.5 size-4 shrink-0" />
-        {PROGRAMME_NOTE[programme]}
+        {t(PROGRAMME_NOTE[programme])}
       </p>
       <form
         noValidate
@@ -143,39 +141,40 @@ export function RegisterPage({
                   search={{ redirect }}
                   className="font-medium underline underline-offset-4"
                 >
-                  Sign in instead
+                  {t('register.signInInstead')}
                 </Link>
                 <Link to="/forgot-password" className="font-medium underline underline-offset-4">
-                  Reset your password
+                  {t('register.resetPassword')}
                 </Link>
               </span>
             ) : null}
           </FormAlert>
         ) : null}
         <form.AppField name="name" validators={{ onBlur: schema.shape.name }}>
-          {(field) => <field.TextField label="Full name" autoComplete="name" icon={UserRound} />}
+          {(field) => (
+            <field.TextField label={t('register.name')} autoComplete="name" icon={UserRound} />
+          )}
         </form.AppField>
         <form.AppField name="email" validators={{ onBlur: schema.shape.email }}>
           {(field) => (
             <field.TextField
-              label="Email"
+              label={t('register.email')}
               type="email"
               autoComplete="email"
               icon={Mail}
-              description="Use a fictional address ending in example.com for this demonstration."
+              description={t('register.emailHint')}
             />
           )}
         </form.AppField>
         <form.AppField name="password" validators={{ onBlur: schema.shape.password }}>
-          {() => <PasswordField autoComplete="new-password" hint="At least 8 characters." />}
+          {() => <PasswordField autoComplete="new-password" hint={t('password.hint')} />}
         </form.AppField>
         <form.AppForm>
-          <form.SubmitButton className="h-12 w-full text-base">Create account</form.SubmitButton>
+          <form.SubmitButton className="h-12 w-full text-base">
+            {t('register.submit')}
+          </form.SubmitButton>
         </form.AppForm>
-        <p className="text-muted-foreground text-xs leading-relaxed">
-          Next you will verify your email in a simulated step and complete a short profile. Your
-          profile helps us recommend relevant learning.
-        </p>
+        <p className="text-muted-foreground text-xs leading-relaxed">{t('register.next')}</p>
       </form>
     </AuthShell>
   )

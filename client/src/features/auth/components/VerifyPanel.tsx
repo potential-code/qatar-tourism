@@ -1,5 +1,6 @@
 import { Loader2, RotateCw } from 'lucide-react'
 import { type FormEvent, useId, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -30,6 +31,7 @@ export function VerifyPanel({
   rememberMe?: boolean
   onSignedIn: () => Promise<void>
 }) {
+  const { t } = useTranslation('auth')
   const id = useId()
   const [inbox, setInbox] = useState<SimulatedEmail | null>(initial)
   const [code, setCode] = useState('')
@@ -43,13 +45,13 @@ export function VerifyPanel({
     event.preventDefault()
     setError(null)
     if (!/^\d{6}$/.test(code)) {
-      setError('Enter the six-digit code from the demo inbox.')
+      setError(t('validation.code'))
       return
     }
     try {
       await verify.mutateAsync({ email, code })
     } catch (failure) {
-      setError(failure instanceof ApiError ? failure.message : 'Verification failed. Try again.')
+      setError(failure instanceof ApiError ? failure.message : t('verify.failed'))
       return
     }
     setSigningIn(true)
@@ -59,7 +61,7 @@ export function VerifyPanel({
       .catch(() => false)
     if (!signedIn) {
       setSigningIn(false)
-      setError('Your email is verified. Sign in with your email and password to continue.')
+      setError(t('verify.signInAfter'))
       return
     }
     await onSignedIn()
@@ -69,24 +71,21 @@ export function VerifyPanel({
     setError(null)
     const result = await resend.mutateAsync(email).catch(() => null)
     if (result?.simulatedEmail) setInbox(result.simulatedEmail)
-    else setError('A new code could not be issued. If you already verified, sign in instead.')
+    else setError(t('verify.noCode'))
   }
 
   const busy = verify.isPending || signingIn
   return (
     <div className="grid gap-6">
       <div className="grid gap-2">
-        <h1 className="font-display font-light text-4xl">Verify your email</h1>
-        <p className="text-muted-foreground">
-          This demonstration does not send real email. Your verification code is shown in the demo
-          inbox below.
-        </p>
+        <h1 className="font-display font-light text-4xl rtl:leading-[1.4]">{t('verify.title')}</h1>
+        <p className="text-muted-foreground">{t('verify.intro')}</p>
       </div>
       {inbox ? <SimulatedInbox email={inbox} /> : null}
       <form noValidate onSubmit={submit} className="grid gap-4">
         {error ? <FormAlert>{error}</FormAlert> : null}
         <div className="grid gap-2">
-          <Label htmlFor={id}>Six-digit code</Label>
+          <Label htmlFor={id}>{t('verify.codeLabel')}</Label>
           <Input
             id={id}
             inputMode="numeric"
@@ -94,17 +93,18 @@ export function VerifyPanel({
             maxLength={6}
             value={code}
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
+            dir="ltr"
             className="h-12 text-center font-display text-2xl tracking-[0.4em]"
           />
         </div>
         <div className="flex flex-wrap gap-3">
           <Button type="submit" size="lg" disabled={busy}>
             {busy ? <Loader2 aria-hidden className="animate-spin" /> : null}
-            Verify and continue
+            {t('verify.submit')}
           </Button>
           {inbox ? (
             <Button type="button" size="lg" variant="outline" onClick={() => setCode(inbox.code)}>
-              Use the demo code
+              {t('verify.useDemo')}
             </Button>
           ) : null}
         </div>
@@ -116,7 +116,7 @@ export function VerifyPanel({
           disabled={resend.isPending}
         >
           <RotateCw aria-hidden />
-          {inbox ? 'Send a new demo code' : 'Show my demo code'}
+          {inbox ? t('verify.resend') : t('verify.show')}
         </Button>
       </form>
     </div>

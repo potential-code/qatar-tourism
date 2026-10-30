@@ -1,5 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useAppForm } from '@/hooks/useAppForm'
@@ -8,20 +9,21 @@ import { AuthShell } from './AuthShell'
 import { FormAlert } from './FormAlert'
 import { PasswordField } from './PasswordField'
 
-const passwordRule = z.string().min(8, 'Use at least 8 characters')
+const passwordRule = z.string().min(8, 'auth:validation.min8')
 
 const schema = z
   .object({
     password: passwordRule,
-    confirmPassword: z.string().min(1, 'Confirm your new password'),
+    confirmPassword: z.string().min(1, 'auth:validation.confirm'),
   })
   .refine((value) => value.password === value.confirmPassword, {
-    message: 'The passwords do not match',
+    message: 'auth:validation.mismatch',
     path: ['confirmPassword'],
   })
 
 /** The demo reset link opens this page with `?token=…` (or `?error=INVALID_TOKEN`). */
 export function ResetPasswordPage({ token, error }: { token?: string; error?: string }) {
+  const { t } = useTranslation('auth')
   const navigate = useNavigate()
   const [failed, setFailed] = useState(false)
   const reset = useResetPassword()
@@ -38,19 +40,19 @@ export function ResetPasswordPage({ token, error }: { token?: string; error?: st
         setFailed(true)
         return
       }
-      toast.success('Your password has been changed. Sign in with the new password.')
+      toast.success(t('reset.success'))
       await navigate({ to: '/login' })
     },
   })
   const invalid = !token || error || failed
   return (
-    <AuthShell image="/images/official/zulal-spa.jpg" alt="A calm spa interior">
-      <h1 className="font-display font-light text-4xl">Choose a new password</h1>
+    <AuthShell image="/images/official/zulal-spa.jpg" alt={t('forgot.alt')}>
+      <h1 className="font-display font-light text-4xl rtl:leading-[1.4]">{t('reset.title')}</h1>
       {invalid ? (
         <FormAlert>
-          This reset link is not valid or has expired.{' '}
+          {t('reset.invalid')}{' '}
           <Link to="/forgot-password" className="font-medium underline underline-offset-4">
-            Request a new link
+            {t('reset.requestNew')}
           </Link>
         </FormAlert>
       ) : null}
@@ -66,18 +68,18 @@ export function ResetPasswordPage({ token, error }: { token?: string; error?: st
           <form.AppField name="password" validators={{ onBlur: passwordRule }}>
             {() => (
               <PasswordField
-                label="New password"
+                label={t('reset.newPassword')}
                 autoComplete="new-password"
-                hint="At least 8 characters."
+                hint={t('password.hint')}
               />
             )}
           </form.AppField>
           <form.AppField name="confirmPassword">
-            {() => <PasswordField label="Confirm new password" autoComplete="new-password" />}
+            {() => <PasswordField label={t('reset.confirmPassword')} autoComplete="new-password" />}
           </form.AppField>
           <form.AppForm>
             <form.SubmitButton className="h-12 w-full text-base">
-              Save new password
+              {t('reset.save')}
             </form.SubmitButton>
           </form.AppForm>
         </form>

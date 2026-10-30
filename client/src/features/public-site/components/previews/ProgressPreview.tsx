@@ -1,5 +1,5 @@
 import { COMPETENCIES } from '@shared/constants'
-import { COMPETENCY_LABELS } from '@shared/content'
+import { useTranslation } from 'react-i18next'
 
 /** Example pre and post scores per competency: the brief §8 worked example (40 to 80). */
 const EXAMPLE = {
@@ -12,36 +12,39 @@ const EXAMPLE = {
 
 /** Track your progress: baseline, post score and improvement, labelled as an example. */
 export function ProgressPreview() {
+  const { t } = useTranslation('public')
   return (
     <div className="grid gap-5">
       <div className="grid grid-cols-3 gap-3 rounded-xl bg-white p-5 text-center ring-1 ring-ink/5">
         <div>
-          <p className="text-muted-foreground text-xs">Baseline</p>
+          <p className="text-muted-foreground text-xs">{t('previews.progress.baseline')}</p>
           <p className="font-display text-4xl text-ink/60">40</p>
         </div>
         <div>
-          <p className="text-muted-foreground text-xs">Post-assessment</p>
+          <p className="text-muted-foreground text-xs">{t('previews.progress.postAssessment')}</p>
           <p className="font-display text-4xl text-teal">80</p>
         </div>
         <div>
-          <p className="text-muted-foreground text-xs">Improvement</p>
-          <p className="font-display text-4xl text-teal-deep">+40</p>
+          <p className="text-muted-foreground text-xs">{t('previews.progress.improvement')}</p>
+          <p dir="ltr" className="font-display text-4xl text-teal-deep">
+            +40
+          </p>
         </div>
       </div>
       <table className="w-full text-sm">
         <caption className="pb-2 text-start text-muted-foreground text-xs">
-          Example result by competency, points out of 20
+          {t('previews.progress.caption')}
         </caption>
         <thead className="text-muted-foreground text-xs">
           <tr>
             <th scope="col" className="py-1 text-start font-normal">
-              Competency
+              {t('previews.progress.competency')}
             </th>
             <th scope="col" className="py-1 text-end font-normal">
-              Before
+              {t('previews.progress.before')}
             </th>
             <th scope="col" className="py-1 text-end font-normal">
-              After
+              {t('previews.progress.after')}
             </th>
           </tr>
         </thead>
@@ -49,7 +52,7 @@ export function ProgressPreview() {
           {COMPETENCIES.map((key) => (
             <tr key={key} className="border-ink/5 border-t">
               <th scope="row" className="py-2 text-start font-normal">
-                {COMPETENCY_LABELS[key]}
+                {t(`data.competency.${key}`)}
               </th>
               <td className="py-2 text-end text-muted-foreground">{EXAMPLE[key][0]}</td>
               <td className="py-2 text-end font-medium">{EXAMPLE[key][1]}</td>

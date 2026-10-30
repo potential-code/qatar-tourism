@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useSession } from '@/hooks/useSession'
 
@@ -8,11 +9,12 @@ import { useSession } from '@/hooks/useSession'
  */
 export function BookAction({ full }: { full: boolean }) {
   const { role } = useSession()
+  const { t } = useTranslation('public')
   if (role === 'learner') {
     return (
       <Button asChild size="sm" variant="outline">
         <Link to={'/learner/sessions' as never}>
-          {full ? 'Join the waitlist' : 'Book in My sessions'}
+          {full ? t('sessions.joinWaitlist') : t('sessions.book')}
         </Link>
       </Button>
     )
@@ -21,7 +23,7 @@ export function BookAction({ full }: { full: boolean }) {
   return (
     <Button asChild size="sm">
       <Link to="/login" search={{ redirect: '/learner/sessions' }}>
-        Sign in to book
+        {t('sessions.signInToBook')}
       </Link>
     </Button>
   )

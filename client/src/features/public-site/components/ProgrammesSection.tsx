@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern, Eyebrow, SectionHeading } from '@/components/brand'
 import { ScrollReveal, SplitWords } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -11,6 +12,7 @@ import { SectionError } from './SectionState'
  * each in its own brand colour, on a warm ground with soft teal, sky and rose light.
  */
 export function ProgrammesSection() {
+  const { t } = useTranslation('public')
   const { data, isPending, isError, refetch } = useQuery(programmesQuery())
   return (
     <section
@@ -32,13 +34,17 @@ export function ProgrammesSection() {
       <ScrollReveal className="mx-auto flex max-w-[1400px] flex-col gap-14 px-4 py-24 md:px-8 md:py-32">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
-            eyebrow={<Eyebrow index="01">Programmes</Eyebrow>}
+            eyebrow={
+              <Eyebrow className="rtl:tracking-normal" index="01">
+                {t('programmesSection.eyebrow')}
+              </Eyebrow>
+            }
             title={
-              <span id="programmes-title">
-                <SplitWords text="Find your next learning journey" />
+              <span id="programmes-title" className="rtl:leading-[1.4]">
+                <SplitWords text={t('programmesSection.title')} />
               </span>
             }
-            description="Three programmes, each with a different shape. Start where your role and goals point you, and add another programme at any time."
+            description={t('programmesSection.description')}
           />
           <div aria-hidden data-reveal className="hidden items-center gap-2 lg:flex">
             <span className="size-3 rounded-full bg-teal" />
@@ -53,7 +59,7 @@ export function ProgrammesSection() {
             ))}
           </div>
         ) : isError ? (
-          <SectionError what="the programmes" onRetry={() => refetch()} />
+          <SectionError what={t('errors.programmes')} onRetry={() => refetch()} />
         ) : (
           <ScrollReveal className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
             {data.map((programme) => (

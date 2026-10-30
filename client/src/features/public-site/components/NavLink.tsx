@@ -1,5 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { motion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { scrollToSection } from '../utils/scroll'
 import type { PublicNavLink } from './nav-links'
@@ -22,6 +23,7 @@ export function NavLink({
   onHover?: () => void
   onNavigate?: () => void
 }) {
+  const { t } = useTranslation('public')
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   return (
     <Link
@@ -57,7 +59,7 @@ export function NavLink({
           )}
         />
       ) : null}
-      {link.label}
+      {t(link.labelKey)}
       {active && !large ? (
         <span
           aria-hidden

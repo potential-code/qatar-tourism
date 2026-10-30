@@ -1,8 +1,10 @@
 import { Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 /** Marks Program C as an illustrative sample everywhere it appears (brief §3). */
 export function IllustrativeTag({ className }: { className?: string }) {
+  const { t } = useTranslation('public')
   return (
     <span
       className={cn(
@@ -11,7 +13,7 @@ export function IllustrativeTag({ className }: { className?: string }) {
       )}
     >
       <Info aria-hidden className="size-3.5" />
-      Illustrative sample
+      {t('programme.illustrative')}
     </span>
   )
 }

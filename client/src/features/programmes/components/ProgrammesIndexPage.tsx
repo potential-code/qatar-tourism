@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { Stagger, StaggerItem } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PublicLayout } from '@/features/public-site/components/PublicLayout'
@@ -9,16 +10,16 @@ import { PublicPageIntro } from './PublicPageIntro'
 
 /** Programme catalogue (brief §3): A and B are active; C is an illustrative sample. */
 export function ProgrammesIndexPage() {
+  const { t } = useTranslation('public')
   const { data, isPending, isError, refetch } = useQuery(programmesQuery())
   return (
     <PublicLayout overlayHeader>
       <PublicPageIntro
-        title="Programmes"
+        title={t('programmesPage.title')}
         image="/images/official/westbay-skyline-007.jpg"
-        alt="The West Bay skyline across the bay at dusk"
+        alt={t('programmesPage.alt')}
       >
-        Program A and Program B are active demonstration programmes. Program C is an illustrative
-        sample of a possible future offering.
+        {t('programmesPage.intro')}
       </PublicPageIntro>
       <div className="mx-auto flex max-w-[1400px] flex-col gap-12 px-4 py-14 md:px-8 md:py-20">
         {isPending ? (
@@ -28,10 +29,10 @@ export function ProgrammesIndexPage() {
             ))}
           </div>
         ) : isError ? (
-          <SectionError what="the programmes" onRetry={() => refetch()} />
+          <SectionError what={t('errors.programmes')} onRetry={() => refetch()} />
         ) : (
           <Stagger className="grid gap-6 lg:grid-cols-3" stagger={0.1}>
-            <h2 className="sr-only">Programmes</h2>
+            <h2 className="sr-only">{t('programmesPage.title')}</h2>
             {data.map((programme, index) => (
               <StaggerItem key={programme.code}>
                 <ProgrammeCard programme={programme} layout={index === 0 ? 'feature' : 'column'} />

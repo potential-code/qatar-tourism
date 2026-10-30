@@ -1,36 +1,63 @@
 import { Link } from '@tanstack/react-router'
 import { FlaskConical } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern, Logo } from '@/components/brand'
 
-const COLUMNS = [
+type FooterLabel =
+  | 'footer.programmeA'
+  | 'footer.programmeB'
+  | 'footer.programmeC'
+  | 'footer.sessions'
+  | 'footer.trainers'
+  | 'footer.allProgrammes'
+  | 'nav.signIn'
+  | 'nav.createAccount'
+  | 'footer.signInTrainer'
+
+type FooterLink = {
+  label: FooterLabel
+  to: string
+  code?: string
+  mode?: string
+}
+
+const COLUMNS: readonly {
+  id: 'programmes' | 'academy' | 'account'
+  title: 'footer.programmes' | 'footer.academy' | 'footer.account'
+  links: readonly FooterLink[]
+}[] = [
   {
-    title: 'Programmes',
+    id: 'programmes',
+    title: 'footer.programmes',
     links: [
-      { label: 'Program A: Tourism Service Professional', to: '/programmes/$code', code: 'a' },
-      { label: 'Program B: Visitor Service Essentials', to: '/programmes/$code', code: 'b' },
-      { label: 'Program C: Destination Storytelling (sample)', to: '/programmes/$code', code: 'c' },
+      { label: 'footer.programmeA', to: '/programmes/$code', code: 'a' },
+      { label: 'footer.programmeB', to: '/programmes/$code', code: 'b' },
+      { label: 'footer.programmeC', to: '/programmes/$code', code: 'c' },
     ],
   },
   {
-    title: 'Academy',
+    id: 'academy',
+    title: 'footer.academy',
     links: [
-      { label: 'Upcoming sessions', to: '/sessions' },
-      { label: 'Our trainers', to: '/trainers' },
-      { label: 'All programmes', to: '/programmes' },
+      { label: 'footer.sessions', to: '/sessions' },
+      { label: 'footer.trainers', to: '/trainers' },
+      { label: 'footer.allProgrammes', to: '/programmes' },
     ],
   },
   {
-    title: 'Account',
+    id: 'account',
+    title: 'footer.account',
     links: [
-      { label: 'Sign in', to: '/login' },
-      { label: 'Create account', to: '/register' },
-      { label: 'Sign in as trainer', to: '/login', mode: 'trainer' },
+      { label: 'nav.signIn', to: '/login' },
+      { label: 'nav.createAccount', to: '/register' },
+      { label: 'footer.signInTrainer', to: '/login', mode: 'trainer' },
     ],
   },
-] as const
+]
 
 /** Footer with the required demonstration notice (brief §2, docs/ARCHITECTURE.md). */
 export function PublicFooter() {
+  const { t } = useTranslation('public')
   return (
     <footer className="qt-grain relative isolate overflow-hidden bg-grad-night text-white">
       <div
@@ -41,24 +68,21 @@ export function PublicFooter() {
       <div className="mx-auto grid max-w-[1400px] gap-12 px-4 py-16 md:px-8 lg:grid-cols-[1.2fr_2fr]">
         <div className="grid content-start gap-5">
           <Logo variant="white" withAcademy className="h-10" />
-          <p className="max-w-sm text-sm text-white/75 leading-relaxed">
-            The Service Excellence Academy brings learning, practice and trainer-led sessions
-            together in one place for everyone who welcomes visitors to Qatar.
-          </p>
+          <p className="max-w-sm text-sm text-white/75 leading-relaxed">{t('footer.blurb')}</p>
         </div>
         <div className="grid gap-10 sm:grid-cols-3">
           {COLUMNS.map((column) => (
-            <nav key={column.title} aria-label={column.title} className="grid content-start gap-3">
-              <p className="font-display text-gold-soft text-lg">{column.title}</p>
+            <nav key={column.id} aria-label={t(column.title)} className="grid content-start gap-3">
+              <p className="font-display text-gold-soft text-lg">{t(column.title)}</p>
               {column.links.map((link) => (
                 <Link
                   key={link.label}
                   to={link.to as never}
-                  params={'code' in link ? ({ code: link.code } as never) : undefined}
-                  search={'mode' in link ? ({ mode: link.mode } as never) : undefined}
+                  params={link.code ? ({ code: link.code } as never) : undefined}
+                  search={link.mode ? ({ mode: link.mode } as never) : undefined}
                   className="w-fit text-sm text-white/75 transition-all duration-300 hover:translate-x-1 hover:text-white rtl:hover:-translate-x-1"
                 >
-                  {link.label}
+                  {t(link.label)}
                 </Link>
               ))}
             </nav>
@@ -69,9 +93,9 @@ export function PublicFooter() {
         <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-4 py-6 text-sm text-white/80 md:flex-row md:items-center md:justify-between md:px-8">
           <p role="note" className="inline-flex items-center gap-2 font-medium text-white">
             <FlaskConical aria-hidden className="size-4" />
-            Demonstration environment. All learner and training data is fictional.
+            {t('demoNotice')}
           </p>
-          <p>Qatar Tourism Academy demonstration</p>
+          <p>{t('footer.caption')}</p>
         </div>
       </div>
     </footer>
