@@ -10,6 +10,15 @@ import {
 import { notificationsReport } from './definitions/notifications'
 import { sessionsReport, trainersReport } from './definitions/operations'
 import { assessmentsReport, assignmentsReport, certificationReport } from './definitions/outcomes'
+import {
+  accountStatusReport,
+  approvalsReport,
+  contentReport,
+  cpdReport,
+  crmSyncReport,
+  externalReviewReport,
+  waitlistReport,
+} from './definitions/workflow'
 import type { ReportDefinition } from './types'
 
 /** Every report the admin workspace offers (brief §12 Reports children, §13 columns). */
@@ -26,4 +35,11 @@ export const REPORTS: Record<ReportKey, ReportDefinition> = {
   certification: certificationReport,
   notifications: notificationsReport,
   attention: attentionReport,
+  approvals: approvalsReport,
+  'external-review': externalReviewReport,
+  waitlist: waitlistReport,
+  'account-status': accountStatusReport,
+  cpd: cpdReport,
+  content: contentReport,
+  'crm-sync': crmSyncReport,
 }

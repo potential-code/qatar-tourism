@@ -25,6 +25,7 @@ export const assessmentResultsReport: ReportDefinition = {
     { key: 'language', header: 'Language', type: 'text' },
     { key: 'attempts', header: 'Attempts', type: 'number' },
     { key: 'attemptLimit', header: 'Allowed', type: 'number' },
+    { key: 'remaining', header: 'Attempts left', type: 'number' },
     { key: 'result', header: 'Result', type: 'status' },
     { key: 'best', header: 'Best score', type: 'score' },
     { key: 'counted', header: 'Counted score', type: 'score' },
@@ -37,11 +38,12 @@ export const assessmentResultsReport: ReportDefinition = {
   statusOptions: [
     { value: 'Passed', label: 'Passed' },
     { value: 'Not passed', label: 'Not passed' },
+    { value: 'Attempt limit reached', label: 'Attempt limit reached' },
     { value: 'Baseline recorded', label: 'Baseline recorded' },
     { value: 'In progress', label: 'In progress' },
   ],
   defaultSort: { key: 'lastSubmitted', direction: 'desc' },
-  searchKeys: ['learnerCode', 'name', 'assessment', 'language'],
+  searchKeys: ['learnerCode', 'name', 'assessment', 'language', 'result'],
   load({ cohort }) {
     settleAllExpired()
     const assessments = new Map(db.assessments.map((a) => [a.id, a]))
@@ -73,6 +75,7 @@ export const assessmentResultsReport: ReportDefinition = {
       const counted = countedScore(policy, ordered)
       const best = countedScore('best', ordered)
       const open = ordered.some((a) => a.status === 'in_progress')
+      const standing = rule ? allowance(rule, first.enrolmentId, first.assessmentId) : null
       const result =
         open && submitted.length === 0
           ? 'In progress'
@@ -80,7 +83,9 @@ export const assessmentResultsReport: ReportDefinition = {
             ? 'Baseline recorded'
             : counted !== null && counted >= pass
               ? 'Passed'
-              : 'Not passed'
+              : standing && standing.remaining === 0 && !open
+                ? 'Attempt limit reached'
+                : 'Not passed'
       const language =
         latest?.snapshot?.items[0]?.language ?? ordered.at(-1)?.snapshot?.items[0]?.language ?? 'en'
       rows.push({
@@ -92,10 +97,8 @@ export const assessmentResultsReport: ReportDefinition = {
         assessment: KIND_LABEL[kind],
         language: LANGUAGE_LABEL[language],
         attempts: ordered.length,
-        attemptLimit: rule
-          ? allowance(rule, first.enrolmentId, first.assessmentId).limit +
-            allowance(rule, first.enrolmentId, first.assessmentId).granted
-          : null,
+        attemptLimit: standing ? standing.limit + standing.granted : null,
+        remaining: standing ? standing.remaining : null,
         result,
         best,
         counted,
@@ -108,7 +111,10 @@ export const assessmentResultsReport: ReportDefinition = {
     return rows
   },
   summarise(rows) {
-    const decided = rows.filter((r) => r.result === 'Passed' || r.result === 'Not passed')
+    const decided = rows.filter(
+      (r) =>
+        r.result === 'Passed' || r.result === 'Not passed' || r.result === 'Attempt limit reached',
+    )
     const passed = decided.filter((r) => r.result === 'Passed').length
     const arabic = rows.filter((r) => r.language === 'Arabic').length
     return [
@@ -116,6 +122,10 @@ export const assessmentResultsReport: ReportDefinition = {
       {
         label: 'Pass rate (post)',
         value: decided.length ? `${Math.round((passed / decided.length) * 100)}%` : 'None',
+      },
+      {
+        label: 'Attempt limit reached',
+        value: String(rows.filter((r) => r.result === 'Attempt limit reached').length),
       },
       { label: 'Taken in Arabic', value: String(arabic) },
     ]

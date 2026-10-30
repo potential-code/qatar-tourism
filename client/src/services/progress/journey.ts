@@ -12,6 +12,7 @@ import {
   bestScore,
   type EvaluatedItem,
   evaluate,
+  finalPassMark,
   latestPostAttempt,
 } from './rules'
 
@@ -326,7 +327,7 @@ export function journeyFor(learnerId: string, programme: ProgrammeCode) {
       foundationBest: bestScore(evidence.attempts, 'formative'),
       thresholds: {
         foundationQuiz: THRESHOLDS.foundationQuizPass,
-        finalAssessment: THRESHOLDS.finalAssessmentPass,
+        finalAssessment: finalPassMark(evidence),
         reviewSuggestedBelow: THRESHOLDS.programmeBReviewSuggested,
       },
     },

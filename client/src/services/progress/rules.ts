@@ -63,7 +63,15 @@ export type Evidence = {
   rolePlayCount: number
   session: SessionEvidence
   submissions: readonly SubmissionEvidence[]
+  /**
+   * Program A post-assessment pass mark from the published assessment rule (SPEC §6). Absent
+   * means no published rule, so `THRESHOLDS.finalAssessmentPass` applies.
+   */
+  finalPassPercent?: number
 }
+
+export const finalPassMark = (e: Pick<Evidence, 'finalPassPercent'>): number =>
+  e.finalPassPercent ?? THRESHOLDS.finalAssessmentPass
 
 export type ItemState = 'locked' | 'available' | 'in_progress' | 'completed'
 
@@ -166,9 +174,9 @@ export function itemSatisfied(e: Evidence, item: PathItemInput): boolean {
       return submitted(e.attempts, 'pre').length > 0
     case 'assessment_post':
       // B: the post-assessment is required but no score blocks completion (brief §5).
-      // A: the final assessment needs at least 80 (brief §6).
+      // A: the final assessment needs the published pass mark, 80 by default (SPEC §6).
       return e.programme === 'A'
-        ? (bestScore(e.attempts, 'post') ?? -1) >= THRESHOLDS.finalAssessmentPass
+        ? (bestScore(e.attempts, 'post') ?? -1) >= finalPassMark(e)
         : submitted(e.attempts, 'post').length > 0
     case 'assessment_formative':
       return (bestScore(e.attempts, 'formative') ?? -1) >= THRESHOLDS.foundationQuizPass
@@ -306,7 +314,7 @@ function gatesFor(e: Evidence, f: GateFacts, complete: boolean): StageGate[] {
     {
       key: 'final',
       label: 'Final assessment',
-      explanation: 'Parallel post-assessment with competency comparison. At least 80 percent.',
+      explanation: `Parallel post-assessment with competency comparison. At least ${finalPassMark(e)} percent.`,
     },
     {
       key: 'certification',

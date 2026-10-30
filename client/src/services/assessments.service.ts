@@ -29,6 +29,7 @@ import {
   isEngineAttempt,
   type LearnerQuestion,
   programmeOfEnrolment,
+  reportAttemptToCrm,
   savedSelections,
   secondsLeft,
   settleIfExpired,
@@ -597,6 +598,7 @@ export async function submit(attemptId: string) {
     })
     touchEnrolment(attempt.row.enrolmentId, instant)
     recomputeEnrolment(learnerId, programmeOfEnrolment(attempt.row.enrolmentId))
+    reportAttemptToCrm(attempt.row)
   }
   commit()
   return out(resultView(learnerId, attemptId))

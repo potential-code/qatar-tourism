@@ -46,6 +46,8 @@ function entityLabel(entityId: string | null): string | null {
   if (request) return `Request ${request.code}`
   const attempt = db.assessmentAttempts.find((a) => a.id === entityId)
   if (attempt) return `Attempt ${attempt.attemptNo}`
+  const credential = db.certificates.find((c) => c.id === entityId)
+  if (credential) return `Credential ${credential.code}`
   return entityId.length > 24 ? `${entityId.slice(0, 8)}…` : entityId
 }
 

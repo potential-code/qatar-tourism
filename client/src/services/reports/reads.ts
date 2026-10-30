@@ -51,6 +51,7 @@ export function attemptRows() {
         status: attempt.status,
         score: attempt.score,
         submittedAt: attempt.submittedAt,
+        language: attempt.snapshot?.items[0]?.language ?? ('en' as const),
       },
     ]
   })

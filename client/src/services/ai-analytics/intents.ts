@@ -16,6 +16,10 @@ export type Intent =
   | 'best_by_score'
   | 'best_by_completion'
   | 'best_by_improvement'
+  | 'certificates_expiring'
+  | 'program_a_waitlist'
+  | 'assessment_pass_rates'
+  | 'crm_failed_events'
 
 export type Match =
   | { kind: 'intent'; intent: Intent; programme: ProgrammeCode | null }
@@ -23,7 +27,7 @@ export type Match =
   | { kind: 'refused'; reason: 'write' | 'personal' | 'query' }
   | { kind: 'unsupported'; topic: string | null }
 
-/** The seven suggested prompts, verbatim from the brief. */
+/** The seven prompts from the brief, then the four added for the 29 Oct update (SPEC §9). */
 export const SUGGESTED_PROMPTS = [
   'How many learners are in each programme?',
   'Which organisations have the lowest completion rate?',
@@ -32,6 +36,10 @@ export const SUGGESTED_PROMPTS = [
   'Show attendance by delivery format.',
   'How many Program A learners are ready for certification?',
   'Which learners have been inactive for two weeks?',
+  'Which learners have certificates expiring in the next 30 days?',
+  'How many learners are waiting for Program A sessions?',
+  'Show assessment pass rates by programme and language',
+  'Which CRM events failed?',
 ] as const
 
 export const CLARIFY_OPTIONS = [
@@ -103,6 +111,15 @@ export function match(question: string): Match {
   }
 
   const intent = (value: Intent): Match => ({ kind: 'intent', intent: value, programme })
+
+  // 29 Oct questions first: "how many learners are waiting" must not read as a headcount.
+  if (has(q, /\bcrm\b.*\b(fail\w*|errors?|stuck|conflicts?|problems?)\b/, /\bfailed\b.*\bcrm\b/))
+    return intent('crm_failed_events')
+  if (has(q, /\bcertif\w*\b.*\bexpir\w*/, /\bexpir\w*\b.*\bcertif\w*/))
+    return intent('certificates_expiring')
+  if (has(q, /\bwait\w*\b/)) return intent('program_a_waitlist')
+  if (has(q, /\bpass\w*\s+rates?\b/, /\bpass rate\b/, /\brate of passing\b/))
+    return intent('assessment_pass_rates')
 
   if (
     has(q, /\b(improv\w*|gain\w*|progress\w* most)\b/) &&

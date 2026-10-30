@@ -22,7 +22,7 @@ const REFUSALS = {
 } as const
 
 const SUPPORTED_TOPICS =
-  'I can answer questions about enrolments by programme, completion by organisation, pre and post improvement, trainer marking, attendance by format, Program A certification readiness and inactive learners.'
+  'I can answer questions about enrolments by programme, completion by organisation, pre and post improvement, trainer marking, attendance by format, Program A certification readiness, inactive learners, certificates expiring soon, the Program A waitlist, assessment pass rates by programme and language, and failed CRM events.'
 
 function blank(question: string): Omit<AnalyticsAnswer, 'kind' | 'title' | 'prose'> {
   return {
@@ -92,7 +92,7 @@ export async function ask(input: { question: string }): Promise<AnalyticsAnswer>
   }
 }
 
-/** The seven suggested prompts, verbatim from the brief. */
+/** The suggested prompts: the seven from the brief and the four added for the 29 Oct update. */
 export async function listPrompts() {
   await delay()
   requireRole('admin')

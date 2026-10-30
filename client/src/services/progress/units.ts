@@ -26,6 +26,7 @@ import {
   updateRow,
 } from '../api'
 import { C03_QUESTIONS, C05_CHECKLIST, C05_MIN_DRAFT_WORDS } from '../courses/unit-content'
+import { reportCompletion } from '../crm/lms-events'
 import { type EnrolmentContext, findEnrolment, findEnrolmentRow } from './evidence'
 import { recomputeEnrolment } from './recompute'
 
@@ -103,6 +104,18 @@ export function writeUnit(
       })
   const enrolment = findEnrolmentRow(ctx.enrolment.learnerId, ctx.enrolment.programme)?.row
   if (enrolment) updateRow(enrolment, { lastActivityAt: instant })
+  if (completeNow) {
+    // Course completion reaches the CRM once, for linked learners (SPEC §8 Completion).
+    const courseCode = db.courses.find((c) => c.id === ctx.courseId)?.code
+    if (courseCode) {
+      reportCompletion({
+        learnerId: ctx.enrolment.learnerId,
+        programmeLetter: ctx.enrolment.programme,
+        enrolmentId: ctx.enrolment.id,
+        courseCode,
+      })
+    }
+  }
   return { completedNow: completeNow, unit }
 }
 

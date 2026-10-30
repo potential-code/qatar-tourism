@@ -65,7 +65,7 @@ export const REPORT_META: Record<
   },
   certification: {
     title: 'Certification',
-    description: 'Program A certificates. B and C are excluded.',
+    description: 'Program A credentials with validity, expiry and renewal. B and C are excluded.',
     scope: 'cohort',
     searchHint: 'Certificate ID, learner ID, name',
   },
@@ -75,6 +75,48 @@ export const REPORT_META: Record<
     scope: 'none',
     searchHint: 'Event, session or report, actor, event ID',
   },
+  approvals: {
+    title: 'Approvals',
+    description: 'Enrolment and external-certificate requests by status and reviewer.',
+    scope: 'none',
+    searchHint: 'Request ID, type, learner ID, name',
+  },
+  'external-review': {
+    title: 'External certificate review',
+    description: 'External certificates, claimed and recognised CPD, and review status.',
+    scope: 'none',
+    searchHint: 'Learner ID, name, certificate, issuer, reference',
+  },
+  waitlist: {
+    title: 'Waitlist',
+    description: 'Learners waiting for a seat or holding an offer on upcoming sessions.',
+    scope: 'none',
+    searchHint: 'Session, learner ID, name',
+  },
+  'account-status': {
+    title: 'Locked accounts',
+    description: 'Locked and disabled learner accounts with reason and who changed them.',
+    scope: 'none',
+    searchHint: 'Learner ID, name, reason',
+  },
+  cpd: {
+    title: 'CPD progress',
+    description: 'Earned, pending and remaining CPD per learner against the demo target.',
+    scope: 'cohort',
+    searchHint: 'Learner ID, name',
+  },
+  content: {
+    title: 'Content by language and format',
+    description: 'English and Arabic SCORM and xAPI packages with launches and completions.',
+    scope: 'none',
+    searchHint: 'Package ID, title, format, language',
+  },
+  'crm-sync': {
+    title: 'CRM sync status',
+    description: 'Simulated CRM events by direction, status, attempts and error.',
+    scope: 'none',
+    searchHint: 'Event ID, entity, direction, learner ID, error',
+  },
   attention: {
     title: 'Learners requiring attention',
     description: 'Open enrolments with an issue to act on.',
@@ -82,7 +124,7 @@ export const REPORT_META: Record<
   },
 }
 
-/** The ten Reports children, in the brief §12 order. */
+/** The Reports children: the brief §12 reports first, then the 29 Oct additions. */
 export const REPORT_ORDER: ReportKey[] = [
   'program-a',
   'program-b',
@@ -94,5 +136,12 @@ export const REPORT_ORDER: ReportKey[] = [
   'assessment-results',
   'assignments',
   'certification',
+  'cpd',
+  'approvals',
+  'external-review',
+  'waitlist',
+  'account-status',
+  'content',
+  'crm-sync',
   'notifications',
 ]

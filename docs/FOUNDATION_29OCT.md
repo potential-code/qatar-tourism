@@ -5,7 +5,7 @@ should not edit shared files without telling the foundation owner. Source of tru
 the SPEC (SPEC-29oct.md). All thresholds are "Demo settings — subject to Qatar Tourism
 confirmation".
 
-Versions: `DB_VERSION` 2 (`client/src/mocks/db.ts`), `SEED_VERSION` `qta-demo-1.1-29oct`
+Versions: `DB_VERSION` 3 (`client/src/mocks/db.ts`), `SEED_VERSION` `qta-demo-1.2-29oct`
 (`client/src/mocks/seed/reference-date.ts`). A bump reseeds; there is no migration.
 
 ## Adding to the data model later
@@ -142,3 +142,19 @@ tests. New: `foundation-29oct.test.ts`, `i18n/__tests__/i18n.test.ts`,
   use `useTranslation` so they re-render when the language changes.
 - Plurals: no `_one`/`_other` keys (Arabic has more categories and the parity test compares key
   sets); use separate keys or `{{n}}`.
+
+## Wave 2a notes (cross-lane wiring, reports, AI Analytics)
+
+- LMS to CRM events all go through `services/crm/lms-events.ts` (`reportLmsEvent`, keyed by `payload.dedupeKey`):
+  enrolment decisions (`approvals/decide.ts`), exam results (`assessments/attempts.ts`), completions
+  (`progress/units.ts`, `progress/recompute.ts`), certification (`credentials/events.ts`, now also on issue and
+  reissue) and licence review requests (`licence.service.requestLicenceReview`). Linked learners only, except
+  certification, which reports for every learner. The CRM scenario reuses an existing event for the same fact.
+- Program A pass mark: `Evidence.finalPassPercent` is the published post rule (`publishedPassPercent('A','post')`);
+  `finalPassMark(evidence)` falls back to `THRESHOLDS.finalAssessmentPass`.
+- New reports: `approvals`, `external-review`, `waitlist`, `account-status`, `cpd`, `content`, `crm-sync`
+  (`services/reports/definitions/workflow.ts`); Certification gains validity and renewal; Assessment Results gains
+  "Attempt limit reached". Dashboard counts equal the matching status filters (see `wave2a.test.ts`).
+- Public "Join Program A" still enrols directly (registration to profile, e2e 01). Approval-gated enrolment is only used
+  where a session or the CRM requires it (`requestEnrolment`); routing the public journey through approval would
+  hold every new learner at "Pending review" and break that walkthrough.

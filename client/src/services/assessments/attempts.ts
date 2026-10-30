@@ -1,10 +1,13 @@
 import type { ContentLanguage, ProgrammeCode, QuestionType } from '@shared/constants'
+import { THRESHOLDS } from '@shared/constants'
 import { COMPETENCY_LABELS } from '@shared/content/assessments'
 import type { AssessmentAttemptRow, AttemptSnapshotItem, QuestionBankRow } from '@shared/types/db'
 import { ApiError, commit, db, now, updateRow } from '../api'
 import { recordAudit } from '../audit.service'
+import { reportExamResult } from '../crm/lms-events'
 import { recomputeEnrolment } from '../progress/recompute'
 import { type Scored, scoreItems } from './draw'
+import { ruleById } from './rules'
 
 /**
  * Rules-engine attempts: reading a frozen snapshot back as questions, saving answers, scoring,
@@ -102,7 +105,31 @@ export function closeAttempt(row: AssessmentAttemptRow, submittedAt: string): Sc
   })
   touchEnrolment(row.enrolmentId, submittedAt)
   recomputeEnrolment(row.learnerId, programmeOfEnrolment(row.enrolmentId))
+  reportAttemptToCrm(row)
   return scored
+}
+
+/**
+ * Reports a submitted attempt to the CRM once (attempt id, score, pass or fail; SPEC §8
+ * Examination). The pass mark is the attempt's own rule; the pre-assessment has no pass gate.
+ */
+export function reportAttemptToCrm(row: AssessmentAttemptRow): void {
+  const assessment = db.assessments.find((a) => a.id === row.assessmentId)
+  if (!assessment || assessment.kind === 'formative') return
+  const programme = programmeOfEnrolment(row.enrolmentId)
+  const rule = ruleById(row.ruleId)
+  const passPercent =
+    assessment.kind === 'pre'
+      ? null
+      : (rule?.passPercent ?? (programme === 'A' ? THRESHOLDS.finalAssessmentPass : null))
+  reportExamResult({
+    learnerId: row.learnerId,
+    attemptId: row.id,
+    kind: assessment.kind,
+    scorePercent: row.score,
+    passPercent,
+    programmeLetter: programme,
+  })
 }
 
 /** Has the attempt's time limit run out? An attempt without a deadline never expires. */

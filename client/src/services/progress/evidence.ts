@@ -2,6 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { THRESHOLDS } from '@shared/constants'
 import type { EnrolmentRow } from '@shared/types/db'
 import { db, now } from '../api'
+import { publishedPassPercent } from '../assessments/rules'
 import type {
   AttemptEvidence,
   Evidence,
@@ -215,5 +216,6 @@ export function loadEvidence(enrolment: EnrolmentContext): Evidence {
         ? loadSessionEvidence(enrolment.learnerId, enrolment.programmeId)
         : { ...NO_SESSION },
     submissions: loadSubmissions(enrolment.id),
+    finalPassPercent: publishedPassPercent('A', 'post') ?? undefined,
   }
 }

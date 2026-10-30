@@ -205,6 +205,7 @@ export async function reissue(code: string, input: { reason: string }) {
     after: { code: newCode, status: 'issued' },
     reason,
   })
+  emitCertificationEvent('issued', reissued)
   commit()
   return out({ code: newCode, status: 'issued' as const })
 }

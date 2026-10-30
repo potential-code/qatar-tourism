@@ -1,9 +1,10 @@
 import { THRESHOLDS } from '@shared/constants'
 import { db, insertRow, nowIso } from '../api'
 import { recordAudit } from '../audit.service'
+import { emitCertificationEvent } from '../credentials/events'
 import { addCredentialCpdLine, newCredentialTerms } from '../credentials/rules'
 import type { EnrolmentContext } from '../progress/evidence'
-import { baselineAttempt, bestScore, type Evidence } from '../progress/rules'
+import { baselineAttempt, bestScore, type Evidence, finalPassMark } from '../progress/rules'
 
 /**
  * Issuing the watermarked demo certificate (formerly part of certificates.service.ts). Called by
@@ -52,7 +53,7 @@ export function issueCertificateIfMissing(
         .sort((a, b) => b - a)[0] ?? null,
     assignmentScoreAtLeast: THRESHOLDS.assignmentPass,
     finalAssessmentScore: bestScore(evidence.attempts, 'post'),
-    finalAssessmentAtLeast: THRESHOLDS.finalAssessmentPass,
+    finalAssessmentAtLeast: finalPassMark(evidence),
     rolePlayAttempts: evidence.rolePlayCount,
     checkedBy: 'system',
   }
@@ -76,5 +77,6 @@ export function issueCertificateIfMissing(
     after: { code, status: 'issued', enrolmentId: enrolment.id },
     reason: 'Every Program A requirement passed',
   })
+  emitCertificationEvent('issued', created)
   return code
 }

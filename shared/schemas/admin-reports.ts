@@ -16,6 +16,13 @@ export const REPORT_KEYS = [
   'certification',
   'notifications',
   'attention',
+  'approvals',
+  'external-review',
+  'waitlist',
+  'account-status',
+  'cpd',
+  'content',
+  'crm-sync',
 ] as const
 export type ReportKey = (typeof REPORT_KEYS)[number]
 

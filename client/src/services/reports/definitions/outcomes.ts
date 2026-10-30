@@ -1,4 +1,5 @@
 import type { EnrolmentFact } from '../../analytics/types'
+import { credentialViews } from '../../credentials/lifecycle'
 import * as reads from '../reads'
 import type { ReportDefinition, ReportRow } from '../types'
 
@@ -33,6 +34,7 @@ export const assessmentsReport: ReportDefinition = {
     { key: 'assessment', header: 'Assessment', type: 'text' },
     { key: 'version', header: 'Version', type: 'code' },
     { key: 'attempt', header: 'Attempt', type: 'number' },
+    { key: 'language', header: 'Language', type: 'text' },
     { key: 'score', header: 'Score', type: 'score' },
     { key: 'improvement', header: 'Improvement (pp)', type: 'number' },
     { key: 'submittedAt', header: 'Submission date', type: 'date' },
@@ -47,7 +49,7 @@ export const assessmentsReport: ReportDefinition = {
     { value: 'Baseline recorded', label: 'Baseline recorded' },
   ],
   defaultSort: { key: 'submittedAt', direction: 'desc' },
-  searchKeys: ['learnerCode', 'name', 'assessment'],
+  searchKeys: ['learnerCode', 'name', 'assessment', 'language'],
   load({ cohort }) {
     const facts = byEnrolment(cohort)
     const attempts = reads.attemptRows()
@@ -64,6 +66,7 @@ export const assessmentsReport: ReportDefinition = {
         assessment: KIND_LABEL[attempt.kind],
         version: attempt.version,
         attempt: attempt.attemptNo,
+        language: attempt.language === 'ar' ? 'Arabic' : 'English',
         score: attempt.score,
         improvement: isPost && pre !== null ? attempt.score - pre : null,
         submittedAt: attempt.submittedAt,
@@ -153,35 +156,65 @@ export const assignmentsReport: ReportDefinition = {
   },
 }
 
-/** Brief §13 Certification: Program A only. B and C are excluded by construction and by filter. */
+const LIFECYCLE_LABEL = {
+  active: 'Active',
+  expiring_soon: 'Expiring soon',
+  expired: 'Expired',
+  revoked: 'Revoked',
+  superseded: 'Superseded',
+} as const
+
+const RENEWAL_LABEL = {
+  none: 'Not due',
+  renewal_due: 'Renewal due',
+  renewal_in_progress: 'Renewal in progress',
+  retraining: 'Retraining required',
+  renewed: 'Renewed',
+  revoked: 'Revoked, not renewable',
+} as const
+
+/**
+ * Brief §13 Certification, extended for SPEC §7 with validity and renewal: Program A credentials
+ * only (B and C are excluded by construction and by filter), one row per credential including
+ * prior cycles. The state is derived from the expiry and the demo clock.
+ */
 export const certificationReport: ReportDefinition = {
   key: 'certification',
   title: 'Certification',
-  description: 'Program A certificates. Programs B and C do not issue certificates.',
+  description:
+    'Program A credentials with validity, expiry and renewal. Programs B and C do not issue certificates. State follows the demo clock; validity and CPD are demo settings, subject to Qatar Tourism confirmation.',
   filterScope: 'cohort',
   columns: [
     { key: 'code', header: 'Certificate ID', type: 'code' },
     { key: 'learnerCode', header: 'Learner ID', type: 'code', field: 'learnerCode' },
     { key: 'name', header: 'A learner', type: 'text', field: 'displayName' },
     { key: 'issuedAt', header: 'Issue date', type: 'date' },
-    { key: 'evidence', header: 'Eligibility evidence', type: 'text' },
-    { key: 'status', header: 'State', type: 'status' },
+    { key: 'expiresAt', header: 'Expiry date', type: 'date' },
+    { key: 'daysToExpiry', header: 'Days to expiry', type: 'number' },
+    { key: 'status', header: 'Validity', type: 'status' },
+    { key: 'renewal', header: 'Renewal', type: 'text' },
+    { key: 'cpdHours', header: 'CPD hours', type: 'number' },
+    { key: 'evidence', header: 'Eligibility evidence', type: 'text', detailOnly: true },
+    { key: 'ruleVersion', header: 'Rule version', type: 'code', detailOnly: true },
+    { key: 'supersedes', header: 'Renews', type: 'code', detailOnly: true },
+    { key: 'supersededBy', header: 'Renewed by', type: 'code', detailOnly: true },
     { key: 'revokeReason', header: 'Revocation reason', type: 'text', detailOnly: true },
   ],
   statusKey: 'status',
-  statusOptions: [
-    { value: 'Issued', label: 'Issued' },
-    { value: 'Revoked', label: 'Revoked' },
-  ],
+  statusOptions: Object.values(LIFECYCLE_LABEL).map((label) => ({ value: label, label })),
   defaultSort: { key: 'code', direction: 'asc' },
-  searchKeys: ['code', 'learnerCode', 'name'],
+  searchKeys: ['code', 'learnerCode', 'name', 'renewal'],
   load({ cohort }) {
     const facts = byEnrolment(cohort)
-    const certs = reads.certificateRows()
-    return certs
-      .filter((c) => c.programme === 'A' && facts.has(c.enrolmentId))
-      .map((c) => {
-        const e = c.evidence as Record<string, number | string | undefined>
+    const enrolmentOf = new Map(reads.certificateRows().map((c) => [c.id, c]))
+    return credentialViews()
+      .filter((view) => {
+        const row = enrolmentOf.get(view.id)
+        return row && row.programme === 'A' && facts.has(row.enrolmentId)
+      })
+      .map((view) => {
+        const row = enrolmentOf.get(view.id)
+        const e = (row?.evidence ?? {}) as Record<string, number | string | undefined>
         const evidence = [
           e.foundationQuizAtLeast !== undefined
             ? `Foundation quiz ${e.foundationQuizAtLeast}+`
@@ -195,16 +228,47 @@ export const certificationReport: ReportDefinition = {
           .filter(Boolean)
           .join(', ')
         return {
-          id: c.id,
-          learnerId: facts.get(c.enrolmentId)?.learnerId ?? null,
-          code: c.code,
-          learnerCode: c.learnerCode,
-          name: c.learnerName,
-          issuedAt: c.issuedAt,
+          id: view.id,
+          learnerId: view.learnerId,
+          code: view.code,
+          learnerCode: view.learnerCode,
+          name: view.learnerName,
+          issuedAt: view.issuedAt,
+          expiresAt: view.expiresAt,
+          daysToExpiry:
+            view.lifecycle === 'active' ||
+            view.lifecycle === 'expiring_soon' ||
+            view.lifecycle === 'expired'
+              ? view.daysToExpiry
+              : null,
+          status: LIFECYCLE_LABEL[view.lifecycle],
+          renewal: RENEWAL_LABEL[view.nextAction],
+          cpdHours: view.cpdHours,
           evidence: evidence || 'All Program A conditions passed',
-          status: c.status === 'issued' ? 'Issued' : 'Revoked',
-          revokeReason: c.revokeReason,
+          ruleVersion: view.ruleVersion,
+          supersedes: view.supersedesCode,
+          supersededBy: view.supersededByCode,
+          revokeReason: view.revokeReason,
         }
       })
+  },
+  summarise(rows) {
+    const count = (label: string) => rows.filter((r) => r.status === label).length
+    return [
+      { label: 'Credentials', value: rows.length.toLocaleString('en-GB') },
+      { label: 'Expiring soon', value: String(count('Expiring soon')) },
+      { label: 'Expired', value: String(count('Expired')) },
+      {
+        label: 'Renewal due or started',
+        value: String(
+          rows.filter(
+            (r) =>
+              r.renewal === 'Renewal due' ||
+              r.renewal === 'Renewal in progress' ||
+              r.renewal === 'Retraining required',
+          ).length,
+        ),
+      },
+    ]
   },
 }

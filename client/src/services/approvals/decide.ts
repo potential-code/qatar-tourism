@@ -1,6 +1,7 @@
 import type { ApprovalRequestRow, ExternalCertificateRow } from '@shared/types/db'
 import { db, insertRow, now, nowIso, updateRow, type Viewer } from '../api'
 import { recordAudit } from '../audit.service'
+import { reportEnrolmentAck } from '../crm/lms-events'
 import { createEnrolment, enrolmentOf } from '../enrolment/core'
 import { notify } from '../notifications.service'
 import { evaluate, loadLearnerContext } from '../rsvps/eligibility'
@@ -106,6 +107,23 @@ function labelOf(request: ApprovalRequestRow): string {
   return programme ? `Program ${programme.code}` : 'the programme'
 }
 
+/** Tells the CRM the enrolment decision (approved, waitlisted or rejected), once per decision. */
+function acknowledgeToCrm(
+  request: ApprovalRequestRow,
+  outcome: 'rejected' | DecisionOutcome['booking'],
+) {
+  const programme = db.programmes.find((p) => p.id === request.programmeId)
+  if (!programme) return
+  reportEnrolmentAck({
+    learnerId: request.learnerId,
+    programmeLetter: programme.code,
+    decision:
+      outcome === 'rejected' ? 'rejected' : outcome === 'waitlisted' ? 'waitlisted' : 'approved',
+    entityId: enrolmentOf(request.learnerId, programme.code)?.id ?? request.id,
+    requestCode: request.code,
+  })
+}
+
 /** Records a decision on a request: status, reason, reviewer, audit and a learner notification. */
 export function decideRequest(
   actor: Viewer,
@@ -148,6 +166,10 @@ export function decideRequest(
     },
     reason,
   })
+
+  if (request.type === 'enrolment' && decision !== 'request_info') {
+    acknowledgeToCrm(request, decision === 'reject' ? 'rejected' : booking)
+  }
 
   const label = labelOf(request)
   const name = learnerFirstName(request.learnerId)

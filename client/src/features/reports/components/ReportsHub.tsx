@@ -3,15 +3,22 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import {
   Award,
+  BadgeCheck,
   BellRing,
   BookOpenCheck,
   CalendarRange,
+  ClipboardCheck,
   ClipboardList,
   FileText,
+  Globe,
   GraduationCap,
+  Hourglass,
+  LockKeyhole,
   type LucideIcon,
+  Network,
   Presentation,
   Sparkles,
+  Target,
   Users,
 } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
@@ -33,6 +40,13 @@ const ICONS: Record<string, LucideIcon> = {
   assignments: FileText,
   certification: Award,
   notifications: BellRing,
+  cpd: Target,
+  approvals: ClipboardCheck,
+  'external-review': BadgeCheck,
+  waitlist: Hourglass,
+  'account-status': LockKeyhole,
+  content: Globe,
+  'crm-sync': Network,
 }
 
 /** Reports landing page: the ten reports of brief §12, each with a live headline count. */
@@ -51,6 +65,13 @@ export function ReportsHub() {
         assignments: `${count(data.kpis.pendingAssessments)} awaiting a mark`,
         certification: `${count(data.kpis.certificates)} A certificates`,
         notifications: 'Simulated, queued, sent and failed',
+        cpd: 'Earned, pending and remaining',
+        approvals: 'Enrolment and external requests',
+        'external-review': 'Claimed and recognised CPD',
+        waitlist: 'Waiting for a seat',
+        'account-status': 'Locked and disabled',
+        content: 'English and Arabic packages',
+        'crm-sync': 'Simulated events and errors',
       }
     : {}
 

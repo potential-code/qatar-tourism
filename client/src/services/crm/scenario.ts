@@ -2,6 +2,7 @@ import type { LicenceStatus } from '@shared/constants'
 import { learnerDisplayId } from '@shared/utils/identity'
 import { ApiError, db, nowIso } from '../api'
 import { type AuditActor, recordAudit } from '../audit.service'
+import { certificationKey } from '../credentials/events'
 import { enrolmentOf } from '../enrolment/core'
 import { findEnrolment, loadEvidence } from '../progress/evidence'
 import { evaluate } from '../progress/rules'
@@ -14,6 +15,7 @@ import {
   type ScenarioState,
 } from './common'
 import { type ProcessOutcome, submitEvent } from './events'
+import { ackKey, findLmsEvent } from './lms-events'
 
 /**
  * The presenter-driven CRM scenario (SPEC §9, steps 1 to 7) for LRN-0042 / CRM-0042.
@@ -116,16 +118,27 @@ export function advanceScenario(actor: AuditActor, input: AdvanceInput): Advance
 
 type Who = ReturnType<typeof learner>
 
-/** Submits an event once per key for the run (the stored id is reused on every retry). */
+/**
+ * Submits an event once per key for the run (the stored id is reused on every retry). With a
+ * `dedupeKey` it first looks for the event the LMS already reported for the same fact (an
+ * approval, a result, a credential), so the sync log shows that fact once, not twice.
+ */
 function emit(
   state: ScenarioState,
   actor: AuditActor,
   key: string,
   event: Parameters<typeof submitEvent>[1],
+  dedupeKey?: string,
 ): ProcessOutcome {
+  const known = dedupeKey ? findLmsEvent(dedupeKey) : undefined
+  if (known) {
+    state.eventIds[key] = known.eventId
+    return submitEvent(actor, { ...event, eventId: known.eventId })
+  }
   const eventId = state.eventIds[key] ?? nextEventId()
   state.eventIds[key] = eventId
-  return submitEvent(actor, { ...event, eventId })
+  const payload = dedupeKey ? { ...event.payload, dedupeKey } : event.payload
+  return submitEvent(actor, { ...event, payload, eventId })
 }
 
 function requiredItems(who: Who, pick: (kind: string) => boolean) {
@@ -239,14 +252,20 @@ function approvalAndCapacity(state: ScenarioState, who: Who, actor: AuditActor):
       ),
   )
   const decision = holds || !session || seats < session.capacity ? 'approved' : 'waitlisted'
-  const ack = emit(state, actor, 'ack', {
-    type: 'enrolment',
-    direction: 'lms_to_crm',
-    learnerId: who.userId,
-    externalLearnerId: SCENARIO_CRM_ID,
-    entityId: enrolment.id,
-    payload: { acknowledgement: decision, programmeCode: 'QT-A' },
-  })
+  const ack = emit(
+    state,
+    actor,
+    'ack',
+    {
+      type: 'enrolment',
+      direction: 'lms_to_crm',
+      learnerId: who.userId,
+      externalLearnerId: SCENARIO_CRM_ID,
+      entityId: enrolment.id,
+      payload: { acknowledgement: decision, programmeCode: 'QT-A' },
+    },
+    ackKey(who.userId, 'A', decision),
+  )
   const capacity = session
     ? `${session.code} has ${seats} of ${session.capacity} seats taken${holds ? ' and the learner holds a confirmed seat' : ''}.`
     : 'No session is attached to this enrolment.'
@@ -300,29 +319,53 @@ function reportToCrm(state: ScenarioState, who: Who, actor: AuditActor): StepOut
     direction: 'lms_to_crm' as const,
   }
   const events = [
-    emit(state, actor, 'completion', {
-      ...base,
-      type: 'completion',
-      entityId: enrolment?.id ?? null,
-      payload: { programmeCode: 'QT-A', status: 'completed', simulated },
-    }),
-    emit(state, actor, 'exam', {
-      ...base,
-      type: 'examination',
-      entityId: post?.id ?? null,
-      payload: {
-        attemptId: post?.id ?? 'simulated',
-        scorePercent: post?.score ?? null,
-        result: post ? 'pass' : 'simulated pass',
-        simulated,
+    emit(
+      state,
+      actor,
+      'completion',
+      {
+        ...base,
+        type: 'completion',
+        entityId: enrolment?.id ?? null,
+        payload: { programmeCode: 'QT-A', status: 'completed', scope: 'programme', simulated },
       },
-    }),
-    emit(state, actor, 'cert', {
-      ...base,
-      type: 'certification',
-      entityId: real?.code ?? SIMULATED_CERTIFICATE,
-      payload: { credentialId: real?.code ?? SIMULATED_CERTIFICATE, action: 'issued', simulated },
-    }),
+      enrolment && !simulated ? `completion:${enrolment.id}` : undefined,
+    ),
+    emit(
+      state,
+      actor,
+      'exam',
+      {
+        ...base,
+        type: 'examination',
+        entityId: post?.id ?? null,
+        payload: {
+          attemptId: post?.id ?? 'simulated',
+          scorePercent: post?.score ?? null,
+          result: post ? 'pass' : 'simulated pass',
+          simulated,
+        },
+      },
+      post && !simulated ? `exam:${post.id}` : undefined,
+    ),
+    emit(
+      state,
+      actor,
+      'cert',
+      {
+        ...base,
+        type: 'certification',
+        entityId: real?.id ?? SIMULATED_CERTIFICATE,
+        payload: {
+          action: 'issued',
+          credentialId: real?.code ?? SIMULATED_CERTIFICATE,
+          credentialCode: real?.code ?? SIMULATED_CERTIFICATE,
+          expiresAt: real?.expiresAt ?? null,
+          simulated,
+        },
+      },
+      real ? certificationKey(real.code, 'issued') : undefined,
+    ),
   ]
   const queued = events.filter((e) => e.status !== 'processed').length
   return {

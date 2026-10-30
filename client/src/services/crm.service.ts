@@ -13,6 +13,7 @@ import {
   type TriggerMode,
 } from './crm/common'
 import { drainQueue, type ProcessOutcome, processEvent, submitEvent } from './crm/events'
+import { reportLmsEvent } from './crm/lms-events'
 import { lookupProgramme } from './crm/mapping'
 import { type CrmEventView, toEventView } from './crm/views'
 
@@ -216,21 +217,33 @@ export async function retryCrmEvent(eventId: string): Promise<ProcessOutcome> {
   return out(result)
 }
 
-/** For other services (approvals, assessments, certificates): report an LMS event to the CRM. */
+/**
+ * For other services (approvals, assessments, certificates): report an LMS event to the CRM.
+ * Idempotent by `dedupeKey` (or event id); a no-op for learners without a CRM link.
+ */
 export function reportLmsEventToCrm(input: {
   type: CrmEventType
   learnerId: string
   entityId?: string | null
   payload: Record<string, unknown>
+  dedupeKey?: string
   eventId?: string
 }): ProcessOutcome | null {
-  const link = db.crmMappings.find((m) => m.kind === 'learner' && m.learnerId === input.learnerId)
-  if (!link?.externalLearnerId) return null
-  const user = db.users.find((u) => u.id === db.session?.userId)
-  return submitEvent(user ? { id: user.id, role: user.role, name: user.name } : null, {
+  if (input.eventId) {
+    const link = db.crmMappings.find((m) => m.kind === 'learner' && m.learnerId === input.learnerId)
+    if (!link?.externalLearnerId) return null
+    const user = db.users.find((u) => u.id === db.session?.userId)
+    return submitEvent(user ? { id: user.id, role: user.role, name: user.name } : null, {
+      ...input,
+      direction: 'lms_to_crm',
+      externalLearnerId: link.externalLearnerId,
+    })
+  }
+  return reportLmsEvent({
     ...input,
-    direction: 'lms_to_crm',
-    externalLearnerId: link.externalLearnerId,
+    dedupeKey:
+      input.dedupeKey ??
+      `lms:${input.type}:${input.learnerId}:${input.entityId ?? ''}:${JSON.stringify(input.payload)}`,
   })
 }
 

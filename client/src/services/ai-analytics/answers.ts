@@ -6,6 +6,12 @@ import { cohort } from '../analytics/filters'
 import * as m from '../analytics/metrics'
 import { METRICS } from '../analytics/registry'
 import type { EnrolmentFact, Facts } from '../analytics/types'
+import {
+  assessmentPassRates,
+  certificatesExpiring,
+  crmFailedEvents,
+  programmeAWaitlist,
+} from './answers-29oct'
 import type { Intent } from './intents'
 
 /** The parts of an answer an intent builder decides; the controller adds id, time and labels. */
@@ -52,6 +58,14 @@ export function build(
   const period = allTime(facts, ref)
 
   switch (intent) {
+    case 'certificates_expiring':
+      return certificatesExpiring(programme, ref)
+    case 'program_a_waitlist':
+      return programmeAWaitlist(programme, ref)
+    case 'assessment_pass_rates':
+      return assessmentPassRates(facts, ref)
+    case 'crm_failed_events':
+      return crmFailedEvents(ref)
     case 'programme_distribution': {
       const all = cohort(facts, {})
       const dist = m.distribution(all)

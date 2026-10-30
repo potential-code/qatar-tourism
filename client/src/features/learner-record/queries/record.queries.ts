@@ -4,16 +4,22 @@ import * as certificates from '@/services/certificates.service'
 import * as record from '@/services/credentials/learner-record.service'
 import * as renewal from '@/services/credentials/renewal.service'
 import * as external from '@/services/external-certificates.service'
+import * as licence from '@/services/licence.service'
 
 export const recordKeys = {
   all: ['record'] as const,
   mine: () => [...recordKeys.all, 'mine'] as const,
+  licence: () => [...recordKeys.all, 'licence'] as const,
   learner: (userId: string) => [...recordKeys.all, 'learner', userId] as const,
   renewal: (code: string) => [...recordKeys.all, 'renewal', code] as const,
 }
 
 export const myRecordQuery = () =>
   queryOptions({ queryKey: recordKeys.mine(), queryFn: () => record.getMyRecord() })
+
+/** The learner's own licence field (CRM-sourced, illustrative) for the profile page. */
+export const myLicenceQuery = () =>
+  queryOptions({ queryKey: recordKeys.licence(), queryFn: () => licence.getMyLicence() })
 
 /** Admin read of one learner's record (learner detail page). */
 export const learnerRecordQuery = (userId: string) =>

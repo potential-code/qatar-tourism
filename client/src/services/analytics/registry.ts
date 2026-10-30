@@ -19,6 +19,10 @@ export type MetricKey =
   | 'inactiveLearners'
   | 'markingBacklog'
   | 'sessionsNearingCapacity'
+  | 'certificatesExpiring'
+  | 'waitlistedLearners'
+  | 'assessmentPassRate'
+  | 'crmFailedEvents'
 
 export type MetricDefinition = {
   key: MetricKey
@@ -139,5 +143,41 @@ export const METRICS: Record<MetricKey, MetricDefinition> = {
     unit: 'count',
     scope: 'programme',
     report: 'sessions',
+  },
+  certificatesExpiring: {
+    key: 'certificatesExpiring',
+    label: 'Certificates expiring',
+    definition:
+      'Program A credentials that are not revoked or superseded and expire within the stated number of days after the demo date. Validity is a demo setting, subject to Qatar Tourism confirmation.',
+    unit: 'count',
+    scope: 'programme',
+    report: 'certification',
+  },
+  waitlistedLearners: {
+    key: 'waitlistedLearners',
+    label: 'Waitlisted learners',
+    definition:
+      'Distinct learners waiting for a seat, or holding a seat offer, on an upcoming session. A waitlisted learner is never counted as attending.',
+    unit: 'count',
+    scope: 'programme',
+    report: 'waitlist',
+  },
+  assessmentPassRate: {
+    key: 'assessmentPassRate',
+    label: 'Assessment pass rate',
+    definition:
+      'Learners whose counted post-assessment score meets the pass mark of its rule, divided by learners with a decided post-assessment, by programme and language of the attempt. The pre-assessment has no pass gate.',
+    unit: 'percent',
+    scope: 'cohort',
+    report: 'assessment-results',
+  },
+  crmFailedEvents: {
+    key: 'crmFailedEvents',
+    label: 'Failed CRM events',
+    definition:
+      'Simulated CRM events with status Failed, plus events held as a mapping or identity Conflict, which need an action before they can process. No network call is made.',
+    unit: 'count',
+    scope: 'programme',
+    report: 'crm-sync',
   },
 }

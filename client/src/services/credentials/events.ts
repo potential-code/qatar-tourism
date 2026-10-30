@@ -1,49 +1,44 @@
-import { crmLearnerId } from '@shared/utils/identity'
-import { db, insertRow, nowIso } from '../api'
+import type { ProcessOutcome } from '../crm/events'
+import { findLmsEvent, reportLmsEvent } from '../crm/lms-events'
 
 /**
  * Certification events for the (simulated) CRM event log: issue, renewal, expiry and revocation
- * (SPEC §7 "updates appear in the CRM event log"). Idempotent: the same credential and kind is
- * recorded once, so a retry or a second page load never duplicates it. Synchronous; the caller
- * commits.
+ * (SPEC §7 "updates appear in the CRM event log", §8 Certification). They go through the one LMS
+ * to CRM entry point, so each credential and kind appears ONCE in the sync log, with the same
+ * shape the CRM scenario uses, and respects a paused sync or simulated outage (the event is then
+ * queued, never lost). Synchronous; the caller commits.
  */
 
 export type CertificationEventKind = 'issued' | 'renewed' | 'expired' | 'revoked'
 
-const nextEventId = (): string => {
-  const highest = db.crmEvents.reduce((max, e) => {
-    const n = /^EVT-(\d+)$/.exec(e.eventId)
-    return n ? Math.max(max, Number(n[1])) : max
-  }, 0)
-  return `EVT-${String(highest + 1).padStart(4, '0')}`
+export const certificationKey = (code: string, kind: CertificationEventKind): string =>
+  `cert:${code}:${kind}`
+
+type Credential = { id: string; code: string; learnerId: string; expiresAt: string | null }
+
+/** Records the event once. Returns true when this call added it. */
+export function emitCertificationEvent(kind: CertificationEventKind, cert: Credential): boolean {
+  if (findLmsEvent(certificationKey(cert.code, kind))) return false
+  return reportCertificationEvent(kind, cert) !== null
 }
 
-export function emitCertificationEvent(
+/** The stored event for the credential and kind, recording it first if it is not there yet. */
+export function reportCertificationEvent(
   kind: CertificationEventKind,
-  cert: { id: string; code: string; learnerId: string; expiresAt: string | null },
-): boolean {
-  const dedupeKey = `cert:${cert.code}:${kind}`
-  if (db.crmEvents.some((e) => e.payload.dedupeKey === dedupeKey)) return false
-  const profile = db.profiles.find((p) => p.userId === cert.learnerId)
-  const instant = nowIso()
-  insertRow('crmEvents', {
-    eventId: nextEventId(),
+  cert: Credential,
+): ProcessOutcome | null {
+  return reportLmsEvent({
+    dedupeKey: certificationKey(cert.code, kind),
     type: 'certification',
-    direction: 'lms_to_crm',
     learnerId: cert.learnerId,
-    externalLearnerId: profile ? crmLearnerId(profile.learnerCode) : null,
     entityId: cert.id,
-    status: 'processed',
-    attempts: 1,
+    allowUnlinked: true,
     payload: {
-      dedupeKey,
       action: kind,
+      credentialId: cert.code,
       credentialCode: cert.code,
       expiresAt: cert.expiresAt,
-      simulated: true,
+      simulated: false,
     },
-    occurredAt: instant,
-    processedAt: instant,
   })
-  return true
 }

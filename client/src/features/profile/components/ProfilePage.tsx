@@ -10,6 +10,8 @@ import { DemoBadge, PageHeader } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
+import { LicencePanel } from '@/features/learner-record/components/LicencePanel'
+import { myLicenceQuery } from '@/features/learner-record/queries/record.queries'
 import { useSession } from '@/hooks/useSession'
 import { tr } from '@/i18n/localised'
 import { ApiError } from '@/lib/api-error'
@@ -46,6 +48,7 @@ export function ProfilePage() {
   const { t, i18n } = useTranslation('learner')
   const { session } = useSession()
   const { data: profile, isPending, isError, refetch } = useQuery(ownProfileQuery())
+  const { data: licence } = useQuery(myLicenceQuery())
   const update = useUpdateProfile()
   const [draft, setDraft] = useState<ProfileDraft | null>(null)
   const [errors, setErrors] = useState<FieldErrors>({})
@@ -160,6 +163,8 @@ export function ProfilePage() {
           </ul>
         </div>
       </section>
+
+      {licence ? <LicencePanel licence={licence} /> : null}
 
       <p className="flex gap-2 text-muted-foreground text-sm">
         <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />

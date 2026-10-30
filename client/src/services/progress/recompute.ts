@@ -2,6 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import type { EnrolmentRow } from '@shared/types/db'
 import { db, insertRow, nowIso, updateRow } from '../api'
 import { issueCertificateIfMissing } from '../certificates/issue'
+import { reportCompletion } from '../crm/lms-events'
 import { findEnrolment, findEnrolmentRow, loadEvidence } from './evidence'
 import { assignmentApproved, evaluate } from './rules'
 
@@ -49,6 +50,13 @@ export function recomputeEnrolment(learnerId: string, programmeCode: ProgrammeCo
   if (result.complete && !row.completedAt) patch.completedAt = instant
   if (!result.complete && row.completedAt) patch.completedAt = null
   if (Object.keys(patch).length > 0) updateRow(row, patch)
+  if (patch.completedAt) {
+    reportCompletion({
+      learnerId,
+      programmeLetter: programmeCode,
+      enrolmentId: enrolment.id,
+    })
+  }
 
   // Certificates: Program A only, and only when the programme has certification switched on.
   if (result.certificateEligible && programmeCode === 'A' && enrolment.certificationEnabled) {
