@@ -25,6 +25,7 @@ import { adminSessionsQuery, type SessionItem } from '../queries/sessions.querie
 import { CapacityBar } from './CapacityBar'
 import { ChangeRequestsPanel } from './ChangeRequestsPanel'
 import { SessionSheet } from './SessionSheet'
+import { WaitlistView } from './WaitlistView'
 
 const STATUS = {
   draft: 'Draft',
@@ -36,7 +37,7 @@ const STATUS = {
 const FORMAT = { in_person: 'In person', online: 'Live online' }
 type Key = 'code' | 'programme' | 'trainerName' | 'startsAt' | 'format' | 'confirmed' | 'status'
 
-export function SessionsPage() {
+export function SessionsPage({ view }: { view?: 'waitlist' }) {
   const query = useQuery(adminSessionsQuery())
   const reduce = useReducedMotion()
   const [search, setSearch] = useState('')
@@ -69,6 +70,7 @@ export function SessionsPage() {
       title="Session management"
       description="An administrator's view over every scheduled session: capacity, bookings, waitlists, attendance and reschedule history."
     >
+      {view === 'waitlist' ? <WaitlistView /> : null}
       {items.length ? (
         <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <Summary label="Sessions" value={items.length} />
@@ -199,7 +201,7 @@ export function SessionsPage() {
                     <TableCell className="text-sm">{FORMAT[s.format]}</TableCell>
                     <TableCell>
                       <CapacityBar
-                        used={s.confirmed}
+                        used={s.confirmed + s.offered}
                         capacity={s.capacity}
                         waitlist={s.waitlisted}
                       />

@@ -1,7 +1,8 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as sessions from '@/services/admin/sessions.service'
+import * as waitlist from '@/services/rsvps-waitlist.service'
 
-export type { ChangeRequest, SessionItem } from '@/services/admin/sessions.service'
+export type { ChangeRequest, SessionDetail, SessionItem } from '@/services/admin/sessions.service'
 
 export const adminSessionsQuery = () =>
   queryOptions({
@@ -28,5 +29,24 @@ export function useDecideChangeRequest() {
     mutationFn: (input: { rsvpId: string; decision: 'approved' | 'declined'; note?: string }) =>
       sessions.decideChangeRequest(input.rsvpId, { decision: input.decision, note: input.note }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] }),
+  })
+}
+
+export const waitlistQuery = () =>
+  queryOptions({
+    queryKey: ['admin', 'sessions', 'waitlist'],
+    queryFn: () => waitlist.listWaitlist(),
+  })
+
+/** Administrator override of waitlist priority (reason required, audited). */
+export function useMoveWaitlistEntry() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { rsvpId: string; direction: 'up' | 'down'; reason: string }) =>
+      waitlist.moveWaitlistEntry(input.rsvpId, {
+        direction: input.direction,
+        reason: input.reason,
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin'] }),
   })
 }

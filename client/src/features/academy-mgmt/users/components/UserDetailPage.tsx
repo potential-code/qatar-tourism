@@ -31,9 +31,11 @@ import {
   useChangeRole,
   useInvite,
   userDetailQuery,
+  useSetLocked,
   useSetSuspended,
 } from '../queries/users.queries'
 import { ACCOUNT_STATUS, ENROLMENT_TONE, ROLE_LABEL } from '../utils/status'
+import { AccountStatusPanel } from './AccountStatusPanel'
 import { EnrolDialog } from './EnrolDialog'
 import { LearnerFormDialog } from './LearnerFormDialog'
 import { AssessmentHistory, BookingHistory, SubmissionHistory } from './UserHistoryTables'
@@ -46,8 +48,9 @@ export function UserDetailPage({ userId }: { userId: string }) {
   const query = useQuery(userDetailQuery(userId))
   const invite = useInvite(userId)
   const suspension = useSetSuspended(userId)
+  const lockChange = useSetLocked(userId)
   const roleChange = useChangeRole(userId)
-  const [dialog, setDialog] = useState<null | 'edit' | 'enrol' | 'suspend' | 'role'>(null)
+  const [dialog, setDialog] = useState<null | 'edit' | 'enrol' | 'suspend' | 'role' | 'lock'>(null)
   const [nextRole, setNextRole] = useState<Role>('learner')
 
   if (query.isPending)
@@ -68,6 +71,7 @@ export function UserDetailPage({ userId }: { userId: string }) {
     tone: 'neutral' as const,
   }
   const suspended = account.status === 'suspended'
+  const locked = account.status === 'locked'
   const isLearner = account.role === 'learner'
 
   return (
@@ -187,6 +191,17 @@ export function UserDetailPage({ userId }: { userId: string }) {
               </p>
             </Panel>
           </Reveal>
+          {isLearner && profile ? (
+            <Reveal delay={0.03}>
+              <AccountStatusPanel
+                status={profile.accountStatus}
+                lockReason={profile.lockReason}
+                lockedAt={profile.lockedAt}
+                lockedBy={profile.lockedBy}
+                onToggle={() => setDialog('lock')}
+              />
+            </Reveal>
+          ) : null}
           <Reveal delay={0.05}>
             <Panel title="Enrolments" description="Each programme keeps its own progress.">
               {enrolments.length === 0 ? (
@@ -278,6 +293,36 @@ export function UserDetailPage({ userId }: { userId: string }) {
             enrolled={enrolments.map((e) => e.programme)}
             open={dialog === 'enrol'}
             onOpenChange={(o) => setDialog(o ? 'enrol' : null)}
+          />
+          <ReasonDialog
+            open={dialog === 'lock'}
+            onOpenChange={(o) => setDialog(o ? 'lock' : null)}
+            title={locked ? 'Unlock account' : 'Lock account'}
+            description={
+              locked
+                ? 'The learner can sign in again. Progress, results and credentials were kept while the account was locked and are not reset.'
+                : 'The learner is signed out and cannot sign in until an administrator unlocks the account. History, results and credentials are kept. This is a simulated control: no external identity system is changed.'
+            }
+            confirmLabel={locked ? 'Unlock account' : 'Lock account'}
+            destructive={!locked}
+            pending={lockChange.isPending}
+            onConfirm={async (reason) => {
+              try {
+                const r = await lockChange.mutateAsync({ lock: !locked, reason })
+                toast.success(
+                  r.accountStatus === 'locked' ? 'Account locked (simulated)' : 'Account unlocked',
+                  {
+                    description:
+                      r.accountStatus === 'locked'
+                        ? 'Sign-in is blocked. Records and progress are kept. Recorded in the audit trail.'
+                        : 'Access restored with progress unchanged. Recorded in the audit trail.',
+                  },
+                )
+                setDialog(null)
+              } catch (e) {
+                fail(e, 'The account status could not be changed')
+              }
+            }}
           />
           <ReasonDialog
             open={dialog === 'suspend'}

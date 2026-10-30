@@ -57,7 +57,7 @@ export function SignInPage({
           return
         }
         setError(
-          apiError?.code === 'ACCOUNT_SUSPENDED'
+          apiError?.code === 'ACCOUNT_SUSPENDED' || apiError?.code === 'ACCOUNT_LOCKED'
             ? apiError.message
             : 'Email or password is incorrect. Check them and try again, or reset your password.',
         )

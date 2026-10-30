@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +14,7 @@ import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { ApiError } from '@/lib/api-error'
-import { qatarRange } from '@/lib/format/qatar-time'
+import { useSessionFormat } from '../hooks/useSessionFormat'
 import { useCancelBooking, useRequestChange } from '../queries/sessions.queries'
 import type { MyBooking } from '../types'
 
@@ -28,6 +29,8 @@ export function BookingChangeDialog({
   booking: MyBooking | null
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation('sessions')
+  const format = useSessionFormat()
   const cancel = useCancelBooking()
   const request = useRequestChange()
   const [reason, setReason] = useState('')
@@ -48,13 +51,18 @@ export function BookingChangeDialog({
     if (!booking) return
     setError(null)
     if (!selfService && reason.trim().length < 5) {
-      setError('Tell the Academy why you need the change (at least 5 characters).')
+      setError(t('cancelDialog.reasonShort'))
       return
     }
     try {
       if (selfService) {
-        await cancel.mutateAsync({ rsvpId: booking.rsvpId, reason: reason.trim() || undefined })
-        toast.success('Booking cancelled. The seat has been released.')
+        const result = await cancel.mutateAsync({
+          rsvpId: booking.rsvpId,
+          reason: reason.trim() || undefined,
+        })
+        toast.success(
+          t(result.offersCreated > 0 ? 'cancelDialog.cancelledOffer' : 'cancelDialog.cancelled'),
+        )
       } else {
         const result = await request.mutateAsync({
           rsvpId: booking.rsvpId,
@@ -62,14 +70,12 @@ export function BookingChangeDialog({
           reason: reason.trim(),
         })
         toast.success(
-          result.alreadyRequested
-            ? 'You have already asked for a change to this booking. The Academy will follow up.'
-            : 'Request sent for admin review. Your booking stays in place until the Academy replies.',
+          t(result.alreadyRequested ? 'cancelDialog.already' : 'cancelDialog.requested'),
         )
       }
       close(false)
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'The change could not be sent. Try again.')
+      setError(err instanceof ApiError ? err.message : t('cancelDialog.failed'))
     }
   }
 
@@ -78,15 +84,13 @@ export function BookingChangeDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
           <DialogTitle className="font-display text-2xl font-normal">
-            {selfService ? 'Cancel this booking?' : 'Request a change'}
+            {selfService ? t('cancelDialog.cancelTitle') : t('cancelDialog.requestTitle')}
           </DialogTitle>
           <DialogDescription>
             {booking
-              ? `${booking.session.title}, ${qatarRange(booking.session.startsAt, booking.session.endsAt)}.`
+              ? `${booking.session.title}, ${format.range(booking.session.startsAt, booking.session.endsAt)}.`
               : null}{' '}
-            {selfService
-              ? 'Your seat is released for another learner. You can book another session at any time.'
-              : 'This session starts within 24 hours, so changes need admin review.'}
+            {selfService ? t('cancelDialog.cancelBody') : t('cancelDialog.requestBody')}
           </DialogDescription>
         </DialogHeader>
         {!selfService ? (
@@ -94,7 +98,7 @@ export function BookingChangeDialog({
             value={kind}
             onValueChange={(v) => setKind(v as 'cancel' | 'reschedule')}
             className="grid grid-cols-2 gap-2"
-            aria-label="What do you need?"
+            aria-label={t('cancelDialog.whatNeed')}
           >
             {(['cancel', 'reschedule'] as const).map((value) => (
               <label
@@ -103,14 +107,14 @@ export function BookingChangeDialog({
                 className="flex items-center gap-2 rounded-lg border bg-card p-3 text-sm has-[:checked]:border-teal"
               >
                 <RadioGroupItem id={`kind-${value}`} value={value} />
-                {value === 'cancel' ? 'Cancel my place' : 'Move to another time'}
+                {value === 'cancel' ? t('cancelDialog.cancelPlace') : t('cancelDialog.moveTime')}
               </label>
             ))}
           </RadioGroup>
         ) : null}
         <div className="grid gap-2">
           <Label htmlFor="change-reason">
-            {selfService ? 'Reason (optional)' : 'Reason for the request'}
+            {selfService ? t('cancelDialog.reasonOptional') : t('cancelDialog.reasonRequest')}
           </Label>
           <Textarea
             id="change-reason"
@@ -128,14 +132,18 @@ export function BookingChangeDialog({
         </div>
         <DialogFooter className="gap-2">
           <Button variant="ghost" onClick={() => close(false)}>
-            Keep booking
+            {t('cancelDialog.keep')}
           </Button>
           <Button
             variant={selfService ? 'destructive' : 'default'}
             onClick={submit}
             disabled={pending}
           >
-            {pending ? 'Sending' : selfService ? 'Cancel booking' : 'Send for admin review'}
+            {pending
+              ? t('cancelDialog.sending')
+              : selfService
+                ? t('myBooking.cancel')
+                : t('cancelDialog.send')}
           </Button>
         </DialogFooter>
       </DialogContent>

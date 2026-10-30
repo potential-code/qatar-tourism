@@ -84,6 +84,16 @@ export function useSetSuspended(userId: string) {
   })
 }
 
+/** Lock or unlock a learner account (reason required, audited, simulated). */
+export function useSetLocked(userId: string) {
+  const invalidate = useInvalidate()
+  return useMutation({
+    mutationFn: ({ lock, reason }: { lock: boolean; reason: string }) =>
+      lock ? users.lockAccount(userId, reason) : users.unlockAccount(userId, reason),
+    onSuccess: invalidate,
+  })
+}
+
 export function useChangeRole(userId: string) {
   const invalidate = useInvalidate()
   return useMutation({

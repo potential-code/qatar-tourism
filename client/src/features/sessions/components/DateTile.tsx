@@ -1,5 +1,5 @@
-import { qatarDay, qatarMonth, qatarWeekday } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
+import { useSessionFormat } from '../hooks/useSessionFormat'
 
 /** Calendar-leaf date: the day number set large in the display face. Qatar date. */
 export function DateTile({
@@ -11,6 +11,7 @@ export function DateTile({
   className?: string
   muted?: boolean
 }) {
+  const format = useSessionFormat()
   return (
     <div
       className={cn(
@@ -21,11 +22,11 @@ export function DateTile({
         className,
       )}
     >
-      <span className="text-[11px] font-medium tracking-wide uppercase">{qatarWeekday(iso)}</span>
+      <span className="text-[11px] font-medium tracking-wide uppercase">{format.weekday(iso)}</span>
       <span className="font-display text-3xl leading-none font-light tabular-nums">
-        {qatarDay(iso)}
+        {format.day(iso)}
       </span>
-      <span className="text-xs">{qatarMonth(iso)}</span>
+      <span className="text-xs">{format.month(iso)}</span>
     </div>
   )
 }

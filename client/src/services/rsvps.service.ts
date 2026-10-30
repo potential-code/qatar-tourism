@@ -22,6 +22,7 @@ import {
   type Viewer,
 } from './api'
 import { recordAudit } from './audit.service'
+import { demoSettings } from './demo-settings.service'
 import { changeRequestMessage } from './notifications/copy'
 import { notify } from './notifications.service'
 import {
@@ -30,7 +31,8 @@ import {
   changeRequestRows,
 } from './rsvps/change-requests'
 import { evaluate, loadLearnerContext, withinSelfService } from './rsvps/eligibility'
-import { nextWaitlistPosition, promoteFromWaitlist, renumberWaitlist } from './rsvps/waitlist'
+import { closeOpenOffer, offerFreedSeats, settleOffers } from './rsvps/offers'
+import { nextWaitlistPosition, renumberWaitlist } from './rsvps/waitlist'
 import {
   getSessionCard,
   isActiveRsvp,
@@ -58,6 +60,7 @@ const idInput = z.uuid()
 export async function getCatalogue() {
   await delay()
   const learner = requireRole('learner')
+  if (settleOffers()) commit()
   const at = now()
   const ctx = loadLearnerContext(learner.id)
   const enrolled = ctx.programmes
@@ -78,6 +81,8 @@ export async function getCatalogue() {
     now: at.toISOString(),
     programmes,
     level1: ctx.level1,
+    /** Seat-offer acceptance window (demo setting), for the "session full" note. */
+    offerWindowHours: demoSettings().seatOfferWindowHours,
     items: cards.map((card) => ({ ...toSessionView(card), eligibility: evaluate(card, ctx, at) })),
   })
 }
@@ -86,6 +91,7 @@ export async function getCatalogue() {
 export async function getMySessions() {
   await delay()
   const learner = requireRole('learner')
+  if (settleOffers()) commit()
   const at = now()
   const rows = db.rsvps
     .filter((r) => r.learnerId === learner.id)
@@ -101,6 +107,9 @@ export async function getMySessions() {
     .sort((a, b) => ms(b.createdAt) - ms(a.createdAt))
   const attendance = new Map(db.attendance.map((a) => [a.rsvpId, a.status]))
   const scores = new Map(db.sessionScores.map((s) => [s.rsvpId, s]))
+  const offers = new Map(
+    db.seatOffers.filter((o) => o.status === 'offered').map((o) => [o.rsvpId, o]),
+  )
 
   const items = rows.flatMap((rsvp) => {
     const card = cards.get(rsvp.sessionId)
@@ -115,6 +124,14 @@ export async function getMySessions() {
         rsvpId: rsvp.id,
         status: rsvp.status,
         waitlistPosition: rsvp.waitlistPosition,
+        /** The open seat offer (status 'offered'): when it was made and when it lapses. */
+        offer: offers.has(rsvp.id)
+          ? {
+              offerId: offers.get(rsvp.id)?.id ?? '',
+              offeredAt: offers.get(rsvp.id)?.offeredAt ?? '',
+              expiresAt: offers.get(rsvp.id)?.expiresAt ?? '',
+            }
+          : null,
         bookedAt: new Date(rsvp.bookedAt).toISOString(),
         cancelledReason: rsvp.cancelledReason,
         replacedByRsvpId: rsvp.replacedByRsvpId,
@@ -142,6 +159,7 @@ export async function bookSession(input: z.input<typeof bookingCreateInput>) {
   await delay()
   const learner = requireRole('learner')
   const body = parseInput(bookingCreateInput, input)
+  settleOffers()
   const card = getSessionCard(body.sessionId)
   const verdict = evaluate(card, loadLearnerContext(learner.id), now())
   if (verdict.state === 'booked') {
@@ -172,6 +190,25 @@ export async function bookSession(input: z.input<typeof bookingCreateInput>) {
   return { rsvpId: created.id, status: created.status, waitlistPosition: created.waitlistPosition }
 }
 
+/**
+ * A booking has left its session: a freed (or offered-and-returned) seat is offered to the next
+ * eligible approved learner on the waitlist instead of being promoted at once; a leaver from the
+ * queue only renumbers it.
+ */
+export function releaseSeat(
+  rsvpId: string,
+  sessionId: string,
+  previous: string,
+  actorId: string,
+): number {
+  if (previous === 'confirmed' || previous === 'offered') {
+    closeOpenOffer(rsvpId, 'declined')
+    return offerFreedSeats(sessionId, actorId).length
+  }
+  renumberWaitlist(sessionId)
+  return 0
+}
+
 const notActive = () => ApiError.conflict('NOT_ACTIVE', 'This booking is no longer active.')
 
 function ownActiveRsvp(learner: Viewer, rsvpId: string) {
@@ -192,8 +229,10 @@ export async function cancelBooking(
   await delay()
   const learner = requireRole('learner')
   const { reason } = parseInput(bookingCancelInput, input)
+  if (settleOffers()) commit()
   const { rsvp, session } = ownActiveRsvp(learner, rsvpId)
-  if (!withinSelfService(session.startsAt, now())) {
+  // Leaving the waitlist (or turning down an offer) is always allowed; only a confirmed seat has the 24-hour rule.
+  if (rsvp.status === 'confirmed' && !withinSelfService(session.startsAt, now())) {
     throw refuse('ADMIN_REVIEW_REQUIRED', ADMIN_REVIEW_MESSAGE)
   }
   const previous = rsvp.status
@@ -202,8 +241,7 @@ export async function cancelBooking(
     waitlistPosition: null,
     cancelledReason: reason || 'Cancelled by the learner',
   })
-  if (previous === 'confirmed') promoteFromWaitlist(rsvp.sessionId, learner.id)
-  else renumberWaitlist(rsvp.sessionId)
+  const offersCreated = releaseSeat(rsvp.id, rsvp.sessionId, previous, learner.id)
   syncCapacityStatus(rsvp.sessionId)
   recordAudit(learner, {
     action: 'rsvp.cancel',
@@ -214,7 +252,7 @@ export async function cancelBooking(
     reason: reason ?? null,
   })
   commit()
-  return { rsvpId, status: 'cancelled' as const }
+  return { rsvpId, status: 'cancelled' as const, offersCreated }
 }
 
 /**
@@ -225,6 +263,7 @@ export async function moveBooking(input: z.input<typeof bookingMoveInput>) {
   await delay()
   const learner = requireRole('learner')
   const body = parseInput(bookingMoveInput, input)
+  if (settleOffers()) commit()
   const { rsvp, session } = ownActiveRsvp(learner, body.rsvpId)
   if (rsvp.sessionId === body.toSessionId) {
     throw refuse('ALREADY_BOOKED', 'You are already booked on this session.')
@@ -260,8 +299,7 @@ export async function moveBooking(input: z.input<typeof bookingMoveInput>) {
     replacedByRsvpId: replacement.id,
     cancelledReason: 'Moved to another session by the learner',
   })
-  if (previous === 'confirmed') promoteFromWaitlist(rsvp.sessionId, learner.id)
-  else renumberWaitlist(rsvp.sessionId)
+  releaseSeat(rsvp.id, rsvp.sessionId, previous, learner.id)
   syncCapacityStatus(rsvp.sessionId)
   syncCapacityStatus(body.toSessionId)
   recordAudit(learner, {

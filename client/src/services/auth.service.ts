@@ -10,7 +10,13 @@ import { endSession, startSession } from './auth/session'
  */
 
 export { getFacilitatorStatus, switchFacilitator } from './auth/facilitator'
-export { isSuspended, SUSPENDED_MESSAGE, startSession } from './auth/session'
+export {
+  isLocked,
+  isSuspended,
+  LOCKED_MESSAGE,
+  SUSPENDED_MESSAGE,
+  startSession,
+} from './auth/session'
 
 /** The signed-in account as the UI sees it (the old Better Auth `session.user`). */
 export type SessionUser = Pick<

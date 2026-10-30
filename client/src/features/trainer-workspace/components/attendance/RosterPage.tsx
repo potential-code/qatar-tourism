@@ -19,6 +19,7 @@ import { CorrectionDialog } from './CorrectionDialog'
 import { ExportActions } from './ExportActions'
 import { RosterTable } from './RosterTable'
 import { ScoreDialog } from './ScoreDialog'
+import { WaitlistRoster } from './WaitlistRoster'
 
 /** Attendance and scores for one session (brief §10–11). */
 export function RosterPage({ sessionId }: { sessionId: string }) {
@@ -44,6 +45,8 @@ export function RosterPage({ sessionId }: { sessionId: string }) {
   }
   const { session, items, recordingOpen, beforeSessionTime, passMark } = roster.data
   const confirmed = items.filter((r) => r.rsvpStatus === 'confirmed')
+  // Offered and waitlisted learners are listed apart: they are not booked, so never marked attending.
+  const queue = items.filter((r) => r.rsvpStatus === 'offered' || r.rsvpStatus === 'waitlisted')
   const marked = confirmed.filter((r) => r.attendance !== 'pending').length
   const finals = confirmed.filter((r) => r.score?.status === 'final')
   const passed = finals.filter((r) => r.score?.passed).length
@@ -126,12 +129,18 @@ export function RosterPage({ sessionId }: { sessionId: string }) {
           />
         </div>
       ) : (
-        <RosterTable
-          rows={items}
-          canRecord={recordingOpen}
-          onAttendance={onAttendance}
-          onScore={setScoring}
-        />
+        <>
+          <h2 className="font-display text-xl font-normal text-ink">
+            Confirmed roster ({confirmed.length})
+          </h2>
+          <RosterTable
+            rows={confirmed}
+            canRecord={recordingOpen}
+            onAttendance={onAttendance}
+            onScore={setScoring}
+          />
+          <WaitlistRoster rows={queue} />
+        </>
       )}
       <ScoreDialog row={scoring} onOpenChange={(o) => !o && setScoring(null)} />
       <CorrectionDialog

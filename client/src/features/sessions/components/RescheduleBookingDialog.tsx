@@ -1,5 +1,6 @@
 import { ArrowRightLeft, Lock } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,11 +13,10 @@ import {
 } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { ApiError } from '@/lib/api-error'
-import { qatarRange } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
+import { useSessionFormat } from '../hooks/useSessionFormat'
 import { useMoveBooking } from '../queries/sessions.queries'
 import type { CatalogueSession, MyBooking } from '../types'
-import { FORMAT_LABEL, locationLabel } from '../utils/session-labels'
 import { BookingPolicyNote } from './BookingPolicyNote'
 
 /**
@@ -32,6 +32,8 @@ export function RescheduleBookingDialog({
   catalogue: CatalogueSession[]
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation('sessions')
+  const format = useSessionFormat()
   const move = useMoveBooking()
   const [target, setTarget] = useState<string>('')
   const options = booking
@@ -47,26 +49,22 @@ export function RescheduleBookingDialog({
       s.seatsRemaining > 0)
   const blockedReason = (s: CatalogueSession) =>
     s.eligibility.state === 'waitlist'
-      ? 'Full. Moving needs a confirmed seat.'
+      ? t('moveDialog.fullBlocked')
       : s.eligibility.state === 'locked'
         ? s.eligibility.reason
         : s.eligibility.state === 'booked'
-          ? 'You already have this session.'
+          ? t('moveDialog.haveThis')
           : ''
 
   async function confirm() {
     if (!booking || !target) return
     try {
       await move.mutateAsync({ rsvpId: booking.rsvpId, toSessionId: target })
-      toast.success('Booking moved. Your new seat is confirmed and the previous seat was released.')
+      toast.success(t('moveDialog.moved'))
       setTarget('')
       onOpenChange(false)
     } catch (error) {
-      toast.error(
-        error instanceof ApiError
-          ? error.message
-          : 'The move could not be saved. Your current seat is kept.',
-      )
+      toast.error(error instanceof ApiError ? error.message : t('moveDialog.failed'))
     }
   }
 
@@ -75,25 +73,27 @@ export function RescheduleBookingDialog({
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-xl">
         <DialogHeader className="text-start">
           <DialogTitle className="font-display text-2xl font-normal">
-            Reschedule your booking
+            {t('moveDialog.title')}
           </DialogTitle>
           <DialogDescription>
             {booking
-              ? `Currently booked: ${booking.session.title}, ${qatarRange(booking.session.startsAt, booking.session.endsAt)}.`
+              ? t('moveDialog.current', {
+                  title: booking.session.title,
+                  when: format.range(booking.session.startsAt, booking.session.endsAt),
+                })
               : null}
           </DialogDescription>
         </DialogHeader>
         <BookingPolicyNote />
         {options.length === 0 ? (
           <p className="rounded-lg bg-sand-deep px-4 py-3 text-sm text-ink-soft">
-            There is no other session in this programme right now. Keep your current booking or
-            check again later.
+            {t('moveDialog.none')}
           </p>
         ) : (
           <RadioGroup
             value={target}
             onValueChange={setTarget}
-            aria-label="Choose a replacement session"
+            aria-label={t('moveDialog.choose')}
             className="gap-2"
           >
             {options.map((s) => {
@@ -115,10 +115,10 @@ export function RescheduleBookingDialog({
                   />
                   <span className="grid gap-0.5 text-sm">
                     <span className="font-medium text-ink">{s.title}</span>
-                    <span className="text-ink-soft">{qatarRange(s.startsAt, s.endsAt)}</span>
+                    <span className="text-ink-soft">{format.range(s.startsAt, s.endsAt)}</span>
                     <span className="text-muted-foreground">
-                      {FORMAT_LABEL[s.format]}, {locationLabel(s)}. {s.trainer.name}.{' '}
-                      {s.seatsRemaining} seats left
+                      {t(`format.${s.format}`)}, {format.location(s)}. {s.trainer.name}.{' '}
+                      {t('moveDialog.seatsLeft', { count: s.seatsRemaining })}
                     </span>
                     {!ok ? (
                       <span className="flex gap-1.5 text-xs text-ink-soft">
@@ -133,11 +133,11 @@ export function RescheduleBookingDialog({
         )}
         <DialogFooter className="gap-2">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Keep current booking
+            {t('moveDialog.keep')}
           </Button>
           <Button onClick={confirm} disabled={!target || move.isPending}>
             <ArrowRightLeft aria-hidden />
-            {move.isPending ? 'Moving' : 'Confirm new session'}
+            {move.isPending ? t('moveDialog.moving') : t('moveDialog.confirm')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -11,6 +11,7 @@ import { FilterBar } from './filters/FilterBar'
 import { KpiBento } from './KpiBento'
 import { PerformanceTable } from './PerformanceTable'
 import { AttendancePanel } from './panels/AttendancePanel'
+import { AttentionCounts } from './panels/AttentionCounts'
 import { DistributionPanel } from './panels/DistributionPanel'
 import { FunnelPanel } from './panels/FunnelPanel'
 import { ImprovementPanel } from './panels/ImprovementPanel'
@@ -46,6 +47,7 @@ export function OverviewDashboard() {
       ) : (
         <>
           <KpiBento data={data} isLoading={query.isLoading} openReport={openReport} />
+          <AttentionCounts />
           {data && data.kpis.enrolments === 0 ? (
             <div className="rounded-xl border bg-card">
               <EmptyState

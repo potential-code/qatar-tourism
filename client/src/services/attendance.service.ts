@@ -23,6 +23,7 @@ import {
 } from './api'
 import { recordAudit } from './audit.service'
 import { recomputeEnrolment } from './progress.service'
+import { settleOffers } from './rsvps/offers'
 import { getSessionCard, ms, programmeOf, rsvpStatusRank } from './sessions/store'
 import { toSessionView } from './sessions/view'
 
@@ -49,7 +50,11 @@ export async function getRoster(sessionId: string) {
   const { viewer, scope } = markerScope()
   parseInput(z.uuid(), sessionId, 'param')
   assertSessionInScope(scope, sessionId)
+  if (settleOffers()) commit()
   const card = getSessionCard(sessionId)
+  const offers = new Map(
+    db.seatOffers.filter((o) => o.status === 'offered').map((o) => [o.rsvpId, o.expiresAt]),
+  )
   const profiles = new Map(db.profiles.map((p) => [p.userId, p]))
   const attendance = new Map(db.attendance.map((a) => [a.rsvpId, a]))
   const scores = new Map(db.sessionScores.map((s) => [s.rsvpId, s]))
@@ -86,6 +91,7 @@ export async function getRoster(sessionId: string) {
         displayName: String(visible.displayName ?? ''),
         rsvpStatus: rsvp.status,
         waitlistPosition: rsvp.waitlistPosition,
+        offerExpiresAt: offers.get(rsvp.id) ?? null,
         attendance: attendance.get(rsvp.id)?.status ?? 'pending',
         score: score
           ? {
