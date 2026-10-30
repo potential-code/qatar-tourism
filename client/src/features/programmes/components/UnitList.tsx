@@ -1,16 +1,65 @@
 import { CircleCheck, CircleDashed } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { dataText } from '@/features/public-site/utils/translate'
 import { cn } from '@/lib/utils'
 import type { ProgrammeDetail } from '../queries/programmes.queries'
 import { accent } from '../tone'
 import { minutesLabel } from '../utils/format'
 
-const KIND_LABEL: Record<string, string> = {
-  assessment_pre: 'Assessment',
-  assessment_post: 'Assessment',
-  assessment_formative: 'Quiz',
-  ai_practice: 'AI practice',
-  session: 'Trainer session',
-  assignment: 'Assignment',
+const KIND_KEY: Record<string, string> = {
+  assessment_pre: 'units.kindAssessment',
+  assessment_post: 'units.kindAssessment',
+  assessment_formative: 'units.kindQuiz',
+  ai_practice: 'units.kindAi',
+  session: 'units.kindSession',
+  assignment: 'units.kindAssignment',
+}
+
+/** Seeded English text mapped to its translation key (`data.<group>.<key>` in `public`). */
+const UNIT_TITLES: Record<string, string> = {
+  'Pre-assessment (baseline)': 'preAssessment',
+  'Welcoming every visitor': 'welcoming',
+  'Understanding visitor needs': 'needs',
+  'Clear and inclusive communication': 'clear',
+  'Planning a helpful visitor response': 'plan',
+  'AI complaint scenario: Changed booking': 'aiComplaint',
+  'Post-assessment': 'postAssessment',
+  'AI directions scenario: Unclear directions': 'aiDirections',
+  'AI practice: chosen scenario': 'aiChosen',
+  'Recovering a difficult service moment': 'recover',
+  'Foundation quiz': 'foundationQuiz',
+  'AI practice: text or voice': 'aiText',
+  'Delivering service in practice': 'delivering',
+  'Practical assignment': 'practicalAssignment',
+  'Final assessment': 'finalAssessment',
+  'Telling a concise destination story': 'story',
+}
+const STAGES: Record<string, string> = {
+  Onboarding: 'onboarding',
+  'Visitor Service Essentials': 'vse',
+  'Foundation learning': 'foundation',
+  'AI practice': 'aiPractice',
+  'Practical assignment': 'practical',
+  'Trainer-led application': 'trainer',
+  'Final assessment': 'final',
+  'Sample overview': 'sample',
+}
+const NOTES: Record<string, string> = { 'Transport scenario': 'transport' }
+const FORMATS: Record<string, string> = {
+  Video: 'video',
+  'Interactive package': 'interactive',
+  'Resource and exercise': 'resource',
+  'Trainer session': 'trainerSession',
+  Preview: 'preview',
+}
+const COMPLETION: Record<string, string> = {
+  'Captioned video plus transcript; complete at 90 percent watched.': 'c01',
+  'Three choices, feedback and retry; package reports completion and score.': 'c02',
+  'Add three formative questions.': 'c03',
+  'Minimum 80 percent on module quiz.': 'c04',
+  'B uses a 100–150 word task; A develops it into the practical assignment.': 'c05',
+  'Role-play in pairs, feedback, attendance and scored demonstration. A only.': 'c06',
+  'No claim of a fully built third programme.': 'c07',
 }
 
 type Unit = ProgrammeDetail['units'][number]
@@ -31,6 +80,7 @@ function groupByStage(units: Unit[]) {
  * timeline: each stage gets an accent node on the rail, its units sit on raised cards.
  */
 export function UnitList({ units, levels }: { units: Unit[]; levels: number }) {
+  const { t } = useTranslation('public')
   const groups = groupByStage(units)
   return (
     <ol className="relative grid gap-6 before:absolute before:inset-y-6 before:start-[1.2rem] before:w-px before:bg-gradient-to-b before:from-teal before:via-sky before:to-gold md:before:start-[1.45rem]">
@@ -52,11 +102,20 @@ export function UnitList({ units, levels }: { units: Unit[]; levels: number }) {
               {String(index + 1).padStart(2, '0')}
             </span>
             <header className="grid content-start gap-1.5 self-start pt-1 md:sticky md:top-28">
-              <p className={cn('font-medium text-xs uppercase tracking-[0.16em]', tone.text)}>
-                {`Stage ${String(index + 1).padStart(2, '0')}`}
-                {levels > 1 && group.stage !== 'Onboarding' ? `, Level ${group.level}` : ''}
+              <p
+                className={cn(
+                  'font-medium text-xs uppercase tracking-[0.16em] rtl:tracking-normal',
+                  tone.text,
+                )}
+              >
+                {t('units.stage', { n: String(index + 1).padStart(2, '0') })}
+                {levels > 1 && group.stage !== 'Onboarding'
+                  ? `, ${t('units.level', { n: group.level })}`
+                  : ''}
               </p>
-              <h3 className="font-display font-light text-2xl leading-snug">{group.stage}</h3>
+              <h3 className="font-display font-light text-2xl leading-snug">
+                {dataText(t, 'stage', STAGES, group.stage)}
+              </h3>
             </header>
             <ul className="grid gap-3">
               {group.units.map((unit) => (
@@ -71,30 +130,40 @@ export function UnitList({ units, levels }: { units: Unit[]; levels: number }) {
                   <div className="grid gap-0.5">
                     <p className="font-medium text-sm">
                       {unit.courseCode ? (
-                        <span className="me-2 rounded-full bg-white px-2 py-0.5 text-teal-deep text-xs shadow-xs ring-1 ring-teal/15">
+                        <span
+                          dir="ltr"
+                          className="me-2 inline-block rounded-full bg-white px-2 py-0.5 text-teal-deep text-xs shadow-xs ring-1 ring-teal/15"
+                        >
                           {unit.courseCode}
                         </span>
                       ) : null}
-                      {unit.title}
+                      {dataText(t, 'unit', UNIT_TITLES, unit.title)}
                     </p>
                     <p className="text-muted-foreground text-xs">
-                      {unit.formatLabel ?? KIND_LABEL[unit.kind] ?? 'Activity'}
+                      {unit.formatLabel
+                        ? dataText(t, 'format', FORMATS, unit.formatLabel)
+                        : KIND_KEY[unit.kind]
+                          ? t(KIND_KEY[unit.kind] as 'units.kindActivity')
+                          : t('units.kindActivity')}
                       {unit.durationMinutes ? `, ${minutesLabel(unit.durationMinutes)}` : ''}
-                      {unit.note ? `, ${unit.note}` : ''}
+                      {unit.note ? `, ${dataText(t, 'note', NOTES, unit.note)}` : ''}
                     </p>
                     {unit.completionText ? (
-                      <p className="text-muted-foreground text-xs">{unit.completionText}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {dataText(t, 'completion', COMPLETION, unit.completionText)}
+                      </p>
                     ) : null}
                   </div>
                   <span className="inline-flex items-center gap-1 text-xs">
                     {unit.required ? (
                       <>
-                        <CircleCheck aria-hidden className="size-3.5 text-teal" /> Required
+                        <CircleCheck aria-hidden className="size-3.5 text-teal" />{' '}
+                        {t('units.required')}
                       </>
                     ) : (
                       <>
                         <CircleDashed aria-hidden className="size-3.5 text-muted-foreground" />{' '}
-                        Optional
+                        {t('units.optional')}
                       </>
                     )}
                   </span>

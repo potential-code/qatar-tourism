@@ -2,7 +2,9 @@ import { Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame, CornerPattern, GoldArch, Logo } from '@/components/brand'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { DemoBadge } from '@/components/layout'
 import { easeOut } from '@/components/motion'
 
@@ -23,6 +25,7 @@ export function AuthShell({
   children: ReactNode
 }) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('auth')
   return (
     <div className="grid min-h-[100dvh] bg-sand lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <aside className="qt-grain relative isolate hidden overflow-hidden bg-grad-night text-white lg:sticky lg:top-0 lg:flex lg:h-[100dvh] lg:flex-col lg:justify-between lg:gap-8 lg:p-10">
@@ -35,7 +38,7 @@ export function AuthShell({
           aria-hidden
           className="absolute -end-24 -bottom-24 -z-10 size-[360px] qt-glow text-rose/30"
         />
-        <Link to="/" aria-label="Qatar Tourism Academy home" className="relative w-fit">
+        <Link to="/" aria-label={t('shell.home')} className="relative w-fit">
           <Logo variant="white" withAcademy className="h-10" />
         </Link>
 
@@ -64,9 +67,9 @@ export function AuthShell({
               className="absolute inset-0 bg-gradient-to-t from-teal-deep/70 via-transparent to-transparent"
             />
           </ArchFrame>
-          <span className="absolute -start-6 bottom-8 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium text-white text-xs uppercase tracking-[0.2em] shadow-xl ring-1 ring-white/25 backdrop-blur-xl">
+          <span className="absolute -start-6 bottom-8 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-medium text-white text-xs uppercase tracking-[0.2em] shadow-xl ring-1 ring-white/25 backdrop-blur-xl rtl:tracking-normal">
             <span aria-hidden className="size-1.5 rounded-full bg-gold" />
-            Service Excellence Academy
+            {t('shell.eyebrow')}
           </span>
         </motion.div>
 
@@ -93,18 +96,19 @@ export function AuthShell({
           className="absolute -bottom-40 -start-40 -z-10 size-[420px] qt-glow text-sky/20"
         />
         <div className="flex items-center justify-between gap-4">
-          <Link to="/" aria-label="Qatar Tourism Academy home" className="lg:hidden">
+          <Link to="/" aria-label={t('shell.home')} className="lg:hidden">
             <Logo withAcademy className="h-9" />
           </Link>
+          <LanguageSwitcher className="ms-auto shadow-sm" />
           <Link
             to="/"
-            className="group ms-auto inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-ink/70 text-sm shadow-sm ring-1 ring-ink/5 backdrop-blur transition-colors hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="group inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-ink/70 text-sm shadow-sm ring-1 ring-ink/5 backdrop-blur transition-colors hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <ChevronLeft
               aria-hidden
               className="size-4 transition-transform group-hover:-translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:translate-x-0.5"
             />
-            Back to home
+            {t('shell.back')}
           </Link>
         </div>
         <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center py-10">
@@ -116,7 +120,7 @@ export function AuthShell({
           >
             <span
               aria-hidden
-              className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal via-sky to-maroon"
+              className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal via-sky to-maroon rtl:bg-gradient-to-l"
             />
             {children}
           </motion.div>

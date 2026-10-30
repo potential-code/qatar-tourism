@@ -1,9 +1,12 @@
 import { Link } from '@tanstack/react-router'
 import { MapPin, MonitorPlay } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
+import { type Translate, tr } from '@/features/public-site/utils/translate'
 import { cn } from '@/lib/utils'
 import type { PublicSession } from '../queries/programmes.queries'
-import { dateChip, formatLabel, QATAR_TIME_LABEL, sessionTimeRange } from '../utils/format'
+import { programmeName } from '../utils/copy'
+import { dateChip, formatLabel, qatarTimeLabel, sessionTimeRange } from '../utils/format'
 import { SeatsMeter } from './SeatsMeter'
 
 const ACCENT = {
@@ -42,6 +45,13 @@ const TICKET_TONES: { accent: SessionAccent; wash: string }[] = [
   },
 ]
 
+/** "Level 2" becomes "المستوى 2" in Arabic; anything else is shown as seeded. */
+function levelText(level: string | null, t: Translate): string {
+  const match = level?.match(/^Level (\d+)$/)
+  if (match) return tr(t, 'public:units.level', { n: match[1] })
+  return level ?? tr(t, 'public:sessions.trainerLed')
+}
+
 /** Ticket tone for the nth ticket in a list (cycles teal, maroon, sky, gold). */
 export function ticketTone(index: number) {
   return (
@@ -69,6 +79,7 @@ export function SessionTicket({
   accent?: SessionAccent
   className?: string
 }) {
+  const { t } = useTranslation('public')
   const chip = dateChip(session.startsAt)
   const FormatIcon = session.format === 'in_person' ? MapPin : MonitorPlay
   const optional = !session.isCompletionGate
@@ -93,13 +104,13 @@ export function SessionTicket({
       <div className="grid gap-4">
         <div className="grid gap-1.5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-            <span className="font-medium text-teal">Program {session.programmeCode}</span>
+            <span className="font-medium text-teal">{programmeName(t, session.programmeCode)}</span>
             <span className="text-muted-foreground">
               {optional
                 ? session.programmeCode === 'C'
-                  ? 'Sample clinic'
-                  : 'Optional clinic'
-                : (session.level ?? 'Trainer-led session')}
+                  ? t('sessions.sampleClinic')
+                  : t('sessions.optionalClinic')
+                : levelText(session.level, t)}
             </span>
           </div>
           <h3 className="font-display text-xl text-ink leading-snug">{session.title}</h3>
@@ -113,7 +124,7 @@ export function SessionTicket({
             </span>
             <span>
               {sessionTimeRange(session.startsAt, session.endsAt)}{' '}
-              <span className="text-muted-foreground">{QATAR_TIME_LABEL}</span>
+              <span className="text-muted-foreground">{qatarTimeLabel()}</span>
             </span>
           </p>
         </div>

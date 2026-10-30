@@ -1,12 +1,535 @@
 {
   "brand": {
     "name": "Qatar Tourism Academy",
-    "tagline": "Skills for every visitor experience"
+    "tagline": "Skills for every visitor experience",
+    "home": "Qatar Tourism Academy home"
   },
   "nav": {
     "programmes": "Programmes",
+    "academy": "Academy",
+    "howItWorks": "How it works",
+    "sessions": "Upcoming sessions",
     "signIn": "Sign in",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "myPortal": "Go to my portal",
+    "openMenu": "Open menu",
+    "menu": "Menu",
+    "main": "Main",
+    "skip": "Skip to content"
   },
-  "demoNotice": "Demonstration environment. All learner and training data is fictional."
+  "demoNotice": "Demonstration environment. All learner and training data is fictional.",
+  "simulated": "Simulated",
+  "errors": {
+    "load": "We could not load {{what}}. Check your connection and try again.",
+    "tryAgain": "Try again",
+    "sessions": "the upcoming sessions",
+    "sessionsShort": "the sessions",
+    "trainerProfiles": "the trainer profiles",
+    "trainers": "the trainers",
+    "trainer": "this trainer",
+    "programmes": "the programmes",
+    "programme": "this programme",
+    "sessionsPreview": "Sessions could not be loaded right now."
+  },
+  "footer": {
+    "blurb": "The Service Excellence Academy brings learning, practice and trainer-led sessions together in one place for everyone who welcomes visitors to Qatar.",
+    "programmes": "Programmes",
+    "academy": "Academy",
+    "account": "Account",
+    "programmeA": "Program A: Tourism Service Professional",
+    "programmeB": "Program B: Visitor Service Essentials",
+    "programmeC": "Program C: Destination Storytelling (sample)",
+    "sessions": "Upcoming sessions",
+    "trainers": "Our trainers",
+    "allProgrammes": "All programmes",
+    "signInTrainer": "Sign in as trainer",
+    "caption": "Qatar Tourism Academy demonstration"
+  },
+  "hero": {
+    "eyebrow": "Service Excellence Academy",
+    "headline": "Build the skills to create memorable visitor experiences.",
+    "accent": "memorable",
+    "body": "Explore flexible learning, practise real situations and progress through a journey shaped around your role.",
+    "primary": "Explore programmes",
+    "secondary": "Start your journey",
+    "scroll": "Scroll",
+    "pause": "Pause background motion",
+    "play": "Play background motion",
+    "slides": {
+      "westBay": "West Bay skyline in Doha at dusk",
+      "museum": "A family walking at the National Museum of Qatar",
+      "dhow": "A family on a dhow with the Museum of Islamic Art behind them",
+      "terrace": "Guests dining together on a terrace"
+    }
+  },
+  "programmesSection": {
+    "eyebrow": "Programmes",
+    "title": "Find your next learning journey",
+    "description": "Three programmes, each with a different shape. Start where your role and goals point you, and add another programme at any time."
+  },
+  "expect": {
+    "eyebrow": "The Academy",
+    "title": "What to expect",
+    "description": "The Academy brings self-paced learning, realistic practice and trainer-led sessions into one connected journey.",
+    "preview": "Preview",
+    "chat": "“I booked this experience for today and now I am told it is unavailable. What can you do?”",
+    "postScore": "Post score",
+    "baseline": "Baseline",
+    "postAssessment": "Post-assessment",
+    "points": "+40 points"
+  },
+  "benefits": {
+    "pace": {
+      "title": "Learn at your pace",
+      "body": "Short video lessons and interactive modules you can pause, resume and revisit when it suits your shifts.",
+      "next": "See the Program B units"
+    },
+    "ai": {
+      "title": "Practise with AI",
+      "body": "Rehearse real visitor conversations by text or voice and get specific feedback after every attempt.",
+      "next": "Start with Program B"
+    },
+    "trainers": {
+      "title": "Learn with expert trainers",
+      "body": "Join in-person or live-online sessions where Academy trainers coach and score your practice.",
+      "next": "Browse upcoming sessions"
+    },
+    "progress": {
+      "title": "Track your progress",
+      "body": "See your starting point, your improvement and your next step on one clear dashboard.",
+      "next": "Create your profile"
+    }
+  },
+  "previews": {
+    "ai": {
+      "simulated": "Simulated AI practice",
+      "meta": "{{title}}, {{difficulty}}, about {{minutes}} minutes, text or voice",
+      "conversation": "Sample conversation",
+      "visitor": "Visitor",
+      "you": "You",
+      "reply": "I am sorry your plans have changed. May I ask how much time you have today, so I can check two options that will work?",
+      "feedback": "Example feedback",
+      "score": "80 / 100",
+      "of": "{{score}} of 4",
+      "strength": "Strength: you acknowledged the visitor’s frustration. Improve: verify availability before promising an alternative."
+    },
+    "pace": {
+      "captions": "Captions and transcript",
+      "caption": "C01 Welcoming every visitor, video, 3 minutes"
+    },
+    "progress": {
+      "baseline": "Baseline",
+      "postAssessment": "Post-assessment",
+      "improvement": "Improvement",
+      "caption": "Example result by competency, points out of 20",
+      "competency": "Competency",
+      "before": "Before",
+      "after": "After"
+    }
+  },
+  "steps": {
+    "eyebrow": "Your journey",
+    "titleLead": "How it",
+    "titleAccent": "works",
+    "intro": "Four steps take you from a new account to measurable improvement. Requirements differ by programme.",
+    "step": "Step {{n}}",
+    "s1": {
+      "title": "Create your profile",
+      "body": "Tell us about your role, organisation and goals. Your profile helps us recommend relevant learning.",
+      "alt": "A hotel lobby lounge"
+    },
+    "s2": {
+      "title": "Check your starting point",
+      "body": "Answer five short scenario questions. The baseline shows where to focus and is never an entry barrier.",
+      "alt": "Visitors under a glass dome"
+    },
+    "s3": {
+      "title": "Follow your learning path",
+      "body": "Work through the units recommended for your role: video, interactive modules and practical resources.",
+      "alt": "The Pearl marina at sunset from above"
+    },
+    "s4": {
+      "title": "Practise and complete",
+      "body": "Rehearse with AI, join a trainer session where your programme asks for one, then measure your improvement.",
+      "alt": "A family visiting Al Hazm"
+    }
+  },
+  "requirements": {
+    "aria": "Requirements by programme",
+    "title": "Requirements differ by programme",
+    "program": "Program",
+    "a": "Two levels with a trainer-led session, a practical assignment, pre and post assessments and a demonstration certificate.",
+    "b": "One self-paced stage with a pre-assessment, practice, a short response and a post-assessment. No certificate.",
+    "c": "An illustrative sample overview only, with a short preview and no requirements."
+  },
+  "faq": {
+    "eyebrow": "Good to know",
+    "title": "Questions before you begin",
+    "imageAlt": "A training room set up for a workshop",
+    "q1": {
+      "q": "How are the programmes different?",
+      "a": "Program A, Tourism Service Professional, is a two-level hybrid route with trainer-led sessions, a practical assignment and a demonstration certificate. Program B, Visitor Service Essentials, is one self-paced stage of short lessons and practice that measures your improvement, without a certificate. Program C, Destination Storytelling, is an illustrative sample of a possible future offering."
+    },
+    "q2": {
+      "q": "What is the difference between self-paced and live learning?",
+      "a": "Self-paced units are videos, interactive modules and resources you complete whenever suits you, and you can resume where you stopped. Live learning happens in scheduled trainer sessions, in person or online, shown with the date and Qatar time. Program A includes one required session; Program B sessions are optional clinics."
+    },
+    "q3": {
+      "q": "Do I receive a certificate?",
+      "a": "Program A issues a watermarked demonstration certificate once every requirement is met: assessments, attendance and a session score, and the practical assignment. It is a training completion record, not a guide licence. Program B and the Program C sample do not issue certificates."
+    },
+    "q4": {
+      "q": "How do I access my account?",
+      "a": "Create an account with your email and a password, confirm your email through the demo verification step, then complete a short profile. Trainers and Academy administrators use accounts provided by the Academy. Choosing the trainer or admin sign-in mode never grants those roles."
+    },
+    "q5": {
+      "q": "Where can I get help?",
+      "a": "Each portal page explains what to do next, and every session lists its trainer and location. In this demonstration, Help requests go to the Academy team running the walkthrough."
+    }
+  },
+  "sessionsSection": {
+    "eyebrow": "Live learning",
+    "title": "Upcoming sessions and trainers",
+    "description": "Trainer-led practice in person at the Academy or live online. All trainers and sessions shown are fictional.",
+    "viewAll": "View all upcoming sessions",
+    "emptyTitle": "No sessions are scheduled right now",
+    "emptyDescription": "New sessions appear here as soon as trainers publish them. Self-paced learning is always open.",
+    "explore": "Explore programmes",
+    "trainersEyebrow": "The people behind it",
+    "trainersTitle": "Meet the trainers",
+    "allTrainers": "All trainer profiles",
+    "previous": "Previous trainers",
+    "next": "Next trainers",
+    "list": "Trainers"
+  },
+  "closing": {
+    "title": "Every great visit starts with a confident welcome.",
+    "body": "Create your account, complete a short profile and get a learning path shaped around your role.",
+    "imageAlt": "Kite surfers over turquoise water at Fuwairit beach"
+  },
+  "programme": {
+    "name": {
+      "A": "Program A",
+      "B": "Program B",
+      "C": "Program C"
+    },
+    "letter": {
+      "A": "A",
+      "B": "B",
+      "C": "C"
+    },
+    "viewProgramme": "View programme",
+    "illustrative": "Illustrative sample",
+    "audience": "Audience",
+    "format": "Format",
+    "duration": "Duration",
+    "structure": "Structure",
+    "levels": "{{n}} levels with stages",
+    "oneStage": "One stage",
+    "certification": "Certification",
+    "certified": "Demonstration certificate",
+    "noCertificate": "No certificate",
+    "sampleNoCertificate": "Sample overview, no certificate",
+    "allProgrammes": "All programmes",
+    "continue": "Continue {{programme}}",
+    "illustrativeNote": "Illustrative sample programme. It shows how a future Academy offering could look, with seeded reporting and a working overview. It is not an actual Qatar Tourism programme, and no complete third journey is part of this demonstration.",
+    "outcomesEyebrow": "Outcomes",
+    "outcomesTitle": "What you will be able to do",
+    "whoFor": "Who it is for",
+    "prerequisites": "Prerequisites",
+    "effort": "Expected effort",
+    "pathEyebrow": "Your path",
+    "unitsTitle": "Units and stages",
+    "sampleUnitTitle": "Sample unit",
+    "pathDescriptionB": "The general path is shown. Your profile can change the selection or order of units within the one stage.",
+    "pathDescriptionA": "The standard professional path: foundation units, practice, a trainer session, an assignment and the final assessment.",
+    "completionEyebrow": "Completion",
+    "completionTitle": "Completion rules",
+    "trainersEyebrow": "The people behind it",
+    "trainersTitle": "Trainers",
+    "trainersDescriptionB": "Optional clinics are available with these trainers. They are never required for Program B.",
+    "trainersDescription": "Fictional trainers approved for this programme.",
+    "sessionsEyebrow": "Live learning",
+    "sessionsTitle": "Upcoming sessions",
+    "closingA": "Ready for a structured, certified route? Any Program B progress stays exactly as it is.",
+    "closingB": "Start with a short profile and a five-question baseline.",
+    "items": {
+      "A": {
+        "title": "Tourism Service Professional",
+        "audience": "Service professionals who want a structured, certified route.",
+        "summary": "Build service skills through self-paced learning, guided practice and trainer-led sessions. Complete assessments and a practical assignment to earn a demonstration certificate.",
+        "formatLine": "Two levels • Hybrid • Approximately 4 hours • Certification track",
+        "durationLabel": "Approximately 4 hours",
+        "formatLabel": "Hybrid",
+        "cta": "Join Program A",
+        "heroAlt": "A family walking at the National Museum of Qatar",
+        "prerequisites": "A learner account and a completed profile. Level 2 sessions open once Level 1 is complete.",
+        "effort": "Approximately 4 hours across two levels, including one 60-minute trainer-led session.",
+        "audienceDetail": "Hotel, tour, transport, travel trade and venue professionals who want a structured route with trainer feedback.",
+        "outcome1": "Welcome every visitor with a confident greeting, a useful question and a clear next step.",
+        "outcome2": "Communicate clearly and inclusively, and check that the visitor has understood.",
+        "outcome3": "Recover a difficult service moment with acknowledgement, feasible options and escalation.",
+        "outcome4": "Apply your skills in a scored, trainer-led session in person or live online.",
+        "outcome5": "Plan a helpful response to a changed booking in a practical assignment."
+      },
+      "B": {
+        "title": "Visitor Service Essentials",
+        "audience": "Anyone who serves visitors and wants a personalised starting point.",
+        "summary": "Develop everyday visitor-service skills through a personalised selection of short lessons and realistic practice. Measure your improvement from start to finish.",
+        "formatLine": "One stage • Self-paced • Approximately 60–90 minutes • No certificate",
+        "durationLabel": "Approximately 60–90 minutes",
+        "formatLabel": "Self-paced",
+        "cta": "Start with Program B",
+        "heroAlt": "A family on a dhow with the Museum of Islamic Art behind them",
+        "prerequisites": "None. Create an account and complete your profile. The pre-assessment shows where to start and is not an entry barrier.",
+        "effort": "Approximately 60–90 minutes, self-paced, in one stage: Visitor Service Essentials.",
+        "audienceDetail": "Anyone who serves visitors, whatever their role or organisation. Your profile shapes the selection and order of units.",
+        "outcome1": "Find out what a visitor needs by asking about interests and available time.",
+        "outcome2": "Explain options in plain language and check understanding.",
+        "outcome3": "Respond to a disappointed visitor with care and realistic choices.",
+        "outcome4": "Measure your improvement from your baseline to your post-assessment."
+      },
+      "C": {
+        "title": "Destination Storytelling",
+        "audience": "Illustrative sample of a possible future Academy offering.",
+        "summary": "Explore a sample future Academy offering focused on clear, engaging destination stories.",
+        "formatLine": "Additional sample programme • Overview and reporting preview",
+        "durationLabel": "Overview and reporting preview",
+        "formatLabel": "Sample overview",
+        "cta": "Explore sample programme",
+        "heroAlt": "Visitors in the Qatar National Library",
+        "prerequisites": "None. This is a sample overview for illustration only.",
+        "effort": "A 5-minute preview with a fictional story-planning worksheet.",
+        "audienceDetail": "Shown to illustrate how a future Academy offering could appear. It is not an actual Qatar Tourism programme.",
+        "outcome1": "Plan a short destination story with a clear opening, one memorable detail and a close.",
+        "outcome2": "Choose details you can verify and that suit the visitor in front of you.",
+        "outcome3": "Tell the story in about five minutes using a fictional story-planning worksheet."
+      }
+    }
+  },
+  "units": {
+    "stage": "Stage {{n}}",
+    "level": "Level {{n}}",
+    "required": "Required",
+    "optional": "Optional",
+    "kindAssessment": "Assessment",
+    "kindQuiz": "Quiz",
+    "kindAi": "AI practice",
+    "kindSession": "Trainer session",
+    "kindAssignment": "Assignment",
+    "kindActivity": "Activity",
+    "minutes": "{{n}} minutes",
+    "hourOne": "1 hour",
+    "hours": "{{n}} hours",
+    "hoursMinutes": "{{h}} h {{m}} min"
+  },
+  "rules": {
+    "aria": "Program A completion rules",
+    "stageCol": "Level and stage",
+    "activitiesCol": "Activities",
+    "outcomeCol": "Unlock or outcome",
+    "a1Stage": "Onboarding",
+    "a1Activity": "Programme enrolment, profile and five-question baseline.",
+    "a1Outcome": "Baseline recorded; Level 1 opens.",
+    "a2Stage": "Level 1: Foundation learning",
+    "a2Activity": "Visitor welcome, clear communication, service recovery, an interactive branching scenario and a formative quiz.",
+    "a2Outcome": "Required units complete and foundation quiz at least {{n}} percent.",
+    "a3Stage": "Level 1: AI practice",
+    "a3Activity": "Text or voice scenario with feedback and retry.",
+    "a3Outcome": "One attempt completed; the score is advisory.",
+    "a4Stage": "Level 2: Trainer-led application",
+    "a4Activity": "Choose an eligible in-person or live-online session, RSVP and attend.",
+    "a4Outcome": "Attendance marked and session score at least {{n}} percent.",
+    "a5Stage": "Level 2: Practical assignment",
+    "a5Activity": "A visitor-service response plan or a short role-play recording, marked with a rubric.",
+    "a5Outcome": "Assignment at least {{n}} percent; revisions permitted.",
+    "a6Stage": "Final assessment",
+    "a6Activity": "Parallel post-assessment with a competency comparison.",
+    "a6Outcome": "At least {{n}} percent; targeted review and retry available.",
+    "a7Stage": "Certification",
+    "a7Activity": "The system checks every required condition before issuing.",
+    "a7Outcome": "Watermarked demonstration certificate and a verifiable certificate record.",
+    "b1": "Complete all core units in your learning path.",
+    "b2": "Complete one role-play, in text or voice mode.",
+    "b3": "Have your short visitor response approved.",
+    "b4": "Complete the post-assessment.",
+    "bNote": "No minimum post score blocks completion. Below {{n}} percent we suggest a review. Practice scores are tracked separately from knowledge assessment scores. Program B issues no certificate, including after excellent scores. These are illustrative settings an administrator can edit.",
+    "c": "Sample overview only: viewing the preview completes it. Seeded reporting shows how a third programme would appear to administrators. There is no certificate."
+  },
+  "paths": {
+    "eyebrow": "Personalised paths",
+    "title": "Shaped around your role",
+    "description": "Program B stays one stage. Your profile and baseline choose between administrator-approved paths, and you can always see why a path was recommended.",
+    "default": "Default when no more specific rule matches"
+  },
+  "sample": {
+    "title": "Story-planning worksheet",
+    "description": "C07 Telling a concise destination story, preview, 5 minutes. A fictional worksheet that shows how the sample programme would work.",
+    "w1Label": "Opening",
+    "w1Prompt": "One sentence that tells the visitor why this place matters to them today.",
+    "w2Label": "One memorable detail",
+    "w2Prompt": "A detail you can verify from an authorised source. Avoid guesses and superlatives.",
+    "w3Label": "Connect to the visitor",
+    "w3Prompt": "Link the story to what the visitor told you they enjoy.",
+    "w4Label": "Close with a next step",
+    "w4Prompt": "Suggest what to see or do next, with clear directions."
+  },
+  "sessions": {
+    "pageTitle": "Upcoming sessions",
+    "pageAlt": "Reading hall of the Qatar National Library",
+    "intro": "Trainer-led sessions in person at the Academy or live online. All times are shown in Qatar time. Sign in to book: eligibility and seats are checked when you book.",
+    "filter": "Filter by programme",
+    "all": "All",
+    "empty": "No upcoming sessions for this programme",
+    "emptyDescription": "Try another programme, or check back once trainers publish new dates.",
+    "qatarTime": "Qatar time",
+    "inPerson": "In person",
+    "liveOnline": "Live online",
+    "sampleClinic": "Sample clinic",
+    "optionalClinic": "Optional clinic",
+    "trainerLed": "Trainer-led session",
+    "full": "Full, {{n}} on the waitlist",
+    "fullOpen": "Full, waitlist open",
+    "seatsLeft": "{{n}} seats left",
+    "ofCapacity": " of {{n}}",
+    "joinWaitlist": "Join the waitlist",
+    "book": "Book in My sessions",
+    "signInToBook": "Sign in to book"
+  },
+  "programmesPage": {
+    "title": "Programmes",
+    "alt": "The West Bay skyline across the bay at dusk",
+    "intro": "Program A and Program B are active demonstration programmes. Program C is an illustrative sample of a possible future offering."
+  },
+  "trainersPage": {
+    "title": "Our trainers",
+    "alt": "A tour operator welcoming visitors in Qatar",
+    "intro": "Coaches and facilitators who lead the Academy’s in-person and live-online sessions."
+  },
+  "trainer": {
+    "heroAlt": "Traditional dhow boats on Doha bay",
+    "all": "All trainers",
+    "notFound": "Trainer not found",
+    "notFoundDescription": "This profile does not exist in the demonstration dataset.",
+    "seeAll": "See all trainers",
+    "languages": "Languages",
+    "programmes": "Programmes",
+    "organisation": "Organisation",
+    "upcoming": "Upcoming sessions with {{name}}",
+    "noSessions": "No upcoming sessions",
+    "noSessionsDescription": "This trainer has no published sessions right now. Browse all upcoming sessions instead.",
+    "allSessions": "All upcoming sessions",
+    "join": "{{a}} and {{b}}",
+    "lang": {
+      "English": "English",
+      "Arabic": "Arabic"
+    }
+  },
+  "enrol": {
+    "cSampleTitle": "Program C is a sample",
+    "cSampleBody": "Program C is an illustrative sample programme and does not take enrolments.",
+    "cExplore": "Explore sample programme",
+    "signInTitle": "Create an account or sign in to continue",
+    "signInBody": "After you sign in you will come straight back here to confirm your place on {{programme}}. Anything you have already completed stays on your account.",
+    "learnerOnlyTitle": "Enrolment is for learner accounts",
+    "learnerOnlyBody": "You are signed in with a {{role}} account. Trainer and administrator accounts do not enrol on programmes.",
+    "already": "You are already enrolled",
+    "alreadyBody": "{{programme}} is {{status}} at {{percent}} percent.",
+    "confirmTitle": "Confirm your enrolment",
+    "approval": "Demo approval rule: learner accounts are approved automatically. A production Academy could require a manager or administrator approval here.",
+    "otherProgress": "Your {{programme}} progress stays as it is: {{status}}, {{percent}} percent.",
+    "nextProfile": "Next you will complete your profile, then the five-question baseline.",
+    "confirm": "Confirm {{programme}} enrolment",
+    "success": "You are enrolled on {{programme}}.",
+    "failed": "Enrolment failed. Please try again.",
+    "status": {
+      "not_started": "not started",
+      "in_progress": "in progress",
+      "awaiting_review": "awaiting review",
+      "completed": "completed"
+    },
+    "role": {
+      "learner": "learner",
+      "trainer": "trainer",
+      "admin": "admin"
+    }
+  },
+  "data": {
+    "unit": {
+      "preAssessment": "Pre-assessment (baseline)",
+      "welcoming": "Welcoming every visitor",
+      "needs": "Understanding visitor needs",
+      "clear": "Clear and inclusive communication",
+      "plan": "Planning a helpful visitor response",
+      "aiComplaint": "AI complaint scenario: Changed booking",
+      "postAssessment": "Post-assessment",
+      "aiDirections": "AI directions scenario: Unclear directions",
+      "aiChosen": "AI practice: chosen scenario",
+      "recover": "Recovering a difficult service moment",
+      "foundationQuiz": "Foundation quiz",
+      "aiText": "AI practice: text or voice",
+      "delivering": "Delivering service in practice",
+      "practicalAssignment": "Practical assignment",
+      "finalAssessment": "Final assessment",
+      "story": "Telling a concise destination story"
+    },
+    "stage": {
+      "onboarding": "Onboarding",
+      "vse": "Visitor Service Essentials",
+      "foundation": "Foundation learning",
+      "aiPractice": "AI practice",
+      "practical": "Practical assignment",
+      "trainer": "Trainer-led application",
+      "final": "Final assessment",
+      "sample": "Sample overview"
+    },
+    "note": {
+      "transport": "Transport scenario"
+    },
+    "format": {
+      "video": "Video",
+      "interactive": "Interactive package",
+      "resource": "Resource and exercise",
+      "trainerSession": "Trainer session",
+      "preview": "Preview"
+    },
+    "completion": {
+      "c01": "Captioned video plus transcript; complete at 90 percent watched.",
+      "c02": "Three choices, feedback and retry; package reports completion and score.",
+      "c03": "Add three formative questions.",
+      "c04": "Minimum 80 percent on module quiz.",
+      "c05": "B uses a 100–150 word task; A develops it into the practical assignment.",
+      "c06": "Role-play in pairs, feedback, attendance and scored demonstration. A only.",
+      "c07": "No claim of a fully built third programme."
+    },
+    "path": {
+      "hotelName": "Hotel guest services",
+      "hotelDescription": "C01, C02, C03 and C05 with a complaint role-play, then the post-assessment.",
+      "transportName": "Transport services",
+      "transportDescription": "C01, C03, C02 with a transport context and C05, with a directions role-play, then the post-assessment.",
+      "generalName": "General visitor service",
+      "generalDescription": "General C01–C03 and C05 with a practice scenario of the learner’s choice, then the post-assessment."
+    },
+    "scenario": {
+      "title": "Changed booking",
+      "difficulty": "Intermediate",
+      "opening": "I booked this experience for today and now I am told it is unavailable. What can you do?",
+      "followUp": "We only have the afternoon free, and there are four of us."
+    },
+    "rubric": {
+      "empathy_professionalism": "Empathy and professionalism",
+      "discovery_questions": "Discovery questions",
+      "clarity": "Clarity",
+      "accuracy_boundaries": "Accuracy and boundaries",
+      "solution_followthrough": "Solution and follow-through"
+    },
+    "competency": {
+      "discover_needs": "Discover needs",
+      "verify_information": "Verify information",
+      "communicate_clearly": "Communicate clearly",
+      "recover_service": "Recover service",
+      "protect_information": "Protect information"
+    },
+    "video": "A helpful welcome begins with attention. Greet the visitor, introduce yourself and ask what they need today. Listen before suggesting an option. If the request is unclear, ask one short follow-up question. Offer information you can verify and explain the next step in plain language. Before the conversation ends, check that the visitor knows what to do next. A confident service experience is built through clarity, respect and follow-through."
+  }
 }

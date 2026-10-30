@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { Languages } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame } from '@/components/brand'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { cn } from '@/lib/utils'
 import type { PublicTrainer } from '../queries/programmes.queries'
+import { languagesText } from '../utils/copy'
 
 const SHOWCASE_TONE = {
   teal: {
@@ -47,6 +49,8 @@ export function TrainerCard({
   tone?: TrainerTone
   className?: string
 }) {
+  const { t: translate } = useTranslation('public')
+  const languages = languagesText(translate, trainer.languages)
   if (showcase) {
     const t = SHOWCASE_TONE[tone]
     return (
@@ -93,7 +97,7 @@ export function TrainerCard({
           )}
         >
           <Languages aria-hidden className="size-3.5" />
-          {trainer.languages.join(' and ')}
+          {languages}
         </p>
       </Link>
     )
@@ -121,7 +125,7 @@ export function TrainerCard({
       </div>
       <p className="mt-auto inline-flex items-center gap-1.5 text-ink/70 text-xs">
         <Languages aria-hidden className="size-3.5 text-teal" />
-        {trainer.languages.join(' and ')}
+        {languages}
       </p>
     </Link>
   )

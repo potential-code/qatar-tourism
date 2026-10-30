@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern, Eyebrow, SectionHeading, StarPattern } from '@/components/brand'
 import { CountUp, easeOut, ScrollReveal, SplitWords, TiltCard } from '@/components/motion'
 import { cn } from '@/lib/utils'
@@ -59,6 +60,7 @@ function PhotoBackdrop({ image, tone }: { image: string; tone: 'teal' | 'ink' })
 /** AI tile: the visitor's line arrives as a chat bubble, then the reply starts typing. */
 function ChatPreview() {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('public')
   const show = (delay: number) => ({
     initial: reduce ? false : { opacity: 0, y: 14, scale: 0.96 },
     whileInView: { opacity: 1, y: 0, scale: 1 },
@@ -71,7 +73,7 @@ function ChatPreview() {
         {...show(0.2)}
         className="max-w-[92%] rounded-2xl rounded-ss-sm bg-white/95 px-5 py-4 font-display text-ink text-lg leading-snug shadow-lg md:text-xl"
       >
-        “I booked this experience for today and now I am told it is unavailable. What can you do?”
+        {t('expect.chat')}
       </motion.p>
       <motion.div
         {...show(0.9)}
@@ -93,6 +95,7 @@ function ChatPreview() {
 /** Progress tile: the score ring beside baseline and post bars that grow in. Decorative. */
 function ProgressPreview() {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('public')
   const radius = 44
   const circumference = 2 * Math.PI * radius
   const grow = (to: string, delay: number) => ({
@@ -138,15 +141,15 @@ function ProgressPreview() {
           <span className="font-display text-4xl text-ink leading-none">
             <CountUp value={80} duration={1.6} />
           </span>
-          <span className="mt-1 text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em]">
-            Post score
+          <span className="mt-1 text-[0.65rem] text-muted-foreground uppercase tracking-[0.18em] rtl:tracking-normal">
+            {t('expect.postScore')}
           </span>
         </span>
       </div>
       <div className="grid gap-4 rounded-2xl bg-gradient-to-br from-sky-mist via-teal-mist/60 to-white p-5 ring-1 ring-teal/10 md:p-6">
         <div className="grid gap-2">
           <div className="flex items-baseline justify-between text-sm">
-            <span className="text-muted-foreground">Baseline</span>
+            <span className="text-muted-foreground">{t('expect.baseline')}</span>
             <span className="font-display text-2xl text-ink/55">
               <CountUp value={40} />
             </span>
@@ -157,7 +160,7 @@ function ProgressPreview() {
         </div>
         <div className="grid gap-2">
           <div className="flex items-baseline justify-between text-sm">
-            <span className="text-muted-foreground">Post-assessment</span>
+            <span className="text-muted-foreground">{t('expect.postAssessment')}</span>
             <span className="font-display text-2xl text-teal">
               <CountUp value={80} duration={1.6} />
             </span>
@@ -165,12 +168,12 @@ function ProgressPreview() {
           <div className="h-2.5 overflow-hidden rounded-full bg-white">
             <motion.div
               {...grow('80%', 0.45)}
-              className="h-full rounded-full bg-gradient-to-r from-teal to-sky"
+              className="h-full rounded-full bg-gradient-to-r from-teal to-sky rtl:bg-gradient-to-l"
             />
           </div>
         </div>
         <span className="w-fit rounded-full bg-rose-mist px-3 py-1 font-medium text-maroon text-sm">
-          +40 points
+          {t('expect.points')}
         </span>
       </div>
     </div>
@@ -179,6 +182,7 @@ function ProgressPreview() {
 
 /** "What to expect" (brief §2): four benefits, each opening its preview. */
 export function WhatToExpect() {
+  const { t } = useTranslation('public')
   const [open, setOpen] = useState<BenefitKey | null>(null)
   return (
     <section
@@ -201,16 +205,16 @@ export function WhatToExpect() {
           <SectionHeading
             tone="light"
             eyebrow={
-              <Eyebrow index="02" tone="light">
-                The Academy
+              <Eyebrow className="rtl:tracking-normal" index="02" tone="light">
+                {t('expect.eyebrow')}
               </Eyebrow>
             }
             title={
-              <span id="expect-title">
-                <SplitWords text="What to expect" />
+              <span id="expect-title" className="rtl:leading-[1.4]">
+                <SplitWords text={t('expect.title')} />
               </span>
             }
-            description="The Academy brings self-paced learning, realistic practice and trainer-led sessions into one connected journey."
+            description={t('expect.description')}
           />
           <ul aria-hidden data-reveal className="flex flex-wrap gap-2 lg:justify-end">
             {BENEFITS.map((benefit) => {
@@ -226,7 +230,7 @@ export function WhatToExpect() {
                       benefit.key === 'progress' ? 'text-sky' : ICON[benefit.key],
                     )}
                   />
-                  {benefit.title}
+                  {t(`benefits.${benefit.key}.title`)}
                 </li>
               )
             })}
@@ -283,10 +287,10 @@ export function WhatToExpect() {
                             : 'bg-white text-ink group-hover:bg-gold-soft',
                         )}
                       >
-                        Preview
+                        {t('expect.preview')}
                         <span
                           className={cn(
-                            'inline-flex size-8 items-center justify-center rounded-full transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5',
+                            'inline-flex size-8 items-center justify-center rounded-full transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5',
                             light ? 'bg-teal text-white' : 'bg-teal text-white',
                           )}
                         >
@@ -297,14 +301,16 @@ export function WhatToExpect() {
                     {benefit.key === 'ai' ? <ChatPreview /> : null}
                     {benefit.key === 'progress' ? <ProgressPreview /> : null}
                     <div className="grid max-w-md gap-2">
-                      <h3 className="font-display text-2xl md:text-3xl">{benefit.title}</h3>
+                      <h3 className="font-display text-2xl md:text-3xl">
+                        {t(`benefits.${benefit.key}.title`)}
+                      </h3>
                       <p
                         className={cn(
                           'text-base leading-relaxed',
                           light ? 'text-muted-foreground' : 'text-white/85',
                         )}
                       >
-                        {benefit.body}
+                        {t(`benefits.${benefit.key}.body`)}
                       </p>
                     </div>
                   </button>

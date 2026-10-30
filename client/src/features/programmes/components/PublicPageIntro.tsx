@@ -32,7 +32,7 @@ export function PublicPageIntro({ title, image, alt, children }: PublicPageIntro
             initial={reduce ? false : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.15, ease: easeOut }}
-            className="max-w-3xl font-display font-light text-4xl text-white leading-[1.06] md:text-6xl"
+            className="max-w-3xl font-display font-light text-4xl text-white leading-[1.06] rtl:leading-[1.4] md:text-6xl"
           >
             {title}
           </motion.h1>

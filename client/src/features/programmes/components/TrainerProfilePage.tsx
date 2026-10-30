@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { CalendarX, ChevronLeft, Languages } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PhotoPanel } from '@/components/brand'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { DemoBadge } from '@/components/layout'
@@ -13,18 +14,20 @@ import { PublicLayout } from '@/features/public-site/components/PublicLayout'
 import { SectionError } from '@/features/public-site/components/SectionState'
 import { programmeSlug } from '../content'
 import { trainerQuery } from '../queries/programmes.queries'
+import { languagesText, programmeName } from '../utils/copy'
 import { BookAction } from './BookAction'
 import { SessionTicket } from './SessionTicket'
 
 /** Public trainer profile (brief §16): bio, expertise, languages, programmes, sessions. */
 export function TrainerProfilePage({ code }: { code: string }) {
+  const { t } = useTranslation('public')
   const { data, isPending, isError, error, refetch } = useQuery(trainerQuery(code))
   const missing = isError && (error as { status?: number }).status === 404
   return (
     <PublicLayout overlayHeader>
       <PhotoPanel
         src="/images/official/dhow-boat-min.jpg"
-        alt="Traditional dhow boats on Doha bay"
+        alt={t('trainer.heroAlt')}
         fade="bottom"
         priority
         className="h-72 bg-ink md:h-96"
@@ -35,7 +38,7 @@ export function TrainerProfilePage({ code }: { code: string }) {
             className="inline-flex w-fit items-center gap-1 rounded-full text-sm text-white/85 hover:text-white focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-white/60"
           >
             <ChevronLeft aria-hidden className="size-4 rtl:-scale-x-100" />
-            All trainers
+            {t('trainer.all')}
           </Link>
         </div>
       </PhotoPanel>
@@ -44,16 +47,16 @@ export function TrainerProfilePage({ code }: { code: string }) {
           <Skeleton className="h-64 rounded-xl" />
         ) : missing ? (
           <EmptyState
-            title="Trainer not found"
-            description="This profile does not exist in the demonstration dataset."
+            title={t('trainer.notFound')}
+            description={t('trainer.notFoundDescription')}
             action={
               <Button asChild>
-                <Link to="/trainers">See all trainers</Link>
+                <Link to="/trainers">{t('trainer.seeAll')}</Link>
               </Button>
             }
           />
         ) : isError ? (
-          <SectionError what="this trainer" onRetry={() => refetch()} />
+          <SectionError what={t('errors.trainer')} onRetry={() => refetch()} />
         ) : (
           <>
             <Reveal className="grid gap-8 rounded-xl bg-white p-6 shadow-black/10 shadow-xl ring-1 ring-ink/5 md:grid-cols-[auto_1fr] md:p-10">
@@ -78,14 +81,14 @@ export function TrainerProfilePage({ code }: { code: string }) {
                 </div>
                 <dl className="grid gap-4 text-sm sm:grid-cols-3">
                   <div className="grid gap-1">
-                    <dt className="text-muted-foreground text-xs">Languages</dt>
+                    <dt className="text-muted-foreground text-xs">{t('trainer.languages')}</dt>
                     <dd className="inline-flex items-center gap-1.5">
                       <Languages aria-hidden className="size-4 text-teal" />
-                      {data.languages.join(' and ')}
+                      {languagesText(t, data.languages)}
                     </dd>
                   </div>
                   <div className="grid gap-1">
-                    <dt className="text-muted-foreground text-xs">Programmes</dt>
+                    <dt className="text-muted-foreground text-xs">{t('trainer.programmes')}</dt>
                     <dd className="flex flex-wrap gap-2">
                       {data.programmes.map((p) => (
                         <Link
@@ -94,13 +97,13 @@ export function TrainerProfilePage({ code }: { code: string }) {
                           params={{ code: programmeSlug(p) }}
                           className="text-teal-deep underline-offset-4 hover:underline"
                         >
-                          Program {p}
+                          {programmeName(t, p)}
                         </Link>
                       ))}
                     </dd>
                   </div>
                   <div className="grid gap-1">
-                    <dt className="text-muted-foreground text-xs">Organisation</dt>
+                    <dt className="text-muted-foreground text-xs">{t('trainer.organisation')}</dt>
                     <dd>{data.organisation}</dd>
                   </div>
                 </dl>
@@ -109,16 +112,16 @@ export function TrainerProfilePage({ code }: { code: string }) {
             </Reveal>
             <section aria-labelledby="trainer-sessions" className="grid gap-6">
               <h2 id="trainer-sessions" className="font-display font-light text-3xl">
-                Upcoming sessions with {data.fullName.split(' ')[0]}
+                {t('trainer.upcoming', { name: data.fullName.split(' ')[0] })}
               </h2>
               {data.upcomingSessions.length === 0 ? (
                 <EmptyState
                   icon={CalendarX}
-                  title="No upcoming sessions"
-                  description="This trainer has no published sessions right now. Browse all upcoming sessions instead."
+                  title={t('trainer.noSessions')}
+                  description={t('trainer.noSessionsDescription')}
                   action={
                     <Button asChild variant="outline">
-                      <Link to="/sessions">All upcoming sessions</Link>
+                      <Link to="/sessions">{t('trainer.allSessions')}</Link>
                     </Button>
                   }
                 />

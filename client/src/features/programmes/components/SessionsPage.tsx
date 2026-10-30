@@ -2,6 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarX } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { DemoBadge } from '@/components/layout'
 import { Stagger, StaggerItem } from '@/components/motion'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -10,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { PublicLayout } from '@/features/public-site/components/PublicLayout'
 import { SectionError } from '@/features/public-site/components/SectionState'
 import { upcomingSessionsQuery } from '../queries/programmes.queries'
+import { programmeName } from '../utils/copy'
 import { sessionDay } from '../utils/format'
 import { BookAction } from './BookAction'
 import { PublicPageIntro } from './PublicPageIntro'
@@ -19,6 +21,7 @@ type Filter = 'all' | ProgrammeCode
 
 /** Public upcoming sessions (brief §2, §16), grouped by Qatar calendar day. */
 export function SessionsPage() {
+  const { t } = useTranslation('public')
   const [filter, setFilter] = useState<Filter>('all')
   const { data, isPending, isError, refetch } = useQuery(
     upcomingSessionsQuery(filter === 'all' ? undefined : filter),
@@ -31,24 +34,23 @@ export function SessionsPage() {
   return (
     <PublicLayout overlayHeader>
       <PublicPageIntro
-        title="Upcoming sessions"
+        title={t('sessions.pageTitle')}
         image="/images/official/grid-qatar-national-library-2-7740-wip-5.jpg"
-        alt="Reading hall of the Qatar National Library"
+        alt={t('sessions.pageAlt')}
       >
-        Trainer-led sessions in person at the Academy or live online. All times are shown in Qatar
-        time. Sign in to book: eligibility and seats are checked when you book.
+        {t('sessions.intro')}
       </PublicPageIntro>
       <div className="mx-auto flex max-w-[1100px] flex-col gap-10 px-4 py-14 md:px-8 md:py-20">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <SegmentedControl
-            aria-label="Filter by programme"
+            aria-label={t('sessions.filter')}
             value={filter}
             onValueChange={(value) => setFilter(value as Filter)}
           >
-            <SegmentedControlItem value="all">All</SegmentedControlItem>
-            <SegmentedControlItem value="A">Program A</SegmentedControlItem>
-            <SegmentedControlItem value="B">Program B</SegmentedControlItem>
-            <SegmentedControlItem value="C">Program C</SegmentedControlItem>
+            <SegmentedControlItem value="all">{t('sessions.all')}</SegmentedControlItem>
+            <SegmentedControlItem value="A">{programmeName(t, 'A')}</SegmentedControlItem>
+            <SegmentedControlItem value="B">{programmeName(t, 'B')}</SegmentedControlItem>
+            <SegmentedControlItem value="C">{programmeName(t, 'C')}</SegmentedControlItem>
           </SegmentedControl>
           <DemoBadge compact />
         </div>
@@ -59,12 +61,12 @@ export function SessionsPage() {
             ))}
           </div>
         ) : isError ? (
-          <SectionError what="the sessions" onRetry={() => refetch()} />
+          <SectionError what={t('errors.sessionsShort')} onRetry={() => refetch()} />
         ) : data.length === 0 ? (
           <EmptyState
             icon={CalendarX}
-            title="No upcoming sessions for this programme"
-            description="Try another programme, or check back once trainers publish new dates."
+            title={t('sessions.empty')}
+            description={t('sessions.emptyDescription')}
           />
         ) : (
           <div className="grid gap-12">

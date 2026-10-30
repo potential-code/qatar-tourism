@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ArchFrame, CornerPattern, Eyebrow, GoldArch } from '@/components/brand'
 import { Parallax, ScrollReveal, SplitWords } from '@/components/motion'
 import {
@@ -6,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { FAQ } from '../content/home'
+import { FAQ_KEYS } from '../content/home'
 
 /**
  * FAQ (brief §2): programme differences, self-paced versus live, certificates, access, help.
@@ -14,6 +15,7 @@ import { FAQ } from '../content/home'
  * the same height.
  */
 export function Faq() {
+  const { t } = useTranslation('public')
   return (
     <section aria-labelledby="faq-title" className="relative isolate overflow-hidden bg-sand-deep">
       <CornerPattern side="a" />
@@ -21,15 +23,15 @@ export function Faq() {
       <ScrollReveal className="mx-auto flex max-w-[1400px] flex-col gap-12 px-4 py-24 md:px-8 md:py-32">
         <div className="flex flex-col gap-4">
           <div data-reveal>
-            <Eyebrow index="05" tone="maroon">
-              Good to know
+            <Eyebrow className="rtl:tracking-normal" index="05" tone="maroon">
+              {t('faq.eyebrow')}
             </Eyebrow>
           </div>
           <h2
             id="faq-title"
-            className="font-display font-light text-4xl text-ink leading-[1.08] md:text-5xl"
+            className="font-display font-light text-4xl text-ink leading-[1.08] rtl:leading-[1.4] md:text-5xl"
           >
-            <SplitWords text="Questions before you begin" />
+            <SplitWords text={t('faq.title')} />
           </h2>
         </div>
         <div className="grid gap-12 lg:grid-cols-[5fr_7fr] lg:items-stretch lg:gap-16">
@@ -39,7 +41,7 @@ export function Faq() {
               <Parallax speed={6} className="absolute -inset-y-10 inset-x-0">
                 <img
                   src="/images/official/qabila-westbay-hotel1.jpg"
-                  alt="A training room set up for a workshop"
+                  alt={t('faq.imageAlt')}
                   loading="lazy"
                   className="size-full object-cover"
                 />
@@ -48,10 +50,10 @@ export function Faq() {
             </ArchFrame>
           </div>
           <Accordion type="single" collapsible className="grid w-full content-start gap-4">
-            {FAQ.map((item, index) => (
+            {FAQ_KEYS.map((key, index) => (
               <AccordionItem
-                key={item.q}
-                value={item.q}
+                key={key}
+                value={key}
                 data-reveal="card"
                 className="group/faq qt-card-elevated relative overflow-hidden rounded-2xl border-0 px-6 transition-shadow duration-500 last:border-b-0 hover:shadow-lg data-[state=open]:shadow-xl md:px-8"
               >
@@ -64,11 +66,11 @@ export function Faq() {
                     <span aria-hidden className="font-display text-base text-teal tabular-nums">
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    {item.q}
+                    {t(`faq.${key}.q`)}
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-7 ps-9 text-base text-muted-foreground leading-relaxed">
-                  {item.a}
+                  {t(`faq.${key}.a`)}
                 </AccordionContent>
               </AccordionItem>
             ))}

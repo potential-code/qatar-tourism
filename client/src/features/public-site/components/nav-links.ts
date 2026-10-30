@@ -1,12 +1,16 @@
 /**
  * Header links (brief §2): each one scrolls to its homepage section, listed in the order the
  * sections appear on the page. From any other page they return to the homepage at that section.
+ * `labelKey` is a key in the `public` namespace.
  */
-export type PublicNavLink = { label: string; hash: string }
+export type PublicNavLink = {
+  labelKey: 'nav.programmes' | 'nav.academy' | 'nav.howItWorks' | 'nav.sessions'
+  hash: string
+}
 
 export const NAV_LINKS: readonly PublicNavLink[] = [
-  { label: 'Programmes', hash: 'programmes' },
-  { label: 'Academy', hash: 'academy' },
-  { label: 'How it works', hash: 'how-it-works' },
-  { label: 'Upcoming sessions', hash: 'sessions' },
+  { labelKey: 'nav.programmes', hash: 'programmes' },
+  { labelKey: 'nav.academy', hash: 'academy' },
+  { labelKey: 'nav.howItWorks', hash: 'how-it-works' },
+  { labelKey: 'nav.sessions', hash: 'sessions' },
 ]

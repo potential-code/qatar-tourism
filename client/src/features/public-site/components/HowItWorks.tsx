@@ -1,10 +1,13 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame, CornerPattern, Eyebrow, GoldArch } from '@/components/brand'
 import { ScrollReveal } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { PROGRAMME_REQUIREMENTS, STEPS } from '../content/home'
+import { useDocumentDir } from '../hooks/useDocumentDir'
+import { tr } from '../utils/translate'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,16 +31,24 @@ const CODE_TONE: Record<string, string> = {
  * pins and the steps pan sideways as you scroll (one track width only, so it never traps the
  * reader); a gold rail fills and lights each step's node, and the big numerals drift at their own
  * pace. Narrow screens and reduced motion get a vertical timeline.
+ *
+ * RTL decision (Arabic): the sideways pan is left-to-right only. A pinned horizontal track that
+ * scrubs from its start to its end would need every offset, the rail fill and the per-step
+ * parallax mirrored, and a mistake leaves readers scrolling away from the content. In Arabic the
+ * section therefore uses the same vertical timeline as narrow screens (every pinned-only class is
+ * gated with `ltr:`, and the GSAP setup is skipped), which reads naturally right-to-left.
  */
 export function HowItWorks() {
   const wrap = useRef<HTMLDivElement>(null)
   const track = useRef<HTMLDivElement>(null)
   const rail = useRef<HTMLDivElement>(null)
+  const { t } = useTranslation('public')
+  const dir = useDocumentDir()
 
   useEffect(() => {
     const section = wrap.current
     const strip = track.current
-    if (!section || !strip) return
+    if (!section || !strip || dir === 'rtl') return
     const media = gsap.matchMedia()
     media.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
       const distance = () => strip.scrollWidth - window.innerWidth
@@ -143,7 +154,7 @@ export function HowItWorks() {
       ScrollTrigger.refresh()
     })
     return () => media.revert()
-  }, [])
+  }, [dir])
 
   return (
     <section
@@ -164,36 +175,34 @@ export function HowItWorks() {
       <ScrollReveal query="(prefers-reduced-motion: no-preference) and (max-width: 1023px)">
         <div
           ref={wrap}
-          className="relative lg:motion-safe:flex lg:motion-safe:min-h-[100dvh] lg:motion-safe:items-center"
+          className="relative lg:motion-safe:ltr:flex lg:motion-safe:ltr:min-h-[100dvh] lg:motion-safe:ltr:items-center"
         >
           <div
             ref={track}
-            className="mx-auto flex max-w-[1400px] flex-col gap-16 px-4 py-24 md:px-8 lg:py-32 lg:motion-safe:mx-0 lg:motion-safe:w-max lg:motion-safe:max-w-none lg:motion-safe:flex-row lg:motion-safe:items-center lg:motion-safe:gap-16 lg:motion-safe:py-0 lg:motion-safe:ps-[max(2rem,calc((100vw-1400px)/2+2rem))] lg:motion-safe:pe-[8vw]"
+            className="mx-auto flex max-w-[1400px] flex-col gap-16 px-4 py-24 md:px-8 lg:py-32 lg:motion-safe:ltr:mx-0 lg:motion-safe:ltr:w-max lg:motion-safe:ltr:max-w-none lg:motion-safe:ltr:flex-row lg:motion-safe:ltr:items-center lg:motion-safe:ltr:gap-16 lg:motion-safe:ltr:py-0 lg:motion-safe:ltr:ps-[max(2rem,calc((100vw-1400px)/2+2rem))] lg:motion-safe:ltr:pe-[8vw]"
           >
-            <div className="flex max-w-md shrink-0 flex-col justify-center gap-6 lg:motion-safe:w-[30rem]">
-              <Eyebrow index="03" tone="light">
-                Your journey
+            <div className="flex max-w-md shrink-0 flex-col justify-center gap-6 lg:motion-safe:ltr:w-[30rem]">
+              <Eyebrow className="rtl:tracking-normal" index="03" tone="light">
+                {t('steps.eyebrow')}
               </Eyebrow>
               <h2
                 id="how-title"
-                className="font-display font-light text-5xl leading-[1.04] md:text-7xl"
+                className="font-display font-light text-5xl leading-[1.04] rtl:leading-[1.4] md:text-7xl"
               >
-                How it <em className="text-gold-soft">works</em>
+                {t('steps.titleLead')}{' '}
+                <em className="text-gold-soft rtl:not-italic">{t('steps.titleAccent')}</em>
               </h2>
-              <p className="text-lg text-white/80 leading-relaxed">
-                Four steps take you from a new account to measurable improvement. Requirements
-                differ by programme.
-              </p>
+              <p className="text-lg text-white/80 leading-relaxed">{t('steps.intro')}</p>
             </div>
-            <ol className="relative grid gap-14 border-white/15 border-s ps-8 md:grid-cols-2 md:border-none md:ps-0 lg:motion-safe:flex lg:motion-safe:gap-16">
+            <ol className="relative grid gap-14 border-white/15 border-s ps-8 md:grid-cols-2 md:border-none md:ps-0 lg:motion-safe:ltr:flex lg:motion-safe:ltr:gap-16">
               {STEPS.map((step, index) => (
                 <li
-                  key={step.title}
+                  key={step.key}
                   data-step
                   data-reveal="card"
                   className={cn(
-                    'relative grid shrink-0 content-start gap-0 lg:motion-safe:w-[25rem]',
-                    index % 2 === 1 && 'lg:motion-safe:translate-y-10',
+                    'relative grid shrink-0 content-start gap-0 lg:motion-safe:ltr:w-[25rem]',
+                    index % 2 === 1 && 'lg:motion-safe:ltr:translate-y-10',
                   )}
                 >
                   <span
@@ -214,10 +223,10 @@ export function HowItWorks() {
                         STEP_TONE[index % STEP_TONE.length]?.arch,
                       )}
                     />
-                    <ArchFrame className="aspect-[4/5] overflow-hidden bg-teal shadow-xl lg:motion-safe:aspect-auto lg:motion-safe:h-[min(50dvh,480px)]">
+                    <ArchFrame className="aspect-[4/5] overflow-hidden bg-teal shadow-xl lg:motion-safe:ltr:aspect-auto lg:motion-safe:ltr:h-[min(50dvh,480px)]">
                       <img
                         src={step.image}
-                        alt={step.alt}
+                        alt={t(`steps.${step.key}.alt`)}
                         loading="lazy"
                         className="size-full object-cover"
                       />
@@ -236,26 +245,28 @@ export function HowItWorks() {
                     />
                     <p
                       className={cn(
-                        'font-medium text-xs uppercase tracking-[0.2em]',
+                        'font-medium text-xs uppercase tracking-[0.2em] rtl:tracking-normal',
                         STEP_TONE[index % STEP_TONE.length]?.label,
                       )}
                     >
-                      Step {index + 1}
+                      {t('steps.step', { n: index + 1 })}
                     </p>
                     <h3 className="font-display text-2xl leading-tight md:text-[1.65rem]">
-                      {step.title}
+                      {t(`steps.${step.key}.title`)}
                     </h3>
-                    <p className="text-ink/75 text-sm leading-relaxed">{step.body}</p>
+                    <p className="text-ink/75 text-sm leading-relaxed">
+                      {t(`steps.${step.key}.body`)}
+                    </p>
                   </div>
                 </li>
               ))}
             </ol>
             <aside
-              aria-label="Requirements by programme"
+              aria-label={t('requirements.aria')}
               data-reveal="card"
-              className="grid shrink-0 content-center gap-5 lg:motion-safe:w-[28rem]"
+              className="grid shrink-0 content-center gap-5 lg:motion-safe:ltr:w-[28rem]"
             >
-              <p className="font-display text-3xl">Requirements differ by programme</p>
+              <p className="font-display text-3xl rtl:leading-[1.4]">{t('requirements.title')}</p>
               <dl className="grid gap-3">
                 {PROGRAMME_REQUIREMENTS.map((row) => (
                   <div
@@ -268,10 +279,12 @@ export function HowItWorks() {
                         CODE_TONE[row.code],
                       )}
                     >
-                      <span className="sr-only">Program </span>
-                      {row.code}
+                      <span className="sr-only">{t('requirements.program')} </span>
+                      {tr(t, `programme.letter.${row.code}`)}
                     </dt>
-                    <dd className="text-sm text-white/85 leading-relaxed">{row.text}</dd>
+                    <dd className="text-sm text-white/85 leading-relaxed">
+                      {t(`requirements.${row.key}`)}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -282,7 +295,7 @@ export function HowItWorks() {
           <div
             ref={rail}
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-10 hidden lg:motion-safe:block"
+            className="pointer-events-none absolute inset-x-0 bottom-10 hidden lg:motion-safe:ltr:block"
           >
             <div className="relative mx-auto flex max-w-[1100px] items-center justify-between px-8">
               <span className="absolute inset-x-8 top-1/2 h-px -translate-y-1/2 bg-white/20" />
@@ -292,7 +305,7 @@ export function HowItWorks() {
               />
               {STEPS.map((step, index) => (
                 <span
-                  key={step.title}
+                  key={step.key}
                   data-node
                   data-on="false"
                   className="relative flex size-9 items-center justify-center rounded-full bg-teal-deep font-display text-sm text-white/60 ring-1 ring-white/25 transition-all duration-500 data-[on=true]:scale-110 data-[on=true]:bg-gold data-[on=true]:text-teal-deep data-[on=true]:ring-gold-soft data-[on=true]:shadow-[0_0_24px_rgb(200_164_106/0.6)]"

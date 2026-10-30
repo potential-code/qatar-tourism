@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -14,11 +15,11 @@ import { PacePreview } from './previews/PacePreview'
 import { ProgressPreview } from './previews/ProgressPreview'
 import { TrainersPreview } from './previews/TrainersPreview'
 
-const NEXT: Record<BenefitKey, { label: string; to: string; params?: { code: string } }> = {
-  pace: { label: 'See the Program B units', to: '/programmes/$code', params: { code: 'b' } },
-  ai: { label: 'Start with Program B', to: '/register' },
-  trainers: { label: 'Browse upcoming sessions', to: '/sessions' },
-  progress: { label: 'Create your profile', to: '/register' },
+const NEXT: Record<BenefitKey, { to: string; params?: { code: string } }> = {
+  pace: { to: '/programmes/$code', params: { code: 'b' } },
+  ai: { to: '/register' },
+  trainers: { to: '/sessions' },
+  progress: { to: '/register' },
 }
 
 /** Each benefit links to its preview (brief §2), built from the demo's real content. */
@@ -29,6 +30,7 @@ export function BenefitPreviewDialog({
   benefit: BenefitKey | null
   onClose: () => void
 }) {
+  const { t } = useTranslation('public')
   const meta = BENEFITS.find((b) => b.key === benefit)
   const next = benefit ? NEXT[benefit] : null
   return (
@@ -37,8 +39,10 @@ export function BenefitPreviewDialog({
         {meta && next ? (
           <>
             <DialogHeader className="gap-2 border-ink/5 border-b bg-white p-6 text-start md:p-8">
-              <DialogTitle className="font-display font-light text-3xl">{meta.title}</DialogTitle>
-              <DialogDescription>{meta.body}</DialogDescription>
+              <DialogTitle className="font-display font-light text-3xl">
+                {t(`benefits.${meta.key}.title`)}
+              </DialogTitle>
+              <DialogDescription>{t(`benefits.${meta.key}.body`)}</DialogDescription>
             </DialogHeader>
             <div className="grid gap-6 p-6 md:p-8">
               {benefit === 'pace' ? <PacePreview /> : null}
@@ -47,7 +51,7 @@ export function BenefitPreviewDialog({
               {benefit === 'progress' ? <ProgressPreview /> : null}
               <Button asChild className="w-fit">
                 <Link to={next.to as never} params={next.params as never} onClick={onClose}>
-                  {next.label}
+                  {t(`benefits.${meta.key}.next`)}
                   <ArrowRight aria-hidden className="rtl:-scale-x-100" />
                 </Link>
               </Button>

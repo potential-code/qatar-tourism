@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 /** Capacity as text first, with a slim meter (status is never colour alone). */
@@ -12,6 +13,7 @@ export function SeatsMeter({
   waitlisted: number
   className?: string
 }) {
+  const { t } = useTranslation('public')
   const remaining = Math.max(0, capacity - booked)
   const full = remaining === 0
   const share = Math.min(100, Math.round((booked / capacity) * 100))
@@ -20,12 +22,16 @@ export function SeatsMeter({
       <p className="text-sm">
         {full ? (
           <span className="font-medium text-maroon">
-            Full{waitlisted > 0 ? `, ${waitlisted} on the waitlist` : ', waitlist open'}
+            {waitlisted > 0 ? t('sessions.full', { n: waitlisted }) : t('sessions.fullOpen')}
           </span>
         ) : (
           <>
-            <span className="font-medium text-ink">{remaining} seats left</span>
-            <span className="text-muted-foreground"> of {capacity}</span>
+            <span className="font-medium text-ink">
+              {t('sessions.seatsLeft', { n: remaining })}
+            </span>
+            <span className="text-muted-foreground">
+              {t('sessions.ofCapacity', { n: capacity })}
+            </span>
           </>
         )}
       </p>

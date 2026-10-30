@@ -5,10 +5,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronLeft } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { type ReactNode, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern } from '@/components/brand'
 import { easeOut, SplitWords } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { PROGRAMME_TONE } from '../tone'
+import { programmeLetter } from '../utils/copy'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -35,6 +37,7 @@ export function PageHero({
   children?: ReactNode
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('public')
   const photo = useRef<HTMLImageElement>(null)
   const tone = programme ? PROGRAMME_TONE[programme] : null
 
@@ -88,7 +91,7 @@ export function PageHero({
           aria-hidden
           className="pointer-events-none absolute end-[4%] -bottom-[6%] -z-10 select-none font-display font-light text-[clamp(14rem,32vw,30rem)] text-white/[0.09] leading-none"
         >
-          {programme}
+          {programmeLetter(t, programme)}
         </span>
       ) : null}
       <div className="mx-auto flex min-h-[82dvh] max-w-[1400px] flex-col justify-end gap-8 px-4 pt-36 pb-40 md:px-8 md:pb-48">
@@ -105,14 +108,14 @@ export function PageHero({
         <div className="flex max-w-3xl flex-col gap-6">
           {eyebrow ? (
             <motion.div
-              initial={reduce ? false : { opacity: 0, x: -16 }}
+              initial={reduce ? false : { opacity: 0, x: i18n.dir() === 'rtl' ? 16 : -16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, ease: easeOut }}
             >
               {eyebrow}
             </motion.div>
           ) : null}
-          <h1 className="font-display font-light text-4xl leading-[1.04] md:text-7xl">
+          <h1 className="font-display font-light text-4xl leading-[1.04] rtl:leading-[1.4] md:text-7xl">
             {typeof title === 'string' ? (
               <SplitWords text={title} onView={false} delay={0.15} />
             ) : (

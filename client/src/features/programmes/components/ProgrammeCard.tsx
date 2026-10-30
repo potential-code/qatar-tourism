@@ -1,11 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight, Clock, Layers, Users } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame } from '@/components/brand'
 import { cardHover } from '@/components/motion'
 import { cn } from '@/lib/utils'
 import { programmeSlug } from '../content'
 import type { PublicProgramme } from '../queries/programmes.queries'
+import { programmeName, programmeText } from '../utils/copy'
 import { CertificationStatus } from './CertificationStatus'
 import { IllustrativeTag } from './IllustrativeTag'
 
@@ -20,6 +22,8 @@ type Props = {
 export function ProgrammeCard({ programme, layout = 'row', className }: Props) {
   const feature = layout === 'feature'
   const reduce = useReducedMotion()
+  const { t } = useTranslation('public')
+  const text = (field: string) => programmeText(t, programme.code, field)
   const image = (
     <img
       src={programme.cardImagePath ?? '/images/official/city-view.jpg'}
@@ -56,7 +60,7 @@ export function ProgrammeCard({ programme, layout = 'row', className }: Props) {
       )}
       <div className={cn('flex flex-1 flex-col gap-4 p-6', feature && 'md:p-8')}>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-sm text-teal">Program {programme.code}</span>
+          <span className="font-medium text-sm text-teal">{programmeName(t, programme.code)}</span>
           {programme.isIllustrative ? <IllustrativeTag /> : null}
         </div>
         <h3
@@ -65,27 +69,27 @@ export function ProgrammeCard({ programme, layout = 'row', className }: Props) {
             feature ? 'text-3xl md:text-4xl' : 'text-2xl',
           )}
         >
-          {programme.title}
+          {text('title')}
         </h3>
-        <p className="text-muted-foreground text-sm leading-relaxed">{programme.summary}</p>
+        <p className="text-muted-foreground text-sm leading-relaxed">{text('summary')}</p>
         <dl className="grid gap-2.5 text-ink/80 text-sm">
           <div className="flex items-start gap-2">
-            <dt className="sr-only">Audience</dt>
+            <dt className="sr-only">{t('programme.audience')}</dt>
             <Users aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />
-            <dd>{programme.audience}</dd>
+            <dd>{text('audience')}</dd>
           </div>
           <div className="flex items-start gap-2">
-            <dt className="sr-only">Format</dt>
+            <dt className="sr-only">{t('programme.format')}</dt>
             <Layers aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />
-            <dd>{programme.formatLabel}</dd>
+            <dd>{text('formatLabel')}</dd>
           </div>
           <div className="flex items-start gap-2">
-            <dt className="sr-only">Duration</dt>
+            <dt className="sr-only">{t('programme.duration')}</dt>
             <Clock aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />
-            <dd>{programme.durationLabel}</dd>
+            <dd>{text('durationLabel')}</dd>
           </div>
           <div className="flex items-start gap-2 text-teal-deep">
-            <dt className="sr-only">Certification</dt>
+            <dt className="sr-only">{t('programme.certification')}</dt>
             <dd>
               <CertificationStatus
                 certified={programme.certificationEnabled}
@@ -99,8 +103,8 @@ export function ProgrammeCard({ programme, layout = 'row', className }: Props) {
           params={{ code: programmeSlug(programme.code) }}
           className="mt-auto inline-flex w-fit items-center gap-3 rounded-full py-1 pe-1 ps-0 font-medium text-sm text-teal-deep after:absolute after:inset-0 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          View programme
-          <span className="inline-flex size-8 items-center justify-center rounded-full bg-teal-mist transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:bg-teal group-hover:text-white">
+          {t('programme.viewProgramme')}
+          <span className="inline-flex size-8 items-center justify-center rounded-full bg-teal-mist transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 group-hover:bg-teal group-hover:text-white">
             <ArrowUpRight aria-hidden className="size-4 rtl:-scale-x-100" />
           </span>
         </Link>

@@ -1,5 +1,6 @@
 import { Eye, EyeOff, LockKeyhole } from 'lucide-react'
 import { useId, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useFieldContext } from '@/lib/form-context'
@@ -15,24 +16,31 @@ function messageOf(error: unknown): string | null {
 
 /** Password input with a show/hide toggle (brief §3), bound to a TanStack Form field. */
 export function PasswordField({
-  label = 'Password',
+  label,
   autoComplete,
   hint,
 }: {
+  /** Defaults to the translated "Password". */
   label?: string
   autoComplete: 'current-password' | 'new-password'
   hint?: string
 }) {
   const field = useFieldContext<string>()
+  const { t, i18n } = useTranslation('auth')
   const id = useId()
   const [visible, setVisible] = useState(false)
   const { errors, isTouched } = field.state.meta
   const shown = isTouched || field.form.state.submissionAttempts > 0
-  const messages = shown ? [...new Set(errors.map(messageOf).filter(Boolean))] : []
+  // Validation messages that are translation keys (`auth:validation.min8`) are translated here.
+  const messages = shown
+    ? [...new Set(errors.map(messageOf).filter((m): m is string => Boolean(m)))].map((message) =>
+        i18n.exists(message) ? t(message as never) : message,
+      )
+    : []
   const invalid = messages.length > 0
   return (
     <div className="grid gap-2">
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id}>{label ?? t('password.label')}</Label>
       <div className="group/input relative">
         <LockKeyhole
           aria-hidden
@@ -53,7 +61,7 @@ export function PasswordField({
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? 'Hide password' : 'Show password'}
+          aria-label={visible ? t('password.hide') : t('password.show')}
           aria-pressed={visible}
           className="absolute end-1 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-teal-mist hover:text-teal focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >

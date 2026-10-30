@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { DemoBadge } from '@/components/layout'
 import { Stagger, StaggerItem } from '@/components/motion'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,15 +13,16 @@ const SKELETONS = Array.from({ length: 10 }, (_, i) => `trainer-skeleton-${i}`)
 
 /** All ten fictional trainers (brief §16). */
 export function TrainersPage() {
+  const { t } = useTranslation('public')
   const { data, isPending, isError, refetch } = useQuery(trainersQuery())
   return (
     <PublicLayout overlayHeader>
       <PublicPageIntro
-        title="Our trainers"
+        title={t('trainersPage.title')}
         image="/images/official/tour-operator.jpg"
-        alt="A tour operator welcoming visitors in Qatar"
+        alt={t('trainersPage.alt')}
       >
-        Coaches and facilitators who lead the Academy’s in-person and live-online sessions.
+        {t('trainersPage.intro')}
       </PublicPageIntro>
       <div className="mx-auto flex max-w-[1400px] flex-col gap-10 px-4 py-14 md:px-8 md:py-20">
         <DemoBadge className="w-fit" />
@@ -31,7 +33,7 @@ export function TrainersPage() {
             ))}
           </div>
         ) : isError ? (
-          <SectionError what="the trainers" onRetry={() => refetch()} />
+          <SectionError what={t('errors.trainers')} onRetry={() => refetch()} />
         ) : (
           <Stagger
             className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"

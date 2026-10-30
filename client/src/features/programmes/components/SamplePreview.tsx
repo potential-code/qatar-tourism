@@ -1,29 +1,15 @@
+import { useTranslation } from 'react-i18next'
 import { SectionHeading } from '@/components/brand'
+import { tr } from '@/features/public-site/utils/translate'
 import { cn } from '@/lib/utils'
 import { accent } from '../tone'
 import { IllustrativeTag } from './IllustrativeTag'
 
-const WORKSHEET = [
-  {
-    label: 'Opening',
-    prompt: 'One sentence that tells the visitor why this place matters to them today.',
-  },
-  {
-    label: 'One memorable detail',
-    prompt: 'A detail you can verify from an authorised source. Avoid guesses and superlatives.',
-  },
-  {
-    label: 'Connect to the visitor',
-    prompt: 'Link the story to what the visitor told you they enjoy.',
-  },
-  {
-    label: 'Close with a next step',
-    prompt: 'Suggest what to see or do next, with clear directions.',
-  },
-]
+const WORKSHEET = ['w1', 'w2', 'w3', 'w4'] as const
 
 /** Program C working overview: the fictional C07 story-planning worksheet (brief §7). */
 export function SamplePreview() {
+  const { t } = useTranslation('public')
   return (
     <section
       id="sample-preview"
@@ -34,14 +20,18 @@ export function SamplePreview() {
       <div className="flex flex-col gap-3">
         <IllustrativeTag className="w-fit" />
         <SectionHeading
-          title={<span id="sample-title">Story-planning worksheet</span>}
-          description="C07 Telling a concise destination story, preview, 5 minutes. A fictional worksheet that shows how the sample programme would work."
+          title={
+            <span id="sample-title" className="rtl:leading-[1.4]">
+              {t('sample.title')}
+            </span>
+          }
+          description={t('sample.description')}
         />
       </div>
       <div className="grid gap-5 md:grid-cols-2">
         {WORKSHEET.map((row, index) => (
           <div
-            key={row.label}
+            key={row}
             data-reveal="card"
             className={cn(
               'grid gap-2 rounded-[1.5rem] border border-teal/25 border-dashed bg-gradient-to-br via-white to-white p-6 shadow-card',
@@ -52,9 +42,9 @@ export function SamplePreview() {
               <span aria-hidden className={cn('font-display text-2xl', accent(index).icon)}>
                 {index + 1}
               </span>
-              {row.label}
+              {tr(t, `sample.${row}Label`)}
             </p>
-            <p className="text-muted-foreground text-sm">{row.prompt}</p>
+            <p className="text-muted-foreground text-sm">{tr(t, `sample.${row}Prompt`)}</p>
           </div>
         ))}
       </div>

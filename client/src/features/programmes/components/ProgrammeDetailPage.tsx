@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern, Eyebrow, SectionHeading } from '@/components/brand'
 import { Magnetic, Parallax, ScrollReveal, SplitWords } from '@/components/motion'
 import { Button } from '@/components/ui/button'
@@ -10,10 +11,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { PublicLayout } from '@/features/public-site/components/PublicLayout'
 import { SectionError } from '@/features/public-site/components/SectionState'
 import { cn } from '@/lib/utils'
-import { ILLUSTRATIVE_NOTE, PROGRAMME_COPY } from '../content'
+import { PROGRAMME_COPY } from '../content'
 import { useProgrammeCta } from '../hooks'
 import { programmeQuery } from '../queries/programmes.queries'
 import { accent, PROGRAMME_TONE } from '../tone'
+import { programmeLetter, programmeName, programmeText } from '../utils/copy'
 import { BookAction } from './BookAction'
 import { CompletionRules } from './CompletionRules'
 import { IllustrativeTag } from './IllustrativeTag'
@@ -56,10 +58,13 @@ function Band({
 
 /** Programme overview (brief §3): outcomes, audience, units, prerequisites, effort, trainers, rules. */
 export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
+  const { t } = useTranslation('public')
   const { data, isPending, isError, refetch } = useQuery(programmeQuery(code))
   const copy = PROGRAMME_COPY[code]
   const tone = PROGRAMME_TONE[code]
-  const cta = useProgrammeCta(code, data?.cta ?? '')
+  const text = (field: string) => programmeText(t, code, field)
+  const cta = useProgrammeCta(code, data ? text('cta') : '')
+  const outcomes = Array.from({ length: copy.outcomeCount }, (_, i) => `outcome${i + 1}`)
 
   const primary = data ? (
     <Magnetic className="w-fit">
@@ -83,9 +88,9 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
     <PublicLayout overlayHeader>
       <PageHero
         image={copy.heroImage}
-        alt={copy.heroAlt}
+        alt={text('heroAlt')}
         programme={code}
-        back={{ label: 'All programmes', to: '/programmes' }}
+        back={{ label: t('programme.allProgrammes'), to: '/programmes' }}
         eyebrow={
           <span className="flex flex-wrap items-center gap-2">
             <span
@@ -94,21 +99,23 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                 tone.solid,
               )}
             >
-              <span className="font-display text-base leading-none">{code}</span>
+              <span className="font-display text-base leading-none">
+                {programmeLetter(t, code)}
+              </span>
               <span aria-hidden className="h-3 w-px bg-current opacity-40" />
-              Program {code}
+              {programmeName(t, code)}
             </span>
             {code === 'C' ? <IllustrativeTag /> : null}
           </span>
         }
-        title={data?.title ?? <Skeleton className="h-14 w-80 bg-white/20" />}
+        title={data ? text('title') : <Skeleton className="h-14 w-80 bg-white/20" />}
       >
         {data ? (
           <>
             <p className="max-w-2xl border-gold/60 border-s-2 ps-5 text-lg text-white/90 leading-relaxed">
-              {data.summary}
+              {text('summary')}
             </p>
-            <p className="text-sm text-white/75">{data.formatLine}</p>
+            <p className="text-sm text-white/75">{text('formatLine')}</p>
             {primary}
           </>
         ) : null}
@@ -121,7 +128,7 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
         </div>
       ) : isError ? (
         <div className="mx-auto max-w-[1400px] px-4 py-16 md:px-8">
-          <SectionError what="this programme" onRetry={() => refetch()} />
+          <SectionError what={t('errors.programme')} onRetry={() => refetch()} />
         </div>
       ) : (
         <>
@@ -138,27 +145,29 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                   data-reveal
                   className="rounded-2xl border border-maroon/15 bg-rose-mist p-5 text-maroon-deep text-sm leading-relaxed"
                 >
-                  {ILLUSTRATIVE_NOTE}
+                  {t('programme.illustrativeNote')}
                 </p>
               ) : null}
               <div className="grid gap-10 lg:grid-cols-[7fr_5fr] lg:gap-12">
                 <div className="grid content-start gap-6">
                   <div data-reveal>
-                    <Eyebrow index="01">Outcomes</Eyebrow>
+                    <Eyebrow className="rtl:tracking-normal" index="01">
+                      {t('programme.outcomesEyebrow')}
+                    </Eyebrow>
                   </div>
                   <h2
                     id="outcomes-title"
-                    className="font-display font-light text-4xl leading-[1.08] md:text-5xl"
+                    className="font-display font-light text-4xl leading-[1.08] rtl:leading-[1.4] md:text-5xl"
                   >
-                    <SplitWords text="What you will be able to do" />
+                    <SplitWords text={t('programme.outcomesTitle')} />
                   </h2>
                   <ul className="grid gap-3">
-                    {copy.outcomes.map((outcome, index) => (
+                    {outcomes.map((outcome, index) => (
                       <li
                         key={outcome}
                         data-reveal="card"
                         className={cn(
-                          'group relative flex gap-4 overflow-hidden rounded-2xl bg-gradient-to-r via-white to-white p-5 shadow-card ring-1 ring-ink/5 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 motion-reduce:hover:transform-none',
+                          'group relative flex gap-4 overflow-hidden rounded-2xl bg-gradient-to-r via-white to-white p-5 rtl:bg-gradient-to-l shadow-card ring-1 ring-ink/5 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 motion-reduce:hover:transform-none',
                           accent(index).mist,
                         )}
                       >
@@ -170,7 +179,7 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                           aria-hidden
                           className={cn('mt-0.5 size-6 shrink-0', accent(index).icon)}
                         />
-                        <span className="text-base leading-relaxed">{outcome}</span>
+                        <span className="text-base leading-relaxed">{text(outcome)}</span>
                       </li>
                     ))}
                   </ul>
@@ -187,9 +196,9 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                     className="qt-star-tile-dark absolute inset-x-0 bottom-0 -z-10 h-2/3 [mask-image:linear-gradient(to_top,black,transparent)]"
                   />
                   {[
-                    ['Who it is for', copy.audienceDetail],
-                    ['Prerequisites', copy.prerequisites],
-                    ['Expected effort', copy.effort],
+                    [t('programme.whoFor'), text('audienceDetail')],
+                    [t('programme.prerequisites'), text('prerequisites')],
+                    [t('programme.effort'), text('effort')],
                   ].map(([term, detail]) => (
                     <div
                       key={term}
@@ -216,17 +225,23 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
             className="bg-gradient-to-br from-teal-mist via-sky-mist/70 to-sand"
           >
             <SectionHeading
-              eyebrow={<Eyebrow index="02">Your path</Eyebrow>}
+              eyebrow={
+                <Eyebrow className="rtl:tracking-normal" index="02">
+                  {t('programme.pathEyebrow')}
+                </Eyebrow>
+              }
               title={
                 <span id="units-title">
-                  <SplitWords text={code === 'C' ? 'Sample unit' : 'Units and stages'} />
+                  <SplitWords
+                    text={code === 'C' ? t('programme.sampleUnitTitle') : t('programme.unitsTitle')}
+                  />
                 </span>
               }
               description={
                 code === 'B'
-                  ? 'The general path is shown. Your profile can change the selection or order of units within the one stage.'
+                  ? t('programme.pathDescriptionB')
                   : code === 'A'
-                    ? 'The standard professional path: foundation units, practice, a trainer session, an assignment and the final assessment.'
+                    ? t('programme.pathDescriptionA')
                     : undefined
               }
             />
@@ -246,13 +261,13 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
           >
             <SectionHeading
               eyebrow={
-                <Eyebrow index="03" tone="maroon">
-                  Completion
+                <Eyebrow className="rtl:tracking-normal" index="03" tone="maroon">
+                  {t('programme.completionEyebrow')}
                 </Eyebrow>
               }
               title={
                 <span id="rules-title">
-                  <SplitWords text="Completion rules" />
+                  <SplitWords text={t('programme.completionTitle')} />
                 </span>
               }
             />
@@ -264,23 +279,23 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
               <SectionHeading
                 tone="light"
                 eyebrow={
-                  <Eyebrow index="04" tone="light">
-                    The people behind it
+                  <Eyebrow className="rtl:tracking-normal" index="04" tone="light">
+                    {t('programme.trainersEyebrow')}
                   </Eyebrow>
                 }
                 title={
                   <span id="trainers-title">
-                    <SplitWords text="Trainers" />
+                    <SplitWords text={t('programme.trainersTitle')} />
                   </span>
                 }
                 description={
                   code === 'B'
-                    ? 'Optional clinics are available with these trainers. They are never required for Program B.'
-                    : 'Fictional trainers approved for this programme.'
+                    ? t('programme.trainersDescriptionB')
+                    : t('programme.trainersDescription')
                 }
               />
               <ul
-                aria-label="Trainers"
+                aria-label={t('programme.trainersTitle')}
                 className="-mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pt-2 pb-6 md:-mx-8 md:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {data.trainers.map((trainer, index) => (
@@ -303,10 +318,14 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
               className="bg-gradient-to-b from-sky-mist via-sand to-teal-mist/60"
             >
               <SectionHeading
-                eyebrow={<Eyebrow index="05">Live learning</Eyebrow>}
+                eyebrow={
+                  <Eyebrow className="rtl:tracking-normal" index="05">
+                    {t('programme.sessionsEyebrow')}
+                  </Eyebrow>
+                }
                 title={
                   <span id="programme-sessions-title">
-                    <SplitWords text="Upcoming sessions" />
+                    <SplitWords text={t('programme.sessionsTitle')} />
                   </span>
                 }
               />
@@ -352,9 +371,7 @@ export function ProgrammeDetailPage({ code }: { code: ProgrammeCode }) {
                     data-reveal
                     className="font-display font-light text-3xl leading-snug md:text-5xl"
                   >
-                    {code === 'A'
-                      ? 'Ready for a structured, certified route? Any Program B progress stays exactly as it is.'
-                      : 'Start with a short profile and a five-question baseline.'}
+                    {code === 'A' ? t('programme.closingA') : t('programme.closingB')}
                   </p>
                   <div data-reveal>
                     <Button

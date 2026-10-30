@@ -1,20 +1,22 @@
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { PersonAvatar } from '@/components/data/PersonAvatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { upcomingSessionsQuery } from '@/features/programmes/queries/programmes.queries'
 import {
   formatLabel,
-  QATAR_TIME_LABEL,
+  qatarTimeLabel,
   sessionDay,
   sessionTimeRange,
 } from '@/features/programmes/utils/format'
 
 /** Learn with expert trainers: the next three real sessions from the seeded schedule. */
 export function TrainersPreview() {
+  const { t } = useTranslation('public')
   const { data, isPending, isError } = useQuery(upcomingSessionsQuery())
   if (isPending) return <Skeleton className="h-48 rounded-xl" />
   if (isError || !data) {
-    return <p className="text-muted-foreground text-sm">Sessions could not be loaded right now.</p>
+    return <p className="text-muted-foreground text-sm">{t('errors.sessionsPreview')}</p>
   }
   return (
     <ul className="grid gap-3">
@@ -31,7 +33,7 @@ export function TrainersPreview() {
             </p>
             <p className="text-muted-foreground">
               {sessionDay(session.startsAt)}, {sessionTimeRange(session.startsAt, session.endsAt)}{' '}
-              {QATAR_TIME_LABEL}
+              {qatarTimeLabel()}
             </p>
           </div>
         </li>
