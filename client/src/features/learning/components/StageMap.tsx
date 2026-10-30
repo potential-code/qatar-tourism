@@ -1,16 +1,18 @@
 import { Check, Lock } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import type { Journey } from '../types'
 
 type Gate = Journey['gates'][number]
 
-const STATE_TEXT: Record<Gate['state'], string> = {
-  completed: 'Complete',
-  current: 'In progress',
-  locked: 'Locked',
-}
+const STATE_KEY = {
+  completed: 'learning.state.completed',
+  current: 'learning.state.inProgress',
+  locked: 'learning.state.locked',
+} as const
 
 /**
  * Program A level and stage map (brief §6): Onboarding, Level 1, Level 2, Final, Certification,
@@ -25,11 +27,12 @@ export function StageMap({
   compact?: boolean
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   if (gates.length === 0) return null
   const done = gates.filter((g) => g.state === 'completed').length
   return (
     <ol
-      aria-label={`Programme stages: ${done} of ${gates.length} complete`}
+      aria-label={t('learning.stageMap.aria', { done, total: gates.length })}
       className={cn(
         'relative grid gap-4',
         compact ? 'sm:grid-cols-5 sm:gap-2' : 'md:grid-cols-5 md:gap-3',
@@ -78,7 +81,7 @@ export function StageMap({
             )}
           </span>
           <div className="flex min-w-0 flex-col gap-1 pb-1">
-            <p className="text-sm font-medium text-ink">{gate.label}</p>
+            <p className="text-sm font-medium text-ink">{tr(gate.label, i18n.language)}</p>
             <p
               className={cn(
                 'text-xs font-medium',
@@ -87,10 +90,12 @@ export function StageMap({
                 gate.state === 'locked' && 'text-muted-foreground',
               )}
             >
-              {STATE_TEXT[gate.state]}
+              {t(STATE_KEY[gate.state])}
             </p>
             {compact ? null : (
-              <p className="text-xs leading-relaxed text-muted-foreground">{gate.explanation}</p>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {tr(gate.explanation, i18n.language)}
+              </p>
             )}
           </div>
         </motion.li>

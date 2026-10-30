@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export interface Crumb {
   label: string
@@ -8,8 +9,9 @@ export interface Crumb {
 }
 
 export function Breadcrumbs({ items }: { items: Crumb[] }) {
+  const { t } = useTranslation('learner')
   return (
-    <nav aria-label="Breadcrumb">
+    <nav aria-label={t('shell.breadcrumb')}>
       <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
         {items.map((item, i) => {
           const last = i === items.length - 1

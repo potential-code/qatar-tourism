@@ -34,8 +34,23 @@ export interface NavContext {
   programmes: readonly ProgrammeCode[] | null
 }
 
+/** Keys of `learner:nav.*`: the learner portal follows the visitor's language (29 Oct update). */
+export type LearnerNavKey =
+  | 'overview'
+  | 'myLearning'
+  | 'assessments'
+  | 'aiPractice'
+  | 'mySessions'
+  | 'assignments'
+  | 'progress'
+  | 'certificates'
+  | 'myLearningRecord'
+  | 'profile'
+
 export interface NavItem {
   label: string
+  /** Translation key under `learner:nav`; `label` stays the English text and the fallback. */
+  labelKey?: LearnerNavKey
   to: string
   icon?: LucideIcon
   /** Nested children render indented under the parent (admin hierarchy, brief §12). */
@@ -56,21 +71,37 @@ export interface NavSection {
 export const LEARNER_NAV: NavSection[] = [
   {
     items: [
-      { label: 'Overview', to: '/learner', icon: LayoutDashboard },
-      { label: 'My learning', to: '/learner/learning', icon: BookOpen },
-      { label: 'Assessments', to: '/learner/assessments', icon: ClipboardCheck },
-      { label: 'AI practice', to: '/learner/practice', icon: MessagesSquare },
-      { label: 'My sessions', to: '/learner/sessions', icon: CalendarDays },
-      { label: 'Assignments', to: '/learner/assignments', icon: FileText },
-      { label: 'Progress', to: '/learner/progress', icon: TrendingUp },
+      { label: 'Overview', labelKey: 'overview', to: '/learner', icon: LayoutDashboard },
+      { label: 'My learning', labelKey: 'myLearning', to: '/learner/learning', icon: BookOpen },
+      {
+        label: 'Assessments',
+        labelKey: 'assessments',
+        to: '/learner/assessments',
+        icon: ClipboardCheck,
+      },
+      {
+        label: 'AI practice',
+        labelKey: 'aiPractice',
+        to: '/learner/practice',
+        icon: MessagesSquare,
+      },
+      { label: 'My sessions', labelKey: 'mySessions', to: '/learner/sessions', icon: CalendarDays },
+      { label: 'Assignments', labelKey: 'assignments', to: '/learner/assignments', icon: FileText },
+      { label: 'Progress', labelKey: 'progress', to: '/learner/progress', icon: TrendingUp },
       {
         label: 'Certificates',
+        labelKey: 'certificates',
         to: '/learner/certificates',
         icon: Award,
         visible: hasCertificationTrack,
       },
-      { label: 'My Learning Record', to: '/learner/record', icon: History },
-      { label: 'Profile', to: '/learner/profile', icon: UserRound },
+      {
+        label: 'My Learning Record',
+        labelKey: 'myLearningRecord',
+        to: '/learner/record',
+        icon: History,
+      },
+      { label: 'Profile', labelKey: 'profile', to: '/learner/profile', icon: UserRound },
     ],
   },
 ]

@@ -1,10 +1,12 @@
 import { Link } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern } from '@/components/brand/CornerPattern'
 import type { Journey } from '@/features/learning/types'
 import { CompetencyChart } from '@/features/progress/components/CompetencyChart'
 
 /** Competency chart on the dashboard (brief §5). */
 export function CompetencyCard({ journey }: { journey: Journey }) {
+  const { t } = useTranslation('learner')
   const programme = journey.enrolment.programme
   return (
     <section
@@ -15,21 +17,21 @@ export function CompetencyCard({ journey }: { journey: Journey }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="competency-title" className="font-display text-2xl font-normal text-ink">
-            Competencies
+            {t('home.competency.title')}
           </h2>
-          <p className="text-sm text-muted-foreground">Five competencies, 20 points each</p>
+          <p className="text-sm text-muted-foreground">{t('home.competency.subtitle')}</p>
         </div>
         <Link
           to="/learner/progress"
           search={{ programme }}
           className="text-sm font-medium text-teal hover:underline"
         >
-          Full progress
+          {t('home.competency.fullProgress')}
         </Link>
       </div>
       <CompetencyChart
         data={journey.competencies}
-        postLabel={programme === 'A' ? 'Final' : 'Post'}
+        postLabel={programme === 'A' ? t('home.final') : t('home.post')}
         showFoundation={programme === 'A'}
       />
     </section>

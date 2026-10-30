@@ -2,11 +2,13 @@ import type { ProgrammeCode } from '@shared/constants'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { tr } from '@/i18n/localised'
 import { ApiError } from '@/lib/api-error'
 import { useSaveResource } from '../../queries/learning.queries'
 import type { UnitContent } from '../../types'
@@ -28,6 +30,7 @@ export function ResourceUnit({
   programme: ProgrammeCode
   completed: boolean
 }) {
+  const { t, i18n } = useTranslation('learner')
   const [checked, setChecked] = useState<string[]>(
     content.saved.checklist.length > 0 || !completed
       ? content.saved.checklist
@@ -42,9 +45,12 @@ export function ResourceUnit({
     save.mutate(
       { programme, checklist: checked, draft, markComplete },
       {
-        onSuccess: (r) => toast.success(r.completedNow ? 'Unit complete' : 'Saved'),
+        onSuccess: (r) =>
+          toast.success(
+            r.completedNow ? t('learning.resource.unitComplete') : t('learning.resource.saved'),
+          ),
         onError: (e) =>
-          toast.error(e instanceof ApiError ? e.message : 'Could not save. Try again.'),
+          toast.error(e instanceof ApiError ? e.message : t('learning.resource.saveError')),
       },
     )
 
@@ -55,11 +61,9 @@ export function ResourceUnit({
         className="flex flex-col gap-4 rounded-xl border bg-white p-6 shadow-sm"
       >
         <h2 id="checklist-title" className="font-display text-2xl font-normal text-ink">
-          Visitor response checklist
+          {t('learning.resource.checklistTitle')}
         </h2>
-        <p className="text-sm text-muted-foreground">
-          One page to keep beside you when a plan changes.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('learning.resource.checklistIntro')}</p>
         <ul className="flex flex-col gap-3">
           {content.checklist.map((item, index) => {
             const id = `c05-${item.key}`
@@ -78,7 +82,8 @@ export function ResourceUnit({
                   className="mt-0.5"
                 />
                 <Label htmlFor={id} className="block font-normal leading-relaxed text-ink">
-                  <span className="me-1 font-display text-teal">{index + 1}.</span> {item.label}
+                  <span className="me-1 font-display text-teal">{index + 1}.</span>{' '}
+                  {tr(item.label, i18n.language)}
                 </Label>
               </li>
             )
@@ -90,14 +95,13 @@ export function ResourceUnit({
         className="flex flex-col gap-4 rounded-xl border bg-white p-6 shadow-sm"
       >
         <h2 id="exercise-title" className="font-display text-2xl font-normal text-ink">
-          {programme === 'A' ? 'Draft your response plan' : 'Plan your short response'}
+          {programme === 'A'
+            ? t('learning.resource.draftTitleA')
+            : t('learning.resource.draftTitleB')}
         </h2>
-        <p className="text-sm text-muted-foreground">
-          A visitor’s booked experience has changed. Note how you would acknowledge it, what you
-          would ask, and the next step you would offer.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('learning.resource.exerciseIntro')}</p>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="c05-draft">Your notes</Label>
+          <Label htmlFor="c05-draft">{t('learning.resource.notes')}</Label>
           <Textarea
             id="c05-draft"
             rows={8}
@@ -107,25 +111,26 @@ export function ResourceUnit({
             disabled={completed && programme === 'A'}
           />
           <p className="text-xs text-muted-foreground">
-            {count} words
+            {t('learning.resource.words', { n: count })}
             {programme === 'A'
-              ? `. At least ${content.minDraftWords} words to complete the unit.`
+              ? t('learning.resource.minWords', { n: content.minDraftWords })
               : '.'}
           </p>
         </div>
         {completed ? (
           <p className="inline-flex items-center gap-2 text-sm font-medium text-teal">
-            <CheckCircle2 aria-hidden className="size-4" /> Unit complete
+            <CheckCircle2 aria-hidden className="size-4" /> {t('learning.resource.unitComplete')}
           </p>
         ) : null}
         <div className="mt-auto flex flex-wrap gap-3">
           <Button variant="outline" disabled={save.isPending} onClick={() => submit(false)}>
-            Save notes
+            {t('learning.resource.save')}
           </Button>
           {content.completesOnApproval ? (
             <Button asChild>
               <Link to={'/learner/assignments' as never} search={{ programme } as never}>
-                Submit your short response <ArrowRight aria-hidden className="rtl:-scale-x-100" />
+                {t('learning.resource.submitShort')}{' '}
+                <ArrowRight aria-hidden className="rtl:-scale-x-100" />
               </Link>
             </Button>
           ) : completed ? null : (
@@ -133,15 +138,12 @@ export function ResourceUnit({
               disabled={save.isPending || !allTicked || count < content.minDraftWords}
               onClick={() => submit(true)}
             >
-              Mark complete
+              {t('learning.resource.markComplete')}
             </Button>
           )}
         </div>
         {content.completesOnApproval ? (
-          <p className="text-xs text-muted-foreground">
-            In Program B this unit completes when a trainer approves your 100 to 150 word short
-            response.
-          </p>
+          <p className="text-xs text-muted-foreground">{t('learning.resource.approvalNote')}</p>
         ) : null}
       </section>
     </div>

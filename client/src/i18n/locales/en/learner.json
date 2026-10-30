@@ -2,10 +2,1015 @@
   "nav": {
     "overview": "Overview",
     "myLearning": "My learning",
+    "assessments": "Assessments",
+    "aiPractice": "AI practice",
+    "mySessions": "My sessions",
+    "assignments": "Assignments",
+    "progress": "Progress",
+    "certificates": "Certificates",
     "myLearningRecord": "My Learning Record",
-    "certificates": "Certificates"
+    "profile": "Profile"
   },
   "programmeSwitcher": {
     "label": "My programmes"
+  },
+  "time": {
+    "qatarTime": "Qatar time",
+    "range": "{{from}} to {{to}}",
+    "yourTime": "{{date}}, {{time}} your time",
+    "started": "Started",
+    "inHour": "In {{n}} hour",
+    "inHours": "In {{n}} hours",
+    "inDay": "In {{n}} day",
+    "inDays": "In {{n}} days"
+  },
+  "learning": {
+    "page": {
+      "title": "My learning",
+      "descriptionB": "One stage, Visitor Service Essentials. Your units are personalised to your profile and baseline.",
+      "descriptionA": "Two levels with explicit stages. Each stage opens when the one before it is complete.",
+      "descriptionC": "An illustrative sample programme with a single preview unit.",
+      "levelsAndStages": "Levels and stages",
+      "required": "Required",
+      "requiredSummary": "{{done}} of {{total}} complete, about {{time}} remaining",
+      "levelPrefix": "Level {{level}}: ",
+      "recommended": "Recommended",
+      "noExtras": "No extra units. Your baseline showed no gaps outside your path.",
+      "whyThisPath": "Why this path",
+      "demoMode": "Demo mode",
+      "viewDetails": "View recommendation details",
+      "loading": "Loading your learning path"
+    },
+    "error": {
+      "title": "This could not be loaded",
+      "generic": "Check your connection and try again. Your progress is saved.",
+      "retry": "Try again",
+      "unitTitle": "This unit could not be opened"
+    },
+    "duration": {
+      "min": "{{n}} min",
+      "hours": "{{h}} h",
+      "hoursMin": "{{h}} h {{m}} min"
+    },
+    "state": {
+      "completed": "Complete",
+      "inProgress": "In progress",
+      "available": "Ready to start",
+      "locked": "Locked"
+    },
+    "kind": {
+      "course": "Unit",
+      "assessmentPre": "Assessment",
+      "assessmentPost": "Assessment",
+      "assessmentFormative": "Quiz",
+      "aiPractice": "AI practice",
+      "session": "Trainer-led session",
+      "assignment": "Assignment",
+      "fallback": "Step"
+    },
+    "card": {
+      "step": "Step {{n}}",
+      "recommended": "Recommended",
+      "simulatedAi": "Simulated AI practice"
+    },
+    "programme": {
+      "label": "Programme",
+      "name": "Program {{code}}",
+      "only": "Program {{code}}: {{title}}"
+    },
+    "resume": {
+      "title": "Resume where you left off",
+      "percent": "{{n}}% complete",
+      "button": "Resume"
+    },
+    "stageMap": {
+      "aria": "Programme stages: {{done}} of {{total}} complete"
+    },
+    "notEnrolled": {
+      "title": "You are not enrolled in a programme yet",
+      "description": "Program B is open to everyone and starts with a short baseline. Program A adds trainer-led sessions and a demonstration certificate.",
+      "action": "Explore programmes"
+    },
+    "unit": {
+      "loading": "Loading unit",
+      "minutes": "{{n}} minutes",
+      "complete": "Complete",
+      "percentComplete": "{{n}}% complete",
+      "about": "About this unit",
+      "completion": "Completion",
+      "format": "Format",
+      "formatValue": "{{label}}, version {{version}}",
+      "navAria": "Path navigation",
+      "next": "Next",
+      "previous": "Previous",
+      "back": "Back to my path"
+    },
+    "preview": {
+      "badge": "{{label}}: illustrative programme",
+      "worksheet": "Story-planning worksheet",
+      "viewed": "Preview viewed",
+      "markViewed": "Mark as viewed"
+    },
+    "session": {
+      "title": "Book a trainer-led session",
+      "body": "Role-play in pairs with a trainer, receive feedback and a scored demonstration. You need attendance and a session score of at least 70 to complete this step. Choose an eligible in-person or live-online session in Qatar time.",
+      "goTo": "Go to My sessions"
+    },
+    "transcript": {
+      "title": "Transcript"
+    },
+    "video": {
+      "complete": "{{title}} is complete",
+      "aria": "{{title}}, sample video with captions",
+      "captionsLabel": "English captions",
+      "badge": "Sample video (captioned)",
+      "noVoice": "There is no voice track. The narration is shown as captions and in the transcript.",
+      "watched": "Watched {{n}}%",
+      "completeAt": ". Complete at {{n}}% watched.",
+      "answerQuestions": ". Answer the three questions below to complete the unit.",
+      "progressAria": "Video watched"
+    },
+    "branching": {
+      "whatDoYouDo": "What do you do?",
+      "correct": "Correct. ",
+      "notQuite": "Not quite. ",
+      "continue": "Continue",
+      "optionIntro": "The family is interested in culture and needs step-free access. Both options are verified.",
+      "offerOption": "Offer this option",
+      "confirmPrompt": "The family chooses it. How do you close the conversation?",
+      "saveError": "The result could not be saved. Try again.",
+      "doneTitle": "Preview complete",
+      "scoreLine": "Score {{score}} out of 100",
+      "afterRetry": ", after {{n}} retry",
+      "afterRetries": ", after {{n}} retries",
+      "firstTime": ", right first time",
+      "summary": ". Your best score is {{best}}. Choices recorded: {{choices}}, then {{option}} and a confirmed next step.",
+      "retry": "Retry the scenario",
+      "bestBefore": "Completed before with a best score of {{score}}. You can retry at any time."
+    },
+    "formative": {
+      "title": "Check your understanding",
+      "summary": "{{correct}} of {{total}} answered correctly",
+      "question": "Question {{n}}",
+      "tryAgain": "Try again",
+      "check": "Check answer"
+    },
+    "resource": {
+      "saved": "Saved",
+      "unitComplete": "Unit complete",
+      "saveError": "Could not save. Try again.",
+      "checklistTitle": "Visitor response checklist",
+      "checklistIntro": "One page to keep beside you when a plan changes.",
+      "draftTitleA": "Draft your response plan",
+      "draftTitleB": "Plan your short response",
+      "exerciseIntro": "A visitor’s booked experience has changed. Note how you would acknowledge it, what you would ask, and the next step you would offer.",
+      "notes": "Your notes",
+      "words": "{{n}} words",
+      "minWords": ". At least {{n}} words to complete the unit.",
+      "save": "Save notes",
+      "submitShort": "Submit your short response",
+      "markComplete": "Mark complete",
+      "approvalNote": "In Program B this unit completes when a trainer approves your 100 to 150 word short response."
+    }
+  },
+  "progress": {
+    "page": {
+      "title": "Progress",
+      "description": "Knowledge results, practice and trainer-marked work, kept separate so each tells its own story.",
+      "loading": "Loading progress",
+      "programmeProgress": "Programme progress",
+      "remaining": "About {{time}} remaining",
+      "allDone": "Every required step complete",
+      "baseline": "Baseline",
+      "none": "None",
+      "notYet": "Not yet",
+      "final": "Final",
+      "post": "Post",
+      "points": "{{sign}}{{n}} percentage points",
+      "sessionScore": "Trainer session score",
+      "sessionNote": "Pass mark 70, attended sessions only",
+      "practiceBest": "Practice best",
+      "noneYet": "None yet",
+      "practiceNote": "Simulated AI practice, formative only",
+      "competencies": "Competencies",
+      "competenciesNote": "Points out of 20 per competency in each knowledge assessment."
+    },
+    "chart": {
+      "baseline": "Baseline",
+      "foundation": "Foundation quiz",
+      "notYet": "Not yet",
+      "pointsOf": "{{n}} / 20",
+      "caption": "Points per competency, out of 20",
+      "captionCompared": "Points per competency, out of 20, baseline compared with {{post}}",
+      "competency": "Competency",
+      "notTaken": "Not yet taken"
+    },
+    "history": {
+      "title": "Knowledge assessments",
+      "subtitle": "Every attempt, newest first. Times in Qatar time.",
+      "emptyTitle": "No attempts yet",
+      "emptyDescription": "Your baseline will appear here once you take it.",
+      "tableLabel": "Assessment attempts",
+      "assessment": "Assessment",
+      "attempt": "Attempt",
+      "score": "Score",
+      "version": "Version",
+      "date": "Date",
+      "inProgress": "In progress"
+    },
+    "practice": {
+      "title": "Practice scores",
+      "subtitle": "Formative only. They never count towards knowledge scores or certification.",
+      "emptyTitle": "No practice yet",
+      "emptyDescription": "Text or voice role-play with a scripted visitor, scored on five criteria.",
+      "goTo": "Go to AI practice",
+      "best": "Best",
+      "latest": "Latest",
+      "voice": "Voice",
+      "text": "Text",
+      "nextTime": "Next time: "
+    }
+  },
+  "assignments": {
+    "page": {
+      "title": "Assignments",
+      "description": "Submit your work, read your trainer's feedback and revise when asked. Every version you submit is kept.",
+      "emptyTitle": "No assignments yet",
+      "emptyDescription": "Assignments appear when you join Program A or Program B. Program C is an illustrative sample with no assignments.",
+      "filtered": "Showing Program {{code}} assignments.",
+      "showAll": "Show all programmes",
+      "loadWhat": "Your assignments",
+      "passMarkTitle": "Pass mark",
+      "passMarkBody": "Assignments pass at {{score}} out of 100. This is an illustrative demo setting.",
+      "revisionsTitle": "Revisions",
+      "revisionsBody": "If your trainer returns your work, revise it and submit a new version.",
+      "uploadsTitle": "Uploads",
+      "uploadsBody": "Program A accepts PDF or DOCX up to {{doc}} MB, or MP4 up to {{video}} MB."
+    },
+    "status": {
+      "submitted": "Submitted",
+      "underReview": "Under review",
+      "returned": "Returned for revision",
+      "approved": "Approved",
+      "notStarted": "Not started",
+      "waiting": "Waiting for your trainer"
+    },
+    "card": {
+      "program": "Program {{code}}",
+      "start": "Start assignment",
+      "viewSubmission": "View submission",
+      "readFeedback": "Read feedback and revise",
+      "viewFeedback": "View feedback",
+      "versionOne": "{{n}} version",
+      "versionMany": "{{n}} versions",
+      "latestMark": ", latest mark {{score}}/100",
+      "lastSubmitted": "Last submitted {{date}}",
+      "words": "{{min}} to {{max}} words",
+      "wordsOrUpload": "{{min}} to {{max}} words, or upload a file"
+    },
+    "detail": {
+      "notFoundTitle": "Assignment not found",
+      "notFoundDescription": "This assignment is not part of your programmes.",
+      "back": "Back to assignments",
+      "loadWhat": "This assignment",
+      "crumb": "Assignments",
+      "programLine": "Program {{code}}: {{title}}",
+      "historyTitle": "Version history",
+      "historyEmpty": "Each version you submit is kept here with its feedback."
+    },
+    "brief": {
+      "title": "Assignment brief",
+      "length": "Length",
+      "lengthWords": "{{min}} to {{max}} words",
+      "lengthWordsFile": "{{min}} to {{max}} words, or a file",
+      "passMark": "Pass mark",
+      "revisions": "Revisions",
+      "permitted": "Permitted"
+    },
+    "feedback": {
+      "title": "Trainer feedback on version {{version}}",
+      "meets": "Meets the pass mark of {{pass}}",
+      "below": "Below the pass mark of {{pass}}",
+      "yourTrainer": "Your trainer",
+      "byLine": "{{name}}, {{date}}",
+      "updated": "Your trainer updated this mark on {{date}}."
+    },
+    "file": {
+      "sample": ", sample file, not stored in this demo",
+      "unavailable": ", file not available in this browser",
+      "open": "Open",
+      "openNewTab": " {{name}} in a new tab",
+      "download": "Download"
+    },
+    "dropzone": {
+      "hint": "PDF or DOCX up to {{doc}} MB, or MP4 up to {{video}} MB",
+      "drag": "Drag a file here, or",
+      "choose": "Choose a file",
+      "uploading": ", uploading {{percent}}%",
+      "ready": ", uploaded and ready to submit",
+      "retry": "Retry",
+      "remove": "Remove file",
+      "progress": "Upload progress",
+      "saveFailed": "The file could not be saved. Try again."
+    },
+    "latest": {
+      "version": "Version {{version}}",
+      "submitted": "Submitted {{date}}",
+      "words": "{{n}} words"
+    },
+    "criteria": {
+      "title": "How it is marked",
+      "points": "{{n}} points"
+    },
+    "rubric": {
+      "overall": "The trainer gave one overall mark for this version."
+    },
+    "banner": {
+      "notStartedTitle": "Not started yet",
+      "notStartedBody": "Read the brief, then submit your work below. The pass mark is {{pass}}, and revisions are permitted.",
+      "yourTrainer": "your trainer",
+      "waitingTitle": "Version {{version}} is with {{marker}}",
+      "waitingBody": "You will get an in-app notification when it has been marked.",
+      "returnedTitle": "Version {{version}} was returned for revision",
+      "returnedBody": "Read the feedback, then submit a revised version below. Your earlier version stays in your history.",
+      "approvedTitle": "Approved with {{score}}/100",
+      "approvedBody": "This requirement is complete. Your version history and feedback stay available here."
+    },
+    "composer": {
+      "toastTitle": "Version {{version}} submitted",
+      "toastBody": "Your trainer has an in-app notification and a simulated demo email.",
+      "hintFile": "Your file is ready. Any text you add is sent as a covering note.",
+      "hintWordsOrFile": "Write {{min}} to {{max}} words, or upload a file instead.",
+      "hintWords": "Write {{min}} to {{max}} words.",
+      "reviseTitle": "Revise and resubmit as version {{version}}",
+      "yourSubmission": "Your submission",
+      "reviseBody": "Version {{version}} stays in your history. Use the feedback to improve this version.",
+      "draftBody": "Your work saves in this browser as you type, so nothing is lost if you leave.",
+      "labelPlan": "Your response plan",
+      "labelResponse": "Your response",
+      "startFrom": "Start from version {{version}}",
+      "placeholderPlan": "Discovery questions, two feasible options, an escalation path and a follow-up message.",
+      "placeholderResponse": "Acknowledge the change, ask one useful question and offer a clear next step.",
+      "orUpload": "Or upload instead",
+      "uploadBody": "Upload your plan as a document, or a two-minute fictional role-play video.",
+      "errorTitle": "Not submitted",
+      "errorBody": "{{message}} Your text is still here and saved in this browser.",
+      "submitting": "Submitting",
+      "submit": "Submit version {{version}}"
+    },
+    "history": {
+      "version": "Version {{version}}",
+      "shown": " (shown)",
+      "submitted": "Submitted {{date}}",
+      "show": "Show response",
+      "hide": "Hide response",
+      "words": " ({{n}} words)",
+      "marked": "Marked",
+      "by": " by ",
+      "theTrainer": "the trainer",
+      "corrected": ". Mark corrected later.",
+      "waiting": "Waiting for marking.",
+      "open": "Open version {{version}}"
+    },
+    "wordCount": {
+      "range": "{{min}} to {{max}} words",
+      "neededOne": "{{n}} more word needed",
+      "neededMany": "{{n}} more words needed",
+      "overOne": "{{n}} word over the limit",
+      "overMany": "{{n}} words over the limit",
+      "within": "Within the word range",
+      "total": "/ {{min}} to {{max}} words"
+    }
+  },
+  "roleplay": {
+    "loadError": {
+      "title": "{{what}} could not load",
+      "description": "Check your connection and try again. Nothing you have saved is lost.",
+      "retry": "Try again"
+    },
+    "modes": {
+      "text": "Text",
+      "voice": "Voice"
+    },
+    "bands": {
+      "strong": "Strong",
+      "developing": "Developing",
+      "building": "Building"
+    },
+    "overview": {
+      "crumb": "AI practice",
+      "title": "AI practice",
+      "description": "Practise real visitor conversations by text or voice, then see your score with evidence from what you said. Practice is formative: trainer marks and programme rules decide certification.",
+      "statScored": "Conversations scored",
+      "statScoredNote": "Across all four scenarios",
+      "statBest": "Best score",
+      "statLatest": "Latest score",
+      "completeOne": "Complete a conversation",
+      "notYet": "Not yet",
+      "chooseTitle": "Choose a scenario",
+      "attemptsTitle": "Your attempts",
+      "attemptsLoadWhat": "Your attempts",
+      "loadWhat": "AI practice",
+      "howTitle": "How scoring works",
+      "howBody1": "Each conversation is scored on five criteria from 0 to 4: empathy and professionalism, discovery questions, clarity, accuracy and boundaries, and solution and follow-through. The total out of 20 becomes a score out of 100.",
+      "howBody2": "Every criterion quotes what you said and gives one thing to try next. Accent, voice and background are never scored."
+    },
+    "scenario": {
+      "best": "Best",
+      "latest": "Latest",
+      "notYet": "Not yet",
+      "minutes": "{{n}} min",
+      "again": "Practise again",
+      "start": "Start"
+    },
+    "history": {
+      "emptyTitle": "No attempts yet",
+      "emptyDescription": "Your scored conversations will appear here, with your best and latest scores.",
+      "attemptWord": "{{band}} attempt",
+      "best": "Best",
+      "latest": "Latest"
+    },
+    "session": {
+      "scenarioCrumb": "Scenario",
+      "intro": "Read your goal, choose how to reply, then start.",
+      "loadWhat": "This scenario",
+      "notFoundTitle": "Scenario not found",
+      "notFoundDescription": "This practice scenario does not exist. Choose one of the four sample scenarios.",
+      "back": "Back to AI practice",
+      "noProgrammeTitle": "No programme to practise in",
+      "noProgrammeDescription": "AI practice is part of Program A and Program B. Join a programme to start."
+    },
+    "setup": {
+      "about": "About {{n}} minutes",
+      "visitorSays": "The visitor says",
+      "goal": "Your goal",
+      "howTitle": "How do you want to practise?",
+      "textTitle": "Text",
+      "textDescription": "Type your replies in a chat.",
+      "voiceTitle": "Voice",
+      "voiceDescription": "Speak your replies. You approve the microphone first.",
+      "recordIn": "Record this practice in",
+      "programmeOption": "Program {{code}}: {{title}}",
+      "note": "A conversation takes four to six replies. You are scored on what you say, never on accent, voice or background.",
+      "start": "Start conversation"
+    },
+    "conversation": {
+      "goal": "Your goal",
+      "show": "Show",
+      "startOver": "Start over",
+      "regionLabel": "{{title}} conversation",
+      "textPractice": "Text practice",
+      "voicePractice": "Voice practice",
+      "failedTitle": "Your reply was not sent",
+      "failedBody": "The connection dropped. Your words are back in the box: send them again.",
+      "completeTitle": "Conversation complete",
+      "completeBody": "Get your score on five criteria, with evidence from what you said.",
+      "scoring": "Scoring your conversation",
+      "getFeedback": "Get feedback",
+      "typedFallback": "Typed fallback for voice practice.",
+      "saveFailedTitle": "Feedback could not be saved",
+      "saveFailedBody": "Your conversation is still here. Try again in a moment."
+    },
+    "side": {
+      "goal": "Your goal",
+      "looksAt": "Feedback looks at",
+      "startOver": "Start over"
+    },
+    "chat": {
+      "conversation": "Conversation",
+      "visitor": "Visitor (simulated)",
+      "you": "You",
+      "playVisitor": "Play visitor voice",
+      "typing": "The visitor is replying"
+    },
+    "turns": {
+      "complete": "Conversation complete",
+      "replyOne": "{{n}} reply, 4 to 6 needed",
+      "replyMany": "{{n}} replies, 4 to 6 needed"
+    },
+    "text": {
+      "label": "Your reply",
+      "placeholder": "Write what you would say to the visitor",
+      "send": "Send reply",
+      "hint": "Press Enter to send. Shift and Enter adds a new line."
+    },
+    "voice": {
+      "introTitle": "Voice practice uses your microphone",
+      "introBody": "Nothing is recorded until you press Record. You can check and edit the transcript before sending it.",
+      "allow": "Allow microphone",
+      "typeInstead": "Type instead",
+      "record": "Record your reply",
+      "wait": "Wait for the visitor to finish.",
+      "pressRecord": "Press Record, speak your reply, then press Stop.",
+      "noSpeech": "Speech to text is not available in this browser. After recording, type what you said.",
+      "recording": "Recording",
+      "stop": "Stop",
+      "listening": "Listening...",
+      "recordingTypeAfter": "Recording. Type what you said after you stop.",
+      "transcriptLabel": "Your transcript (edit before sending)",
+      "nothingHeard": "Nothing was heard. Record again or type your reply.",
+      "typeWhatSaid": "Type what you said to the visitor.",
+      "recordAgain": "Record again",
+      "sendReply": "Send reply"
+    },
+    "fallback": {
+      "deniedTitle": "Microphone access is blocked",
+      "deniedBody": "Your browser did not allow the microphone. To use voice, allow it from the address bar and reload. You can also watch a recorded demonstration or type your replies.",
+      "unsupportedTitle": "Voice is not available in this browser",
+      "unsupportedBody": "This browser cannot use a microphone here. Watch a recorded demonstration or type your replies instead.",
+      "watch": "Watch recorded demonstration",
+      "type": "Type my replies"
+    },
+    "demo": {
+      "region": "Prerecorded demonstration",
+      "title": "Prerecorded demonstration",
+      "tag": "Recorded demonstration, not your attempt",
+      "loadFailed": "The demonstration could not load.",
+      "retry": "Try again",
+      "thread": "Demonstration conversation",
+      "replay": "Replay",
+      "typeInstead": "Practise by typing instead"
+    },
+    "result": {
+      "allScenarios": "All scenarios",
+      "tryAgain": "Try again",
+      "title": "Feedback: {{scenario}}",
+      "practiceLine": "{{mode}} practice, Program {{code}}, {{date}}",
+      "loadWhat": "This feedback",
+      "rubricTitle": "Rubric",
+      "rubricBody": "Five criteria, each from 0 to 4, with a quote from your conversation as evidence.",
+      "transcriptTitle": "Transcript",
+      "transcriptLabel": "Conversation transcript",
+      "historyTitle": "Attempts at this scenario",
+      "historyLoadWhat": "Attempt history",
+      "formative": "AI practice is formative. Trainer marks and programme rules control certification. Accent, voice and background are never scored.",
+      "usedDemo": "Recorded demonstration was used"
+    },
+    "criterion": {
+      "outOf": "{{score}} out of {{max}}",
+      "evidence": "Evidence: ",
+      "suggestion": "Suggestion: "
+    },
+    "score": {
+      "aria": "Score {{score}} out of 100, {{band}}",
+      "outOf": "out of 100",
+      "strength": "Strength",
+      "improve": "Improve",
+      "retry": "Suggested retry"
+    }
+  },
+  "profile": {
+    "whyWeAsk": "Your profile helps us recommend relevant learning.",
+    "steps": {
+      "work": {
+        "title": "Your work",
+        "why": "Your organisation type and job function choose the learning path that fits your role."
+      },
+      "locale": {
+        "title": "Where and how you learn",
+        "why": "Language and accessibility preferences help us present content in the way that works for you."
+      },
+      "goals": {
+        "title": "Goals and availability",
+        "why": "Your goals and weekly time shape the order of units and the time estimate for your path."
+      }
+    },
+    "errors": {
+      "organisationId": "Choose your organisation, or select Other and enter its name",
+      "organisationOther": "Enter your organisation name",
+      "organisationType": "Choose the organisation type",
+      "jobTitle": "Enter your job title",
+      "jobFunction": "Choose your job function",
+      "seniority": "Choose your seniority",
+      "experience": "Choose your experience",
+      "country": "Choose your country",
+      "preferredLanguage": "Choose your preferred learning language",
+      "goals": "Choose between one and three goals",
+      "weeklyMinutes": "Choose your weekly learning time",
+      "acceptTerms": "Accept the demo terms and privacy information to finish",
+      "mobile": "Use 30 characters or fewer",
+      "accessibilityRequest": "Use 500 characters or fewer"
+    },
+    "options": {
+      "organisationType": {
+        "hotel_accommodation": "Hotel or accommodation",
+        "tour_operator": "Tour operator",
+        "transport": "Transport",
+        "travel_trade": "Travel trade",
+        "attraction_venue": "Attraction or venue",
+        "public_sector": "Public sector",
+        "education": "Education",
+        "independent": "Independent",
+        "other": "Other"
+      },
+      "jobFunction": {
+        "guest_services": "Guest services",
+        "front_office": "Front office",
+        "guiding": "Guiding",
+        "transport": "Transport",
+        "sales": "Sales",
+        "operations": "Operations",
+        "training": "Training",
+        "management": "Management",
+        "other": "Other"
+      },
+      "seniority": {
+        "student_trainee": "Student or trainee",
+        "entry_level": "Entry level",
+        "experienced_professional": "Experienced professional",
+        "supervisor": "Supervisor",
+        "manager": "Manager",
+        "senior_leader": "Senior leader",
+        "independent_professional": "Independent professional"
+      },
+      "experience": {
+        "lt_1": "Less than 1 year",
+        "1_3": "1–3 years",
+        "4_7": "4–7 years",
+        "8_plus": "8 or more years"
+      },
+      "goal": {
+        "visitor_welcome": "Visitor welcome",
+        "communication": "Communication",
+        "complaint_handling": "Complaint handling",
+        "guiding": "Guiding",
+        "storytelling": "Storytelling",
+        "leadership": "Leadership"
+      },
+      "language": {
+        "English": "English",
+        "Arabic": "Arabic",
+        "French": "French",
+        "Hindi": "Hindi",
+        "Portuguese": "Portuguese",
+        "Tagalog": "Tagalog",
+        "Urdu": "Urdu"
+      },
+      "country": {
+        "Qatar": "Qatar",
+        "Bahrain": "Bahrain",
+        "Egypt": "Egypt",
+        "India": "India",
+        "Jordan": "Jordan",
+        "Kuwait": "Kuwait",
+        "Lebanon": "Lebanon",
+        "Nepal": "Nepal",
+        "Oman": "Oman",
+        "Pakistan": "Pakistan",
+        "Philippines": "Philippines",
+        "SaudiArabia": "Saudi Arabia",
+        "SriLanka": "Sri Lanka",
+        "UnitedArabEmirates": "United Arab Emirates",
+        "UnitedKingdom": "United Kingdom",
+        "Other": "Other"
+      }
+    },
+    "common": {
+      "optional": "Optional",
+      "tryAgain": "Try again",
+      "signOut": "Sign out",
+      "homeLabel": "Qatar Tourism Academy home",
+      "stepsLabel": "Profile steps",
+      "stepN": "Step {{n}}",
+      "stepOf": "Step {{step}} of 3, {{code}}"
+    },
+    "status": {
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "awaiting_review": "Awaiting review",
+      "completed": "Completed"
+    },
+    "revision": {
+      "ariaLabel": "Revised path for Program {{programme}}",
+      "title": "A revised path is recommended for Program {{programme}}",
+      "matches": "Your updated profile matches <strong>{{path}}</strong>",
+      "insteadOf": " instead of {{path}}",
+      "completedStay": ". Units you have completed stay complete.",
+      "switched": "Program {{programme}} now follows {{path}}.",
+      "switchFailed": "The path could not be changed. Try again.",
+      "switch": "Switch to this path",
+      "keep": "Keep my current path"
+    },
+    "panel": {
+      "imgHotel": "A hotel lobby lounge",
+      "imgLibrary": "Visitors in the Qatar National Library",
+      "imgFamily": "A family visiting Al Hazm",
+      "welcome": "Welcome, {{name}}",
+      "privacy": "Trainers see your learner ID and display name only. Optional fields are marked, and you can change every answer later."
+    },
+    "org": {
+      "other": "Other organisation",
+      "change": "Change",
+      "changeLabel": "Change organisation",
+      "placeholder": "Search fictional organisations, for example Demo Pearl",
+      "keepLabel": "Keep current organisation",
+      "listLabel": "Organisations",
+      "searching": "Searching…",
+      "loadFailed": "Organisations could not be loaded.",
+      "noMatch": "No organisation matches “{{query}}”. Choose Other to enter it.",
+      "enterOwn": "Other: enter my organisation"
+    },
+    "work": {
+      "organisation": "Organisation",
+      "organisationHint": "Search the fictional organisations, or choose Independent professional, Not currently employed or Other.",
+      "organisationName": "Organisation name",
+      "organisationType": "Organisation type",
+      "typeLocked": "Set by the organisation you chose.",
+      "typePlaceholder": "Choose a type",
+      "jobTitle": "Job title",
+      "jobTitlePlaceholder": "Start typing, for example Front Office Agent",
+      "jobFunction": "Job function",
+      "functionPlaceholder": "Choose a function",
+      "seniority": "Seniority",
+      "seniorityPlaceholder": "Choose a level",
+      "experience": "Experience in visitor-facing roles",
+      "experienceHint": "We use this to pitch examples at the right level. It is never treated as proof of competence.",
+      "experiencePlaceholder": "Choose your experience"
+    },
+    "locale": {
+      "country": "Country",
+      "countryPlaceholder": "Choose a country",
+      "city": "City",
+      "language": "Preferred learning language",
+      "languageHint": "English is the complete content set in this demonstration. We record your preference for future languages.",
+      "languagePlaceholder": "Choose a language",
+      "captions": "Show captions and transcripts by default",
+      "captionsHint": "Every video has captions and a transcript. This turns them on automatically.",
+      "access": "Accessibility support request",
+      "accessHint": "Tell us about anything that would make sessions or content easier to use. Only Academy administrators see this.",
+      "noId": "We never ask for a passport, QID or other identity document."
+    },
+    "goals": {
+      "label": "Your goals",
+      "chooseUpTo": "(choose up to three)",
+      "chosen": "{{n}} of 3 chosen",
+      "weekly": "Weekly learning time",
+      "minutesAWeek": "minutes a week",
+      "mobile": "Mobile number",
+      "mobileHint": "Never shown to trainers by default. Essential session notices still arrive in the app.",
+      "news": "Academy news and programme updates",
+      "newsHint": "Separate from essential session notices, which you always receive.",
+      "readTerms": "Read the demo terms and privacy information",
+      "terms1": "This is a demonstration environment. All learner and training data is fictional, and fictional records are deleted at the end of the trial.",
+      "terms2": "Your profile is used to recommend learning. Trainers see your learner ID and display name only. Administrators see profile fields for reporting. No identity documents are collected.",
+      "accept": "I accept the demo terms and privacy information."
+    },
+    "wizard": {
+      "loadFailedTitle": "Your profile could not be loaded",
+      "loadFailedDesc": "Check your connection and try again.",
+      "completeTitle": "Your profile is complete",
+      "completeDesc": "You can change any answer later from the Profile page in your learner portal.",
+      "continue": "Continue",
+      "editProfile": "Edit profile",
+      "needsAttention": "Some answers need attention before you continue.",
+      "saveLater": "Save and finish later",
+      "back": "Back",
+      "finish": "Finish my profile",
+      "saveFailed": "Your answers could not be saved. Try again.",
+      "draftSaved": "Draft saved. You can resume from this step at any time.",
+      "draftFailed": "Your draft could not be saved. Try again.",
+      "finishAttention": "Some answers need attention before you finish.",
+      "complete": "Profile complete.",
+      "profileSaveFailed": "Your profile could not be saved. Try again."
+    },
+    "page": {
+      "title": "Profile",
+      "description": "Your profile helps us recommend relevant learning. Change any answer at any time.",
+      "attention": "Some answers need attention before saving.",
+      "savedRevised": "Profile saved. A revised path is recommended: review it at the top of the page.",
+      "saved": "Profile saved.",
+      "saveFailed": "Your profile could not be saved.",
+      "draftNotice": "Your profile is incomplete, so you have the programme’s default path. Complete the missing details for a recommendation that fits your role.",
+      "completeProfile": "Complete my profile",
+      "complete": "Complete",
+      "learnerId": "Learner ID {{code}}",
+      "programmeLine": "Program {{programme}}: {{title}}",
+      "progressLine": "{{status}}, {{percent}} percent",
+      "pathChange": "Changing your role or organisation can change your recommended path. We will offer the new path for you to accept, and completed work is never deleted.",
+      "workTitle": "Your work",
+      "workDesc": "Organisation, role and experience. These choose your path.",
+      "localeTitle": "Where and how you learn",
+      "localeDesc": "Country, language and accessibility preferences.",
+      "goalsTitle": "Goals and contact",
+      "goalsDesc": "Goals, weekly time and optional contact details.",
+      "discard": "Discard changes",
+      "save": "Save profile"
+    },
+    "welcome": {
+      "loadFailedTitle": "We could not load your welcome page",
+      "notEnrolledTitle": "You are not enrolled on Program B",
+      "notEnrolledDesc": "Program B, Visitor Service Essentials, is open to every learner. Join it to see your welcome.",
+      "startB": "Start with Program B",
+      "profileComplete": "Profile complete",
+      "completeMissing": "Complete the missing details to get a more specific recommendation.",
+      "profileDone": "Your profile is complete, so your path matches your role.",
+      "reviewProfile": "Review my profile",
+      "programmeLine": "Program B: {{title}}",
+      "heading": "Welcome, {{name}}",
+      "intro": "One stage of short lessons and realistic practice, personalised to your role. You will measure your improvement from start to finish.",
+      "yourGoals": "Your goals",
+      "addGoals": "Add goals in your profile.",
+      "expectedTime": "Expected time",
+      "selfPaced": "{{duration}}, self-paced.",
+      "atMinutes": "At {{minutes}} minutes a week, about {{n}} week.",
+      "atMinutesPlural": "At {{minutes}} minutes a week, about {{n}} weeks.",
+      "startingPath": "Your starting path: {{path}}",
+      "nextTitle": "Next: a five-question baseline",
+      "nextBody": "The baseline identifies useful learning for you. It is not an entry barrier, and there is no pass mark. Your results build your recommended learning path.",
+      "startPre": "Start pre-assessment",
+      "goLearning": "Go to my learning"
+    }
+  },
+  "aiPath": {
+    "loading": "Loading recommendation",
+    "myLearning": "My learning",
+    "breadcrumb": "Learning path",
+    "demoMode": "Demo mode: scripted recommendation",
+    "title": "Your personalised learning path",
+    "subtitle": "Built from your profile and baseline, using only administrator-approved courses and paths.",
+    "startBaseline": "Start with your baseline",
+    "startBaselineDesc": "Five scenario questions show where to begin. The baseline identifies useful learning and is not an entry barrier.",
+    "startPre": "Start pre-assessment",
+    "ready": "Your inputs are ready. The generator matches them against the published path rules and your lowest baseline areas.",
+    "build": "Build my learning path",
+    "again": "Generate again",
+    "steps": {
+      "profile": "Reading your profile",
+      "baseline": "Comparing your baseline competencies",
+      "paths": "Matching administrator-approved paths",
+      "gates": "Checking prerequisites and level gates"
+    },
+    "building": "Building your learning path",
+    "inputs": {
+      "programme": "Programme",
+      "programmeValue": "Program {{programme}}: {{title}}",
+      "jobTitle": "Job title",
+      "jobFunction": "Job function",
+      "orgType": "Organisation type",
+      "seniority": "Seniority",
+      "experience": "Experience",
+      "goals": "Goals",
+      "time": "Available time",
+      "minutesAWeek": "{{n}} minutes a week",
+      "notGiven": "Not given",
+      "profile": "Profile",
+      "incomplete": "Incomplete: default path applies",
+      "baseline": "Baseline",
+      "strong": "Strong",
+      "gap": "Gap",
+      "noBaseline": "No baseline yet."
+    },
+    "values": {
+      "experience": {
+        "lt_1": "Less than 1 year",
+        "1_3": "1 to 3 years",
+        "4_7": "4 to 7 years",
+        "8_plus": "8 or more years"
+      }
+    },
+    "result": {
+      "pathSet": "Your path is set. The first step is ready.",
+      "saveFailed": "Could not save your path. Try again.",
+      "why": "Why we recommend this",
+      "suggested": "Suggested units",
+      "step": "Step",
+      "required": "Required",
+      "extra": "Recommended extra",
+      "estimate": "Time estimate",
+      "requiredMinutes": "{{time}} required",
+      "andRecommended": " and {{time}} recommended",
+      "aboutWeek": ". About {{n}} week at {{minutes}} minutes a week.",
+      "aboutWeeks": ". About {{n}} weeks at {{minutes}} minutes a week.",
+      "continuePath": "Continue this path",
+      "startPath": "Start this path",
+      "viewDetails": "View recommendation details",
+      "details": "Recommendation details",
+      "path": "Path",
+      "defaultPath": "Default path",
+      "version": ", version {{n}}",
+      "rule": "Assignment rule",
+      "override": "Administrator override: {{reason}}",
+      "ruleLine": "{{reason}}. {{summary}}.",
+      "programmeDefault": "Programme default",
+      "recorded": "Recorded reason",
+      "notAccepted": "Not yet accepted",
+      "demoNote": "Demo mode: this recommendation is produced by scripted, deterministic logic, not a live AI model. It only uses administrator-approved courses and paths.",
+      "extrasNote": "Recommended extras never replace required units, never bypass a prerequisite and never change certificate requirements. An administrator can override the path with a recorded reason.",
+      "strengths": "Strengths: {{list}}. Gaps: {{gaps}}.",
+      "none": "none",
+      "noneYet": "none yet"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadLabel": "Notifications, {{n}} unread",
+    "markAll": "Mark all read",
+    "loadFailed": "Notifications could not be loaded.",
+    "tryAgain": "Try again",
+    "empty": "You have no notifications yet.",
+    "unread": "Unread: ",
+    "demoEmail": "A matching demo email is generated for each message. No external emails are sent."
+  },
+  "shell": {
+    "skipToContent": "Skip to content",
+    "academyHome": "Academy home",
+    "portalLearner": "Learner",
+    "notifications": "Notifications",
+    "accountMenu": ", account menu",
+    "signOut": "Sign out",
+    "demoData": "Demo data",
+    "demoTitle": "Demonstration environment.",
+    "demoBody": "All learner and training data is fictional.",
+    "breadcrumb": "Breadcrumb"
+  },
+  "home": {
+    "final": "Final",
+    "post": "Post",
+    "loading": "Loading your overview",
+    "competency": {
+      "title": "Competencies",
+      "subtitle": "Five competencies, 20 points each",
+      "fullProgress": "Full progress"
+    },
+    "profileReminder": {
+      "title": "Your profile is not finished",
+      "body": "Until it is complete you follow the default path. Finish it to get learning matched to your role.",
+      "cta": "Finish my profile"
+    },
+    "scores": {
+      "titleFinal": "Baseline and final",
+      "titlePost": "Baseline and post",
+      "version": "Knowledge assessment, version {{version}}",
+      "baseline": "Baseline",
+      "none": "None",
+      "notYet": "Not yet",
+      "improvement": "Improvement",
+      "pending": "Pending",
+      "gainFinal": "{{gain}} percentage points from your matched baseline and final attempts.",
+      "gainPost": "{{gain}} percentage points from your matched baseline and post attempts.",
+      "hintFinal": "Your final assessment uses new scenarios on the same five competencies, so you can see your improvement.",
+      "hintPost": "Your post-assessment uses new scenarios on the same five competencies, so you can see your improvement.",
+      "hintStart": "Start with the five-question baseline. It identifies useful learning and is not an entry barrier.",
+      "view": "View assessments"
+    },
+    "welcome": "Welcome back, {{name}}",
+    "yourPath": "Your path: {{path}}.",
+    "lastActive": "Last active {{date}}.",
+    "feedback": {
+      "title": "Trainer feedback",
+      "emptyTitle": "No trainer feedback yet",
+      "emptyA": "Feedback appears here after your trainer-led session and practical assignment are marked.",
+      "emptyB": "A trainer reviews your short visitor response. Their feedback will appear here.",
+      "goAssignments": "Go to assignments",
+      "approved": "Approved",
+      "revision": "Revision requested",
+      "badge": "{{status}} · {{score}}/100"
+    },
+    "journey": {
+      "title": "Your journey",
+      "pathFallback": "Learning path",
+      "comma": ", ",
+      "version": "version {{version}}",
+      "remaining": "About {{time}} remaining",
+      "noneRemaining": "No required time remaining",
+      "progress": "Progress",
+      "progressAria": "Programme progress",
+      "stepsAria": "Required steps",
+      "stateComplete": ", complete",
+      "stateLocked": ", locked",
+      "stateTodo": ", to do"
+    },
+    "recommendation": {
+      "label": "Recommended next action",
+      "demo": "Demo mode",
+      "openUnit": "Open the unit",
+      "details": "View recommendation details"
+    },
+    "next": {
+      "label": "Next action",
+      "step": "Step",
+      "about": "About {{time}}",
+      "simulatedPractice": "Simulated AI practice",
+      "continue": "Continue",
+      "start": "Start",
+      "resume": "Resume {{title}}",
+      "completeTitle": "Every required step is complete",
+      "waitingTitle": "Waiting on your trainer",
+      "completeBody": "Your learning summary and results are below.",
+      "waitingBody": "Your submission is with a trainer. You will see their feedback here as soon as it is marked.",
+      "progressAria": "Programme progress {{n}} percent",
+      "stepsOf": "{{done}} of {{total}} required steps"
+    },
+    "celebration": {
+      "title": "You have completed Program {{programme}}.",
+      "completedOn": "Completed {{date}}.",
+      "summaryOne": "{{units}} units, {{n}} practice conversation",
+      "summaryMany": "{{units}} units, {{n}} practice conversations",
+      "gainFinal": ", baseline {{baseline}} to final {{post}} ({{gain}} percentage points).",
+      "gainPost": ", baseline {{baseline}} to post {{post}} ({{gain}} percentage points).",
+      "viewCertificate": "View demonstration certificate",
+      "suggestedNext": "Suggested next: Program A, Tourism Service Professional",
+      "summary": "Learning summary"
+    }
   }
 }

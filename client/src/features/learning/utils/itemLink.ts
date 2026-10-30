@@ -38,6 +38,18 @@ export function itemLink(
   }
 }
 
+/** Translation keys (learner namespace) per path-item kind; learner screens use these with `t()`. */
+export const KIND_KEY = {
+  course: 'learning.kind.course',
+  assessment_pre: 'learning.kind.assessmentPre',
+  assessment_post: 'learning.kind.assessmentPost',
+  assessment_formative: 'learning.kind.assessmentFormative',
+  ai_practice: 'learning.kind.aiPractice',
+  session: 'learning.kind.session',
+  assignment: 'learning.kind.assignment',
+} as const
+
+/** English labels, for the other portals. */
 export const KIND_LABEL: Record<string, string> = {
   course: 'Unit',
   assessment_pre: 'Assessment',

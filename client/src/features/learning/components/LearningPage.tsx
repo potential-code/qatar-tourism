@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Sparkles } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Button } from '@/components/ui/button'
+import { tr } from '@/i18n/localised'
 import { journeyQuery } from '../queries/learning.queries'
 import type { Journey } from '../types'
 import { minutesLabel } from '../utils/format'
@@ -35,16 +37,17 @@ function groupByStage(items: Journey['items']) {
 
 function Learning({ ctx }: { ctx: ProgrammeContext }) {
   const journey = useQuery(journeyQuery(ctx.programme))
+  const { t, i18n } = useTranslation('learner')
   const header = (
     <PageHeader
       image="learning"
-      title="My learning"
+      title={t('learning.page.title')}
       description={
         ctx.programme === 'B'
-          ? 'One stage, Visitor Service Essentials. Your units are personalised to your profile and baseline.'
+          ? t('learning.page.descriptionB')
           : ctx.programme === 'A'
-            ? 'Two levels with explicit stages. Each stage opens when the one before it is complete.'
-            : 'An illustrative sample programme with a single preview unit.'
+            ? t('learning.page.descriptionA')
+            : t('learning.page.descriptionC')
       }
       actions={
         <ProgrammeSwitcher
@@ -81,7 +84,9 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
       <ResumeBanner journey={data} />
       {data.gates.length > 0 ? (
         <Reveal className="rounded-xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-5 font-display text-2xl font-normal text-ink">Levels and stages</h2>
+          <h2 className="mb-5 font-display text-2xl font-normal text-ink">
+            {t('learning.page.levelsAndStages')}
+          </h2>
           <StageMap gates={data.gates} />
         </Reveal>
       ) : null}
@@ -90,20 +95,23 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
         <section aria-labelledby="required-title" className="flex flex-col gap-6">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="required-title" className="font-display text-2xl font-normal text-ink">
-              Required
+              {t('learning.page.required')}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {required.filter((i) => i.state === 'completed').length} of {required.length}{' '}
-              complete, about {minutesLabel(data.remainingMinutes)} remaining
+              {t('learning.page.requiredSummary', {
+                done: required.filter((i) => i.state === 'completed').length,
+                total: required.length,
+                time: minutesLabel(data.remainingMinutes),
+              })}
             </p>
           </div>
           {groupByStage(required).map((group) => (
             <div key={group.items[0]?.id ?? group.stage} className="flex flex-col gap-3">
               <h3 className="text-sm font-medium text-muted-foreground">
                 {ctx.programme === 'A' && group.stage !== 'Onboarding'
-                  ? `Level ${group.level}: `
+                  ? t('learning.page.levelPrefix', { level: group.level })
                   : ''}
-                {group.stage}
+                {tr(group.stage, i18n.language)}
               </h3>
               <Stagger className="flex flex-col gap-3">
                 {group.items.map((item) => {
@@ -122,11 +130,11 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
         <aside className="flex flex-col gap-6" aria-labelledby="recommended-title">
           <div className="flex flex-col gap-3">
             <h2 id="recommended-title" className="font-display text-2xl font-normal text-ink">
-              Recommended
+              {t('learning.page.recommended')}
             </h2>
             {data.extras.length + optional.length === 0 ? (
               <p className="rounded-xl border border-dashed bg-white/60 p-4 text-sm text-muted-foreground">
-                No extra units. Your baseline showed no gaps outside your path.
+                {t('learning.page.noExtras')}
               </p>
             ) : (
               <div className="flex flex-col gap-3">
@@ -169,13 +177,19 @@ function Learning({ ctx }: { ctx: ProgrammeContext }) {
           <div className="flex flex-col gap-3 rounded-xl bg-teal-deep p-5 text-white shadow-md">
             <div className="flex items-center gap-2">
               <Sparkles aria-hidden className="size-4 text-teal-soft" />
-              <p className="text-sm font-medium">Why this path</p>
-              <SimulatedTag label="Demo mode" className="border-white/20 bg-white/10 text-white" />
+              <p className="text-sm font-medium">{t('learning.page.whyThisPath')}</p>
+              <SimulatedTag
+                label={t('learning.page.demoMode')}
+                className="border-white/20 bg-white/10 text-white"
+              />
             </div>
-            <p className="text-sm leading-relaxed text-white/85">{data.rationale}</p>
+            <p className="text-sm leading-relaxed text-white/85">
+              {tr(data.rationale, i18n.language)}
+            </p>
             <Button asChild variant="glass" size="sm" className="self-start">
               <Link to="/learner/learning/path" search={{ programme: ctx.programme }}>
-                View recommendation details <ArrowRight aria-hidden className="rtl:-scale-x-100" />
+                {t('learning.page.viewDetails')}{' '}
+                <ArrowRight aria-hidden className="rtl:-scale-x-100" />
               </Link>
             </Button>
           </div>

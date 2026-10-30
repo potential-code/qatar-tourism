@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Label } from '@/components/ui/label'
 
 /**
@@ -20,12 +21,15 @@ export function Field({
   error?: string
   children: ReactNode
 }) {
+  const { t } = useTranslation('learner')
   return (
     <div className="grid content-start gap-2">
       <Label htmlFor={id} className="flex items-baseline gap-2">
         {label}
         {optional ? (
-          <span className="font-normal text-muted-foreground text-xs">Optional</span>
+          <span className="font-normal text-muted-foreground text-xs">
+            {t('profile.common.optional')}
+          </span>
         ) : null}
       </Label>
       {children}

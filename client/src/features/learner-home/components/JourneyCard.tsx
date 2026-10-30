@@ -1,15 +1,18 @@
 import { Link } from '@tanstack/react-router'
 import { Check, Clock, Lock } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { CornerPattern } from '@/components/brand/CornerPattern'
 import { Progress } from '@/components/ui/progress'
 import { StageMap } from '@/features/learning/components/StageMap'
 import type { Journey } from '@/features/learning/types'
 import { minutesLabel } from '@/features/learning/utils/format'
 import { itemLink } from '@/features/learning/utils/itemLink'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 
 /** Progress bar, estimated time remaining and the steps of the active path (brief §5). */
 export function JourneyCard({ journey }: { journey: Journey }) {
+  const { t, i18n } = useTranslation('learner')
   const { enrolment } = journey
   const required = journey.items.filter((i) => i.required)
   return (
@@ -21,31 +24,33 @@ export function JourneyCard({ journey }: { journey: Journey }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h2 id="journey-title" className="font-display text-2xl font-normal text-ink">
-            Your journey
+            {t('home.journey.title')}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {enrolment.pathName ?? 'Learning path'}
-            {enrolment.pathVersion ? `, version ${enrolment.pathVersion}` : ''}
+            {tr(enrolment.pathName ?? t('home.journey.pathFallback'), i18n.language)}
+            {enrolment.pathVersion
+              ? `${t('home.journey.comma')}${t('home.journey.version', { version: enrolment.pathVersion })}`
+              : ''}
           </p>
         </div>
         <p className="inline-flex items-center gap-1.5 rounded-full bg-sand-deep px-3 py-1 text-sm text-ink">
           <Clock aria-hidden className="size-4 text-teal" />
           {journey.remainingMinutes > 0
-            ? `About ${minutesLabel(journey.remainingMinutes)} remaining`
-            : 'No required time remaining'}
+            ? t('home.journey.remaining', { time: minutesLabel(journey.remainingMinutes) })
+            : t('home.journey.noneRemaining')}
         </p>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Progress</span>
+          <span className="text-muted-foreground">{t('home.journey.progress')}</span>
           <span className="font-medium tabular-nums text-ink">{enrolment.progressPercent}%</span>
         </div>
-        <Progress value={enrolment.progressPercent} aria-label="Programme progress" />
+        <Progress value={enrolment.progressPercent} aria-label={t('home.journey.progressAria')} />
       </div>
       {journey.gates.length > 0 ? (
         <StageMap gates={journey.gates} compact />
       ) : (
-        <ol className="flex flex-wrap gap-2" aria-label="Required steps">
+        <ol className="flex flex-wrap gap-2" aria-label={t('home.journey.stepsAria')}>
           {required.map((item) => {
             const link = itemLink(item, enrolment.programme)
             return (
@@ -66,13 +71,13 @@ export function JourneyCard({ journey }: { journey: Journey }) {
                   ) : item.state === 'locked' ? (
                     <Lock aria-hidden className="size-3" />
                   ) : null}
-                  {item.title}
+                  {tr(item.title, i18n.language)}
                   <span className="sr-only">
                     {item.state === 'completed'
-                      ? ', complete'
+                      ? t('home.journey.stateComplete')
                       : item.state === 'locked'
-                        ? ', locked'
-                        : ', to do'}
+                        ? t('home.journey.stateLocked')
+                        : t('home.journey.stateTodo')}
                   </span>
                 </Link>
               </li>

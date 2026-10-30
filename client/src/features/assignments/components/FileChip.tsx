@@ -1,4 +1,5 @@
 import { Download, ExternalLink, FileText, Film } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useSubmissionFileUrl } from '../hooks/useSubmissionFileUrl'
 import type { VersionFile } from '../types'
 import { formatBytes } from '../utils/files'
@@ -13,12 +14,13 @@ const linkClass =
  * seeded records carry details only, and say so instead of a dead link.
  */
 export function FileChip({ submissionId, file }: { submissionId: string; file: VersionFile }) {
+  const { t } = useTranslation('learner')
   const Icon = file.mimeType === 'video/mp4' ? Film : FileText
   const stored = useSubmissionFileUrl(submissionId, file.stored)
   const note = !file.stored
-    ? ', sample file, not stored in this demo'
+    ? t('assignments.file.sample')
     : stored.isError
-      ? ', file not available in this browser'
+      ? t('assignments.file.unavailable')
       : ''
   return (
     <div className="flex items-center gap-3 rounded-lg border bg-white px-3 py-2">
@@ -34,12 +36,14 @@ export function FileChip({ submissionId, file }: { submissionId: string; file: V
         <div className="flex shrink-0 items-center gap-1">
           {file.mimeType && PREVIEWABLE.has(file.mimeType) ? (
             <a href={stored.url} target="_blank" rel="noopener" className={linkClass}>
-              <ExternalLink aria-hidden className="size-3.5" /> Open
-              <span className="sr-only"> {file.name} in a new tab</span>
+              <ExternalLink aria-hidden className="size-3.5" /> {t('assignments.file.open')}
+              <span className="sr-only">
+                {t('assignments.file.openNewTab', { name: file.name })}
+              </span>
             </a>
           ) : null}
           <a href={stored.url} download={file.name} className={linkClass}>
-            <Download aria-hidden className="size-3.5" /> Download
+            <Download aria-hidden className="size-3.5" /> {t('assignments.file.download')}
           </a>
         </div>
       ) : null}

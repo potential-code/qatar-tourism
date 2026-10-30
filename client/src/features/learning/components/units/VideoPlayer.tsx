@@ -1,6 +1,7 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { Captions, CheckCircle2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -27,6 +28,7 @@ export function VideoPlayer({
   completed: boolean
 }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const { t } = useTranslation('learner')
   const { watched, lastResult } = useVideoTracking(videoRef, {
     programme,
     courseCode,
@@ -35,8 +37,8 @@ export function VideoPlayer({
   })
 
   useEffect(() => {
-    if (lastResult?.completedNow) toast.success(`${title} is complete`)
-  }, [lastResult?.completedNow, title])
+    if (lastResult?.completedNow) toast.success(t('learning.video.complete', { title }))
+  }, [lastResult?.completedNow, title, t])
 
   return (
     <div className="flex flex-col gap-4">
@@ -47,41 +49,39 @@ export function VideoPlayer({
           preload="metadata"
           poster={media.poster}
           className="aspect-video w-full"
-          aria-label={`${title}, sample video with captions`}
+          aria-label={t('learning.video.aria', { title })}
         >
           <source src={media.src} type="video/mp4" />
           <track
             kind="captions"
             src={media.captions}
             srcLang="en"
-            label="English captions"
+            label={t('learning.video.captionsLabel')}
             default
           />
         </video>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <Badge variant="outline" className="gap-1.5 border-teal/30 text-teal-deep">
-          <Captions aria-hidden /> Sample video (captioned)
+          <Captions aria-hidden /> {t('learning.video.badge')}
         </Badge>
-        <p className="text-xs text-muted-foreground">
-          There is no voice track. The narration is shown as captions and in the transcript.
-        </p>
+        <p className="text-xs text-muted-foreground">{t('learning.video.noVoice')}</p>
       </div>
       <div className="flex flex-col gap-2 rounded-xl border bg-white p-4">
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
           <span className="text-muted-foreground">
-            Watched {Math.min(100, watched)}%
+            {t('learning.video.watched', { n: Math.min(100, watched) })}
             {completeAt
-              ? `. Complete at ${completeAt}% watched.`
-              : '. Answer the three questions below to complete the unit.'}
+              ? t('learning.video.completeAt', { n: completeAt })
+              : t('learning.video.answerQuestions')}
           </span>
           {completed ? (
             <span className="inline-flex items-center gap-1 font-medium text-teal">
-              <CheckCircle2 aria-hidden className="size-4" /> Complete
+              <CheckCircle2 aria-hidden className="size-4" /> {t('learning.unit.complete')}
             </span>
           ) : null}
         </div>
-        <Progress value={Math.min(100, watched)} aria-label="Video watched" />
+        <Progress value={Math.min(100, watched)} aria-label={t('learning.video.progressAria')} />
       </div>
     </div>
   )

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import i18n from '@/i18n'
 
 /** Minimal typing for the Web Speech API, which TypeScript's DOM lib does not ship. */
 type RecognitionResultList = ArrayLike<{ isFinal: boolean; 0: { transcript: string } }>
@@ -48,7 +49,7 @@ export function useSpeechRecognition() {
       return
     }
     const rec = new Ctor()
-    rec.lang = 'en-GB'
+    rec.lang = i18n.language === 'ar' ? 'ar-QA' : 'en-GB'
     rec.continuous = true
     rec.interimResults = true
     rec.onresult = (event) => {

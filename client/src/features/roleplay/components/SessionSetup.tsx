@@ -1,5 +1,6 @@
 import { Clock, Keyboard, Mic, Target } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { Reveal } from '@/components/motion/Reveal'
 import { Badge } from '@/components/ui/badge'
@@ -12,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { tr } from '@/i18n/localised'
 import type { PracticeEnrolment, PracticeMode, ScenarioSummary } from '../types'
 import { COMPETENCY_LABEL, SCENARIO_IMAGE } from '../utils/labels'
 import { DifficultyPips } from './DifficultyPips'
@@ -25,6 +27,7 @@ interface SessionSetupProps {
 
 /** Before the conversation: the goal, the visitor's opening, and Text or Voice (brief §9). */
 export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProps) {
+  const { t, i18n } = useTranslation('learner')
   const [mode, setMode] = useState<PracticeMode>('text')
   const [enrolmentId, setEnrolmentId] = useState(enrolments[0]?.id ?? '')
 
@@ -40,17 +43,18 @@ export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProp
           <div className="grid gap-3 p-6 text-white">
             <div className="flex flex-wrap items-center gap-2">
               <Badge className="bg-white/15 text-white backdrop-blur">
-                {COMPETENCY_LABEL[scenario.competency]}
+                {tr(COMPETENCY_LABEL[scenario.competency], i18n.language)}
               </Badge>
               <span className="inline-flex items-center gap-1 text-xs text-white/85">
-                <Clock aria-hidden className="size-3.5" /> About {scenario.estimatedMinutes} minutes
+                <Clock aria-hidden className="size-3.5" />{' '}
+                {t('roleplay.setup.about', { n: scenario.estimatedMinutes })}
               </span>
             </div>
             <p className="text-xs font-medium tracking-wide text-white/75 uppercase">
-              The visitor says
+              {t('roleplay.setup.visitorSays')}
             </p>
             <blockquote className="font-display text-2xl leading-snug font-light md:text-3xl">
-              “{scenario.visitorOpening}”
+              “{tr(scenario.visitorOpening, i18n.language)}”
             </blockquote>
           </div>
         </PhotoPanel>
@@ -60,30 +64,32 @@ export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProp
         <div className="grid gap-2">
           <div className="flex items-center gap-2 text-teal">
             <Target aria-hidden className="size-4" />
-            <h2 className="text-sm font-medium">Your goal</h2>
+            <h2 className="text-sm font-medium">{t('roleplay.setup.goal')}</h2>
           </div>
-          <p className="font-display text-xl leading-snug text-ink">{scenario.learnerObjective}</p>
+          <p className="font-display text-xl leading-snug text-ink">
+            {tr(scenario.learnerObjective, i18n.language)}
+          </p>
           <DifficultyPips difficulty={scenario.difficulty} />
         </div>
 
         <fieldset className="grid gap-3">
           <legend className="mb-1 text-sm font-medium text-ink">
-            How do you want to practise?
+            {t('roleplay.setup.howTitle')}
           </legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <ModeOption
               value="text"
               icon={Keyboard}
-              title="Text"
-              description="Type your replies in a chat."
+              title={t('roleplay.setup.textTitle')}
+              description={t('roleplay.setup.textDescription')}
               checked={mode === 'text'}
               onSelect={() => setMode('text')}
             />
             <ModeOption
               value="voice"
               icon={Mic}
-              title="Voice"
-              description="Speak your replies. You approve the microphone first."
+              title={t('roleplay.setup.voiceTitle')}
+              description={t('roleplay.setup.voiceDescription')}
               checked={mode === 'voice'}
               onSelect={() => setMode('voice')}
             />
@@ -92,7 +98,7 @@ export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProp
 
         {enrolments.length > 1 ? (
           <div className="grid gap-2">
-            <Label htmlFor="practice-enrolment">Record this practice in</Label>
+            <Label htmlFor="practice-enrolment">{t('roleplay.setup.recordIn')}</Label>
             <Select value={enrolmentId} onValueChange={setEnrolmentId}>
               <SelectTrigger id="practice-enrolment" className="w-full sm:w-80">
                 <SelectValue />
@@ -100,7 +106,10 @@ export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProp
               <SelectContent>
                 {enrolments.map((e) => (
                   <SelectItem key={e.id} value={e.id}>
-                    Program {e.programmeCode}: {e.programmeTitle}
+                    {t('roleplay.setup.programmeOption', {
+                      code: e.programmeCode,
+                      title: tr(e.programmeTitle, i18n.language),
+                    })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -108,14 +117,11 @@ export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProp
           </div>
         ) : null}
 
-        <p className="text-sm text-muted-foreground">
-          A conversation takes four to six replies. You are scored on what you say, never on accent,
-          voice or background.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('roleplay.setup.note')}</p>
 
         <div className="mt-auto flex flex-wrap gap-3">
           <Button size="lg" onClick={() => onStart({ mode, enrolmentId })} disabled={!enrolmentId}>
-            Start conversation
+            {t('roleplay.setup.start')}
           </Button>
         </div>
       </Reveal>

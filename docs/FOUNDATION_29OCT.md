@@ -120,3 +120,25 @@ each under `client/src/i18n/locales/en/` and `ar/`.
 counts in `analytics`, `reports`, `admin-workspace`, `demo`, `ai-analytics` and `learning-engine`
 tests. New: `foundation-29oct.test.ts`, `i18n/__tests__/i18n.test.ts`,
 `__tests__/LanguageSwitcher.test.tsx`, and the new actions in `shared/permissions.test.ts`.
+
+## Learner portal Arabic and RTL (lane A2)
+
+- Shell: `PortalHeader` shows `LanguageSwitcher` in the learner portal only (desktop and mobile; one
+  instance, always visible). Learner nav labels use `labelKey` -> `learner:nav.*` in
+  `app/navigation.ts` (English `label` stays the fallback; trainer/admin items have no key).
+  Shell strings live under `learner:shell.*`. The `Logo` "Academy" wordmark stays English (brand).
+- Sidebar: `components/ui/sidebar.tsx` maps `side` to the logical edge, so the desktop sidebar and
+  the mobile sheet open from the right in Arabic. `components/ui` uses logical utilities
+  (`ms-`, `pe-`, `start-`, `end-`, `text-start`, `border-s`) or `rtl:` variants. `Sheet` `side`
+  stays physical (a caller asking for `right` gets the right edge); centred dialogs are symmetric.
+- Charts: no learner screen uses recharts. Learner competency bars are CSS and start from the
+  start edge, so they mirror. Recharts (admin/trainer only) stays English/LTR.
+- Seed copy: Arabic map keyed by the exact English text in `shared/content/curriculum-ar.ts`;
+  `tr(text, lang)` and `localised(row, lang)` in `client/src/i18n/localised.ts` apply it (fall back
+  to English; ids, codes, counts untouched). `tr` also rebuilds sentences the mock services
+  assemble from templates ("Continue: <title>", the recommendation rationale).
+- Dates and times: `lib/format/qatar-time.ts` follows the active language (`ar-QA` with
+  `nu-latn` Latin digits, `en-GB` otherwise), always in Asia/Qatar. Components that call these must
+  use `useTranslation` so they re-render when the language changes.
+- Plurals: no `_one`/`_other` keys (Arabic has more categories and the parity test compares key
+  sets); use separate keys or `{{n}}`.

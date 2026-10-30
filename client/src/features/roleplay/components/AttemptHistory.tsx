@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { History, Keyboard, Mic } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { EmptyState } from '@/components/ui/empty-state'
+import { tr } from '@/i18n/localised'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
 import type { AttemptView } from '../types'
@@ -23,13 +25,14 @@ export function AttemptHistory({
   currentId,
   showScenario = true,
 }: AttemptHistoryProps) {
+  const { t, i18n } = useTranslation('learner')
   if (attempts.length === 0) {
     return (
       <EmptyState
         size="sm"
         icon={History}
-        title="No attempts yet"
-        description="Your scored conversations will appear here, with your best and latest scores."
+        title={t('roleplay.history.emptyTitle')}
+        description={t('roleplay.history.emptyDescription')}
       />
     )
   }
@@ -53,23 +56,25 @@ export function AttemptHistory({
               </span>
               <span className="grid min-w-0 flex-1 gap-0.5">
                 <span className="truncate text-sm font-medium text-ink">
-                  {showScenario ? attempt.scenarioTitle : `${band.label} attempt`}
+                  {showScenario
+                    ? tr(attempt.scenarioTitle, i18n.language)
+                    : t('roleplay.history.attemptWord', { band: t(`roleplay.bands.${band.key}`) })}
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <ModeIcon aria-hidden className="size-3" />
-                  {attempt.mode === 'voice' ? 'Voice' : 'Text'},{' '}
+                  {attempt.mode === 'voice' ? t('roleplay.modes.voice') : t('roleplay.modes.text')},{' '}
                   {qatarDateTime(attempt.completedAt)}
                 </span>
               </span>
               <span className="flex shrink-0 flex-wrap justify-end gap-1">
                 {attempt.id === bestId ? (
                   <span className="rounded-full bg-teal px-2 py-0.5 text-[11px] font-medium text-white">
-                    Best
+                    {t('roleplay.history.best')}
                   </span>
                 ) : null}
                 {attempt.id === latestId ? (
                   <span className="rounded-full border border-teal/30 px-2 py-0.5 text-[11px] font-medium text-teal-deep">
-                    Latest
+                    {t('roleplay.history.latest')}
                   </span>
                 ) : null}
               </span>

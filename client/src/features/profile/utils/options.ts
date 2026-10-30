@@ -5,6 +5,8 @@ import type {
   OrganisationType,
   Seniority,
 } from '@shared/constants'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /** Display labels for the brief §4 option lists, in the brief's order. */
 
@@ -104,3 +106,31 @@ export const COUNTRIES = [
   'United Kingdom',
   'Other',
 ] as const
+
+type Group = 'organisationType' | 'jobFunction' | 'seniority' | 'experience' | 'goal'
+
+/**
+ * Option labels in the active language. The values (ids) stay English; only the display text is
+ * translated. The English maps above remain the source of the key sets.
+ */
+export function useOptionLabels() {
+  const { t } = useTranslation('learner')
+  return useMemo(() => {
+    const tt = t as unknown as (key: string) => string
+    const map = <K extends string>(labels: Record<K, string>, group: Group) =>
+      Object.fromEntries(
+        (Object.keys(labels) as K[]).map((k) => [k, tt(`profile.options.${group}.${k}`)]),
+      ) as Record<K, string>
+    const list = (values: readonly string[], group: 'language' | 'country') =>
+      values.map((v) => [v, tt(`profile.options.${group}.${v.replace(/\s+/g, '')}`)] as const)
+    return {
+      organisationType: map(ORGANISATION_TYPE_LABEL, 'organisationType'),
+      jobFunction: map(JOB_FUNCTION_LABEL, 'jobFunction'),
+      seniority: map(SENIORITY_LABEL, 'seniority'),
+      experience: map(EXPERIENCE_LABEL, 'experience'),
+      goal: map(GOAL_LABEL, 'goal'),
+      languages: list(LANGUAGES, 'language'),
+      countries: list(COUNTRIES, 'country'),
+    }
+  }, [t])
+}

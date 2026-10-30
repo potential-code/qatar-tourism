@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
@@ -28,6 +29,8 @@ interface VersionHistoryProps {
 /** Every submitted version, newest first. Nothing is ever overwritten (brief §6). */
 export function VersionHistory({ versions, currentId, onSelect }: VersionHistoryProps) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
+  const dir = i18n.dir()
   return (
     <ol className="relative grid gap-5 ps-6 before:absolute before:inset-y-2 before:start-[7px] before:w-px before:bg-border">
       {versions.map((v, i) => {
@@ -35,7 +38,7 @@ export function VersionHistory({ versions, currentId, onSelect }: VersionHistory
         return (
           <motion.li
             key={v.id}
-            initial={reduce ? false : { opacity: 0, x: -8 }}
+            initial={reduce ? false : { opacity: 0, x: dir === 'rtl' ? 8 : -8 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08, ease: easeOut }}
@@ -50,33 +53,40 @@ export function VersionHistory({ versions, currentId, onSelect }: VersionHistory
             />
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className={cn('font-medium text-ink', v.id === currentId && 'text-teal-deep')}>
-                Version {v.version}
-                {v.id === currentId ? <span className="sr-only"> (shown)</span> : null}
+                {t('assignments.history.version', { version: v.version })}
+                {v.id === currentId ? (
+                  <span className="sr-only">{t('assignments.history.shown')}</span>
+                ) : null}
               </h3>
               <StatusPill label={status.label} tone={status.tone} />
             </div>
             <p className="text-xs text-muted-foreground">
-              Submitted {qatarDateTime(v.submittedAt)}
+              {t('assignments.history.submitted', { date: qatarDateTime(v.submittedAt) })}
             </p>
             {v.file ? <FileChip submissionId={v.id} file={v.file} /> : null}
             {v.responseText ? (
               <details className="group rounded-lg border bg-white px-3 py-2 text-sm">
                 <summary className="cursor-pointer list-none text-teal-deep marker:hidden">
-                  <span className="group-open:hidden">Show response</span>
-                  <span className="hidden group-open:inline">Hide response</span>
-                  <span className="text-muted-foreground"> ({v.wordCount ?? 0} words)</span>
+                  <span className="group-open:hidden">{t('assignments.history.show')}</span>
+                  <span className="hidden group-open:inline">{t('assignments.history.hide')}</span>
+                  <span className="text-muted-foreground">
+                    {t('assignments.history.words', { n: v.wordCount ?? 0 })}
+                  </span>
                 </summary>
                 <p className="mt-2 whitespace-pre-line text-ink">{v.responseText}</p>
               </details>
             ) : null}
             {v.review ? (
               <p className="text-sm text-muted-foreground">
-                Marked <span className="font-medium text-ink">{v.review.score}/100</span> by{' '}
-                {v.review.reviewerName ?? 'the trainer'}, {qatarDateTime(v.review.reviewedAt)}
-                {v.correctedAt ? '. Mark corrected later.' : ''}
+                {t('assignments.history.marked')}{' '}
+                <span className="font-medium text-ink">{v.review.score}/100</span>
+                {t('assignments.history.by')}
+                {v.review.reviewerName ?? t('assignments.history.theTrainer')},{' '}
+                {qatarDateTime(v.review.reviewedAt)}
+                {v.correctedAt ? t('assignments.history.corrected') : ''}
               </p>
             ) : (
-              <p className="text-sm text-muted-foreground">Waiting for marking.</p>
+              <p className="text-sm text-muted-foreground">{t('assignments.history.waiting')}</p>
             )}
             {onSelect && v.id !== currentId ? (
               <button
@@ -84,7 +94,7 @@ export function VersionHistory({ versions, currentId, onSelect }: VersionHistory
                 onClick={() => onSelect(v.id)}
                 className="w-fit text-sm font-medium text-teal hover:underline"
               >
-                Open version {v.version}
+                {t('assignments.history.open', { version: v.version })}
               </button>
             ) : null}
           </motion.li>

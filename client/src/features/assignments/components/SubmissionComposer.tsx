@@ -2,6 +2,7 @@ import { countWords } from '@shared/schemas/assignment-marking'
 import { AlertCircle, CopyPlus, Send } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { spring } from '@/components/motion/variants'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -23,6 +24,7 @@ interface SubmissionComposerProps {
 /** Write or upload a new version. The draft is kept in this browser until it is submitted. */
 export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   const { assignment, enrolment, versions } = item
   const latest = versions[0]
   const nextVersion = (latest?.version ?? 0) + 1
@@ -51,8 +53,8 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
         onSuccess: (result) => {
           setText('')
           uploader.reset()
-          toast.success(`Version ${result.version} submitted`, {
-            description: 'Your trainer has an in-app notification and a simulated demo email.',
+          toast.success(t('assignments.composer.toastTitle', { version: result.version }), {
+            description: t('assignments.composer.toastBody'),
           })
         },
       },
@@ -60,10 +62,10 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
   }
 
   const hint = fileReady
-    ? 'Your file is ready. Any text you add is sent as a covering note.'
+    ? t('assignments.composer.hintFile')
     : isPractical
-      ? `Write ${min} to ${max} words, or upload a file instead.`
-      : `Write ${min} to ${max} words.`
+      ? t('assignments.composer.hintWordsOrFile', { min, max })
+      : t('assignments.composer.hintWords', { min, max })
 
   return (
     <section
@@ -72,18 +74,24 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
     >
       <div className="grid gap-1">
         <h2 id={`${editorId}-title`} className="font-display text-2xl font-light text-ink">
-          {latest ? `Revise and resubmit as version ${nextVersion}` : 'Your submission'}
+          {latest
+            ? t('assignments.composer.reviseTitle', { version: nextVersion })
+            : t('assignments.composer.yourSubmission')}
         </h2>
         <p className="text-sm text-muted-foreground">
           {latest
-            ? `Version ${latest.version} stays in your history. Use the feedback to improve this version.`
-            : 'Your work saves in this browser as you type, so nothing is lost if you leave.'}
+            ? t('assignments.composer.reviseBody', { version: latest.version })
+            : t('assignments.composer.draftBody')}
         </p>
       </div>
 
       <div className="grid gap-2">
         <div className="flex flex-wrap items-end justify-between gap-2">
-          <Label htmlFor={editorId}>{isPractical ? 'Your response plan' : 'Your response'}</Label>
+          <Label htmlFor={editorId}>
+            {isPractical
+              ? t('assignments.composer.labelPlan')
+              : t('assignments.composer.labelResponse')}
+          </Label>
           {latest?.responseText && !text ? (
             <Button
               type="button"
@@ -91,7 +99,8 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
               variant="ghost"
               onClick={() => setText(latest.responseText ?? '')}
             >
-              <CopyPlus aria-hidden /> Start from version {latest.version}
+              <CopyPlus aria-hidden />{' '}
+              {t('assignments.composer.startFrom', { version: latest.version })}
             </Button>
           ) : null}
         </div>
@@ -104,8 +113,8 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
           className="min-h-40 text-[15px] leading-relaxed"
           placeholder={
             isPractical
-              ? 'Discovery questions, two feasible options, an escalation path and a follow-up message.'
-              : 'Acknowledge the change, ask one useful question and offer a clear next step.'
+              ? t('assignments.composer.placeholderPlan')
+              : t('assignments.composer.placeholderResponse')
           }
           aria-describedby={`${editorId}-count`}
         />
@@ -118,12 +127,10 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
         <div className="grid gap-3">
           <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
-            Or upload instead
+            {t('assignments.composer.orUpload')}
             <span className="h-px flex-1 bg-border" />
           </div>
-          <p className="text-sm text-muted-foreground">
-            Upload your plan as a document, or a two-minute fictional role-play video.
-          </p>
+          <p className="text-sm text-muted-foreground">{t('assignments.composer.uploadBody')}</p>
           <FileDropzone
             state={uploader.state}
             limits={limits}
@@ -136,9 +143,9 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
       {submit.isError ? (
         <Alert variant="destructive">
           <AlertCircle aria-hidden />
-          <AlertTitle>Not submitted</AlertTitle>
+          <AlertTitle>{t('assignments.composer.errorTitle')}</AlertTitle>
           <AlertDescription>
-            {submit.error.message} Your text is still here and saved in this browser.
+            {t('assignments.composer.errorBody', { message: submit.error.message })}
           </AlertDescription>
         </Alert>
       ) : null}
@@ -148,7 +155,9 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
         <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={spring}>
           <Button size="lg" onClick={send} disabled={!canSubmit}>
             <Send aria-hidden className="rtl:-scale-x-100" />
-            {submit.isPending ? 'Submitting' : `Submit version ${nextVersion}`}
+            {submit.isPending
+              ? t('assignments.composer.submitting')
+              : t('assignments.composer.submit', { version: nextVersion })}
           </Button>
         </motion.div>
       </div>

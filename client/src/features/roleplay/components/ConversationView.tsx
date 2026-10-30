@@ -2,9 +2,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { AlertCircle, Keyboard, Mic, RotateCcw, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { tr } from '@/i18n/localised'
 import { useConversation } from '../hooks/useConversation'
 import { useSpeak } from '../hooks/useSpeak'
 import { useSubmitAttempt } from '../queries/roleplay.queries'
@@ -26,6 +28,7 @@ interface ConversationViewProps {
 /** The live, scripted conversation and its submission for feedback. */
 export function ConversationView({ scenario, mode, enrolmentId, label }: ConversationViewProps) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const navigate = useNavigate()
   const chat = useConversation(scenario.key, scenario.visitorOpening)
   const voice = useSpeak()
@@ -80,17 +83,21 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
       <details className="group rounded-xl border bg-card px-4 py-3 shadow-xs lg:hidden">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-medium text-teal">
-          Your goal
-          <span className="text-xs font-normal text-muted-foreground group-open:hidden">Show</span>
+          {t('roleplay.conversation.goal')}
+          <span className="text-xs font-normal text-muted-foreground group-open:hidden">
+            {t('roleplay.conversation.show')}
+          </span>
         </summary>
-        <p className="mt-2 text-sm text-ink">{scenario.learnerObjective}</p>
+        <p className="mt-2 text-sm text-ink">{tr(scenario.learnerObjective, i18n.language)}</p>
         <Button variant="ghost" size="sm" className="mt-2 -ms-2" onClick={restart}>
-          <RotateCcw aria-hidden /> Start over
+          <RotateCcw aria-hidden /> {t('roleplay.conversation.startOver')}
         </Button>
       </details>
       <div className="flex min-w-0 flex-col gap-4 self-start">
         <section
-          aria-label={`${scenario.title} conversation`}
+          aria-label={t('roleplay.conversation.regionLabel', {
+            title: tr(scenario.title, i18n.language),
+          })}
           className="rounded-[1.25rem] bg-white/60 p-1.5 shadow-sm ring-1 ring-ink/5"
         >
           <div className="flex h-[78dvh] min-h-[520px] flex-col overflow-hidden rounded-[calc(1.25rem-0.375rem)] border border-border/60 bg-sand lg:h-[min(780px,calc(100dvh-190px))]">
@@ -100,14 +107,16 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
                   V
                 </span>
                 <div className="grid">
-                  <p className="font-medium text-ink">{scenario.title}</p>
+                  <p className="font-medium text-ink">{tr(scenario.title, i18n.language)}</p>
                   <p className="flex items-center gap-1 text-xs text-muted-foreground">
                     {typed ? (
                       <Keyboard aria-hidden className="size-3" />
                     ) : (
                       <Mic aria-hidden className="size-3" />
                     )}
-                    {typed ? 'Text practice' : 'Voice practice'}
+                    {typed
+                      ? t('roleplay.conversation.textPractice')
+                      : t('roleplay.conversation.voicePractice')}
                   </p>
                 </div>
               </div>
@@ -127,10 +136,8 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
               {chat.failedReply ? (
                 <Alert variant="destructive" className="mb-3">
                   <AlertCircle aria-hidden />
-                  <AlertTitle>Your reply was not sent</AlertTitle>
-                  <AlertDescription>
-                    The connection dropped. Your words are back in the box: send them again.
-                  </AlertDescription>
+                  <AlertTitle>{t('roleplay.conversation.failedTitle')}</AlertTitle>
+                  <AlertDescription>{t('roleplay.conversation.failedBody')}</AlertDescription>
                 </Alert>
               ) : null}
               <AnimatePresence mode="wait" initial={false}>
@@ -142,14 +149,18 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
                     className="flex flex-col items-start gap-3 rounded-xl bg-teal-mist/70 p-4 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="grid gap-0.5">
-                      <p className="font-medium text-teal-deep">Conversation complete</p>
+                      <p className="font-medium text-teal-deep">
+                        {t('roleplay.conversation.completeTitle')}
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        Get your score on five criteria, with evidence from what you said.
+                        {t('roleplay.conversation.completeBody')}
                       </p>
                     </div>
                     <Button onClick={getFeedback} disabled={submit.isPending} size="lg">
                       <Sparkles aria-hidden />
-                      {submit.isPending ? 'Scoring your conversation' : 'Get feedback'}
+                      {submit.isPending
+                        ? t('roleplay.conversation.scoring')
+                        : t('roleplay.conversation.getFeedback')}
                     </Button>
                   </motion.div>
                 ) : typed ? (
@@ -165,7 +176,7 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
                     />
                     {mode === 'voice' ? (
                       <p className="mt-2 px-2 text-xs text-muted-foreground">
-                        Typed fallback for voice practice.
+                        {t('roleplay.conversation.typedFallback')}
                       </p>
                     ) : null}
                   </motion.div>
@@ -188,10 +199,8 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
               {submit.isError ? (
                 <Alert variant="destructive" className="mt-3">
                   <AlertCircle aria-hidden />
-                  <AlertTitle>Feedback could not be saved</AlertTitle>
-                  <AlertDescription>
-                    Your conversation is still here. Try again in a moment.
-                  </AlertDescription>
+                  <AlertTitle>{t('roleplay.conversation.saveFailedTitle')}</AlertTitle>
+                  <AlertDescription>{t('roleplay.conversation.saveFailedBody')}</AlertDescription>
                 </Alert>
               ) : null}
             </div>

@@ -1,5 +1,7 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { easeOut } from '@/components/motion/variants'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 
 export type CompetencyDatum = {
@@ -12,17 +14,30 @@ export type CompetencyDatum = {
 
 type Series = {
   key: 'baseline' | 'foundation' | 'post'
-  label: string
+  labelKey: 'progress.chart.baseline' | 'progress.chart.foundation' | null
   bar: string
   swatch: string
 }
 
+// RTL decision: these are CSS bars, not a recharts chart. The bar grows from the start edge
+// (`origin-left`, `rtl:origin-right`), so in Arabic the scale mirrors and each row still reads
+// from its label outwards. Numbers beside the bars stay Latin digits; no dir="ltr" wrapper needed.
 const barClass = 'absolute inset-y-0 start-0 w-full origin-left rounded-full rtl:origin-right'
 
 const SERIES: Series[] = [
-  { key: 'baseline', label: 'Baseline', bar: 'bg-teal-soft', swatch: 'bg-teal-soft' },
-  { key: 'foundation', label: 'Foundation quiz', bar: 'bg-maroon/70', swatch: 'bg-maroon/70' },
-  { key: 'post', label: 'Post', bar: 'bg-teal', swatch: 'bg-teal' },
+  {
+    key: 'baseline',
+    labelKey: 'progress.chart.baseline',
+    bar: 'bg-teal-soft',
+    swatch: 'bg-teal-soft',
+  },
+  {
+    key: 'foundation',
+    labelKey: 'progress.chart.foundation',
+    bar: 'bg-maroon/70',
+    swatch: 'bg-maroon/70',
+  },
+  { key: 'post', labelKey: null, bar: 'bg-teal', swatch: 'bg-teal' },
 ]
 
 /**
@@ -42,9 +57,11 @@ export function CompetencyChart({
   className?: string
 }) {
   const reduce = useReducedMotion()
-  const series = SERIES.filter((s) => s.key !== 'foundation' || showFoundation).map((s) =>
-    s.key === 'post' ? { ...s, label: postLabel } : s,
-  )
+  const { t, i18n } = useTranslation('learner')
+  const series = SERIES.filter((s) => s.key !== 'foundation' || showFoundation).map((s) => ({
+    ...s,
+    label: s.labelKey ? t(s.labelKey) : postLabel,
+  }))
   const hasPost = data.some((d) => d.post !== null)
 
   return (
@@ -63,7 +80,7 @@ export function CompetencyChart({
             key={row.key}
             className="grid gap-1.5 sm:grid-cols-[11rem_1fr] sm:items-center sm:gap-4"
           >
-            <p className="text-sm font-medium text-ink">{row.label}</p>
+            <p className="text-sm font-medium text-ink">{tr(row.label, i18n.language)}</p>
             <div className="flex flex-col gap-1">
               {series.map((s) => {
                 const value = row[s.key] ?? null
@@ -88,7 +105,9 @@ export function CompetencyChart({
                       ) : null}
                     </div>
                     <span className="w-16 text-end text-xs tabular-nums text-muted-foreground">
-                      {value === null ? 'Not yet' : value > 0 ? `${value} / 20` : '0 / 20'}
+                      {value === null
+                        ? t('progress.chart.notYet')
+                        : t('progress.chart.pointsOf', { n: value })}
                     </span>
                   </div>
                 )
@@ -100,12 +119,13 @@ export function CompetencyChart({
       <div className="sr-only">
         <table>
           <caption>
-            Points per competency, out of 20
-            {hasPost ? `, baseline compared with ${postLabel.toLowerCase()}` : ''}
+            {hasPost
+              ? t('progress.chart.captionCompared', { post: postLabel.toLowerCase() })
+              : t('progress.chart.caption')}
           </caption>
           <thead>
             <tr>
-              <th scope="col">Competency</th>
+              <th scope="col">{t('progress.chart.competency')}</th>
               {series.map((s) => (
                 <th key={s.key} scope="col">
                   {s.label}
@@ -116,9 +136,9 @@ export function CompetencyChart({
           <tbody>
             {data.map((row) => (
               <tr key={row.key}>
-                <th scope="row">{row.label}</th>
+                <th scope="row">{tr(row.label, i18n.language)}</th>
                 {series.map((s) => (
-                  <td key={s.key}>{row[s.key] ?? 'Not yet taken'}</td>
+                  <td key={s.key}>{row[s.key] ?? t('progress.chart.notTaken')}</td>
                 ))}
               </tr>
             ))}

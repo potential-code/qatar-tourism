@@ -1,4 +1,5 @@
 import type { Competency } from '@shared/constants'
+import './arabic-copy'
 
 export const COMPETENCY_LABEL: Record<Competency, string> = {
   discover_needs: 'Discover needs',
@@ -19,8 +20,12 @@ export const SCENARIO_IMAGE: Record<string, string> = {
 export const MODE_LABEL = { text: 'Text', voice: 'Voice' } as const
 
 /** Score band words, so a score never relies on colour alone. */
-export function scoreBand(percent: number): { label: string; tone: 'strong' | 'steady' | 'build' } {
-  if (percent >= 80) return { label: 'Strong', tone: 'strong' }
-  if (percent >= 60) return { label: 'Developing', tone: 'steady' }
-  return { label: 'Building', tone: 'build' }
+export function scoreBand(percent: number): {
+  label: string
+  key: 'strong' | 'developing' | 'building'
+  tone: 'strong' | 'steady' | 'build'
+} {
+  if (percent >= 80) return { label: 'Strong', key: 'strong', tone: 'strong' }
+  if (percent >= 60) return { label: 'Developing', key: 'developing', tone: 'steady' }
+  return { label: 'Building', key: 'building', tone: 'build' }
 }

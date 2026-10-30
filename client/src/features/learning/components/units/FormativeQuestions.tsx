@@ -1,7 +1,9 @@
 import type { ProgrammeCode } from '@shared/constants'
 import { CheckCircle2, CircleAlert } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import { useFormativeAnswer } from '../../queries/learning.queries'
 import type { UnitContent } from '../../types'
@@ -16,15 +18,16 @@ export function FormativeQuestions({
   questions: readonly Question[]
   programme: ProgrammeCode
 }) {
+  const { t } = useTranslation('learner')
   const correct = questions.filter((q) => q.answered?.correct).length
   return (
     <section aria-labelledby="formative-title" className="flex flex-col gap-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="formative-title" className="font-display text-2xl font-normal text-ink">
-          Check your understanding
+          {t('learning.formative.title')}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {correct} of {questions.length} answered correctly
+          {t('learning.formative.summary', { correct, total: questions.length })}
         </p>
       </div>
       {questions.map((question, index) => (
@@ -48,6 +51,8 @@ function FormativeQuestion({
   index: number
   programme: ProgrammeCode
 }) {
+  const { t, i18n } = useTranslation('learner')
+  const lang = i18n.language
   const [selected, setSelected] = useState<string | null>(question.answered?.option ?? null)
   const mutation = useFormativeAnswer()
   const result = mutation.data
@@ -58,10 +63,10 @@ function FormativeQuestion({
 
   return (
     <fieldset className="flex flex-col gap-3 rounded-xl border bg-white p-5">
-      <legend className="sr-only">Question {index + 1}</legend>
+      <legend className="sr-only">{t('learning.formative.question', { n: index + 1 })}</legend>
       <p className="font-medium text-ink">
         <span className="me-2 font-display text-lg text-teal">{index + 1}</span>
-        {question.prompt}
+        {tr(question.prompt, lang)}
       </p>
       <div className="flex flex-col gap-2">
         {question.options.map((option) => (
@@ -82,7 +87,7 @@ function FormativeQuestion({
               onChange={() => setSelected(option.key)}
               className="mt-0.5 accent-[var(--qt-teal)]"
             />
-            {option.text}
+            {tr(option.text, lang)}
           </label>
         ))}
       </div>
@@ -100,7 +105,9 @@ function FormativeQuestion({
               })
             }
           >
-            {result && !result.correct ? 'Try again' : 'Check answer'}
+            {result && !result.correct
+              ? t('learning.formative.tryAgain')
+              : t('learning.formative.check')}
           </Button>
         )}
         <p aria-live="polite" className="flex items-start gap-2 text-sm">
@@ -112,8 +119,12 @@ function FormativeQuestion({
                 <CircleAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-maroon" />
               )}
               <span className="text-ink">
-                <span className="font-medium">{result.correct ? 'Correct. ' : 'Not quite. '}</span>
-                {result.feedback}
+                <span className="font-medium">
+                  {result.correct
+                    ? t('learning.branching.correct')
+                    : t('learning.branching.notQuite')}
+                </span>
+                {tr(result.feedback, lang)}
               </span>
             </>
           ) : null}

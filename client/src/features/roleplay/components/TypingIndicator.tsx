@@ -1,8 +1,10 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 
 /** Three dots while the simulated visitor "types". Announced politely to screen readers. */
 export function TypingIndicator() {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   return (
     <motion.li
       initial={reduce ? false : { opacity: 0, y: 8 }}
@@ -20,7 +22,7 @@ export function TypingIndicator() {
         role="status"
         className="flex items-center gap-1.5 rounded-2xl rounded-ss-md border border-border bg-white px-4 py-3.5 shadow-xs"
       >
-        <span className="sr-only">The visitor is replying</span>
+        <span className="sr-only">{t('roleplay.chat.typing')}</span>
         {[0, 1, 2].map((i) => (
           <motion.span
             key={i}

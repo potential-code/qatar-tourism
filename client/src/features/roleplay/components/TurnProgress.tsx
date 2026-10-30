@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 const MIN = 4
@@ -7,6 +8,7 @@ const MAX = 6
 /** Replies so far against the 4 to 6 the scenario needs. */
 export function TurnProgress({ turns, done }: { turns: number; done: boolean }) {
   const reduce = useReducedMotion()
+  const { t } = useTranslation('learner')
   return (
     <div className="flex items-center gap-2">
       <span aria-hidden className="flex gap-1">
@@ -30,8 +32,8 @@ export function TurnProgress({ turns, done }: { turns: number; done: boolean }) 
       </span>
       <span className="text-xs text-muted-foreground tabular-nums">
         {done
-          ? 'Conversation complete'
-          : `${turns} ${turns === 1 ? 'reply' : 'replies'}, 4 to 6 needed`}
+          ? t('roleplay.turns.complete')
+          : t(turns === 1 ? 'roleplay.turns.replyOne' : 'roleplay.turns.replyMany', { n: turns })}
       </span>
     </div>
   )

@@ -1,5 +1,6 @@
 import { SendHorizontal } from 'lucide-react'
 import { type FormEvent, type KeyboardEvent, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,12 +16,8 @@ interface TextComposerProps {
 const MAX = 1000
 
 /** Typed reply box. Enter sends, Shift+Enter adds a line. */
-export function TextComposer({
-  onSend,
-  disabled,
-  restore,
-  label = 'Your reply',
-}: TextComposerProps) {
+export function TextComposer({ onSend, disabled, restore, label }: TextComposerProps) {
+  const { t } = useTranslation('learner')
   const [text, setText] = useState('')
 
   useEffect(() => {
@@ -45,7 +42,7 @@ export function TextComposer({
   return (
     <form onSubmit={submit} className="grid gap-2">
       <Label htmlFor="practice-reply" className="sr-only">
-        {label}
+        {label ?? t('roleplay.text.label')}
       </Label>
       <div className="flex items-end gap-2 rounded-2xl border border-border bg-white p-2 shadow-xs focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/40">
         <Textarea
@@ -54,7 +51,7 @@ export function TextComposer({
           maxLength={MAX}
           onChange={(event) => setText(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder="Write what you would say to the visitor"
+          placeholder={t('roleplay.text.placeholder')}
           rows={2}
           className="max-h-40 min-h-12 resize-none border-0 bg-transparent shadow-none focus-visible:ring-0"
         />
@@ -62,14 +59,12 @@ export function TextComposer({
           type="submit"
           size="icon"
           disabled={disabled || !text.trim()}
-          aria-label="Send reply"
+          aria-label={t('roleplay.text.send')}
         >
           <SendHorizontal className="rtl:-scale-x-100" />
         </Button>
       </div>
-      <p className="px-2 text-xs text-muted-foreground">
-        Press Enter to send. Shift and Enter adds a new line.
-      </p>
+      <p className="px-2 text-xs text-muted-foreground">{t('roleplay.text.hint')}</p>
     </form>
   )
 }

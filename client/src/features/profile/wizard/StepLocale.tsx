@@ -1,31 +1,32 @@
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { describedBy, Field } from '../components/Field'
 import { OptionSelect } from '../components/OptionSelect'
-import { COUNTRIES, LANGUAGES } from '../utils/options'
+import { useOptionLabels } from '../utils/options'
 import type { StepProps } from './StepWork'
-
-const pairs = (values: readonly string[]) => values.map((v) => [v, v] as const)
 
 /** Step 2: where and how you learn (country, city, language, captions, accessibility). */
 export function StepLocale({ draft, set, errors }: StepProps) {
+  const { t } = useTranslation('learner')
+  const labels = useOptionLabels()
   const id = useId()
   return (
     <div className="grid gap-6">
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field id={`${id}-country`} label="Country" error={errors.country}>
+        <Field id={`${id}-country`} label={t('profile.locale.country')} error={errors.country}>
           <OptionSelect<string>
             id={`${id}-country`}
             value={draft.country}
-            options={pairs(COUNTRIES)}
-            placeholder="Choose a country"
+            options={labels.countries}
+            placeholder={t('profile.locale.countryPlaceholder')}
             onChange={(country) => set({ country })}
             error={errors.country}
           />
         </Field>
-        <Field id={`${id}-city`} label="City" optional>
+        <Field id={`${id}-city`} label={t('profile.locale.city')} optional>
           <Input
             id={`${id}-city`}
             value={draft.city}
@@ -36,15 +37,15 @@ export function StepLocale({ draft, set, errors }: StepProps) {
       </div>
       <Field
         id={`${id}-language`}
-        label="Preferred learning language"
-        hint="English is the complete content set in this demonstration. We record your preference for future languages."
+        label={t('profile.locale.language')}
+        hint={t('profile.locale.languageHint')}
         error={errors.preferredLanguage}
       >
         <OptionSelect<string>
           id={`${id}-language`}
           value={draft.preferredLanguage}
-          options={pairs(LANGUAGES)}
-          placeholder="Choose a language"
+          options={labels.languages}
+          placeholder={t('profile.locale.languagePlaceholder')}
           onChange={(preferredLanguage) => set({ preferredLanguage })}
           error={errors.preferredLanguage}
           hint
@@ -56,11 +57,13 @@ export function StepLocale({ draft, set, errors }: StepProps) {
             htmlFor={`${id}-captions`}
             className="flex items-baseline gap-2 font-medium text-sm"
           >
-            Show captions and transcripts by default
-            <span className="font-normal text-muted-foreground text-xs">Optional</span>
+            {t('profile.locale.captions')}
+            <span className="font-normal text-muted-foreground text-xs">
+              {t('profile.common.optional')}
+            </span>
           </label>
           <p id={`${id}-captions-hint`} className="text-muted-foreground text-sm">
-            Every video has captions and a transcript. This turns them on automatically.
+            {t('profile.locale.captionsHint')}
           </p>
         </div>
         <Switch
@@ -72,9 +75,9 @@ export function StepLocale({ draft, set, errors }: StepProps) {
       </div>
       <Field
         id={`${id}-access`}
-        label="Accessibility support request"
+        label={t('profile.locale.access')}
         optional
-        hint="Tell us about anything that would make sessions or content easier to use. Only Academy administrators see this."
+        hint={t('profile.locale.accessHint')}
         error={errors.accessibilityRequest}
       >
         <Textarea
@@ -87,9 +90,7 @@ export function StepLocale({ draft, set, errors }: StepProps) {
           aria-describedby={describedBy(`${id}-access`, errors.accessibilityRequest, true)}
         />
       </Field>
-      <p className="text-muted-foreground text-sm">
-        We never ask for a passport, QID or other identity document.
-      </p>
+      <p className="text-muted-foreground text-sm">{t('profile.locale.noId')}</p>
     </div>
   )
 }

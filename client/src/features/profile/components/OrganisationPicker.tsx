@@ -2,11 +2,13 @@ import type { OrganisationType } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
 import { Building2, Check, PenLine, Search, X } from 'lucide-react'
 import { useDeferredValue, useId, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import { type OrganisationOption, organisationsQuery } from '../queries/profile.queries'
-import { ORGANISATION_TYPE_LABEL } from '../utils/options'
+import { useOptionLabels } from '../utils/options'
 
 export type OrganisationChoice =
   | { kind: 'existing'; id: string; name: string; type: OrganisationType; isPseudo: boolean }
@@ -29,6 +31,8 @@ export function OrganisationPicker({
   onChoose: (choice: OrganisationChoice) => void
   error?: string
 }) {
+  const { t, i18n } = useTranslation('learner')
+  const labels = useOptionLabels()
   const listId = useId()
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(!selectedName && !isOther)
@@ -47,16 +51,16 @@ export function OrganisationPicker({
           ) : (
             <Building2 aria-hidden className="size-4" />
           )}
-          {isOther ? 'Other organisation' : selectedName}
+          {isOther ? t('profile.org.other') : tr(selectedName, i18n.language)}
         </span>
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          aria-label="Change organisation"
+          aria-label={t('profile.org.changeLabel')}
           onClick={() => setOpen(true)}
         >
-          Change
+          {t('profile.org.change')}
         </Button>
       </div>
     )
@@ -92,7 +96,7 @@ export function OrganisationPicker({
           id={id}
           aria-controls={listId}
           aria-describedby={error ? `${id}-error` : undefined}
-          placeholder="Search fictional organisations, for example Demo Pearl"
+          placeholder={t('profile.org.placeholder')}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           className="h-11 border-0 bg-sand ps-9 shadow-none"
@@ -101,7 +105,7 @@ export function OrganisationPicker({
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Keep current organisation"
+            aria-label={t('profile.org.keepLabel')}
             className="absolute end-2 top-1/2 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-ink"
           >
             <X aria-hidden className="size-4" />
@@ -110,24 +114,24 @@ export function OrganisationPicker({
       </div>
       <ul
         id={listId}
-        aria-label="Organisations"
+        aria-label={t('profile.org.listLabel')}
         aria-live="polite"
         className="grid max-h-64 gap-0.5 overflow-y-auto"
       >
         {isPending ? (
-          <li className="px-3 py-2 text-muted-foreground text-sm">Searching…</li>
+          <li className="px-3 py-2 text-muted-foreground text-sm">{t('profile.org.searching')}</li>
         ) : isError ? (
           <li className="flex items-center justify-between px-3 py-2 text-sm">
-            Organisations could not be loaded.
+            {t('profile.org.loadFailed')}
             <Button type="button" variant="link" size="sm" onClick={() => refetch()}>
-              Try again
+              {t('profile.common.tryAgain')}
             </Button>
           </li>
         ) : (
           <>
             {named.length === 0 ? (
               <li className="px-3 py-2 text-muted-foreground text-sm">
-                No organisation matches “{deferred}”. Choose Other to enter it.
+                {t('profile.org.noMatch', { query: deferred })}
               </li>
             ) : null}
             {named.map((org) => (
@@ -139,9 +143,9 @@ export function OrganisationPicker({
                   className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-start text-sm hover:bg-teal-mist focus-visible:bg-teal-mist focus-visible:outline-none"
                 >
                   <span>
-                    <span className="block font-medium">{org.name}</span>
+                    <span className="block font-medium">{tr(org.name, i18n.language)}</span>
                     <span className="text-muted-foreground text-xs">
-                      {ORGANISATION_TYPE_LABEL[org.type]}
+                      {labels.organisationType[org.type]}
                       {org.city ? `, ${org.city}` : ''}
                     </span>
                   </span>
@@ -159,7 +163,7 @@ export function OrganisationPicker({
                   onClick={() => pick(org)}
                   className="w-full rounded-lg px-3 py-2.5 text-start font-medium text-sm hover:bg-teal-mist focus-visible:bg-teal-mist focus-visible:outline-none"
                 >
-                  {org.name}
+                  {tr(org.name, i18n.language)}
                 </button>
               </li>
             ))}
@@ -173,7 +177,7 @@ export function OrganisationPicker({
                 className="inline-flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-start font-medium text-sm hover:bg-teal-mist focus-visible:bg-teal-mist focus-visible:outline-none"
               >
                 <PenLine aria-hidden className="size-4 text-teal" />
-                Other: enter my organisation
+                {t('profile.org.enterOwn')}
               </button>
             </li>
           </>

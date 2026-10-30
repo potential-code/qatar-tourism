@@ -1,21 +1,23 @@
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, Check, Lock } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { spring } from '@/components/motion/variants'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import type { JourneyItem, ProgrammeCode } from '../types'
 import { minutesLabel } from '../utils/format'
 import { UNIT_IMAGE } from '../utils/imagery'
-import { itemLink, KIND_LABEL } from '../utils/itemLink'
+import { itemLink, KIND_KEY } from '../utils/itemLink'
 import { ItemIcon } from './ItemIcon'
 
-const STATE_LABEL: Record<JourneyItem['state'], string> = {
-  completed: 'Complete',
-  in_progress: 'In progress',
-  available: 'Ready to start',
-  locked: 'Locked',
-}
+const STATE_KEY = {
+  completed: 'learning.state.completed',
+  in_progress: 'learning.state.inProgress',
+  available: 'learning.state.available',
+  locked: 'learning.state.locked',
+} as const satisfies Record<JourneyItem['state'], string>
 
 /** One step of the path: what it is, its state in words and an icon, and where it opens. */
 export function PathItemCard({
@@ -45,6 +47,9 @@ export function PathItemCard({
   index?: number
 }) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
+  const stateLabel = t(STATE_KEY[item.state])
+  const kindKey = KIND_KEY[item.kind as keyof typeof KIND_KEY] ?? 'learning.kind.fallback'
   const link = itemLink(item, programme)
   const locked = item.state === 'locked'
   const image = item.courseCode ? UNIT_IMAGE[item.courseCode] : undefined
@@ -77,30 +82,34 @@ export function PathItemCard({
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          {index !== undefined ? <span className="tabular-nums">Step {index}</span> : null}
+          {index !== undefined ? (
+            <span className="tabular-nums">{t('learning.card.step', { n: index })}</span>
+          ) : null}
           <span className="inline-flex items-center gap-1">
             <ItemIcon kind={item.kind} courseCode={item.courseCode} className="size-3.5" />
             {item.courseCode ? `${item.courseCode} · ` : ''}
-            {KIND_LABEL[item.kind] ?? 'Step'}
+            {t(kindKey)}
           </span>
           <span>{minutesLabel(item.estimatedMinutes)}</span>
           {recommended ? (
             <span className="rounded-full bg-maroon-mist px-2 py-0.5 font-medium text-maroon-deep">
-              Recommended
+              {t('learning.card.recommended')}
             </span>
           ) : null}
-          {item.kind === 'ai_practice' ? <SimulatedTag label="Simulated AI practice" /> : null}
+          {item.kind === 'ai_practice' ? (
+            <SimulatedTag label={t('learning.card.simulatedAi')} />
+          ) : null}
         </div>
         <p className={cn('font-medium text-ink', compact ? 'leading-snug' : 'truncate')}>
-          {item.title}
+          {tr(item.title, i18n.language)}
         </p>
         {compact ? (
           <p aria-hidden className="text-xs text-muted-foreground">
-            {STATE_LABEL[item.state]}
+            {stateLabel}
           </p>
         ) : null}
         {locked && item.lockReason ? (
-          <p className="text-xs text-muted-foreground">{item.lockReason}</p>
+          <p className="text-xs text-muted-foreground">{tr(item.lockReason, i18n.language)}</p>
         ) : item.state === 'in_progress' && percent > 0 ? (
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-28 overflow-hidden rounded-full bg-teal-mist">
@@ -123,16 +132,16 @@ export function PathItemCard({
           )}
         >
           {locked ? <Lock aria-hidden className="size-3" /> : null}
-          {STATE_LABEL[item.state]}
+          {stateLabel}
         </span>
         {locked ? null : (
           <ArrowRight
             aria-hidden
-            className="size-4 text-teal transition-transform group-hover:translate-x-1 rtl:-scale-x-100"
+            className="size-4 text-teal transition-transform group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
           />
         )}
       </div>
-      <span className="sr-only">, {STATE_LABEL[item.state]}</span>
+      <span className="sr-only">, {stateLabel}</span>
     </>
   )
 

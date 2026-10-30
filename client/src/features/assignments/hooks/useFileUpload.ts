@@ -1,5 +1,6 @@
 import { uploadProblem } from '@shared/schemas/assignment-marking'
 import { useCallback, useRef, useState } from 'react'
+import i18n from '@/i18n'
 import { ApiError } from '@/lib/api-error'
 import { uploadAssignmentFile } from '../queries/assignments.queries'
 
@@ -37,7 +38,9 @@ export function useFileUpload(assignmentId: string) {
           status: 'error',
           file,
           message:
-            error instanceof ApiError ? error.message : 'The file could not be saved. Try again.',
+            error instanceof ApiError
+              ? error.message
+              : i18n.t('assignments.dropzone.saveFailed', { ns: 'learner' }),
         })
       }
     },

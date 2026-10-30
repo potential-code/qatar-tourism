@@ -1,6 +1,8 @@
 import { Volume2 } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { spring } from '@/components/motion/variants'
+import { tr } from '@/i18n/localised'
 import { cn } from '@/lib/utils'
 import type { TranscriptTurn } from '../types'
 
@@ -14,7 +16,10 @@ interface ChatBubbleProps {
 /** One line of the conversation. The visitor sits at the start, the learner at the end. */
 export function ChatBubble({ turn, onSpeak, className }: ChatBubbleProps) {
   const reduce = useReducedMotion()
+  const { t, i18n } = useTranslation('learner')
   const visitor = turn.speaker === 'visitor'
+  // The scripted visitor lines are stored in English; the learner's own words show as typed.
+  const text = visitor ? tr(turn.text, i18n.language) : turn.text
   return (
     <motion.li
       layout={reduce ? false : 'position'}
@@ -35,7 +40,7 @@ export function ChatBubble({ turn, onSpeak, className }: ChatBubbleProps) {
         className={cn('flex max-w-[85%] flex-col gap-1 sm:max-w-[75%]', !visitor && 'items-end')}
       >
         <span className="text-[11px] font-medium text-muted-foreground">
-          {visitor ? 'Visitor (simulated)' : 'You'}
+          {visitor ? t('roleplay.chat.visitor') : t('roleplay.chat.you')}
         </span>
         <div
           className={cn(
@@ -45,16 +50,16 @@ export function ChatBubble({ turn, onSpeak, className }: ChatBubbleProps) {
               : 'rounded-se-md bg-teal text-white',
           )}
         >
-          {turn.text}
+          {text}
         </div>
         {visitor && onSpeak ? (
           <button
             type="button"
-            onClick={() => onSpeak(turn.text)}
+            onClick={() => onSpeak(text)}
             className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs text-teal-deep transition-colors hover:bg-teal-mist focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             <Volume2 aria-hidden className="size-3.5" />
-            Play visitor voice
+            {t('roleplay.chat.playVisitor')}
           </button>
         ) : null}
       </div>
