@@ -1,67 +1,97 @@
-import type { Competency } from '@shared/constants'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
-import type { OpenAttempt } from '../types'
+import type { AttemptQuestion } from '../types'
 
-type Question = OpenAttempt['questions'][number]
+const LETTERS: Record<string, readonly string[]> = {
+  en: ['A', 'B', 'C', 'D', 'E', 'F'],
+  ar: ['أ', 'ب', 'ج', 'د', 'هـ', 'و'],
+}
 
-/** One scenario question; answer order is shuffled by the server per attempt (brief §8). */
+/**
+ * One question. Single-choice and scenario questions use radio buttons, multiple-choice ones use
+ * checkboxes. The answer text keeps the language the attempt was drawn in, so its direction is set
+ * from the question rather than the page.
+ */
 export function QuestionStep({
   question,
   index,
   total,
   selected,
-  onSelect,
+  disabled,
+  onChange,
 }: {
-  question: Question
+  question: AttemptQuestion
   index: number
   total: number
-  selected: string | undefined
-  onSelect: (competency: Competency, option: 'A' | 'B' | 'C') => void
+  selected: readonly string[]
+  disabled: boolean
+  onChange: (questionId: string, keys: string[]) => void
 }) {
-  const name = `q-${question.competency}`
+  const { t } = useTranslation('assessments')
+  const multiple = question.type === 'multiple'
+  const dir = question.language === 'ar' ? 'rtl' : 'ltr'
+  const toggle = (key: string) => {
+    if (!multiple) return onChange(question.id, [key])
+    onChange(
+      question.id,
+      selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key],
+    )
+  }
   return (
-    <fieldset className="flex flex-col gap-5">
+    <fieldset className="flex flex-col gap-5" disabled={disabled}>
       <legend className="flex flex-col gap-2">
         <span className="text-sm font-medium text-maroon">
-          Question {index + 1} of {total} · {question.competencyLabel}
+          {t('runner.questionOf', { n: index + 1, total })} ·{' '}
+          {t(`competency.${question.competency}` as 'competency.discover_needs')}
         </span>
-        <span className="font-display text-2xl leading-snug text-ink md:text-3xl">
+        <span
+          lang={question.language}
+          dir={dir}
+          className="font-display text-2xl leading-snug text-ink md:text-3xl"
+        >
           {question.prompt}
         </span>
+        <span className="text-sm text-muted-foreground">
+          {multiple ? t('runner.multiple') : t('runner.single')}
+          {question.type === 'scenario' ? ` · ${t('runner.scenario')}` : ''}
+        </span>
       </legend>
-      <div className="flex flex-col gap-3">
-        {question.options.map((option, i) => (
-          <label
-            key={option.key}
-            className={cn(
-              'flex cursor-pointer items-center gap-4 rounded-xl border bg-white p-4 transition-all duration-200 hover:border-teal/50 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring',
-              selected === option.key && 'border-teal bg-teal-mist shadow-sm',
-            )}
-          >
-            <input
-              type="radio"
-              name={name}
-              value={option.key}
-              checked={selected === option.key}
-              onChange={() =>
-                onSelect(question.competency as Competency, option.key as 'A' | 'B' | 'C')
-              }
-              className="sr-only"
-            />
-            <span
-              aria-hidden
+      <div className="flex flex-col gap-3" lang={question.language} dir={dir}>
+        {question.options.map((option, i) => {
+          const checked = selected.includes(option.key)
+          return (
+            <label
+              key={option.key}
               className={cn(
-                'grid size-8 shrink-0 place-items-center rounded-full border text-sm font-semibold',
-                selected === option.key
-                  ? 'border-teal bg-teal text-white'
-                  : 'bg-sand text-teal-deep',
+                'flex cursor-pointer items-center gap-4 rounded-xl border bg-white p-4 transition-colors duration-200 hover:border-teal/50 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring',
+                checked && 'border-teal bg-teal-mist shadow-sm',
+                disabled && 'cursor-not-allowed opacity-70',
               )}
             >
-              {String.fromCharCode(65 + i)}
-            </span>
-            <span className="text-ink">{option.text}</span>
-          </label>
-        ))}
+              <input
+                type={multiple ? 'checkbox' : 'radio'}
+                name={`q-${question.id}`}
+                value={option.key}
+                checked={checked}
+                onChange={() => toggle(option.key)}
+                className="sr-only"
+              />
+              <span
+                aria-hidden
+                className={cn(
+                  'grid size-8 shrink-0 place-items-center border text-sm font-semibold',
+                  multiple ? 'rounded-md' : 'rounded-full',
+                  checked ? 'border-teal bg-teal text-white' : 'bg-sand text-teal-deep',
+                )}
+              >
+                {checked && multiple
+                  ? '✓'
+                  : ((LETTERS[question.language] ?? LETTERS.en)?.[i] ?? i + 1)}
+              </span>
+              <span className="text-ink">{option.text}</span>
+            </label>
+          )
+        })}
       </div>
     </fieldset>
   )

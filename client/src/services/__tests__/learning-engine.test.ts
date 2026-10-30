@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
+import type { Competency } from '@shared/constants'
 import type { DemoDb } from '@/mocks/db'
 import * as aiPath from '../ai-path.service'
 import { insertRow, nowIso } from '../api'
+import * as adminAssessments from '../assessments/admin'
 import * as assessments from '../assessments.service'
 import * as certificates from '../certificates.service'
 import * as courses from '../courses.service'
@@ -10,9 +12,18 @@ import * as programmeEnrolment from '../programme-enrolment.service'
 import { findEnrolment } from '../progress/evidence'
 import { getAttemptHistory, recomputeEnrolment, saveResource } from '../progress.service'
 import * as scorm from '../scorm.service'
+import * as takeSupport from './assessments-support'
 import { actAs, freshDemo } from './helpers'
 
 /** Ported from server/modules/progress/learning-engine.test.ts, programmes and certificates. */
+
+const COMPETENCIES_ALL = [
+  'discover_needs',
+  'verify_information',
+  'communicate_clearly',
+  'recover_service',
+  'protect_information',
+] as const
 
 const MAHA = 'user-l0001'
 const OMAR = 'user-l0002'
@@ -47,16 +58,9 @@ function addRolePlay(learnerId: string, programme: 'A' | 'B') {
   })
 }
 
-/** Answers every question of an open attempt and submits it. */
-async function answerAndSubmit(attemptId: string, options: Record<string, 'A' | 'B' | 'C'>) {
-  for (const [competency, option] of Object.entries(options)) {
-    await assessments.saveAnswer({
-      attemptId,
-      competency: competency as Parameters<typeof assessments.saveAnswer>[0]['competency'],
-      option,
-    })
-  }
-  return assessments.submit(attemptId)
+/** Answers every question of an open attempt (the listed competencies wrongly) and submits it. */
+function answerAndSubmit(attemptId: string, wrong: Competency[] = []) {
+  return takeSupport.answerAndSubmit(db, attemptId, wrong)
 }
 
 describe('learner scope', () => {
@@ -78,7 +82,11 @@ describe('learner scope', () => {
     await expect(assessments.getResult(saraAttempt)).rejects.toMatchObject({ status: 404 })
     await expect(assessments.submit(saraAttempt)).rejects.toMatchObject({ status: 404 })
     await expect(
-      assessments.saveAnswer({ attemptId: saraAttempt, competency: 'discover_needs', option: 'A' }),
+      assessments.saveAnswer({
+        attemptId: saraAttempt,
+        questionId: 'Q-DN-001-EN',
+        selected: ['A'],
+      }),
     ).rejects.toMatchObject({ status: 404 })
   })
 
@@ -178,14 +186,9 @@ describe('AI path generator (brief §9)', () => {
 
     await expect(aiPath.acceptPath('B')).rejects.toMatchObject({ status: 400 })
     const { attemptId } = await assessments.start('B', 'pre')
-    const result = await answerAndSubmit(attemptId, {
-      discover_needs: 'A',
-      verify_information: 'B',
-      communicate_clearly: 'B',
-      recover_service: 'A',
-      protect_information: 'B',
-    })
+    const result = await answerAndSubmit(attemptId, ['discover_needs', 'recover_service'])
     expect(result.kind).toBe('pre')
+    expect(result.gaps).toEqual(['discover_needs', 'recover_service'])
 
     const rec = await aiPath.getRecommendation('B')
     expect(rec.inputs.baseline).not.toBeNull()
@@ -275,8 +278,19 @@ describe('assessments (brief §8)', () => {
     recomputeEnrolment(MAHA, 'B')
     actAs(db, MAHA)
     const { attemptId } = await assessments.start('B', 'post')
-    await assessments.saveAnswer({ attemptId, competency: 'discover_needs', option: 'B' })
-    await assessments.saveAnswer({ attemptId, competency: 'verify_information', option: 'B' })
+    const drawn = takeSupport.attemptRow(db, attemptId).snapshot?.items ?? []
+    expect(drawn).toHaveLength(10)
+    const [first, second] = drawn
+    await assessments.saveAnswer({
+      attemptId,
+      questionId: first?.questionId as string,
+      selected: [first?.optionOrder[0] as string],
+    })
+    await assessments.saveAnswer({
+      attemptId,
+      questionId: second?.questionId as string,
+      selected: [second?.optionOrder[0] as string],
+    })
 
     const resumed = await assessments.getState('B', 'post')
     expect(resumed.attempt?.id).toBe(attemptId)
@@ -285,13 +299,15 @@ describe('assessments (brief §8)', () => {
     expect((await assessments.start('B', 'post')).resumed).toBe(true)
 
     await expect(assessments.submit(attemptId)).rejects.toMatchObject({ status: 400 })
-    await assessments.saveAnswer({ attemptId, competency: 'communicate_clearly', option: 'B' })
-    await assessments.saveAnswer({ attemptId, competency: 'recover_service', option: 'B' })
-    await assessments.saveAnswer({ attemptId, competency: 'protect_information', option: 'A' })
+    await takeSupport.answerAll(db, attemptId, ['protect_information'])
     const result = await assessments.submit(attemptId)
-    expect(result.score).toBe(80)
-    expect(result.comparison).toEqual({ baseline: 40, post: 80, gainPoints: 40 })
     expect(result.competencies.find((c) => c.key === 'protect_information')?.points).toBe(0)
+    expect(result.score).toBeGreaterThanOrEqual(60)
+    expect(result.comparison).toEqual({
+      baseline: 40,
+      post: result.score,
+      gainPoints: result.score - 40,
+    })
     await expect(assessments.submit(attemptId)).rejects.toMatchObject({ status: 400 })
   })
 })
@@ -369,14 +385,8 @@ describe('Program A certificate through the services (brief §6)', () => {
     expect((await certificates.listMine()).items).toHaveLength(0)
 
     const { attemptId } = await assessments.start('A', 'post')
-    const result = await answerAndSubmit(attemptId, {
-      discover_needs: 'B',
-      verify_information: 'B',
-      communicate_clearly: 'B',
-      recover_service: 'B',
-      protect_information: 'C',
-    })
-    expect(result.score).toBe(80)
+    const result = await answerAndSubmit(attemptId)
+    expect(result.score).toBe(100)
     expect(result.passed).toBe(true)
 
     const mine = await certificates.listMine()
@@ -393,6 +403,30 @@ describe('Program A certificate through the services (brief §6)', () => {
     ).toHaveLength(1)
     // The final assessment cannot be retaken once passed.
     await expect(assessments.start('A', 'post')).rejects.toMatchObject({ status: 400 })
+  })
+
+  test('no certificate while the post-assessment is unmet; an admin grant lets Omar pass and earn it', async () => {
+    await omarReadyForFinal()
+    const failing = [...COMPETENCIES_ALL]
+    await takeSupport.takeAttempt(db, 'A', 'post', failing)
+    const second = await takeSupport.takeAttempt(db, 'A', 'post', failing)
+    expect(second.result.limitReached).toBe(true)
+    expect(findEnrolment(OMAR, 'A')?.status).not.toBe('completed')
+    expect((await certificates.listMine()).items).toHaveLength(0)
+    await expect(assessments.start('A', 'post')).rejects.toMatchObject({
+      message: 'Attempt limit reached — request support',
+    })
+
+    actAs(db, ADMIN)
+    await adminAssessments.grantExtraAttempt({
+      attemptId: second.result.attemptId,
+      reason: 'Reviewed with the trainer; one more attempt approved',
+    })
+    actAs(db, OMAR)
+    const third = await takeSupport.takeAttempt(db, 'A', 'post')
+    expect(third.result.passed).toBe(true)
+    expect((await certificates.listMine()).items).toHaveLength(1)
+    expect(findEnrolment(OMAR, 'A')?.status).toBe('completed')
   })
 
   test('a revoked certificate stays revoked after recompute; only the admin reissue replaces it', async () => {

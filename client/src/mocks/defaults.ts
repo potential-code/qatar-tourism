@@ -109,7 +109,7 @@ export const COLUMN_DEFAULTS = {
     snapshot: null,
     deadlineAt: null,
   }),
-  assessmentAnswers: () => ({}),
+  assessmentAnswers: () => ({ questionId: null }),
   rolePlayAttempts: () => ({ usedRecordedDemo: false }),
   sessions: () => ({
     level: null,

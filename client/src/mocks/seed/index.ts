@@ -18,7 +18,7 @@ import {
 import { buildLearners } from './learners'
 import { buildOrganisations } from './organisations'
 import { buildPlan } from './plan'
-import { buildAssessmentRules, buildQuestionBank } from './question-bank'
+import { applyAssessmentDemo, buildAssessmentRules, buildQuestionBank } from './question-bank'
 import { calendar, SEED_VERSION } from './reference-date'
 import { Rng } from './rng'
 import { toRows } from './rows'
@@ -134,6 +134,8 @@ export function buildSeed(referenceDate: string, seededAt: Date = new Date()): S
     crmEvents: toRows('crmEvents', buildCrmEvents(cal, cast)),
     integrationSettings: toRows('integrationSettings', buildIntegrationSettings(cal)),
   }
+
+  applyAssessmentDemo(collections)
 
   const meta: DemoMetaRow = {
     referenceDate,

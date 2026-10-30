@@ -99,7 +99,7 @@ export function pointsFor(kind: AssessmentKind, competency: Competency, option: 
 }
 
 /** Deterministic per-attempt shuffle (brief §8: shuffle answer order). */
-function seededOrder(seed: string, length: number): number[] {
+export function seededOrder(seed: string, length: number): number[] {
   let h = 2166136261
   for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619)
   const order = Array.from({ length }, (_, i) => i)

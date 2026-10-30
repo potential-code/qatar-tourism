@@ -1,1 +1,156 @@
-{}
+{
+  "page": {
+    "title": "Assessments",
+    "lead": "Short scenario questions on five competencies. Your baseline and final results measure improvement on the same skills.",
+    "loading": "Loading assessments",
+    "loadError": "This assessment could not be opened",
+    "emptyTitle": "No assessments in this programme",
+    "emptyBody": "Program C is an illustrative sample with a single preview unit.",
+    "crumb": "Assessments",
+    "startFailed": "Could not start. Try again."
+  },
+  "kind": {
+    "pre": "Baseline assessment",
+    "post": "Post-assessment",
+    "postA": "Final assessment",
+    "formative": "Foundation quiz"
+  },
+  "competency": {
+    "discover_needs": "Discover needs",
+    "verify_information": "Verify information",
+    "communicate_clearly": "Communicate clearly",
+    "recover_service": "Recover service",
+    "protect_information": "Protect information"
+  },
+  "lang": {
+    "en": "English",
+    "ar": "Arabic"
+  },
+  "policy": {
+    "best": "best score",
+    "latest": "latest score"
+  },
+  "card": {
+    "questions": "{{n}} questions",
+    "passRequirement": "Pass requirement: {{n}}%",
+    "noPass": "No pass mark",
+    "attempts": "Attempts remaining: {{left}} of {{total}}",
+    "timeLimit": "{{n}} minute limit",
+    "inProgress": "In progress, saved",
+    "locked": "Locked",
+    "counted": "Counted score {{score}}%",
+    "ready": "Ready to start",
+    "resume": "Resume",
+    "viewResult": "View result",
+    "viewDetails": "View details",
+    "start": "Start"
+  },
+  "reason": {
+    "baseline_recorded": "Your baseline is recorded. It is taken once so improvement can be measured.",
+    "passed": "You have passed this assessment.",
+    "limit_reached": "Attempt limit reached — request support",
+    "no_rule": "No assessment rule is published for this programme."
+  },
+  "comparison": {
+    "title": "Baseline compared with your counted score",
+    "baseline": "Baseline",
+    "final": "Final",
+    "post": "Post",
+    "improvement": "Improvement",
+    "improvementValue": "Improvement: {{points}} percentage points",
+    "note": "Percentage points, from matched attempts: your first baseline and your counted score ({{policy}})."
+  },
+  "measure": {
+    "title": "How improvement is measured",
+    "body": "The baseline and the final assessment draw questions on the same five competencies. Questions are drawn at random for each new attempt and can differ in language, wording and order. Improvement compares your first baseline with the score that counts for your final assessment."
+  },
+  "intro": {
+    "pre": "A short diagnostic on five competencies. It is taken once, has no pass mark and is not an entry barrier. It shows where your learning path should focus.",
+    "post": "Questions on the same five competencies as your baseline, drawn at random for each attempt. You need {{mark}} percent to pass, and the time limit applies.",
+    "formative": "Five questions on the Level 1 foundation units. You need at least {{mark}} percent to open Level 2. Targeted review and retry are available."
+  },
+  "start": {
+    "questions": "Questions",
+    "passRequirement": "Pass requirement",
+    "timeLimit": "Time limit",
+    "attempts": "Attempts remaining",
+    "scoreCounts": "Score that counts",
+    "noPass": "None",
+    "minutes": "{{n}} minutes",
+    "noLimit": "No limit",
+    "attemptsValue": "{{left}} of {{total}}",
+    "startPre": "Start pre-assessment",
+    "start": "Start",
+    "notice": "Questions are drawn at random for each new attempt. Reloading this page resumes the same attempt, and your answers save as you go.",
+    "noticeTimed": "The timer starts when you begin and keeps running if you leave. When time ends, the answers you saved are submitted automatically.",
+    "language": "Questions are shown in {{lang}}, your portal language, when a version exists."
+  },
+  "runner": {
+    "answered": "{{answered}} of {{total}} answered",
+    "progress": "Questions answered",
+    "resumed": "Resumed where you left off. Your saved answers are kept.",
+    "questions": "Questions",
+    "questionN": "Question {{n}}",
+    "questionAnswered": "Question {{n}}, answered",
+    "questionOf": "Question {{n}} of {{total}}",
+    "single": "Choose one answer",
+    "multiple": "Select all that apply",
+    "scenario": "Scenario",
+    "points": "Points: {{n}}",
+    "previous": "Previous",
+    "next": "Next",
+    "saveExit": "Save and exit",
+    "submit": "Submit answers",
+    "submitting": "Submitting",
+    "saveFailed": "Your answer was not saved. Check your connection and choose again.",
+    "submitFailed": "Could not submit. Your answers are saved.",
+    "attemptOf": "Attempt {{no}} of {{total}}",
+    "attemptsAfter": "Attempts remaining after this one: {{n}}",
+    "title": "{{title}}, version {{version}}"
+  },
+  "timer": {
+    "label": "Time remaining",
+    "limit": "{{n}} minute limit",
+    "fiveMinutes": "5 minutes remaining.",
+    "oneMinute": "1 minute remaining.",
+    "expired": "Time is up. Submitting your saved answers.",
+    "noteSaved": "Your answers save as you go. If time ends, the saved answers are submitted automatically."
+  },
+  "result": {
+    "title": "{{title}} result",
+    "attemptLine": "Attempt {{no}}, submitted {{date}}",
+    "passed": "Passed. The pass requirement is {{mark}} percent.",
+    "failed": "Not yet passed. You need {{mark}} percent. Review the areas below and retry if an attempt remains.",
+    "baselineNote": "Your baseline identifies useful learning. It is not an entry barrier, and it does not reveal the answers to the post-assessment.",
+    "advisory": "For Program B this score does not block completing the programme.",
+    "reviewSuggested": "A short review of your lowest areas is suggested. It does not block completing Program B.",
+    "autoTitle": "Time ran out",
+    "autoBody": "Time ran out, so your saved answers were submitted automatically. You answered {{answered}} of {{total}} questions. Unanswered questions score no points.",
+    "points": "{{earned}} of {{possible}} points",
+    "counted": "Counted score: {{score}}% ({{policy}})",
+    "language": "Taken in {{lang}}",
+    "attemptsRemaining": "Attempts remaining: {{left}} of {{total}}",
+    "limitReached": "Attempt limit reached — request support",
+    "limitHelp": "Contact Academy support. An authorised administrator can grant one more attempt and records the reason.",
+    "feedbackHeld": "Question feedback is released once you pass.",
+    "gapsTitle": "Skill gaps found",
+    "gapsBody": "These gaps were sent to your AI learning path: {{list}}.",
+    "gapsNone": "No gaps found. We recommend the standard order of your path.",
+    "byCompetency": "Results by competency",
+    "competencyScore": "{{correct}} of {{total}} correct",
+    "strong": "A strong area.",
+    "learn": "A useful area to learn. Your path covers it.",
+    "review": "Review: {{course}}",
+    "reviewTitle": "Question review",
+    "yourAnswer": "Your answer",
+    "correctAnswer": "Correct answer",
+    "notAnswered": "Not answered",
+    "correct": "Correct",
+    "incorrect": "Not correct",
+    "feedback": "Feedback",
+    "buildPath": "Build my learning path",
+    "retry": "Retry",
+    "all": "All assessments",
+    "score": "Score {{n}} percent"
+  }
+}
