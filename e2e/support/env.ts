@@ -23,6 +23,8 @@ export const ACCOUNTS = {
   leila: 'user-l0003',
   daniel: 'user-l0004',
   sara: 'user-l0005',
+  /** Mariam Al Nuaimi, LRN-0042: the 29 Oct unified-record demonstration learner. */
+  mariam: 'user-l0042',
   trainer: (n: number) => `user-t${String(n).padStart(2, '0')}`,
 } as const
 
@@ -30,5 +32,6 @@ export const ACCOUNTS = {
 export const EMAILS = {
   admin: 'admin@example.com',
   maha: 'learner0001@example.com',
+  mariam: 'mariam.alnuaimi@example.com',
   trainer: (n: number) => `trainer${String(n).padStart(2, '0')}@example.com`,
 } as const

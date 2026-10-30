@@ -2,6 +2,7 @@ import type { AttendanceValue, ProgrammeCode } from '@shared/constants'
 import { NOTIFICATION_TEMPLATES, renderTemplate } from '@shared/content/notifications'
 import { formatQatarDateTime } from '@shared/utils/qatar-calendar'
 import { stableUuid } from './ids'
+import { MARIAM_N } from './personas'
 import type { EnrolmentPlan, SeedPlan } from './plan'
 import type { Calendar } from './reference-date'
 import type { Rng } from './rng'
@@ -419,7 +420,10 @@ export function buildSessions(
 
   // --- Cancelled historical session (T07) -----------------------------------------------
   const l1Done = plan.enrolments.filter((e) => e.programme === 'A' && e.stage === 'l1_done')
-  const bookable = rng.fork('l1done').shuffle(l1Done.filter((e) => !e.keepUnbooked))
+  // Mariam (29 Oct demo learner) is booked explicitly below, so she stays out of the random pool.
+  const bookable = rng
+    .fork('l1done')
+    .shuffle(l1Done.filter((e) => !e.keepUnbooked && e.learner.n !== MARIAM_N))
   const t07 = trainerByN.get(CANCELLED_TRAINER) as TrainerSeed
   const t07Id = sessionIdOf(t07, 1)
   const t07Meta = sessionMeta.get(t07Id) as NonNullable<ReturnType<typeof sessionMeta.get>>
@@ -475,6 +479,15 @@ export function buildSessions(
     const sessionId = sessionForSlot(slot)
     const meta = sessionMeta.get(sessionId) as NonNullable<ReturnType<typeof sessionMeta.get>>
     let placed = 0
+    // Pinned booking: Mariam holds a confirmed seat on SES-T01-2 (her one upcoming session).
+    const mariamA = plan.enrolments.find((e) => e.learner.n === MARIAM_N && e.programme === 'A')
+    if (mariamA && slot.trainer === 1 && slot.kind === 'upcoming') {
+      const bookedAt = cal.ago(rng.float(0.5, 12))
+      addRsvp(mariamA, sessionId, 'confirmed', bookedAt)
+      result.upcomingBooked.add(mariamA.id)
+      result.firstBookedAt.set(mariamA.id, bookedAt)
+      placed += 1
+    }
     for (let i = 0; i < pool.length && placed < slot.confirmed; ) {
       const enrolment = pool[i] as EnrolmentPlan
       if (overlaps(enrolment.learner.n, meta.startsAt, meta.endsAt)) {
@@ -662,7 +675,7 @@ export function buildSessions(
     const booking = result.rsvps.findLast((r) => {
       if (r.sessionId !== sessionId || r.status !== 'confirmed') return false
       const owner = plan.enrolments.find((e) => e.learner.userId === r.learnerId)
-      return owner !== undefined && owner.learner.n > 5
+      return owner !== undefined && !owner.learner.persona
     })
     const owner = plan.enrolments.find((e) => e.learner.userId === booking?.learnerId)
     if (!booking || !owner) throw new Error(`No booking to raise a late request on ${meta.code}`)

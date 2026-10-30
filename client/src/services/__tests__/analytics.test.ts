@@ -17,11 +17,11 @@ const overview = (filters: Parameters<typeof getOverview>[0] = {}): Promise<Over
   getOverview(filters)
 
 describe('metric reconciliation on a fresh seed (brief §15)', () => {
-  test('1,200 unique learners, 1,260 enrolments, 120 certificates, 480 completions', async () => {
+  test('1,200 unique learners, 1,260 enrolments, 122 certified enrolments, 480 completions', async () => {
     const { kpis } = await overview()
     expect(kpis.uniqueLearners).toBe(1200)
     expect(kpis.enrolments).toBe(1260)
-    expect(kpis.certificates).toBe(120)
+    expect(kpis.certificates).toBe(122)
     expect(kpis.completions).toBe(480)
     expect(kpis.completionRate).toBe(38.1)
     expect(kpis.pendingAssessments).toBe(90)
@@ -38,7 +38,11 @@ describe('metric reconciliation on a fresh seed (brief §15)', () => {
       { label: 'Enrolments', value: '1,260' },
       { label: 'Unique learners', value: '1,200' },
     ])
-    expect((await getReportPage('certification', { pageSize: 100 })).total).toBe(kpis.certificates)
+    // KPI counts certified enrolments; the report lists every credential row, including the
+    // superseded and revoked prior-cycle ones the 29 Oct seed adds (they share enrolments).
+    expect((await getReportPage('certification', { pageSize: 100 })).total).toBe(
+      kpis.certificates + 2,
+    )
     expect((await getReportPage('assignments', { view: 'pending' })).total).toBe(
       kpis.pendingAssessments,
     )
@@ -86,7 +90,7 @@ describe('metric reconciliation on a fresh seed (brief §15)', () => {
   test('performance shows certificates for A only (null for B and C)', async () => {
     const { performance } = await overview()
     expect(performance.map((p) => [p.programme, p.certificates])).toEqual([
-      ['A', 120],
+      ['A', 122],
       ['B', null],
       ['C', null],
     ])

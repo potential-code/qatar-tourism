@@ -57,8 +57,10 @@ describe('learners and enrolments (brief §15)', () => {
     const learners = db.users.filter((u) => u.role === 'learner')
     expect(learners).toHaveLength(1200)
     expect(new Set(db.enrolments.map((e) => e.learnerId)).size).toBe(1200)
+    // Mariam Al Nuaimi (LRN-0042, 29 Oct persona) replaces generated learner 42's address.
     const pattern = /^learner(0[0-9]{3}|1[01][0-9]{2}|1200)@example\.com$/
-    expect(count(learners, (u) => pattern.test(u.email))).toBe(1200)
+    expect(count(learners, (u) => pattern.test(u.email))).toBe(1199)
+    expect(count(learners, (u) => u.email === 'mariam.alnuaimi@example.com')).toBe(1)
     expect(count(db.users, (u) => u.email === 'learner0001@example.com')).toBe(1)
     expect(count(db.users, (u) => u.email === 'learner1200@example.com')).toBe(1)
   })
@@ -147,16 +149,21 @@ describe('learners and enrolments (brief §15)', () => {
 })
 
 describe('certificates and assessments', () => {
-  test('120 issued A certificates, one per completed A enrolment, none for B or C', () => {
-    expect(count(db.certificates, (c) => c.status === 'issued')).toBe(120)
+  test('120 current A certificates, one per completed A enrolment, none for B or C', () => {
+    // Four prior-cycle credentials (evidence.priorCycle) sit beside the 120 current ones.
+    const current = db.certificates.filter((c) => !c.evidence.priorCycle)
+    const priorCycle = db.certificates.filter((c) => c.evidence.priorCycle)
+    expect(priorCycle).toHaveLength(4)
+    expect(count(db.certificates, (c) => c.status === 'issued')).toBe(123)
+    expect(count(current, (c) => c.status === 'issued')).toBe(120)
     expect(
-      count(db.certificates, (c) => {
+      count(current, (c) => {
         const e = L.enrolment.get(c.enrolmentId)
         return L.codeOfEnrolment(c.enrolmentId) === 'A' && e?.status === 'completed'
       }),
     ).toBe(120)
     expect(count(db.certificates, (c) => L.programmeCode.get(c.programmeId) !== 'A')).toBe(0)
-    expect(new Set(db.certificates.map((c) => c.enrolmentId)).size).toBe(120)
+    expect(new Set(current.map((c) => c.enrolmentId)).size).toBe(120)
     expect(db.programmes.find((p) => p.code === 'B')?.certificationEnabled).toBe(false)
   })
 
@@ -620,7 +627,7 @@ describe('determinism', () => {
   test('a different reference date shifts the dates but not the counts', () => {
     const other = createDemoDb('2027-02-01')
     expect(other.enrolments).toHaveLength(1260)
-    expect(other.certificates).toHaveLength(120)
+    expect(other.certificates).toHaveLength(124)
     expect(other.sessions.find((s) => s.code === 'SES-T01-2')?.startsAt).toBe(
       '2027-02-03T06:00:00.000Z',
     )

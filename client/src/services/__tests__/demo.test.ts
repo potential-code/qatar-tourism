@@ -58,7 +58,7 @@ describe('demo reset', () => {
     actAs(db, 'user-l0001')
     const meta = await getDemoMeta()
     expect(meta.referenceDate).toBe('2026-10-27')
-    expect(meta.counts.certificates).toBe(120)
+    expect(meta.counts.certificates).toBe(124)
     expect(Date.parse(meta.now)).toBeGreaterThanOrEqual(Date.parse('2026-10-27T05:00:00.000Z'))
   })
 })

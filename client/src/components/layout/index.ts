@@ -1,5 +1,8 @@
 export { Breadcrumbs, type Crumb } from './Breadcrumbs'
 export { DemoBadge } from './DemoBadge'
+export { DemoSettingsNote } from './DemoSettingsNote'
+export { ILLUSTRATIVE_COPY, IllustrativeNote } from './IllustrativeNote'
+export { InProgress } from './InProgress'
 export { PageHeader } from './PageHeader'
 export { PortalHeader } from './PortalHeader'
 export { PortalShell } from './PortalShell'

@@ -81,6 +81,34 @@ describe('permission matrix (brief §11)', () => {
   })
 })
 
+describe('29 Oct admin-only actions', () => {
+  const adminOnly = [
+    'account.lock',
+    'approval.review',
+    'assessment.grant_attempt',
+    'credential.manage',
+    'integration.configure',
+    'demo.clock',
+    'content.manage',
+  ] as const
+
+  test('every new action is registered', () => {
+    for (const action of adminOnly) expect(ACTIONS).toContain(action)
+  })
+
+  test('only admins hold them: learners and trainers have none', () => {
+    for (const action of adminOnly) {
+      expect(accessFor('admin', action)).toBe('authorised')
+      expect(can('trainer', action)).toBe(false)
+      expect(can('learner', action)).toBe(false)
+    }
+  })
+
+  test('external trainers cannot lock or unlock accounts', () => {
+    expect(accessFor('trainer', 'account.lock')).toBe('none')
+  })
+})
+
 describe('learner field visibility', () => {
   const record = {
     learnerCode: 'L0001',

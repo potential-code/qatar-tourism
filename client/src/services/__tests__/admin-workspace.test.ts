@@ -31,10 +31,10 @@ const programmeId = (code: string) => db.programmes.find((p) => p.code === code)
 const trainerId = (code: string) => db.trainerProfiles.find((t) => t.code === code)?.id ?? ''
 
 describe('programmes', () => {
-  test('counts come from the data: A 420, B 660, C 180; 120 A certificates', async () => {
+  test('counts come from the data: A 420, B 660, C 180; 123 issued A certificates (120 current + 3 prior-cycle; 1 revoked)', async () => {
     const list = await listProgrammes()
     expect(list.map((p) => [p.code, p.enrolments, p.certificates, p.canCertify])).toEqual([
-      ['A', 420, 120, true],
+      ['A', 420, 123, true],
       ['B', 660, 0, false],
       ['C', 180, 0, false],
     ])
@@ -231,7 +231,7 @@ describe('governance', () => {
     expect(denied.total).toBeGreaterThan(0)
     expect(denied.items.every((e) => e.outcome === 'denied')).toBe(true)
     const issued = await listAudit({ action: 'certificate.issue', pageSize: 50 })
-    expect(issued.total).toBe(120)
+    expect(issued.total).toBe(124) // 120 current plus the 4 prior-cycle credentials
     expect(issued.items).toHaveLength(50)
   })
 

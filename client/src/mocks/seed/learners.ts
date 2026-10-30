@@ -526,7 +526,7 @@ export function buildLearners(
       n,
       userId: userIds.learner(n),
       code: learnerCode(n),
-      email: learnerEmail(n),
+      email: persona?.email ?? learnerEmail(n),
       fullName: persona ? persona.fullName : nextName(),
       group,
       orgType,

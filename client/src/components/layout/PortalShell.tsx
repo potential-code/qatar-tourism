@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import type { NavContext } from '@/app/navigation'
 import { easeOut } from '@/components/motion/variants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { usePortalLanguage } from '@/i18n/usePortalLanguage'
 import { PortalHeader } from './PortalHeader'
 import { PortalSidebar } from './PortalSidebar'
 
@@ -24,6 +25,8 @@ export function PortalShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const reduce = useReducedMotion()
+  // Trainer and admin portals stay English and LTR whatever language the visitor chose.
+  usePortalLanguage(portal)
 
   return (
     <SidebarProvider>

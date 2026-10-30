@@ -38,6 +38,14 @@ export const ACTIONS = [
   'certificate.revoke',
   'demo.reset',
   'audit.view',
+  // 29 Oct update: admin-only controls (trainers hold none of them).
+  'account.lock',
+  'approval.review',
+  'assessment.grant_attempt',
+  'credential.manage',
+  'integration.configure',
+  'demo.clock',
+  'content.manage',
 ] as const
 
 export type Action = (typeof ACTIONS)[number]
@@ -189,6 +197,55 @@ export const PERMISSION_MATRIX: Record<Action, MatrixRow> = {
     trainer: 'none',
     admin: 'authorised',
     note: { learner: 'No', trainer: 'No', admin: 'Authorised admin' },
+  },
+  'account.lock': {
+    label: 'Lock or unlock learner accounts',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, reason required, audited' },
+  },
+  'approval.review': {
+    label: 'Approve or reject enrolment and external-certificate requests',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, audited' },
+  },
+  'assessment.grant_attempt': {
+    label: 'Grant an extra assessment attempt',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, reason recorded' },
+  },
+  'credential.manage': {
+    label: 'Manage credential rules, renewals and CPD settings',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, audited' },
+  },
+  'integration.configure': {
+    label: 'Change security and integration configuration',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, audited' },
+  },
+  'demo.clock': {
+    label: 'Advance or reset the demo clock',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Demonstration administrator only' },
+  },
+  'content.manage': {
+    label: 'Manage the content library and packages',
+    learner: 'none',
+    trainer: 'none',
+    admin: 'authorised',
+    note: { learner: 'No', trainer: 'No', admin: 'Authorised admin, audited' },
   },
 }
 

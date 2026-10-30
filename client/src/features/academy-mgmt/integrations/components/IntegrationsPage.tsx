@@ -23,7 +23,7 @@ export function IntegrationsPage() {
   const reduce = useReducedMotion()
   return (
     <ManagePage
-      title="Integration settings"
+      title="Integrations and Security"
       description="The proposed CRM, single sign-on, email and online-classroom adapters. Each state is backed by evidence from this environment."
     >
       <div className="flex flex-wrap items-center gap-3 rounded-xl border bg-card px-5 py-3 text-sm shadow-xs">

@@ -1,4 +1,4 @@
-import type { DemoMetaRow } from '@shared/types/db'
+import type { DemoMetaRow, DemoSettings } from '@shared/types/db'
 import { clearUploads, pruneSnapshots, readSnapshot, writeSnapshot } from './persist'
 import { buildSeed } from './seed'
 import { seedReferenceDate } from './seed/reference-date'
@@ -23,12 +23,14 @@ export interface DemoDb extends DemoCollections {
   version: number
   session: DemoSession | null
   meta: DemoMetaRow
+  /** Configurable thresholds (offer window, validity, CPD target, reminders). */
+  settings: DemoSettings
   /** Passwords chosen at registration, by user id. Seeded accounts use DEMO_PASSWORD. */
   passwords: Record<string, string>
 }
 
 /** Bump when the DemoDb shape or the seed recipe changes: saved snapshots are then rebuilt. */
-export const DB_VERSION = 1
+export const DB_VERSION = 2
 const SNAPSHOT_KEY = `qta-demo-db:v${DB_VERSION}`
 const SAVE_DELAY_MS = 250
 

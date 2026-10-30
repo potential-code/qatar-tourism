@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "overview": "نظرة عامة",
+    "myLearning": "تعلّمي",
+    "myLearningRecord": "سجل تعلّمي",
+    "certificates": "الشهادات"
+  },
+  "programmeSwitcher": {
+    "label": "برامجي"
+  }
+}

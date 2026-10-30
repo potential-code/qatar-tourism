@@ -89,7 +89,7 @@ describe('the seven suggested prompts are answered from computed data', () => {
     const a = await question(SUGGESTED_PROMPTS[5])
     expectComplete(a)
     expect(a.sampleSize?.value).toBe(420)
-    expect(a.prose).toContain('120 already hold an issued certificate')
+    expect(a.prose).toContain('122 already hold an issued certificate')
   })
 
   test('7. inactive for two weeks', async () => {

@@ -395,7 +395,8 @@ async function setSuspended(userId: string, suspended: boolean, reasonInput: str
     )
   }
   const wasSuspended = profile.suspended
-  updateRow(profile, { suspended })
+  // Keep the 29 Oct accountStatus in step: suspending disables, reactivating makes it active.
+  updateRow(profile, { suspended, accountStatus: suspended ? 'disabled' : 'active' })
   // Suspension takes effect at once: a live session is ended.
   const sessionsRevoked = suspended ? revokeSessions(account.id) : 0
   recordAudit(actorOf(admin), {

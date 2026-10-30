@@ -114,7 +114,7 @@ const MIN_AGE: Record<string, number> = {
   c_viewing: 5,
 }
 
-const PERSONA_AGE: Record<number, number> = { 1: 21, 2: 40, 3: 35, 4: 45, 5: 50 }
+const PERSONA_AGE: Record<number, number> = { 1: 21, 2: 40, 3: 35, 4: 45, 5: 50, 42: 60 }
 
 function expand<T>(counts: readonly (readonly [T, number])[]): T[] {
   return counts.flatMap(([stage, count]) => Array.from({ length: count }, () => stage))

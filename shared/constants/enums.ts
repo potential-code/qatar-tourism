@@ -81,6 +81,8 @@ export const PACKAGE_TYPES = [
   'scorm_12',
   'html_preview',
   'resource',
+  // xAPI activity reporting to the simulated learning record store (29 Oct update).
+  'xapi',
 ] as const
 export type PackageType = (typeof PACKAGE_TYPES)[number]
 
@@ -134,7 +136,12 @@ export type SessionFormat = (typeof SESSION_FORMATS)[number]
 export const SESSION_STATUSES = ['draft', 'published', 'full', 'completed', 'cancelled'] as const
 export type SessionStatus = (typeof SESSION_STATUSES)[number]
 
-export const RSVP_STATUSES = ['confirmed', 'waitlisted', 'cancelled', 'moved'] as const
+/**
+ * `offered` is a waitlisted learner holding a time-limited seat offer (see SeatOfferRow). The seat
+ * counts as reserved while offered, so it cannot be double booked. Appended last: ranks of the
+ * older statuses are unchanged.
+ */
+export const RSVP_STATUSES = ['confirmed', 'waitlisted', 'cancelled', 'moved', 'offered'] as const
 export type RsvpStatus = (typeof RSVP_STATUSES)[number]
 
 export const ATTENDANCE_VALUES = ['pending', 'attended', 'late', 'absent', 'excused'] as const
@@ -169,3 +176,93 @@ export type NotificationState = (typeof NOTIFICATION_STATES)[number]
 
 export const RULE_STATUSES = ['draft', 'published', 'archived'] as const
 export type RuleStatus = (typeof RULE_STATUSES)[number]
+
+// --- 29 Oct update: waitlist offers, approvals, account controls ---------------------------------
+
+export const SEAT_OFFER_STATUSES = ['offered', 'accepted', 'declined', 'expired'] as const
+export type SeatOfferStatus = (typeof SEAT_OFFER_STATUSES)[number]
+
+export const APPROVAL_TYPES = ['enrolment', 'external_certificate'] as const
+export type ApprovalType = (typeof APPROVAL_TYPES)[number]
+
+export const APPROVAL_STATUSES = ['pending', 'approved', 'rejected', 'info_requested'] as const
+export type ApprovalStatus = (typeof APPROVAL_STATUSES)[number]
+
+/** Separate from programme approval, certificate validity and licence status. */
+export const ACCOUNT_STATUSES = ['active', 'locked', 'disabled'] as const
+export type AccountStatus = (typeof ACCOUNT_STATUSES)[number]
+
+// --- Assessment banks and rules -------------------------------------------------------------------
+
+export const CONTENT_LANGUAGES = ['en', 'ar'] as const
+export type ContentLanguage = (typeof CONTENT_LANGUAGES)[number]
+
+export const QUESTION_TYPES = ['single', 'multiple', 'scenario'] as const
+export type QuestionType = (typeof QUESTION_TYPES)[number]
+
+export const QUESTION_DIFFICULTIES = ['easy', 'medium', 'hard'] as const
+export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number]
+
+export const QUESTION_STATUSES = ['draft', 'published'] as const
+export type QuestionStatus = (typeof QUESTION_STATUSES)[number]
+
+export const FEEDBACK_RELEASES = ['immediate', 'after_submission', 'after_pass'] as const
+export type FeedbackRelease = (typeof FEEDBACK_RELEASES)[number]
+
+export const SCORE_POLICIES = ['best', 'latest'] as const
+export type ScorePolicy = (typeof SCORE_POLICIES)[number]
+
+// --- Credentials, CPD, external evidence, licence -----------------------------------------------
+
+/** Derived (not stored) lifecycle of an issued credential: see shared/utils/credentials.ts. */
+export const CREDENTIAL_LIFECYCLES = [
+  'active',
+  'expiring_soon',
+  'expired',
+  'revoked',
+  'superseded',
+] as const
+export type CredentialLifecycle = (typeof CREDENTIAL_LIFECYCLES)[number]
+
+export const CPD_SOURCES = ['academy', 'external'] as const
+export type CpdSource = (typeof CPD_SOURCES)[number]
+
+export const CPD_STATUSES = ['earned', 'pending', 'approved', 'rejected'] as const
+export type CpdStatus = (typeof CPD_STATUSES)[number]
+
+/** Hours and credits are never summed without a defined conversion (DemoSettings). */
+export const CPD_UNITS = ['hours', 'credits'] as const
+export type CpdUnit = (typeof CPD_UNITS)[number]
+
+export const EXTERNAL_CERTIFICATE_STATUSES = [
+  'pending',
+  'verified',
+  'rejected',
+  'info_requested',
+] as const
+export type ExternalCertificateStatus = (typeof EXTERNAL_CERTIFICATE_STATUSES)[number]
+
+export const LICENCE_STATUSES = ['active', 'expired', 'suspended', 'pending'] as const
+export type LicenceStatus = (typeof LICENCE_STATUSES)[number]
+
+// --- Content packages and the simulated learning record store ------------------------------------
+
+export const CONTENT_FORMATS = ['scorm_2004', 'xapi'] as const
+export type ContentFormat = (typeof CONTENT_FORMATS)[number]
+
+// --- CRM integration (illustrative, simulated) ---------------------------------------------------
+
+export const CRM_EVENT_TYPES = [
+  'enrolment',
+  'completion',
+  'examination',
+  'certification',
+  'licence',
+] as const
+export type CrmEventType = (typeof CRM_EVENT_TYPES)[number]
+
+export const CRM_DIRECTIONS = ['crm_to_lms', 'lms_to_crm'] as const
+export type CrmDirection = (typeof CRM_DIRECTIONS)[number]
+
+export const CRM_EVENT_STATUSES = ['processed', 'queued', 'failed', 'conflict'] as const
+export type CrmEventStatus = (typeof CRM_EVENT_STATUSES)[number]

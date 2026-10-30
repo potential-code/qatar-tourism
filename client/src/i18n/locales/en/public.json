@@ -1,0 +1,12 @@
+{
+  "brand": {
+    "name": "Qatar Tourism Academy",
+    "tagline": "Skills for every visitor experience"
+  },
+  "nav": {
+    "programmes": "Programmes",
+    "signIn": "Sign in",
+    "createAccount": "Create account"
+  },
+  "demoNotice": "Demonstration environment. All learner and training data is fictional."
+}

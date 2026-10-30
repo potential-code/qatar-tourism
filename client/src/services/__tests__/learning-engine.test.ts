@@ -363,7 +363,8 @@ describe('Program A certificate through the services (brief §6)', () => {
   const issuedCount = () => db.certificates.filter((c) => c.status === 'issued').length
 
   test('the final assessment pass issues exactly one certificate, QTA-DEMO-A-000121', async () => {
-    expect(issuedCount()).toBe(120)
+    // 120 current-cycle certificates plus three issued prior-cycle credentials (29 Oct seed).
+    expect(issuedCount()).toBe(123)
     await omarReadyForFinal()
     expect((await certificates.listMine()).items).toHaveLength(0)
 
@@ -381,10 +382,10 @@ describe('Program A certificate through the services (brief §6)', () => {
     const mine = await certificates.listMine()
     expect(mine.items.map((c) => c.code)).toEqual(['QTA-DEMO-A-000121'])
     expect(mine.items[0]?.status).toBe('issued')
-    expect(issuedCount()).toBe(121)
+    expect(issuedCount()).toBe(124)
     expect(findEnrolment(OMAR, 'A')?.status).toBe('completed')
     expect(recomputeEnrolment(OMAR, 'A')).toBe('completed')
-    expect(issuedCount()).toBe(121)
+    expect(issuedCount()).toBe(124)
     expect(
       db.auditEvents.filter(
         (e) => e.action === 'certificate.issue' && e.objectId === 'QTA-DEMO-A-000121',
@@ -395,7 +396,12 @@ describe('Program A certificate through the services (brief §6)', () => {
   })
 
   test('a revoked certificate stays revoked after recompute; only the admin reissue replaces it', async () => {
-    const cert = db.certificates.find((c) => c.status === 'issued')
+    const cert = db.certificates.find(
+      (c) =>
+        c.status === 'issued' &&
+        c.supersedesId === null &&
+        db.certificates.filter((x) => x.enrolmentId === c.enrolmentId).length === 1,
+    )
     if (!cert) throw new Error('No issued certificate')
     const programme = db.programmes.find((p) => p.id === cert.programmeId)?.code ?? 'A'
 

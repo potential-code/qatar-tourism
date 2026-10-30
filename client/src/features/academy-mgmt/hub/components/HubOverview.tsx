@@ -2,10 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import {
   ArrowUpRight,
+  Award,
   BookOpenText,
   CalendarRange,
   ClipboardCheck,
+  FolderLock,
   GraduationCap,
+  Inbox,
   type LucideIcon,
   Plug,
   Route,
@@ -32,6 +35,9 @@ type Counts = {
   sessions: number
   assessments: number
   auditEvents: number
+  pendingApprovals: number
+  contentPackages: number
+  credentials: number
 }
 
 type Area = {
@@ -114,11 +120,35 @@ const AREAS: Area[] = [
   },
   {
     to: '/admin/manage/integrations',
-    title: 'Integration settings',
-    description: 'CRM, SSO, email and online-classroom adapters with evidence for each state.',
+    title: 'Integrations and Security',
+    description: 'SSO, API access, content hosting, data residency and CRM, all illustrative.',
     icon: Plug,
     metric: (_c, e) => e.integrations,
     unit: 'adapters',
+  },
+  {
+    to: '/admin/manage/content',
+    title: 'Content Library',
+    description: 'English and Arabic SCORM and xAPI packages with previews and tracking tests.',
+    icon: FolderLock,
+    metric: (c) => c.contentPackages,
+    unit: 'packages',
+  },
+  {
+    to: '/admin/manage/approvals',
+    title: 'Enrolments and Approvals',
+    description: 'Review requests, manage waitlists and seat offers, lock or unlock accounts.',
+    icon: Inbox,
+    metric: (c) => c.pendingApprovals,
+    unit: 'pending approvals',
+  },
+  {
+    to: '/admin/manage/certificates',
+    title: 'Certificates and CPD',
+    description: 'Credential rules, renewals, issued credentials and external CPD reviews.',
+    icon: Award,
+    metric: (c) => c.credentials,
+    unit: 'credentials',
   },
   {
     to: '/admin/manage/audit',
@@ -143,7 +173,7 @@ export function HubOverview() {
       description="Run the Academy: people, programmes, paths, content, sessions and governance, all in one place."
     >
       {query.isPending ? (
-        <CardsSkeleton count={10} className="grid gap-5 xl:grid-cols-4 lg:grid-cols-3" />
+        <CardsSkeleton count={13} className="grid gap-5 xl:grid-cols-4 lg:grid-cols-3" />
       ) : query.isError ? (
         <ErrorPanel error={query.error} onRetry={() => query.refetch()} />
       ) : (

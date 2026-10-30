@@ -1,13 +1,26 @@
 import type {
+  AccountStatus,
+  ApprovalStatus,
+  ApprovalType,
   AssessmentKind,
   AttemptStatus,
   AttendanceValue,
   CertificateStatus,
   Competency,
+  ContentLanguage,
   CourseFormat,
+  CpdSource,
+  CpdStatus,
+  CpdUnit,
+  CrmDirection,
+  CrmEventStatus,
+  CrmEventType,
   EnrolmentStatus,
   ExperienceBand,
+  ExternalCertificateStatus,
+  FeedbackRelease,
   JobFunction,
+  LicenceStatus,
   NotificationChannel,
   NotificationState,
   OrganisationType,
@@ -17,11 +30,16 @@ import type {
   ProfileStatus,
   ProgrammeCode,
   ProgrammeStatus,
+  QuestionDifficulty,
+  QuestionStatus,
+  QuestionType,
   ReviewRecordStatus,
   RolePlayMode,
   RsvpStatus,
   RuleStatus,
+  ScorePolicy,
   ScoreStatus,
+  SeatOfferStatus,
   Seniority,
   SessionFormat,
   SessionStatus,
@@ -106,7 +124,19 @@ export interface ProfileRow extends Timestamps {
   status: ProfileStatus
   consentAcceptedAt: IsoInstant | null
   marketingOptIn: boolean
+  /**
+   * Legacy flag: the account is disabled (suspended accounts cannot sign in). Kept for the
+   * existing user-management code. Read `accountStatusOf(profile)` (shared/utils/account.ts), which
+   * folds it into `accountStatus`: suspended === true reads as 'disabled'.
+   */
   suspended: boolean
+  /** Active, locked (temporary, reversible, reason required) or disabled. Default 'active'. */
+  accountStatus: AccountStatus
+  /** Why the account was locked (shown to admins; the learner sees only "Contact Academy support"). */
+  lockReason: string | null
+  lockedAt: IsoInstant | null
+  /** User id of the admin who locked it. */
+  lockedBy: string | null
   registeredAt: IsoInstant
   lastActivityAt: IsoInstant | null
   completeness: number
@@ -171,6 +201,19 @@ export interface ContentPackageRow extends Timestamps {
   launchUrl: string | null
   formatLabel: string
   isCurrent: boolean
+  /**
+   * Content Library fields (29 Oct). Null on the original per-course packages. A library variant
+   * has a stable `packageId`, a `courseKey` shared by its language variants, and `isCurrent: false`
+   * so the existing course player (which reads the current package) is unaffected until lane B
+   * wires them in.
+   */
+  packageId: string | null
+  /** Shared course identity: the EN and AR variants of one item carry the same key. */
+  courseKey: string | null
+  language: ContentLanguage
+  /** Who may launch it, e.g. 'assigned-learners'. Illustrative. */
+  accessGroup: string | null
+  publishedAt: IsoInstant | null
 }
 
 export interface LearningPathRow extends Timestamps {
@@ -280,6 +323,30 @@ export interface AssessmentAttemptRow extends Timestamps {
   competencyScores: Record<string, number> | null
   startedAt: IsoInstant
   submittedAt: IsoInstant | null
+  /** Rule used for this attempt (AssessmentRuleRow id and its version); null for seeded history. */
+  ruleId: string | null
+  ruleVersion: number | null
+  /**
+   * The questions drawn, frozen at start, so editing the bank never alters a completed attempt.
+   * Null for seeded history. Reload resumes the same snapshot; a retake draws a new one.
+   */
+  snapshot: AttemptSnapshot | null
+  /** Time limit deadline for an in-progress attempt (startedAt + timeLimitMinutes). */
+  deadlineAt: IsoInstant | null
+}
+
+export interface AttemptSnapshotItem {
+  questionId: string
+  version: number
+  /** Option keys in the order shown to this learner. */
+  optionOrder: string[]
+  /** Option and prompt text as authored at draw time (the language the attempt used). */
+  language: ContentLanguage
+}
+
+export interface AttemptSnapshot {
+  items: AttemptSnapshotItem[]
+  seed: string
 }
 
 export interface AssessmentAnswerRow extends Timestamps {
@@ -465,6 +532,18 @@ export interface CertificateRow extends Timestamps {
   revokeReason: string | null
   reissuedFromId: string | null
   evidence: Record<string, unknown>
+  /**
+   * Validity end. Null only for rows with no expiry. Lifecycle (active / expiring_soon / expired /
+   * revoked / superseded) is derived with `credentialLifecycle()` (shared/utils/credentials.ts),
+   * never stored, so the demo clock moves it.
+   */
+  expiresAt: IsoInstant | null
+  /** Credential rule version the issue used (CredentialRuleRow is part of DemoSettings for now). */
+  ruleVersion: string
+  /** CPD hours this credential counts for, in the Academy's configured unit. */
+  cpdHours: number
+  /** The earlier credential this one renews. That earlier row is then 'superseded', never deleted. */
+  supersedesId: string | null
 }
 
 // --- Messaging and governance -----------------------------------------------------------------
@@ -508,4 +587,284 @@ export interface DemoMetaRow {
   seedVersion: string
   seededAt: IsoInstant
   counts: Record<string, number>
+  /**
+   * Whole days the presenter has advanced the demo clock (services/clock.ts adds it to `now()`).
+   * 0 after seeding and after a reset. Never change `referenceDate` to move time.
+   */
+  clockOffsetDays: number
+}
+
+/**
+ * Configurable thresholds ("Demo settings — subject to Qatar Tourism confirmation"). One record,
+ * `db.settings`; every lane reads limits from here, never from a literal. Edited through
+ * `services/demo-settings.service.ts`.
+ */
+export interface DemoSettings {
+  /** Hours a waitlisted learner has to accept an offered seat. */
+  seatOfferWindowHours: number
+  /** Credential validity in months from issue. */
+  credentialValidityMonths: number
+  /** Annual CPD target for the demo cycle, in `cpdUnit`. */
+  cpdTarget: number
+  cpdUnit: CpdUnit
+  /** Hours per credit, the only defined conversion between CPD units. */
+  cpdHoursPerCredit: number
+  /** Days before expiry that a reminder is sent, largest first. */
+  reminderDaysBefore: number[]
+  /** Whether completed Program B courses earn CPD. Off until Qatar Tourism confirms. */
+  programmeBCpdEnabled: boolean
+  /** CPD earned per completed Program B course when the rule above is on. */
+  programmeBCpdPerCourse: number
+}
+
+// --- 29 Oct update: waitlist offers, approvals ------------------------------------------------
+
+/**
+ * A time-limited offer of a freed seat to the first eligible waitlisted learner. While `offered`
+ * the linked RSVP has status 'offered' and the seat counts as reserved.
+ */
+export interface SeatOfferRow extends Timestamps {
+  id: string
+  sessionId: string
+  rsvpId: string
+  learnerId: string
+  offeredAt: IsoInstant
+  /** offeredAt + DemoSettings.seatOfferWindowHours. */
+  expiresAt: IsoInstant
+  status: SeatOfferStatus
+  /** When it left 'offered' (accepted, declined or expired). */
+  resolvedAt: IsoInstant | null
+}
+
+/**
+ * A request an admin must decide: a programme enrolment, or an external certificate. For a full
+ * session, approval comes first and never bypasses capacity.
+ */
+export interface ApprovalRequestRow extends Timestamps {
+  id: string
+  /** Display id, REQ-0001 … */
+  code: string
+  type: ApprovalType
+  learnerId: string
+  /** Enrolment requests: the programme asked for (A, B or C). Null for external certificates. */
+  programmeId: string | null
+  /** Enrolment requests for a session: the session the learner wants, when any. */
+  sessionId: string | null
+  /** External-certificate requests: ExternalCertificateRow id. */
+  externalCertificateId: string | null
+  submittedAt: IsoInstant
+  /** Assigned reviewer (admin user id). */
+  reviewerId: string | null
+  /** Evidence summary shown to the reviewer (file name, note). */
+  evidence: ApprovalEvidence
+  status: ApprovalStatus
+  /** Decision reason (required to reject; shown to the learner with the next step). */
+  reason: string | null
+  decidedAt: IsoInstant | null
+  decidedBy: string | null
+}
+
+export interface ApprovalEvidence {
+  note: string
+  fileName: string | null
+}
+
+// --- Question banks and assessment rules --------------------------------------------------------
+
+export interface QuestionOption {
+  key: string
+  text: string
+}
+
+/**
+ * One question variant. EN and AR variants of the same question share `sharedId`. Editing a
+ * published question creates a new `version`; attempt snapshots keep the version they drew.
+ */
+export interface QuestionBankRow extends Timestamps {
+  id: string
+  /** Display id, e.g. Q-DN-001-EN. */
+  questionId: string
+  /** Links the EN and AR variants, e.g. QS-DN-001. */
+  sharedId: string
+  competency: Competency
+  /** Programme the item belongs to; 'all' serves both A and B. */
+  programme: 'A' | 'B' | 'all'
+  difficulty: QuestionDifficulty
+  language: ContentLanguage
+  type: QuestionType
+  prompt: string
+  options: QuestionOption[]
+  /** Correct option keys (one for single and scenario, several for multiple). */
+  correct: string[]
+  feedback: string
+  points: number
+  version: number
+  status: QuestionStatus
+}
+
+export interface DrawRule {
+  competency: Competency
+  difficulty: QuestionDifficulty | 'any'
+  count: number
+}
+
+/** Pre or post assessment rule for a programme. Publishing creates a new `version`. */
+export interface AssessmentRuleRow extends Timestamps {
+  id: string
+  kind: Extract<AssessmentKind, 'pre' | 'post'>
+  programme: 'A' | 'B'
+  /** The assessment (assessments table) these rules govern. */
+  assessmentId: string
+  drawCount: number
+  draws: DrawRule[]
+  randomiseQuestions: boolean
+  randomiseOptions: boolean
+  /** Null for the pre assessment: no pass gate. */
+  passPercent: number | null
+  attemptLimit: number
+  timeLimitMinutes: number | null
+  feedbackRelease: FeedbackRelease
+  scorePolicy: ScorePolicy
+  version: number
+  status: QuestionStatus
+}
+
+/** One extra attempt an admin granted to a learner, with the recorded reason. */
+export interface AttemptGrantRow extends Timestamps {
+  id: string
+  assessmentId: string
+  enrolmentId: string
+  learnerId: string
+  grantedBy: string
+  reason: string
+  grantedAt: IsoInstant
+  /** The attempt that used it; null while unused. */
+  consumedByAttemptId: string | null
+}
+
+// --- Credentials, CPD, licence ------------------------------------------------------------------
+
+/** One line of the CPD ledger. Academy lines come from credentials; external from reviews. */
+export interface CpdLedgerRow extends Timestamps {
+  id: string
+  learnerId: string
+  source: CpdSource
+  /** Amount in `unit`. */
+  hours: number
+  unit: CpdUnit
+  /** earned (Academy), pending / approved / rejected (external). Only earned and approved count. */
+  status: CpdStatus
+  title: string
+  earnedOn: IsoDate
+  certificateId: string | null
+  externalCertificateId: string | null
+  /** Program B completions, when that rule is on. */
+  enrolmentId: string | null
+}
+
+/** A certificate earned elsewhere, submitted by the learner for review. Never an Academy credential. */
+export interface ExternalCertificateRow extends Timestamps {
+  id: string
+  learnerId: string
+  title: string
+  issuer: string
+  externalRef: string
+  issuedOn: IsoDate
+  expiresOn: IsoDate | null
+  claimedAmount: number
+  unit: CpdUnit
+  competency: Competency | null
+  /** Key of the evidence file in the browser upload store, or a seeded sample id. */
+  evidenceFileId: string | null
+  evidenceFileName: string | null
+  verificationUrl: string | null
+  status: ExternalCertificateStatus
+  /** CPD the reviewer recognised (can differ from the claim). Null until decided. */
+  recognisedAmount: number | null
+  reviewerId: string | null
+  reviewedAt: IsoInstant | null
+  reason: string | null
+  submittedAt: IsoInstant
+}
+
+/**
+ * Professional licence status. A separate field sourced from the configured system (the CRM, as
+ * illustrative authority). A passed exam or valid certificate never implies a valid licence.
+ */
+export interface LicenceStatusRow extends Timestamps {
+  id: string
+  learnerId: string
+  status: LicenceStatus
+  source: 'crm'
+  /** An LMS-to-CRM change request, pending until the CRM acknowledges it. */
+  pendingRequest: { requestedStatus: LicenceStatus; requestedAt: IsoInstant; reason: string } | null
+}
+
+// --- Content library and simulated LRS ----------------------------------------------------------
+
+/** An xAPI statement in the simulated learning record store (always labelled simulated). */
+export interface XapiStatementRow {
+  id: string
+  /** Statement id (UUID), immutable. */
+  statementId: string
+  actorLearnerId: string
+  verb: string
+  activityId: string
+  packageId: string
+  timestamp: IsoInstant
+  result: Record<string, unknown> | null
+  simulatedLrs: true
+}
+
+// --- CRM integration (illustrative, simulated) -------------------------------------------------
+
+/** Links an LMS learner to a CRM record. The external id is stable and used for matching. */
+export interface CrmMappingRow extends Timestamps {
+  id: string
+  /** A field mapping row ('field') or a learner identity link ('learner'). */
+  kind: 'field' | 'learner'
+  /** field: CRM field name; learner: unused. */
+  crmField: string | null
+  lmsField: string | null
+  dataType: string | null
+  direction: CrmDirection | 'both'
+  transformation: string | null
+  required: boolean
+  authoritative: 'crm' | 'lms'
+  /** learner links: LMS learner (user id) and the CRM id (e.g. CRM-0042). */
+  learnerId: string | null
+  externalLearnerId: string | null
+  /** 'matched', or 'review' for a missing or ambiguous identity match. */
+  matchState: 'matched' | 'review' | null
+}
+
+export interface CrmEventRow {
+  id: string
+  /** Immutable event id used for dedup, e.g. EVT-0001. */
+  eventId: string
+  type: CrmEventType
+  direction: CrmDirection
+  learnerId: string | null
+  externalLearnerId: string | null
+  /** Enrolment, credential or attempt id the event concerns. */
+  entityId: string | null
+  status: CrmEventStatus
+  attempts: number
+  error: string | null
+  payload: Record<string, unknown>
+  occurredAt: IsoInstant
+  processedAt: IsoInstant | null
+  createdAt: IsoInstant
+  updatedAt: IsoInstant
+}
+
+/** Illustrative integration configuration. No real endpoints or secrets, ever. */
+export interface IntegrationSettingRow extends Timestamps {
+  id: string
+  /** One row per area. */
+  area: 'sso' | 'api' | 'contentHosting' | 'dataResidency' | 'crm'
+  config: Record<string, unknown>
+  /** Connection state label shown in the UI, e.g. 'Not configured', 'Connected demo'. */
+  state: string
+  lastTestAt: IsoInstant | null
 }

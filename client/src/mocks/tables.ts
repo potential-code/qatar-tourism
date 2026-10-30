@@ -1,25 +1,36 @@
 import type {
+  ApprovalRequestRow,
   AssessmentAnswerRow,
   AssessmentAttemptRow,
   AssessmentRow,
+  AssessmentRuleRow,
   AssignmentRow,
   AssignmentRuleRow,
+  AttemptGrantRow,
   AttendanceRow,
   AuditEventRow,
   CertificateRow,
   ContentPackageRow,
   CourseRow,
+  CpdLedgerRow,
+  CrmEventRow,
+  CrmMappingRow,
   EnrolmentRow,
+  ExternalCertificateRow,
+  IntegrationSettingRow,
   LearningPathRow,
+  LicenceStatusRow,
   NotificationRow,
   OrganisationRow,
   PathItemRow,
   PathVersionRow,
   ProfileRow,
   ProgrammeRow,
+  QuestionBankRow,
   ReviewRow,
   RolePlayAttemptRow,
   RsvpRow,
+  SeatOfferRow,
   SessionRescheduleRow,
   SessionRow,
   SessionScoreRow,
@@ -29,6 +40,7 @@ import type {
   UnitProgressRow,
   UserRow,
   VerificationRow,
+  XapiStatementRow,
 } from '@shared/types/db'
 
 /**
@@ -66,6 +78,19 @@ export interface DemoTables {
   certificates: CertificateRow
   notifications: NotificationRow
   auditEvents: AuditEventRow
+  // 29 Oct update (see docs/FOUNDATION_29OCT.md)
+  seatOffers: SeatOfferRow
+  approvalRequests: ApprovalRequestRow
+  questionBank: QuestionBankRow
+  assessmentRules: AssessmentRuleRow
+  attemptGrants: AttemptGrantRow
+  cpdLedger: CpdLedgerRow
+  externalCertificates: ExternalCertificateRow
+  licenceStatus: LicenceStatusRow
+  xapiStatements: XapiStatementRow
+  crmMappings: CrmMappingRow
+  crmEvents: CrmEventRow
+  integrationSettings: IntegrationSettingRow
 }
 
 export type TableName = keyof DemoTables
@@ -105,4 +130,16 @@ export const TABLE_NAMES = [
   'certificates',
   'notifications',
   'auditEvents',
+  'seatOffers',
+  'approvalRequests',
+  'questionBank',
+  'assessmentRules',
+  'attemptGrants',
+  'cpdLedger',
+  'externalCertificates',
+  'licenceStatus',
+  'xapiStatements',
+  'crmMappings',
+  'crmEvents',
+  'integrationSettings',
 ] as const satisfies readonly TableName[]

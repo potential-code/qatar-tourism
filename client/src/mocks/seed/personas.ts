@@ -27,7 +27,14 @@ export type PersonaSeed = {
   /** Programmes held, with the pinned stage (see plan.ts for stage meanings). */
   enrolments: { programme: 'A' | 'B'; stage: string }[]
   note: string
+  /** Overrides the generated learnerNNNN@example.com address. */
+  email?: string
+  /** Stable CRM identifier for the integration demo (29 Oct), e.g. CRM-0042. */
+  externalLearnerId?: string
 }
+
+/** Mariam Al Nuaimi: the 29 Oct unified-record demonstration learner (display ID LRN-0042). */
+export const MARIAM_N = 42
 
 export const PERSONAS: readonly PersonaSeed[] = [
   {
@@ -117,6 +124,29 @@ export const PERSONAS: readonly PersonaSeed[] = [
     city: 'Doha',
     enrolments: [{ programme: 'B', stage: 'completed' }],
     note: 'B completed; pre 60 and post 100',
+  },
+  {
+    n: MARIAM_N,
+    fullName: 'Mariam Al Nuaimi',
+    organisation: 'Demo Pearl Hospitality',
+    orgType: 'hotel_accommodation',
+    jobTitle: 'Guest Relations Officer',
+    jobFunction: 'guest_services',
+    seniority: 'experienced_professional',
+    experience: '4_7',
+    language: 'Arabic',
+    goals: ['visitor_welcome', 'communication'],
+    weeklyMinutes: 60,
+    country: 'Qatar',
+    city: 'Doha',
+    // A: Level 1 done and booked on SES-T01-2 (pinned in sessions.ts). B: two of three lessons done.
+    enrolments: [
+      { programme: 'A', stage: 'l1_done' },
+      { programme: 'B', stage: 'b_mid' },
+    ],
+    note: 'Unified record demo: A and B, completed B lesson, upcoming session, expiring credential',
+    email: 'mariam.alnuaimi@example.com',
+    externalLearnerId: 'CRM-0042',
   },
 ]
 

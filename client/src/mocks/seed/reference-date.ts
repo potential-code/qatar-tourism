@@ -2,7 +2,7 @@ import { DEMO_REFERENCE_DATE } from '@shared/constants'
 import { addDays, DAY_MS, dayOffsetAt, qatarInstant } from '@shared/utils/qatar-calendar'
 
 /** Version of the dataset recipe. Bump it when the seed's output changes. */
-export const SEED_VERSION = 'qta-demo-1.0'
+export const SEED_VERSION = 'qta-demo-1.1-29oct'
 
 const WINDOW_START_MS = 30 * 60_000
 const WINDOW_MS = 10.5 * 3_600_000

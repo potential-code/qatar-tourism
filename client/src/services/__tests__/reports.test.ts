@@ -17,11 +17,11 @@ beforeEach(() => {
 const lines = (csv: string) => csv.replace(/^﻿/, '').trim().split('\r\n')
 
 describe('reports reconcile with the metric layer', () => {
-  test('programme reports: A 420, B 660, C 180; certification 120, Program A only', async () => {
+  test('programme reports: A 420, B 660, C 180; certification 124, Program A only', async () => {
     expect((await getReportPage('program-a')).total).toBe(420)
     expect((await getReportPage('program-b')).total).toBe(660)
     expect((await getReportPage('program-c')).total).toBe(180)
-    expect((await getReportPage('certification')).total).toBe(120)
+    expect((await getReportPage('certification')).total).toBe(124)
     expect((await getReportPage('certification', { programme: 'B' })).total).toBe(0)
   })
 

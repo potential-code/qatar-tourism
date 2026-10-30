@@ -14,12 +14,12 @@ interface InstantColumns {
   users: Stamps
   verifications: Stamps | 'expiresAt'
   organisations: Stamps
-  profiles: Stamps | 'consentAcceptedAt' | 'registeredAt' | 'lastActivityAt'
+  profiles: Stamps | 'consentAcceptedAt' | 'registeredAt' | 'lastActivityAt' | 'lockedAt'
   trainerProfiles: Stamps
   trainerProgrammes: Stamps
   programmes: Stamps
   courses: Stamps
-  contentPackages: Stamps
+  contentPackages: Stamps | 'publishedAt'
   learningPaths: Stamps
   pathVersions: Stamps | 'publishedAt'
   pathItems: Stamps
@@ -27,7 +27,7 @@ interface InstantColumns {
   enrolments: Stamps | 'enrolledAt' | 'startedAt' | 'completedAt' | 'lastActivityAt'
   unitProgress: Stamps | 'completedAt' | 'lastActivityAt'
   assessments: Stamps
-  assessmentAttempts: Stamps | 'startedAt' | 'submittedAt'
+  assessmentAttempts: Stamps | 'startedAt' | 'submittedAt' | 'deadlineAt'
   assessmentAnswers: Stamps
   rolePlayAttempts: Stamps | 'completedAt'
   sessions: Stamps | 'startsAt' | 'endsAt' | 'bookingDeadline'
@@ -38,9 +38,21 @@ interface InstantColumns {
   assignments: Stamps
   submissions: Stamps | 'submittedAt'
   reviews: Stamps | 'reviewedAt'
-  certificates: Stamps | 'issuedAt' | 'revokedAt'
+  certificates: Stamps | 'issuedAt' | 'revokedAt' | 'expiresAt'
   notifications: Stamps | 'readAt'
   auditEvents: 'createdAt'
+  seatOffers: Stamps | 'offeredAt' | 'expiresAt' | 'resolvedAt'
+  approvalRequests: Stamps | 'submittedAt' | 'decidedAt'
+  questionBank: Stamps
+  assessmentRules: Stamps
+  attemptGrants: Stamps | 'grantedAt'
+  cpdLedger: Stamps
+  externalCertificates: Stamps | 'reviewedAt' | 'submittedAt'
+  licenceStatus: Stamps
+  xapiStatements: 'timestamp'
+  crmMappings: Stamps
+  crmEvents: 'occurredAt' | 'processedAt' | Stamps
+  integrationSettings: Stamps | 'lastTestAt'
 }
 
 type AsDate<V> = Date | Extract<V, null | undefined>

@@ -1,0 +1,11 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "myLearning": "My learning",
+    "myLearningRecord": "My Learning Record",
+    "certificates": "Certificates"
+  },
+  "programmeSwitcher": {
+    "label": "My programmes"
+  }
+}

@@ -36,6 +36,10 @@ function hubCounts() {
     sessions: db.sessions.length,
     assessments: db.assessments.length,
     auditEvents: db.auditEvents.length,
+    // 29 Oct hub tiles: open work and library size, counted from the demo records.
+    pendingApprovals: db.approvalRequests.filter((r) => r.status === 'pending').length,
+    contentPackages: db.contentPackages.filter((p) => p.packageId !== null).length,
+    credentials: db.certificates.length,
   }
 }
 

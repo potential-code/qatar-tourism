@@ -80,3 +80,10 @@
   --qt-dur-slow: 400ms;
   --qt-dur-reveal: 900ms;
 }
+
+/* Arabic (29 Oct update): Noto Kufi Arabic for UI text, Noto Naskh Arabic for display headings.
+   Set by setAppLanguage() via <html lang="ar">. Latin fallbacks keep mixed numerals legible. */
+:root[lang="ar"] {
+  --qt-font-display: "Noto Naskh Arabic", "Spectral", Georgia, serif;
+  --qt-font-sans: "Noto Kufi Arabic", "Jost", "Trebuchet MS", sans-serif;
+}

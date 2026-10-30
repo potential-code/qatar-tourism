@@ -5,10 +5,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import { Toaster } from '@/components/ui/sonner'
-import i18n from '@/i18n'
+import i18n, { initDocumentLanguage } from '@/i18n'
 import { queryClient } from '@/lib/query-client'
 import { createAppRouter } from '@/router'
 import { bootDemo } from '@/services/boot'
+
+// Apply the visitor's saved language (html lang/dir) before the first paint.
+initDocumentLanguage()
 
 // The demo database (IndexedDB) loads, or is seeded, before anything reads it.
 await bootDemo()

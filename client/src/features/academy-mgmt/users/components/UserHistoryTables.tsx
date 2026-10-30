@@ -74,6 +74,7 @@ const RSVP_TONE = {
   waitlisted: 'warn',
   cancelled: 'muted',
   moved: 'info',
+  offered: 'info',
 } as const
 const ATTEND_TONE = {
   attended: 'good',
