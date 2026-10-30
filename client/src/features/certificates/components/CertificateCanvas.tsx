@@ -1,9 +1,11 @@
+import type { CredentialLifecycle } from '@shared/constants/enums'
+import { useTranslation } from 'react-i18next'
 import { ArchFrame } from '@/components/brand/ArchFrame'
-import { qatarDate } from '@/lib/format/qatar-time'
+import { useRecordFormat } from '@/features/learner-record/utils/format'
 import { cn } from '@/lib/utils'
 
 /**
- * On-screen demo certificate, matching the PDF: watermarked DEMONSTRATION ONLY across the
+ * On-screen demo certificate, matching the PDF: watermarked SAMPLE — NOT VALID across the
  * design, the arch motif as the single accent, and wording that never implies a licence.
  */
 export function CertificateCanvas({
@@ -11,17 +13,32 @@ export function CertificateCanvas({
   programmeTitle,
   code,
   completedAt,
-  status,
+  expiresAt,
+  lifecycle,
 }: {
   learnerName: string
   programmeTitle: string
   code: string
   completedAt: string
-  status: 'issued' | 'revoked'
+  expiresAt: string | null
+  lifecycle: CredentialLifecycle
 }) {
+  const { t } = useTranslation('record')
+  const format = useRecordFormat()
+  const bad = lifecycle === 'revoked' || lifecycle === 'expired'
+  const facts: [string, string, boolean][] = [
+    [t('certificate.canvas.completionDate'), format.date(completedAt), false],
+    [
+      t('certificate.canvas.expiryDate'),
+      expiresAt ? format.date(expiresAt) : t('certificate.canvas.noExpiry'),
+      false,
+    ],
+    [t('certificate.canvas.id'), code, false],
+    [t('certificate.canvas.status'), t(`credentials.lifecycle.${lifecycle}`), bad],
+  ]
   return (
     <figure
-      aria-label={`Demonstration certificate ${code} for ${learnerName}`}
+      aria-label={t('certificate.canvas.aria', { code, name: learnerName })}
       className="relative isolate overflow-hidden rounded-xl border bg-sand shadow-lg"
     >
       <span aria-hidden className="absolute inset-y-0 start-0 w-2 bg-teal" />
@@ -32,57 +49,51 @@ export function CertificateCanvas({
         {[0, 1].map((i) => (
           <p
             key={i}
-            className="-rotate-[22deg] whitespace-nowrap font-sans text-5xl font-semibold tracking-wide text-maroon/[0.08] sm:text-7xl"
+            className="-rotate-[22deg] whitespace-nowrap font-sans text-4xl font-semibold tracking-wide text-maroon/[0.1] sm:text-6xl"
           >
-            DEMONSTRATION ONLY
+            {t('certificate.canvas.watermark')}
           </p>
         ))}
       </div>
       <div className="m-3 flex flex-col items-center gap-4 border border-border/80 px-4 py-8 text-center sm:m-6 sm:gap-5 sm:px-10 sm:py-10">
         <ArchFrame className="w-28 sm:w-36">
           <div className="grid aspect-[3/4] place-items-center bg-teal-mist p-4 pt-10">
-            <img src="/brand/qatar-tourism-logo.svg" alt="Qatar Tourism" className="w-full" />
+            <img
+              src="/brand/qatar-tourism-logo.svg"
+              alt={t('certificate.canvas.logoAlt')}
+              className="w-full"
+            />
           </div>
         </ArchFrame>
         <p className="text-xs font-medium tracking-[0.18em] text-teal-deep">
-          QATAR TOURISM ACADEMY
+          {t('certificate.canvas.academy')}
         </p>
         <p className="font-display text-3xl font-light text-ink sm:text-4xl">
-          Certificate of training completion
+          {t('certificate.canvas.heading')}
         </p>
         <p className="font-display text-base italic text-muted-foreground">
-          This demonstration record confirms that
+          {t('certificate.canvas.confirms')}
         </p>
         <p className="font-display text-4xl text-teal-deep sm:text-5xl">{learnerName}</p>
         <span aria-hidden className="h-px w-64 max-w-full bg-border" />
         <p className="font-display text-base italic text-muted-foreground">
-          completed every requirement of
+          {t('certificate.canvas.completed')}
         </p>
-        <p className="text-lg font-semibold text-ink">Program A: {programmeTitle}</p>
-        <dl className="mt-2 grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3">
-          {[
-            ['Completion date', qatarDate(completedAt, { month: 'long' })],
-            ['Demo certificate ID', code],
-            ['Status', status === 'issued' ? 'Issued (demo record)' : 'Revoked'],
-          ].map(([label, value]) => (
+        <p className="text-lg font-semibold text-ink">
+          {t('certificate.canvas.programme', { title: programmeTitle })}
+        </p>
+        <dl className="mt-2 grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {facts.map(([label, value, isBad]) => (
             <div key={label}>
               <dt className="text-[11px] tracking-wider text-muted-foreground uppercase">
                 {label}
               </dt>
-              <dd
-                className={cn(
-                  'font-semibold text-ink',
-                  label === 'Status' && status === 'revoked' && 'text-destructive',
-                )}
-              >
-                {value}
-              </dd>
+              <dd className={cn('font-semibold text-ink', isBad && 'text-destructive')}>{value}</dd>
             </div>
           ))}
         </dl>
         <figcaption className="mt-2 max-w-xl text-xs text-maroon">
-          Training completion certificate for a fictional demonstration. It is not a guide licence,
-          permit or official qualification.
+          {t('certificate.canvas.caption')}
         </figcaption>
       </div>
     </figure>

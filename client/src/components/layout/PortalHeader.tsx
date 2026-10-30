@@ -11,12 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { MyProgrammesSwitcher } from '@/features/learner-record/components/MyProgrammesSwitcher'
 import { useSession, useSignOut } from '@/hooks/useSession'
 import { DemoBadge } from './DemoBadge'
 
 /** Sticky top bar for all portals. `notifications` slot is filled by the notifications feature. */
 export function PortalHeader({ notifications }: { notifications?: React.ReactNode }) {
-  const { session } = useSession()
+  const { session, role } = useSession()
   const signOut = useSignOut()
   const navigate = useNavigate()
 
@@ -33,6 +34,7 @@ export function PortalHeader({ notifications }: { notifications?: React.ReactNod
       <SidebarTrigger className="-ms-1" />
       <DemoBadge compact className="hidden sm:flex" />
       <div className="ms-auto flex items-center gap-2">
+        {role === 'learner' ? <MyProgrammesSwitcher /> : null}
         {notifications ?? (
           <Button variant="ghost" size="icon" aria-label="Notifications">
             <Bell aria-hidden />

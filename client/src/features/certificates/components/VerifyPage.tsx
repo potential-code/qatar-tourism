@@ -1,34 +1,82 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { BadgeCheck, CircleX, SearchX } from 'lucide-react'
+import { BadgeCheck, CircleX, Clock, SearchX } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 import { Logo } from '@/components/brand/Logo'
 import { PhotoPanel } from '@/components/brand/PhotoPanel'
 import { DemoBadge } from '@/components/layout/DemoBadge'
 import { easeOut } from '@/components/motion/variants'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useRecordFormat } from '@/features/learner-record/utils/format'
 import { LoadError } from '@/features/learning/components/LoadError'
 import { PAGE_IMAGE } from '@/features/learning/utils/imagery'
-import { qatarDate } from '@/lib/format/qatar-time'
 import { verifyQuery } from '../queries/certificates.queries'
 
 const CODE_PATTERN = /^QTA-DEMO-[A-Z]-\d{6}$/
 
-/** Public verification of a demo certificate record (brief §6). Minimal fields only. */
+/**
+ * Public status page for a demo certificate (brief §6): the dummy verification link printed on
+ * the sample PDF points here. Minimal fields only; it states expiry, replacement and revocation.
+ */
 export function VerifyPage({ code }: { code: string }) {
+  const { t } = useTranslation('record')
+  const format = useRecordFormat()
   const reduce = useReducedMotion()
   const valid = CODE_PATTERN.test(code)
   const result = useQuery({ ...verifyQuery(code), enabled: valid })
+  const data = result.data?.found ? result.data : null
+
+  const outcome = (() => {
+    if (!data) return null
+    switch (data.lifecycle) {
+      case 'revoked':
+        return {
+          icon: CircleX,
+          tone: 'text-destructive',
+          title: t('certificate.verify.revokedTitle'),
+          body: t('certificate.verify.revokedBody', { date: format.date(data.revokedAt) }),
+        }
+      case 'expired':
+        return {
+          icon: CircleX,
+          tone: 'text-destructive',
+          title: t('certificate.verify.expiredTitle'),
+          body: t('certificate.verify.expiredBody', { date: format.date(data.expiresAt) }),
+        }
+      case 'superseded':
+        return {
+          icon: Clock,
+          tone: 'text-muted-foreground',
+          title: t('certificate.verify.supersededTitle'),
+          body: t('certificate.verify.supersededBody'),
+        }
+      case 'expiring_soon':
+        return {
+          icon: Clock,
+          tone: 'text-warning',
+          title: t('certificate.verify.expiringTitle'),
+          body: t('certificate.verify.expiringBody', { date: format.date(data.expiresAt) }),
+        }
+      default:
+        return {
+          icon: BadgeCheck,
+          tone: 'text-teal',
+          title: t('certificate.verify.validTitle'),
+          body: t('certificate.verify.validBody'),
+        }
+    }
+  })()
 
   return (
     <div className="min-h-[100dvh] bg-sand">
       <PhotoPanel src={PAGE_IMAGE.certificates.src} alt="" fade="full" className="min-h-[22rem]">
         <div className="mx-auto flex max-w-3xl flex-col gap-10 px-4 py-8">
-          <Link to="/" aria-label="Qatar Tourism Academy home" className="h-11">
+          <Link to="/" aria-label={t('certificate.verify.homeLabel')} className="h-11">
             <Logo variant="white" withAcademy className="h-full" />
           </Link>
           <h1 className="font-display text-4xl font-light text-white md:text-5xl">
-            Certificate verification
+            {t('certificate.verify.title')}
           </h1>
         </div>
       </PhotoPanel>
@@ -44,42 +92,37 @@ export function VerifyPage({ code }: { code: string }) {
             <Outcome
               icon={SearchX}
               tone="text-muted-foreground"
-              title="Not a demo certificate ID"
-              body={`"${code}" is not in the QTA-DEMO format.`}
+              title={t('certificate.verify.notFormatTitle')}
+              body={t('certificate.verify.notFormatBody', { code })}
             />
           ) : result.isLoading ? (
-            <Skeleton className="h-40 w-full" aria-label="Checking the record" />
+            <Skeleton className="h-40 w-full" aria-label={t('certificate.verify.checking')} />
           ) : result.error || !result.data ? (
             <LoadError error={result.error} onRetry={() => void result.refetch()} />
-          ) : !result.data.found ? (
+          ) : !data || !outcome ? (
             <Outcome
               icon={SearchX}
               tone="text-muted-foreground"
-              title="No record found"
-              body={`There is no demonstration certificate with ID ${code}.`}
+              title={t('certificate.verify.notFoundTitle')}
+              body={t('certificate.verify.notFoundBody', { code })}
             />
           ) : (
             <div className="flex flex-col gap-6">
-              <Outcome
-                icon={result.data.status === 'issued' ? BadgeCheck : CircleX}
-                tone={result.data.status === 'issued' ? 'text-teal' : 'text-destructive'}
-                title={
-                  result.data.status === 'issued'
-                    ? 'Valid demonstration record'
-                    : 'This certificate was revoked'
-                }
-                body={
-                  result.data.status === 'issued'
-                    ? 'This record exists in the Qatar Tourism Academy demonstration environment.'
-                    : `Revoked on ${qatarDate(result.data.revokedAt, { month: 'long' })}.`
-                }
-              />
+              <Outcome {...outcome} />
               <dl className="grid gap-4 border-t pt-6 sm:grid-cols-2">
                 {[
-                  ['Learner', result.data.learnerName],
-                  ['Programme', `Program A: ${result.data.programmeTitle}`],
-                  ['Issued', qatarDate(result.data.issuedAt, { month: 'long' })],
-                  ['Demo certificate ID', result.data.code],
+                  [t('certificate.verify.fields.learner'), data.learnerName],
+                  [
+                    t('certificate.verify.fields.programme'),
+                    t('certificate.canvas.programme', { title: data.programmeTitle }),
+                  ],
+                  [t('certificate.verify.fields.issued'), format.date(data.issuedAt)],
+                  [t('certificate.verify.fields.expires'), format.date(data.expiresAt)],
+                  [t('certificate.verify.fields.id'), data.code],
+                  [
+                    t('credentials.fields.verification'),
+                    t(`credentials.lifecycle.${data.lifecycle}`),
+                  ],
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="text-xs tracking-wider text-muted-foreground uppercase">
@@ -92,10 +135,7 @@ export function VerifyPage({ code }: { code: string }) {
             </div>
           )}
         </motion.section>
-        <p className="text-sm font-medium text-maroon">
-          DEMONSTRATION ONLY. A training completion record with fictional data. It is not a guide
-          licence, permit or official qualification.
-        </p>
+        <p className="text-sm font-medium text-maroon">{t('certificate.verify.disclaimer')}</p>
         <DemoBadge />
       </main>
     </div>
