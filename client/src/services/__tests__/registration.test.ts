@@ -87,7 +87,7 @@ describe('registration with simulated verification (brief §3)', () => {
       register({ name: 'Hessa Al Kuwari', email: EMAIL, password: PASSWORD }),
     ).rejects.toMatchObject({ status: 409, code: 'ACCOUNT_UNVERIFIED' })
     await expect(
-      register({ name: 'Maha', email: 'learner0001@example.com', password: PASSWORD }),
+      register({ name: 'Maha', email: 'maha.alnouri@example.com', password: PASSWORD }),
     ).rejects.toMatchObject({ status: 409, code: 'ACCOUNT_EXISTS' })
   })
 
@@ -122,7 +122,7 @@ describe('simulated SSO and password reset', () => {
   test('SSO signs in to the fixed mock learner and records it as simulated', async () => {
     const result = await signInSimulated('qatar-tourism')
     expect(result).toMatchObject({ role: 'learner', provider: 'qatar-tourism' })
-    const account = db.users.find((u) => u.email === 'learner0013@example.com')
+    const account = db.users.find((u) => u.id === 'user-l0013')
     expect(db.session?.userId).toBe(account?.id ?? '')
     const event = db.auditEvents.find((a) => a.action === 'auth.sso_simulated')
     expect(event?.after).toMatchObject({ mode: 'simulated', claimsVerified: false })
@@ -130,7 +130,7 @@ describe('simulated SSO and password reset', () => {
   })
 
   test('SSO refuses a suspended mock account', async () => {
-    const account = db.users.find((u) => u.email === 'learner0016@example.com')
+    const account = db.users.find((u) => u.id === 'user-l0016')
     const profile = db.profiles.find((p) => p.userId === account?.id)
     if (!profile) throw new Error('missing profile')
     profile.suspended = true
@@ -141,13 +141,13 @@ describe('simulated SSO and password reset', () => {
 
   test('a reset link sets a new password once; unknown addresses get no link', async () => {
     expect((await requestPasswordReset('nobody@example.com')).simulatedEmail).toBeNull()
-    const { simulatedEmail } = await requestPasswordReset('learner0001@example.com')
+    const { simulatedEmail } = await requestPasswordReset('maha.alnouri@example.com')
     const token = simulatedEmail?.token ?? ''
     await resetPassword({ token, newPassword: 'NewSecret2026' })
-    await expect(signIn('learner0001@example.com', 'password')).rejects.toMatchObject({
+    await expect(signIn('maha.alnouri@example.com', 'password')).rejects.toMatchObject({
       status: 401,
     })
-    expect((await signIn('learner0001@example.com', 'NewSecret2026')).user.id).toBe('user-l0001')
+    expect((await signIn('maha.alnouri@example.com', 'NewSecret2026')).user.id).toBe('user-l0001')
     await expect(resetPassword({ token, newPassword: 'Another2026' })).rejects.toMatchObject({
       code: 'INVALID_TOKEN',
     })

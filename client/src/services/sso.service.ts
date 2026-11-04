@@ -11,9 +11,9 @@ import { startSession } from './auth/session'
 export const SSO_PROVIDERS = ['qatar-tourism', 'organisation'] as const
 export type SsoProvider = (typeof SSO_PROVIDERS)[number]
 
-const MOCK_ACCOUNTS: Record<SsoProvider, { email: string; label: string }> = {
-  'qatar-tourism': { email: 'learner0013@example.com', label: 'Qatar Tourism account (simulated)' },
-  organisation: { email: 'learner0016@example.com', label: 'Organisation account (simulated)' },
+const MOCK_ACCOUNTS: Record<SsoProvider, { userId: string; label: string }> = {
+  'qatar-tourism': { userId: 'user-l0013', label: 'Qatar Tourism account (simulated)' },
+  organisation: { userId: 'user-l0016', label: 'Organisation account (simulated)' },
 }
 
 /** Signs in as the provider's mock learner. Audited as simulated, with no verified claims. */
@@ -21,7 +21,7 @@ export async function signInSimulated(provider: SsoProvider) {
   await delay(300)
   const mock = SSO_PROVIDERS.includes(provider) ? MOCK_ACCOUNTS[provider] : undefined
   if (!mock) throw ApiError.validation('Invalid request', { target: 'json', issues: [] })
-  const account = db.users.find((u) => u.email === mock.email)
+  const account = db.users.find((u) => u.id === mock.userId)
   // Guard against a changed dataset: the mock must still be a learner.
   if (account?.role !== 'learner') {
     throw new ApiError(503, 'SSO_UNAVAILABLE', 'The simulated SSO account is not available')

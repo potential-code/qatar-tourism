@@ -1,5 +1,9 @@
 import type { ProgrammeCode, SessionFormat } from '@shared/constants'
-import { stableUuid, trainerCode, trainerEmail, userIds } from './ids'
+import { uniqueDemoEmail } from '@shared/utils/identity'
+import { stableUuid, trainerCode, userIds } from './ids'
+
+/** Trainer addresses already handed out, so two trainers never share one. */
+const trainerEmails = new Set<string>()
 
 /**
  * The ten fictional trainers and their upcoming sessions (brief §16).
@@ -228,7 +232,7 @@ export const TRAINERS: readonly TrainerSeed[] = (
     id: stableUuid('trainer', n),
     userId: userIds.trainer(n),
     code: trainerCode(n),
-    email: trainerEmail(n),
+    email: uniqueDemoEmail(definition.name, trainerEmails),
     fullName: definition.name,
     headline: definition.headline,
     bio: definition.bio,

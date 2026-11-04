@@ -13,23 +13,24 @@ import { startSession } from './session'
  * identity is kept on the session (`facilitatorId`), so signing out ends facilitator access.
  */
 
-const TARGET_EMAILS: Record<FacilitatorTarget, string> = {
-  'persona-1': 'learner0001@example.com',
-  'persona-2': 'learner0002@example.com',
-  'persona-3': 'learner0003@example.com',
-  'persona-4': 'learner0004@example.com',
-  'persona-5': 'learner0005@example.com',
-  'trainer-01': 'trainer01@example.com',
-  'trainer-02': 'trainer02@example.com',
-  'trainer-03': 'trainer03@example.com',
-  'trainer-04': 'trainer04@example.com',
-  'trainer-05': 'trainer05@example.com',
-  'trainer-06': 'trainer06@example.com',
-  'trainer-07': 'trainer07@example.com',
-  'trainer-08': 'trainer08@example.com',
-  'trainer-09': 'trainer09@example.com',
-  'trainer-10': 'trainer10@example.com',
-  admin: 'admin@example.com',
+/** Seeded user id per target: ids are stable, sign-in addresses are derived from names. */
+const TARGET_USER_IDS: Record<FacilitatorTarget, string> = {
+  'persona-1': 'user-l0001',
+  'persona-2': 'user-l0002',
+  'persona-3': 'user-l0003',
+  'persona-4': 'user-l0004',
+  'persona-5': 'user-l0005',
+  'trainer-01': 'user-t01',
+  'trainer-02': 'user-t02',
+  'trainer-03': 'user-t03',
+  'trainer-04': 'user-t04',
+  'trainer-05': 'user-t05',
+  'trainer-06': 'user-t06',
+  'trainer-07': 'user-t07',
+  'trainer-08': 'user-t08',
+  'trainer-09': 'user-t09',
+  'trainer-10': 'user-t10',
+  admin: 'user-admin',
 }
 
 /** What each persona demonstrates (brief §15), shown in the toolbar. */
@@ -53,9 +54,9 @@ function facilitatorId(): string | null {
 }
 
 function listTargets() {
-  return (Object.entries(TARGET_EMAILS) as [FacilitatorTarget, string][]).flatMap(
-    ([key, email]) => {
-      const account = db.users.find((u) => u.email === email)
+  return (Object.entries(TARGET_USER_IDS) as [FacilitatorTarget, string][]).flatMap(
+    ([key, userId]) => {
+      const account = db.users.find((u) => u.id === userId)
       if (!account) return []
       const learnerCode = db.profiles.find((p) => p.userId === account.id)?.learnerCode
       const trainer = db.trainerProfiles.find((t) => t.userId === account.id)
@@ -91,7 +92,7 @@ export async function switchFacilitator(input: FacilitatorTarget) {
   if (!adminId) {
     throw ApiError.forbidden('The demo toolbar is available to the demo administrator only')
   }
-  const account = db.users.find((u) => u.email === TARGET_EMAILS[target])
+  const account = db.users.find((u) => u.id === TARGET_USER_IDS[target])
   if (!account) throw ApiError.notFound('That demo account is not in the current dataset')
   const admin = db.users.find((u) => u.id === adminId)
   if (admin?.role !== 'admin') throw ApiError.forbidden()

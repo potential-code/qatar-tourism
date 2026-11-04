@@ -261,7 +261,7 @@ function Controls() {
       </div>
       <div className="grid max-w-sm gap-2">
         <Label htmlFor="demo-email">Email</Label>
-        <Input id="demo-email" type="email" defaultValue="learner0001@example.com" />
+        <Input id="demo-email" type="email" defaultValue="maha.alnouri@example.com" />
         <p className="text-xs text-muted-foreground">
           Use fictional addresses ending in example.com.
         </p>

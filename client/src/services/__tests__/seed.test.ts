@@ -53,16 +53,23 @@ const attemptsOf = (enrolmentId: string) =>
   db.assessmentAttempts.filter((a) => a.enrolmentId === enrolmentId)
 
 describe('learners and enrolments (brief §15)', () => {
-  test('1,200 unique learners with the documented emails', () => {
+  test('1,200 unique learners with name-based example.com emails', () => {
     const learners = db.users.filter((u) => u.role === 'learner')
     expect(learners).toHaveLength(1200)
     expect(new Set(db.enrolments.map((e) => e.learnerId)).size).toBe(1200)
-    // Mariam Al Nuaimi (LRN-0042, 29 Oct persona) replaces generated learner 42's address.
-    const pattern = /^learner(0[0-9]{3}|1[01][0-9]{2}|1200)@example\.com$/
-    expect(count(learners, (u) => pattern.test(u.email))).toBe(1199)
+    // Deviation 6: firstname.lastname@example.com instead of learnerNNNN@example.com.
+    const pattern = /^[a-z]+\.[a-z]+\d*@example\.com$/
+    expect(count(learners, (u) => pattern.test(u.email))).toBe(1200)
     expect(count(learners, (u) => u.email === 'mariam.alnuaimi@example.com')).toBe(1)
-    expect(count(db.users, (u) => u.email === 'learner0001@example.com')).toBe(1)
-    expect(count(db.users, (u) => u.email === 'learner1200@example.com')).toBe(1)
+    expect(count(db.users, (u) => u.email === 'maha.alnouri@example.com')).toBe(1)
+  })
+
+  test('every seeded address is unique and name-based, except the admin', () => {
+    expect(new Set(db.users.map((u) => u.email)).size).toBe(db.users.length)
+    const pattern = /^[a-z]+\.[a-z]+\d*@example\.com$/
+    const odd = db.users.filter((u) => !pattern.test(u.email)).map((u) => u.email)
+    expect(odd).toEqual(['admin@example.com'])
+    expect(db.users.find((u) => u.id === 'user-t01')?.email).toBe('amal.alnouri@example.com')
   })
 
   test('360 A-only, 600 B-only, 180 C-only and 60 in both A and B', () => {
@@ -233,14 +240,18 @@ describe('personas (brief §15)', () => {
   const scoresOf = (learnerId: string, kind: string) =>
     db.assessmentAttempts.filter((a) => a.learnerId === learnerId && L.kindOf(a) === kind)
 
-  test('L0001–L0005 have the documented identities and emails', () => {
-    const names = ['Maha Al Nouri', 'Omar Al Safi', 'Leila Rahman', 'Daniel Costa', 'Sara Mansour']
-    for (const [index, name] of names.entries()) {
+  test('L0001–L0005 have the documented identities and name-based emails', () => {
+    const expected = [
+      ['Maha Al Nouri', 'maha.alnouri@example.com'],
+      ['Omar Al Safi', 'omar.alsafi@example.com'],
+      ['Leila Rahman', 'leila.rahman@example.com'],
+      ['Daniel Costa', 'daniel.costa@example.com'],
+      ['Sara Mansour', 'sara.mansour@example.com'],
+    ]
+    for (const [index, [name, email]] of expected.entries()) {
       const profile = profileOf(`L000${index + 1}`)
       expect(profile?.fullName).toBe(name)
-      expect(db.users.find((u) => u.id === profile?.userId)?.email).toBe(
-        `learner000${index + 1}@example.com`,
-      )
+      expect(db.users.find((u) => u.id === profile?.userId)?.email).toBe(email)
     }
   })
 
@@ -312,13 +323,11 @@ describe('personas (brief §15)', () => {
 })
 
 describe('trainers and sessions (brief §16)', () => {
-  test('ten trainers with the documented emails; T04 is renamed', () => {
+  test('ten trainers with name-based emails; T04 is renamed', () => {
     expect(
-      count(
-        db.users,
-        (u) => u.role === 'trainer' && /^trainer(0[1-9]|10)@example\.com$/.test(u.email),
-      ),
+      count(db.users, (u) => u.role === 'trainer' && /^[a-z]+\.[a-z]+@example\.com$/.test(u.email)),
     ).toBe(10)
+    expect(db.users.find((u) => u.id === 'user-t04')?.email).toBe('rafael.sousa@example.com')
     const t04 = db.trainerProfiles.find((t) => t.code === 'T04')
     expect(t04?.fullName).toBe('Rafael Sousa')
     expect(count(db.trainerProfiles, (t) => t.fullName === 'Daniel Costa')).toBe(0)

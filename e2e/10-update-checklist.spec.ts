@@ -280,7 +280,7 @@ test('check 3: waitlist, seat offer, acceptance, roster, approval, lock and unlo
   await expect(page.getByText('Account locked (simulated)')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Unlock account' })).toBeVisible()
 
-  await signInWithForm(page, 'learner0002@example.com')
+  await signInWithForm(page, 'omar.alsafi@example.com')
   await expect(page.getByText('This account is locked. Contact Academy support')).toBeVisible()
   await expect(page).toHaveURL(/\/login/)
 
@@ -294,7 +294,7 @@ test('check 3: waitlist, seat offer, acceptance, roster, approval, lock and unlo
   await expect(page.getByRole('region', { name: 'Training History' }).getByRole('row')).toHaveCount(
     rowsBefore,
   )
-  await signInWithForm(page, 'learner0002@example.com')
+  await signInWithForm(page, 'omar.alsafi@example.com')
   await expect(page).toHaveURL(/\/learner/)
   await expect(page.getByText('This account is locked.')).toHaveCount(0)
 })

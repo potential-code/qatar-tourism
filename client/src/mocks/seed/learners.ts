@@ -6,7 +6,8 @@ import type {
   Seniority,
 } from '@shared/constants'
 import { LEARNING_GOALS } from '@shared/constants'
-import { learnerCode, learnerEmail, userIds } from './ids'
+import { uniqueDemoEmail } from '@shared/utils/identity'
+import { learnerCode, userIds } from './ids'
 import { type OrganisationSeed, PSEUDO_INDEPENDENT, PSEUDO_UNEMPLOYED } from './organisations'
 import { PERSONAS } from './personas'
 import type { Rng } from './rng'
@@ -481,6 +482,11 @@ export function buildLearners(
   const attrRng = rng.fork('attributes')
   const learners: LearnerSeed[] = []
 
+  // Name-based addresses (maha.alnouri@example.com). Trainers and personas claim theirs first,
+  // so a generated learner whose name slugs the same way gets the numbered variant instead.
+  const usedEmails = new Set<string>(TRAINERS.map((t) => t.email))
+  const personaEmails = new Map(PERSONAS.map((p) => [p.n, uniqueDemoEmail(p.fullName, usedEmails)]))
+
   for (let n = 1; n <= LEARNER_TOTAL; n++) {
     const persona = PERSONAS.find((p) => p.n === n)
     const orgType = persona ? persona.orgType : (typePool.pop() as OrganisationType)
@@ -522,12 +528,15 @@ export function buildLearners(
     ] as const)
     const goals = persona ? persona.goals : attrRng.sample(LEARNING_GOALS, goalCount)
 
+    const fullName = persona ? persona.fullName : nextName()
+    const email = personaEmails.get(n) ?? uniqueDemoEmail(fullName, usedEmails)
+
     learners.push({
       n,
       userId: userIds.learner(n),
       code: learnerCode(n),
-      email: persona?.email ?? learnerEmail(n),
-      fullName: persona ? persona.fullName : nextName(),
+      email,
+      fullName,
       group,
       orgType,
       organisation,

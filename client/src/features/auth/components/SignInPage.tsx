@@ -27,8 +27,8 @@ const schema = z.object({
 
 /** The seeded demo accounts offered under the form; one click opens that portal. */
 const DEMO_ACCOUNTS: { role: SignInMode; email: string; icon: typeof UserRound }[] = [
-  { role: 'learner', email: 'learner0001@example.com', icon: UserRound },
-  { role: 'trainer', email: 'trainer01@example.com', icon: GraduationCap },
+  { role: 'learner', email: 'maha.alnouri@example.com', icon: UserRound },
+  { role: 'trainer', email: 'amal.alnouri@example.com', icon: GraduationCap },
   { role: 'admin', email: 'admin@example.com', icon: Shield },
 ]
 

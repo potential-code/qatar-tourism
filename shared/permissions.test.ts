@@ -113,7 +113,7 @@ describe('learner field visibility', () => {
   const record = {
     learnerCode: 'L0001',
     displayName: 'Maha Al Nouri',
-    email: 'learner0001@example.com',
+    email: 'maha.alnouri@example.com',
     mobile: '+000',
     jobTitle: 'Guest Relations Officer',
     accessibilityRequest: 'Needs transcripts',

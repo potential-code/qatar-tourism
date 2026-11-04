@@ -47,5 +47,3 @@ export const userIds = {
 
 export const learnerCode = (n: number) => `L${String(n).padStart(4, '0')}`
 export const trainerCode = (n: number) => `T${String(n).padStart(2, '0')}`
-export const learnerEmail = (n: number) => `learner${String(n).padStart(4, '0')}@example.com`
-export const trainerEmail = (n: number) => `trainer${String(n).padStart(2, '0')}@example.com`

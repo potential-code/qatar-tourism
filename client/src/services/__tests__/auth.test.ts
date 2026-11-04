@@ -53,7 +53,7 @@ describe('sign in and out', () => {
     const profile = db.profiles.find((p) => p.userId === 'user-l0001')
     if (!profile) throw new Error('missing profile')
     profile.suspended = true
-    await expect(signIn('learner0001@example.com', 'password')).rejects.toMatchObject({
+    await expect(signIn('maha.alnouri@example.com', 'password')).rejects.toMatchObject({
       status: 403,
       code: 'ACCOUNT_SUSPENDED',
     })
@@ -61,7 +61,7 @@ describe('sign in and out', () => {
   })
 
   test('sign out clears the session', async () => {
-    await signIn('trainer01@example.com', 'password')
+    await signIn('amal.alnouri@example.com', 'password')
     await signOut()
     expect(db.session).toBeNull()
     expect(await getSession()).toBeNull()
@@ -100,7 +100,7 @@ describe('demo facilitator toolbar', () => {
     actAs(db, 'user-admin')
     await switchFacilitator('persona-1')
     await signOut()
-    await signIn('learner0001@example.com', 'password')
+    await signIn('maha.alnouri@example.com', 'password')
     expect((await getFacilitatorStatus()).active).toBe(false)
   })
 })

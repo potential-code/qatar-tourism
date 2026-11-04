@@ -27,8 +27,6 @@ export type PersonaSeed = {
   /** Programmes held, with the pinned stage (see plan.ts for stage meanings). */
   enrolments: { programme: 'A' | 'B'; stage: string }[]
   note: string
-  /** Overrides the generated learnerNNNN@example.com address. */
-  email?: string
   /** Stable CRM identifier for the integration demo (29 Oct), e.g. CRM-0042. */
   externalLearnerId?: string
 }
@@ -145,7 +143,6 @@ export const PERSONAS: readonly PersonaSeed[] = [
       { programme: 'B', stage: 'b_mid' },
     ],
     note: 'Unified record demo: A and B, completed B lesson, upcoming session, expiring credential',
-    email: 'mariam.alnuaimi@example.com',
     externalLearnerId: 'CRM-0042',
   },
 ]

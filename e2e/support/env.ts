@@ -28,10 +28,24 @@ export const ACCOUNTS = {
   trainer: (n: number) => `user-t${String(n).padStart(2, '0')}`,
 } as const
 
+const TRAINER_EMAILS = [
+  'amal.alnouri@example.com',
+  'khalid.mansour@example.com',
+  'leila.haddad@example.com',
+  'rafael.sousa@example.com',
+  'noura.alsaleh@example.com',
+  'priya.menon@example.com',
+  'youssef.karim@example.com',
+  'sofia.martins@example.com',
+  'hassan.farouk@example.com',
+  'aisha.rahman@example.com',
+] as const
+
 /** Seeded sign-in emails, for the journeys that use the real sign-in form. */
 export const EMAILS = {
   admin: 'admin@example.com',
-  maha: 'learner0001@example.com',
+  maha: 'maha.alnouri@example.com',
   mariam: 'mariam.alnuaimi@example.com',
-  trainer: (n: number) => `trainer${String(n).padStart(2, '0')}@example.com`,
+  /** T01–T10 in order: firstname.lastname@example.com. */
+  trainer: (n: number) => TRAINER_EMAILS[n - 1] as string,
 } as const

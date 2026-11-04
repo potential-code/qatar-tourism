@@ -100,7 +100,7 @@ describe('create, invite, enrol', () => {
       createLearner({ ...NEW_LEARNER, email: 'someone@gmail.com' }),
     ).rejects.toMatchObject({ status: 400 })
     await expect(
-      createLearner({ ...NEW_LEARNER, email: 'learner0001@example.com' }),
+      createLearner({ ...NEW_LEARNER, email: 'maha.alnouri@example.com' }),
     ).rejects.toMatchObject({ status: 409, code: 'EMAIL_TAKEN' })
     expect(db.users).toHaveLength(before)
   })

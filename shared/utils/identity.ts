@@ -26,3 +26,25 @@ export function accountStatusOf(profile: {
   if (profile.accountStatus === 'active' && profile.suspended) return 'disabled'
   return profile.accountStatus
 }
+
+/**
+ * The fictional sign-in address for a seeded name: first name, a dot, then the rest of the name
+ * with no spaces, at example.com. `Maha Al Nouri` becomes `maha.alnouri@example.com`.
+ */
+export function demoEmail(fullName: string): string {
+  const [first = '', ...rest] = fullName
+    .toLowerCase()
+    .replace(/[^a-z ]/g, '')
+    .split(' ')
+    .filter(Boolean)
+  return `${first}.${rest.join('')}@example.com`
+}
+
+/** `demoEmail`, numbered (`sara.mansour2@…`) when `used` already holds it. Adds the result to `used`. */
+export function uniqueDemoEmail(fullName: string, used: Set<string>): string {
+  const base = demoEmail(fullName)
+  let email = base
+  for (let n = 2; used.has(email); n++) email = base.replace('@', `${n}@`)
+  used.add(email)
+  return email
+}
