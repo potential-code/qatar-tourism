@@ -55,6 +55,9 @@ export default defineConfig(({ mode }) => {
   return {
     root: clientRoot,
     envDir: repoRoot,
+    // Playwright gives its server a separate dependency cache: two dev servers re-optimising one
+    // cache at once can stall the other's first page load past the webServer timeout.
+    cacheDir: process.env.VITE_CACHE_DIR || undefined,
     plugins: [
       basicAuth({ ...fileEnv, ...process.env }),
       // Must run before the React plugin so generated route files are transformed.

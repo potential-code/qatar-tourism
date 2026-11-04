@@ -30,7 +30,8 @@ export default defineConfig({
     // Piped, not ignored: with its output ignored the Vite dev server never starts listening here.
     stdout: 'pipe',
     // The specs test the app, not the Basic Auth gate in front of it.
-    env: { BASIC_AUTH: 'off' },
+    // Its own Vite cache, so a developer's dev server on another port cannot stall this one.
+    env: { BASIC_AUTH: 'off', VITE_CACHE_DIR: 'node_modules/.vite-e2e' },
     timeout: 60_000,
   },
 })
