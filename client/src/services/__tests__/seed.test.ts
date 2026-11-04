@@ -122,7 +122,10 @@ describe('learners and enrolments (brief §15)', () => {
       if (type) by[type] = (by[type] ?? 0) + 1
     }
     expect(by.hotel_accommodation).toBe(420)
-    expect(by.tour_operator).toBe(240)
+    // Brief grid is 240. Noor (L0036) takes a tour-operator slot but has not filled in her
+    // profile yet, so it shows 239 until she completes the wizard.
+    expect(by.tour_operator).toBe(239)
+    expect(db.profiles.find((p) => p.learnerCode === 'L0036')?.organisationId).toBeNull()
     expect(by.transport).toBe(180)
     expect(by.travel_trade).toBe(120)
     expect(by.attraction_venue).toBe(120)
@@ -133,7 +136,9 @@ describe('learners and enrolments (brief §15)', () => {
     const by: Record<string, number> = {}
     for (const p of db.profiles) by[p.seniority ?? 'none'] = (by[p.seniority ?? 'none'] ?? 0) + 1
     expect(by.student_trainee).toBe(180)
-    expect(by.entry_level).toBe(300)
+    // Brief grid is 300; Noor (L0036) holds an entry-level slot with her profile still blank.
+    expect(by.entry_level).toBe(299)
+    expect(by.none).toBe(1)
     expect(by.experienced_professional).toBe(420)
     expect(by.supervisor).toBe(180)
     expect((by.manager ?? 0) + (by.senior_leader ?? 0)).toBe(120)
@@ -253,6 +258,42 @@ describe('personas (brief §15)', () => {
       expect(profile?.fullName).toBe(name)
       expect(db.users.find((u) => u.id === profile?.userId)?.email).toBe(email)
     }
+  })
+
+  test('Noor (L0036) starts fresh: blank draft profile at wizard step 1', () => {
+    const noor = profileOf('L0036')
+    expect(noor).toMatchObject({
+      userId: 'user-l0036',
+      fullName: 'Noor Haddad',
+      status: 'draft',
+      wizardStep: 1,
+      completeness: 0,
+      organisationId: null,
+      jobTitle: null,
+      jobFunction: null,
+      seniority: null,
+      experience: null,
+      country: null,
+      goals: [],
+      weeklyMinutes: null,
+      consentAcceptedAt: null,
+    })
+    expect(db.users.find((u) => u.id === 'user-l0036')?.email).toBe('noor.haddad@example.com')
+  })
+
+  test('Noor holds only Program B, not started, with no activity yet', () => {
+    const own = db.enrolments.filter((e) => e.learnerId === 'user-l0036')
+    expect(own.map((e) => [L.programmeCode.get(e.programmeId), e.status])).toEqual([
+      ['B', 'not_started'],
+    ])
+    // Only her account, profile and enrolment mention her: no baseline, units, practice,
+    // bookings, notifications or credentials.
+    const mentions = Object.entries(db)
+      .filter(([, rows]) => Array.isArray(rows))
+      .filter(([, rows]) => JSON.stringify(rows).includes('"user-l0036"'))
+      .map(([name]) => name)
+      .sort()
+    expect(mentions).toEqual(['enrolments', 'profiles', 'users'])
   })
 
   test('Maha: B, baseline 40, Demo Pearl Hospitality, guest relations officer, 4–7 years', () => {

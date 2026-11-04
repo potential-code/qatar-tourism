@@ -77,6 +77,43 @@ export function buildOrganisationRows(
   }))
 }
 
+/**
+ * A learner who has only just registered (Noor): what `register()` writes, a name and a draft
+ * at wizard step 1, so the walkthrough can start at the profile wizard.
+ */
+function freshProfile(l: LearnerSeed, registeredAt: Date): ProfileInsert {
+  return {
+    id: stableUuid('profile', l.code),
+    userId: l.userId,
+    learnerCode: l.code,
+    fullName: l.fullName,
+    organisationId: null,
+    organisationOther: null,
+    jobTitle: null,
+    jobFunction: null,
+    seniority: null,
+    experience: null,
+    country: null,
+    city: null,
+    preferredLanguage: null,
+    captionsPreference: null,
+    accessibilityRequest: null,
+    goals: [],
+    weeklyMinutes: null,
+    mobile: null,
+    wizardStep: 1,
+    status: 'draft',
+    consentAcceptedAt: null,
+    marketingOptIn: false,
+    suspended: false,
+    registeredAt,
+    lastActivityAt: registeredAt,
+    completeness: 0,
+    createdAt: registeredAt,
+    updatedAt: registeredAt,
+  }
+}
+
 export function buildProfiles(
   rootRng: Rng,
   learners: readonly LearnerSeed[],
@@ -88,6 +125,7 @@ export function buildProfiles(
     const complete = l.profileComplete
     // A draft profile stopped in the wizard (step 1 or 2): later fields are still empty.
     const step = complete ? 3 : rng.int(1, 2)
+    if (l.fresh) return freshProfile(l, d.registeredAt)
     return {
       id: stableUuid('profile', l.code),
       userId: l.userId,

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
-import type { DemoDb } from '@/mocks/db'
+import { DB_VERSION, type DemoDb } from '@/mocks/db'
 import { getDemoMeta, resetDemoData } from '../demo.service'
 import { actAs, freshDemo } from './helpers'
 
@@ -20,6 +20,26 @@ function snapshot(d: DemoDb) {
 }
 
 describe('demo reset', () => {
+  test('makes Noor fresh again after a walkthrough moved her on', async () => {
+    actAs(db, 'user-l0036')
+    const profile = db.profiles.find((p) => p.userId === 'user-l0036')
+    if (!profile) throw new Error('Noor is not seeded')
+    profile.wizardStep = 3
+    profile.status = 'complete'
+    profile.completeness = 100
+    actAs(db, 'user-admin')
+    await resetDemoData()
+    expect(db.profiles.find((p) => p.userId === 'user-l0036')).toMatchObject({
+      wizardStep: 1,
+      status: 'draft',
+      completeness: 0,
+    })
+  })
+
+  test('the snapshot format is v4, so a browser holding the v3 seed reseeds', () => {
+    expect(DB_VERSION).toBe(4)
+  })
+
   test('is 401 signed out and 403 for a learner or a trainer', async () => {
     actAs(db, null)
     await expect(resetDemoData()).rejects.toMatchObject({ status: 401 })

@@ -61,7 +61,7 @@ _Spec: `e2e/01-public-and-registration.spec.ts`, first test._
 _Spec: `e2e/01-public-and-registration.spec.ts`, second test._
 
 1. On `/register`, note "New accounts start with Program B". Enter a full name (for example
-   Noor Haddad), the fresh email and a password. Choose **Create account**.
+   Fatima Hassan), the fresh email and a password. Choose **Create account**.
 2. **Verify your email.** Choose **Show my demo code**, then **Use the demo code**, then
    **Verify**. Point out the "Simulated email" label: nothing was sent.
 3. Profile wizard:

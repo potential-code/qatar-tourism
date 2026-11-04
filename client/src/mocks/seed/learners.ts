@@ -9,7 +9,7 @@ import { LEARNING_GOALS } from '@shared/constants'
 import { uniqueDemoEmail } from '@shared/utils/identity'
 import { learnerCode, userIds } from './ids'
 import { type OrganisationSeed, PSEUDO_INDEPENDENT, PSEUDO_UNEMPLOYED } from './organisations'
-import { PERSONAS } from './personas'
+import { FRESH_LEARNER, PERSONAS } from './personas'
 import type { Rng } from './rng'
 import { TRAINERS } from './trainers'
 
@@ -63,6 +63,8 @@ export type LearnerSeed = {
   marketingOptIn: boolean
   /** A draft profile has the goals/availability step unfinished. */
   profileComplete: boolean
+  /** Just registered: blank draft profile at wizard step 1, no activity (see FRESH_LEARNER). */
+  fresh: boolean
   persona: boolean
 }
 
@@ -528,7 +530,10 @@ export function buildLearners(
     ] as const)
     const goals = persona ? persona.goals : attrRng.sample(LEARNING_GOALS, goalCount)
 
-    const fullName = persona ? persona.fullName : nextName()
+    // Noor still draws a generated name, so every later learner's name stays the same.
+    const drawn = persona ? persona.fullName : nextName()
+    const fresh = n === FRESH_LEARNER.n
+    const fullName = fresh ? FRESH_LEARNER.fullName : drawn
     const email = personaEmails.get(n) ?? uniqueDemoEmail(fullName, usedEmails)
 
     learners.push({
@@ -561,6 +566,7 @@ export function buildLearners(
       marketingOptIn: attrRng.chance(0.4),
       // plan.ts marks some not-started learners as draft profiles (brief §4).
       profileComplete: true,
+      fresh,
       persona: Boolean(persona),
     })
   }

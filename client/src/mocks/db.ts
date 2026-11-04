@@ -30,7 +30,7 @@ export interface DemoDb extends DemoCollections {
 }
 
 /** Bump when the DemoDb shape or the seed recipe changes: saved snapshots are then rebuilt. */
-export const DB_VERSION = 3
+export const DB_VERSION = 4
 const SNAPSHOT_KEY = `qta-demo-db:v${DB_VERSION}`
 const SAVE_DELAY_MS = 250
 

@@ -31,6 +31,15 @@ export type PersonaSeed = {
   externalLearnerId?: string
 }
 
+/**
+ * Noor Haddad: the fresh learner who starts the walkthrough at the profile wizard. Not a pinned
+ * persona: she takes over generated learner L0036, which the seed already leaves as a Program B,
+ * not-started draft at wizard step 1 with no other records. Pinning her would reshuffle every
+ * generated learner (and move documented ones such as LRN-0022). Only her name, address and
+ * blank profile fields differ from the generated learner.
+ */
+export const FRESH_LEARNER = { n: 36, fullName: 'Noor Haddad' } as const
+
 /** Mariam Al Nuaimi: the 29 Oct unified-record demonstration learner (display ID LRN-0042). */
 export const MARIAM_N = 42
 
