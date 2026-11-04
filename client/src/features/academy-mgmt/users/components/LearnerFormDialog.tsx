@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { MailCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +26,7 @@ import { ApiError } from '@/lib/api-error'
 import { Field } from '../../hub/components/Field'
 import { OptionSelect, optionsOf } from '../../hub/components/OptionSelect'
 import { useCreateLearner, userOptionsQuery, useUpdateLearner } from '../queries/users.queries'
+import { sampleLearner } from '../utils/sample-answers'
 
 export type LearnerFormValues = {
   name: string
@@ -164,6 +166,17 @@ export function LearnerFormDialog({
           }}
           noValidate
         >
+          {creating ? (
+            <DemoFillButton
+              disabled={pending || options.isPending}
+              onFill={() => {
+                setValues(sampleLearner(options.data?.organisations ?? []))
+                setProgramme('B')
+                setInvite(true)
+                setServerError(null)
+              }}
+            />
+          ) : null}
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="lf-name" label="Full name" error={err('name')}>
               <Input

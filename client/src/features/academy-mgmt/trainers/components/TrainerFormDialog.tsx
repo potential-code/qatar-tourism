@@ -2,6 +2,7 @@ import type { ProgrammeCode } from '@shared/constants'
 import { PROGRAMME_LABELS } from '@shared/schemas/admin-labels'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -17,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ApiError } from '@/lib/api-error'
 import { Field } from '../../hub/components/Field'
 import { useCreateTrainer, useUpdateTrainer } from '../queries/trainers.queries'
+import { sampleTrainer } from '../utils/sample-answers'
 
 type Values = {
   fullName: string
@@ -146,6 +148,15 @@ export function TrainerFormDialog({
             void submit()
           }}
         >
+          {creating ? (
+            <DemoFillButton
+              disabled={pending}
+              onFill={() => {
+                setV(sampleTrainer())
+                setServerError(null)
+              }}
+            />
+          ) : null}
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="tf-name" label="Full name" error={err('fullName')}>
               <Input

@@ -1,7 +1,9 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { AlertTriangle, MapPin, MonitorPlay } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -11,8 +13,13 @@ import { useAppForm } from '@/hooks/useAppForm'
 import { ApiError } from '@/lib/api-error'
 import { learnerLocal, qatarToIso } from '@/lib/format/qatar-time'
 import { cn } from '@/lib/utils'
-import { useCreateSession, useUpdateSession } from '../../queries/trainer.queries'
+import {
+  trainerSessionsQuery,
+  useCreateSession,
+  useUpdateSession,
+} from '../../queries/trainer.queries'
 import type { FormOptions } from '../../types'
+import { findFreeSlot, sampleSession } from '../../utils/sample-answers'
 import { FormSection } from './FormSection'
 import { type SessionFormValues, toFormValues, toPayload, validateSession } from './form-values'
 import { SelectField } from './SelectField'
@@ -67,6 +74,19 @@ export function SessionForm({ options, session }: { options: FormOptions; sessio
   })
 
   const programmeCode = (id: string) => options.programmes.find((p) => p.id === id)?.code
+  const queryClient = useQueryClient()
+
+  /** Presenter aid (new sessions only): a free slot for the chosen trainer and sample text. */
+  async function fillSample() {
+    const current = form.state.values
+    const listed = await queryClient.fetchQuery(trainerSessionsQuery())
+    const slot = findFreeSlot(listed.items, current.trainerId, listed.now)
+    const sample = sampleSession(current, programmeCode(current.programmeId), slot)
+    for (const key of Object.keys(sample) as (keyof SessionFormValues)[]) {
+      form.setFieldValue(key, sample[key])
+    }
+    setServerError(null)
+  }
 
   return (
     <form
@@ -77,6 +97,7 @@ export function SessionForm({ options, session }: { options: FormOptions; sessio
       }}
       className="flex flex-col gap-6"
     >
+      {editing ? null : <DemoFillButton onFill={fillSample} />}
       {serverError ? (
         <p
           role="alert"

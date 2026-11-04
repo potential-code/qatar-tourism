@@ -3,6 +3,7 @@ import { FileCheck2, Paperclip } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +19,7 @@ import {
 } from '@/services/credentials/external-validation'
 import { sampleEvidenceFile } from '@/services/external-certificates.service'
 import { useSubmitExternal } from '../queries/record.queries'
+import { sampleExternal } from '../utils/sample-answers'
 
 const EMPTY: ExternalDraft = {
   title: '',
@@ -63,7 +65,7 @@ function FieldBox({
  * Pending review request and adds no approved CPD.
  */
 export function ExternalForm({ today, onDone }: { today: string; onDone: () => void }) {
-  const { t } = useTranslation('record')
+  const { t, i18n } = useTranslation('record')
   const submit = useSubmitExternal()
   const [draft, setDraft] = useState<ExternalDraft>(EMPTY)
   const [file, setFile] = useState<File | null>(null)
@@ -95,6 +97,12 @@ export function ExternalForm({ today, onDone }: { today: string; onDone: () => v
   }
 
   const attachSample = async () => choose(await sampleEvidenceFile())
+
+  const fillSample = async () => {
+    setDraft(sampleExternal(today, i18n.language))
+    setServerErrors({})
+    await attachSample()
+  }
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -137,6 +145,7 @@ export function ExternalForm({ today, onDone }: { today: string; onDone: () => v
       className="grid gap-4"
       aria-label={t('external.formTitle')}
     >
+      <DemoFillButton onFill={fillSample} disabled={submit.isPending} />
       <FieldBox id="ext-title" label={t('external.fields.title')} error={show('title')}>
         <Input {...text('title')} autoComplete="off" />
       </FieldBox>

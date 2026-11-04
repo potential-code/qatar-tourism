@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { spring } from '@/components/motion/variants'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -13,6 +14,7 @@ import { useDraftText } from '../hooks/useDraftText'
 import { useFileUpload } from '../hooks/useFileUpload'
 import { useSubmitAssignment } from '../queries/assignments.queries'
 import type { LearnerAssignment, UploadLimits } from '../types'
+import { sampleSubmission } from '../utils/sample-answers'
 import { FileDropzone } from './FileDropzone'
 import { WordCountMeter } from './WordCountMeter'
 
@@ -24,7 +26,7 @@ interface SubmissionComposerProps {
 /** Write or upload a new version. The draft is kept in this browser until it is submitted. */
 export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
   const reduce = useReducedMotion()
-  const { t } = useTranslation('learner')
+  const { t, i18n } = useTranslation('learner')
   const { assignment, enrolment, versions } = item
   const latest = versions[0]
   const nextVersion = (latest?.version ?? 0) + 1
@@ -84,6 +86,11 @@ export function SubmissionComposer({ item, limits }: SubmissionComposerProps) {
             : t('assignments.composer.draftBody')}
         </p>
       </div>
+
+      <DemoFillButton
+        onFill={() => setText(sampleSubmission(assignment, i18n.language))}
+        disabled={submit.isPending}
+      />
 
       <div className="grid gap-2">
         <div className="flex flex-wrap items-end justify-between gap-2">

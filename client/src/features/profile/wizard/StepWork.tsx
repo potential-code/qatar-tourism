@@ -34,6 +34,8 @@ export function StepWork({ draft, set, errors }: StepProps) {
         error={errors.organisation}
       >
         <OrganisationPicker
+          // Remount when the organisation changes from outside (sample answers) so it closes.
+          key={draft.organisationId ?? (isOther ? 'other' : 'none')}
           id={`${id}-org`}
           selectedName={draft.organisationName}
           isOther={isOther}

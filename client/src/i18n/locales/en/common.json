@@ -143,5 +143,11 @@
       "trainer": "Trainer",
       "admin": "Admin"
     }
+  },
+  "demoFill": {
+    "label": "Fill with sample answers",
+    "tag": "Demo",
+    "description": "Presenter aid. Fills this form with fictional sample answers. Nothing is sent until you submit.",
+    "filled": "Sample answers filled. Check them, then continue."
   }
 }

@@ -4,11 +4,13 @@ import { Mail, Sparkles, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { useAppForm } from '@/hooks/useAppForm'
 import { useRefreshSession } from '@/hooks/useSession'
 import { ApiError } from '@/lib/api-error'
 import { safeRedirect } from '@/lib/safe-redirect'
 import { type RegisterResult, useRegister } from '../queries/auth.queries'
+import { sampleRegistration } from '../utils/sample-answers'
 import { AuthShell } from './AuthShell'
 import { AuthSwitch } from './AuthSwitch'
 import { FormAlert } from './FormAlert'
@@ -43,7 +45,7 @@ export function RegisterPage({
   programme?: 'A' | 'B' | 'C'
   redirect?: string
 }) {
-  const { t } = useTranslation('auth')
+  const { t, i18n } = useTranslation('auth')
   const router = useRouter()
   const refreshSession = useRefreshSession()
   const register = useRegister()
@@ -131,6 +133,15 @@ export function RegisterPage({
           void form.handleSubmit()
         }}
       >
+        <DemoFillButton
+          onFill={() => {
+            const sample = sampleRegistration(i18n.language)
+            form.setFieldValue('name', sample.name)
+            form.setFieldValue('email', sample.email)
+            form.setFieldValue('password', sample.password)
+            setError(null)
+          }}
+        />
         {error ? (
           <FormAlert>
             <span>{error.message}</span>

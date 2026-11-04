@@ -1,6 +1,7 @@
 import { AlertCircle, Save, Send } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { qatarDateTime } from '@/lib/format/qatar-time'
 import { useMarkingFields } from '../hooks/useMarkingFields'
 import { useFinalise, useSaveDraft } from '../queries/marking.queries'
 import type { MarkingDetail } from '../types'
+import { sampleMarking } from '../utils/sample-answers'
 import { ActionDialog } from './ActionDialog'
 import { DecisionPicker } from './DecisionPicker'
 import { RubricScorer } from './RubricScorer'
@@ -63,6 +65,12 @@ export function MarkingForm({ detail }: { detail: MarkingDetail }) {
   }
 
   const error = saveDraft.error ?? finalise.error
+  const fillSample = () => {
+    const sample = sampleMarking(assignment.rubric)
+    for (const [key, value] of Object.entries(sample.breakdown)) fields.setPart(key, value)
+    fields.setFeedback(sample.feedback)
+    fields.setDecision(sample.decision)
+  }
   return (
     <form
       onSubmit={(event) => {
@@ -85,6 +93,7 @@ export function MarkingForm({ detail }: { detail: MarkingDetail }) {
           </p>
         )}
       </div>
+      <DemoFillButton onFill={fillSample} disabled={finalise.isPending} />
       <TotalReadout total={fields.total} passPercent={assignment.passPercent} />
       <RubricScorer
         rubric={assignment.rubric}

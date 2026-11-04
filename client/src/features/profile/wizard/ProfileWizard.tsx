@@ -1,11 +1,12 @@
 import { profileCompleteInput } from '@shared/schemas'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, ArrowRight, Loader2, Save } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -13,8 +14,14 @@ import { ApiError } from '@/lib/api-error'
 import { OnboardingLayout } from '../components/OnboardingLayout'
 import { WhyWeAskPanel } from '../components/WhyWeAskPanel'
 import { WizardProgress } from '../components/WizardProgress'
-import { ownProfileQuery, useCompleteProfile, useSaveDraft } from '../queries/profile.queries'
+import {
+  organisationsQuery,
+  ownProfileQuery,
+  useCompleteProfile,
+  useSaveDraft,
+} from '../queries/profile.queries'
 import { draftFromProfile, draftPayload, fullPayload, type ProfileDraft } from '../utils/draft'
+import { sampleGoals, sampleLocale, sampleWork } from '../utils/sample-answers'
 import { type FieldErrors, validateStep } from '../utils/validation'
 import { StepGoals } from './StepGoals'
 import { StepLocale } from './StepLocale'
@@ -41,6 +48,7 @@ export function ProfileWizard() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const saveDraft = useSaveDraft()
   const complete = useCompleteProfile()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (profile && !draft) {
@@ -58,6 +66,15 @@ export function ProfileWizard() {
       if ('organisationId' in patch || 'organisationIsOther' in patch) delete next.organisation
       return next
     })
+  }
+
+  /** Presenter aid: fills the current step only. */
+  async function fillSample() {
+    if (step === 1) {
+      const found = await queryClient.fetchQuery(organisationsQuery('', 'hotel_accommodation'))
+      set(sampleWork(found.find((o) => !o.isPseudo && o.type === 'hotel_accommodation')))
+    } else if (step === 2) set(sampleLocale(i18n.language))
+    else set(sampleGoals())
   }
 
   function goTo(next: Step) {
@@ -187,6 +204,8 @@ export function ProfileWizard() {
             </p>
           </div>
         </div>
+
+        <DemoFillButton onFill={fillSample} disabled={busy} className="-mb-4" />
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
