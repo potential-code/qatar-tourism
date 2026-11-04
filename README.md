@@ -64,7 +64,7 @@ Every setting is optional. Copy `.env.example` to `.env` at the repository root 
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `CLIENT_PORT`                                      | Port for `bun run dev`. Default `5173`. A `--port` flag overrides it                                            |
 | `VITE_DEMO_REFERENCE_DATE`                         | `YYYY-MM-DD`. Every "Day +N" in the seed is relative to it. Unset: the fixed date in `shared/constants/demo.ts` |
-| `BASIC_AUTH_USER`, `BASIC_AUTH_PASS`, `BASIC_AUTH` | Docker image only. See Deployment                                                                               |
+| `BASIC_AUTH_USER`, `BASIC_AUTH_PASS`, `BASIC_AUTH` | Basic Auth for dev, preview and Docker. Default `admin` / `Potential`. See Deployment                          |
 
 `VITE_*` values are public: they are compiled into the JavaScript the browser downloads.
 
@@ -165,8 +165,9 @@ One static image, like `wep-mockup`: `Dockerfile` builds the site with Bun, then
 
 - `docker/nginx.conf`: SPA fallback to `index.html`, open `/healthz`, immutable `/assets/`,
   `text/vtt` captions, byte-range video under `/media/`, the SCORM package under `/scorm/`.
-- **Basic Auth.** Set `BASIC_AUTH_USER` and `BASIC_AUTH_PASS`. If either is missing the site
-  answers 503, so it is never served unprotected by accident. `BASIC_AUTH=off` serves it openly
+- **Basic Auth.** `docker compose` and `bun run dev` default to `admin` / `Potential`; set
+  `BASIC_AUTH_USER` and `BASIC_AUTH_PASS` to change it. The browser asks once and reuses it on
+  every page. In a bare `docker run` with either missing, the site answers 503, so it is never served unprotected by accident. `BASIC_AUTH=off` serves it openly
   (local runs only). `/healthz` is always open.
 - `docker-compose.yml` is for Dokploy: one `web` service on container port 80, on the external
   `dokploy-network`, no `ports:`. Add the domain in Dokploy.

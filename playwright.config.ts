@@ -29,6 +29,8 @@ export default defineConfig({
     reuseExistingServer: Boolean(process.env.E2E_REUSE),
     // Piped, not ignored: with its output ignored the Vite dev server never starts listening here.
     stdout: 'pipe',
+    // The specs test the app, not the Basic Auth gate in front of it.
+    env: { BASIC_AUTH: 'off' },
     timeout: 60_000,
   },
 })

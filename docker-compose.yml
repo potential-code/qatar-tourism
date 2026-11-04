@@ -5,12 +5,12 @@
 # `web`, container port 80. Do not add `ports:`: Traefik reaches the container over
 # dokploy-network.
 #
-# Set BASIC_AUTH_USER and BASIC_AUTH_PASS in Dokploy > Environment. If either is missing the
-# site answers 503 (fail closed). /healthz is always open.
+# Basic auth defaults to admin / Potential. Override BASIC_AUTH_USER and BASIC_AUTH_PASS in
+# Dokploy > Environment to change it. /healthz is always open.
 #
 # To run it outside Dokploy:
 #   docker network create dokploy-network        # once
-#   BASIC_AUTH_USER=demo BASIC_AUTH_PASS=change-me docker compose up --build
+#   docker compose up --build
 
 services:
   web:
@@ -20,8 +20,8 @@ services:
       args:
         VITE_DEMO_REFERENCE_DATE: ${VITE_DEMO_REFERENCE_DATE:-}
     environment:
-      BASIC_AUTH_USER: ${BASIC_AUTH_USER:-}
-      BASIC_AUTH_PASS: ${BASIC_AUTH_PASS:-}
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:-admin}
+      BASIC_AUTH_PASS: ${BASIC_AUTH_PASS:-Potential}
       BASIC_AUTH: ${BASIC_AUTH:-}
     expose:
       - "80"
