@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
+import { DEMO_LEARNERS } from '@shared/constants'
 import type { DemoDb } from '@/mocks/db'
 import {
   getFacilitatorStatus,
@@ -73,7 +74,11 @@ describe('demo facilitator toolbar', () => {
     actAs(db, 'user-admin')
     const status = await getFacilitatorStatus()
     expect(status.active).toBe(true)
-    expect(status.targets).toHaveLength(16)
+    expect(status.targets).toHaveLength(18)
+    // Learners in the sign-in page's order: Noor first, then the brief §15 personas, then Mariam.
+    expect(status.targets.filter((t) => t.role === 'learner').map((t) => t.name)).toEqual(
+      DEMO_LEARNERS.map((l) => l.name),
+    )
     expect(status.targets.find((t) => t.key === 'persona-1')).toMatchObject({
       name: 'Maha Al Nouri',
       role: 'learner',
@@ -94,6 +99,12 @@ describe('demo facilitator toolbar', () => {
     const audits = db.auditEvents.filter((e) => e.action === 'demo.role_switch')
     expect(audits).toHaveLength(2)
     expect(audits[0]).toMatchObject({ actorId: 'user-admin', objectId: 'user-l0002' })
+  })
+
+  test('switching to Noor opens the fresh learner', async () => {
+    actAs(db, 'user-admin')
+    expect(await switchFacilitator('persona-36')).toEqual({ role: 'learner', name: 'Noor Haddad' })
+    expect(db.session?.userId).toBe('user-l0036')
   })
 
   test('signing out ends facilitator access', async () => {

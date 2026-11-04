@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, test } from 'bun:test'
+import { DEMO_LEARNERS, DEMO_TRAINER_EMAIL } from '@shared/constants'
 import type { DemoDb } from '@/mocks/db'
 import { createDemoDb } from '@/mocks/db'
 import { TEST_REFERENCE_DATE } from './helpers'
@@ -258,6 +259,16 @@ describe('personas (brief §15)', () => {
       expect(profile?.fullName).toBe(name)
       expect(db.users.find((u) => u.id === profile?.userId)?.email).toBe(email)
     }
+  })
+
+  test('every sign-in demo learner exists with that name, address and id', () => {
+    for (const l of DEMO_LEARNERS) {
+      expect(db.users.find((u) => u.email === l.email)).toMatchObject({
+        id: l.userId,
+        name: l.name,
+      })
+    }
+    expect(db.users.find((u) => u.email === DEMO_TRAINER_EMAIL)?.role).toBe('trainer')
   })
 
   test('Noor (L0036) starts fresh: blank draft profile at wizard step 1', () => {

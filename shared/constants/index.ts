@@ -1,4 +1,5 @@
 export * from './demo'
+export * from './demo-accounts'
 export * from './enums'
 export * from './rubrics'
 export * from './thresholds'

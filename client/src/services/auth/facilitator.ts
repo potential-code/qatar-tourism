@@ -1,3 +1,4 @@
+import { DEMO_LEARNERS, type DemoLearner } from '@shared/constants'
 import { type FacilitatorTarget, facilitatorSwitchInput } from '@shared/schemas/profile-account'
 import { ApiError, db, delay, out, parseInput, requireUser } from '../api'
 import { recordAudit } from '../audit.service'
@@ -15,11 +16,10 @@ import { startSession } from './session'
 
 /** Seeded user id per target: ids are stable, sign-in addresses are derived from names. */
 const TARGET_USER_IDS: Record<FacilitatorTarget, string> = {
-  'persona-1': 'user-l0001',
-  'persona-2': 'user-l0002',
-  'persona-3': 'user-l0003',
-  'persona-4': 'user-l0004',
-  'persona-5': 'user-l0005',
+  ...(Object.fromEntries(DEMO_LEARNERS.map((l) => [l.key, l.userId])) as Record<
+    DemoLearner['key'],
+    string
+  >),
   'trainer-01': 'user-t01',
   'trainer-02': 'user-t02',
   'trainer-03': 'user-t03',
@@ -35,11 +35,13 @@ const TARGET_USER_IDS: Record<FacilitatorTarget, string> = {
 
 /** What each persona demonstrates (brief §15), shown in the toolbar. */
 const PERSONA_PURPOSE: Partial<Record<FacilitatorTarget, string>> = {
+  'persona-36': 'Fresh learner: profile wizard, then the Program B baseline',
   'persona-1': 'B learner, baseline 40, service recovery practice',
   'persona-2': 'A learner, Level 1 complete, ready to book',
   'persona-3': 'A and B, independent progress in each',
   'persona-4': 'A assignment returned for revision',
   'persona-5': 'B completed, pre 60 and post 100',
+  'persona-42': 'A and B unified record, CRM-0042, expiring credential',
 }
 
 const isAdmin = (userId: string | null | undefined) =>

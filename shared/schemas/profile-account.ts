@@ -39,11 +39,14 @@ export const programmeCodeParam = z.object({
 
 /** Demo facilitator quick-switch targets (brief §3). Seeded demo accounts only. */
 export const FACILITATOR_TARGETS = [
+  // Learners in DEMO_LEARNERS order (shared/constants/demo-accounts.ts).
+  'persona-36',
   'persona-1',
   'persona-2',
   'persona-3',
   'persona-4',
   'persona-5',
+  'persona-42',
   'trainer-01',
   'trainer-02',
   'trainer-03',
