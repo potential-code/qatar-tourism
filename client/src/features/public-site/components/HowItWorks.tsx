@@ -163,7 +163,6 @@ export function HowItWorks() {
       aria-labelledby="how-title"
       className="qt-grain relative isolate scroll-mt-20 overflow-hidden bg-grad-teal text-white outline-none"
     >
-      <CornerPattern side="b" tone="dark" />
       <div
         aria-hidden
         className="absolute -top-40 start-1/3 -z-10 size-[640px] qt-glow text-sky/30"
@@ -177,6 +176,8 @@ export function HowItWorks() {
           ref={wrap}
           className="relative lg:motion-safe:ltr:flex lg:motion-safe:ltr:min-h-[100dvh] lg:motion-safe:ltr:items-center"
         >
+          {/* Inside the pinned element, so the star lattice stays put while the steps pan. */}
+          <CornerPattern side="b" tone="dark" />
           <div
             ref={track}
             className="mx-auto flex max-w-[1400px] flex-col gap-16 px-4 py-24 md:px-8 lg:py-32 lg:motion-safe:ltr:mx-0 lg:motion-safe:ltr:w-max lg:motion-safe:ltr:max-w-none lg:motion-safe:ltr:flex-row lg:motion-safe:ltr:items-center lg:motion-safe:ltr:gap-16 lg:motion-safe:ltr:py-0 lg:motion-safe:ltr:ps-[max(2rem,calc((100vw-1400px)/2+2rem))] lg:motion-safe:ltr:pe-[8vw]"

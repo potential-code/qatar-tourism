@@ -1,18 +1,17 @@
+import { DEMO_PASSWORD } from '@shared/constants'
+import { useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { GraduationCap, Info, Mail } from 'lucide-react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { ChevronRight, GraduationCap, Loader2, Mail, Shield, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control'
 import { useAppForm } from '@/hooks/useAppForm'
 import { ApiError } from '@/lib/api-error'
 import { useAfterSignIn } from '../hooks/useAfterSignIn'
 import { useSignIn } from '../queries/session.queries'
-import { MODE_IMAGE, SIGN_IN_MODES, type SignInMode } from '../utils/modes'
+import { MODE_IMAGE, type SignInMode } from '../utils/modes'
 import { AuthShell } from './AuthShell'
 import { AuthSwitch } from './AuthSwitch'
 import { FormAlert } from './FormAlert'
@@ -26,9 +25,18 @@ const schema = z.object({
   password: z.string().min(1, 'auth:validation.password'),
 })
 
-/** Sign in (brief §3): Learner / Trainer / Academy admin modes; the account decides access. */
+/** The seeded demo accounts offered under the form; one click opens that portal. */
+const DEMO_ACCOUNTS: { role: SignInMode; email: string; icon: typeof UserRound }[] = [
+  { role: 'learner', email: 'learner0001@example.com', icon: UserRound },
+  { role: 'trainer', email: 'trainer01@example.com', icon: GraduationCap },
+  { role: 'admin', email: 'admin@example.com', icon: Shield },
+]
+
+/**
+ * Sign in: one email and password form for every account (the account's real role decides
+ * where it goes), plus one-click demo accounts that open each portal directly.
+ */
 export function SignInPage({
-  initialMode = 'learner',
   redirect,
   verified,
 }: {
@@ -36,16 +44,30 @@ export function SignInPage({
   redirect?: string
   verified?: boolean
 }) {
-  const reduce = useReducedMotion()
   const { t } = useTranslation('auth')
-  const [mode, setMode] = useState<SignInMode>(initialMode)
+  const [pendingDemo, setPendingDemo] = useState<SignInMode | null>(null)
+  const queryClient = useQueryClient()
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [unverified, setUnverified] = useState<{ email: string; password: string } | null>(null)
   const afterSignIn = useAfterSignIn()
   const signIn = useSignIn()
-  const image = MODE_IMAGE[mode]
-  const alt = t(`modes.${mode}.alt`)
+  const image = MODE_IMAGE.learner
+  const alt = t('modes.learner.alt')
+
+  async function openDemo(account: (typeof DEMO_ACCOUNTS)[number]) {
+    setError(null)
+    setPendingDemo(account.role)
+    try {
+      await signIn.mutateAsync({ email: account.email, password: DEMO_PASSWORD })
+      // The next user must not see the previous user's cached data.
+      queryClient.clear()
+      await afterSignIn({ redirect })
+    } catch {
+      setError(t('demo.failed'))
+      setPendingDemo(null)
+    }
+  }
 
   const form = useAppForm({
     defaultValues: { email: '', password: '' },
@@ -69,7 +91,7 @@ export function SignInPage({
         )
         return
       }
-      await afterSignIn({ mode, redirect })
+      await afterSignIn({ redirect })
     },
   })
 
@@ -81,7 +103,7 @@ export function SignInPage({
           password={unverified.password}
           initial={null}
           rememberMe={remember}
-          onSignedIn={() => afterSignIn({ mode, redirect })}
+          onSignedIn={() => afterSignIn({ redirect })}
         />
       </AuthShell>
     )
@@ -96,52 +118,11 @@ export function SignInPage({
       }
     >
       <AuthSwitch active="login" redirect={redirect} />
-      <div className="grid gap-5">
-        <SegmentedControl
-          aria-label={t('signIn.modeAria')}
-          value={mode}
-          onValueChange={(value) => setMode(value as SignInMode)}
-          className="h-12 w-full rounded-xl bg-sand-deep p-1.5 shadow-[var(--qt-shadow-inset)]"
-        >
-          {SIGN_IN_MODES.map((m) => (
-            <SegmentedControlItem
-              key={m}
-              value={m}
-              className="relative isolate h-full flex-1 rounded-lg text-ink/75 transition-colors duration-300 hover:text-teal data-[state=checked]:bg-transparent data-[state=checked]:text-teal data-[state=checked]:shadow-none"
-            >
-              {mode === m ? (
-                <motion.span
-                  layoutId="sign-in-mode-pill"
-                  aria-hidden
-                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                  className="absolute inset-0 -z-10 rounded-lg bg-white shadow-md ring-1 ring-teal/10"
-                />
-              ) : null}
-              {t(`modes.${m}.tab`)}
-            </SegmentedControlItem>
-          ))}
-        </SegmentedControl>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={mode}
-            initial={reduce ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? undefined : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="grid gap-2"
-          >
-            <h1 className="font-display font-light text-4xl text-ink md:text-[2.75rem]">
-              {t(`modes.${mode}.title`)}
-            </h1>
-            <p className="text-muted-foreground">{t(`modes.${mode}.description`)}</p>
-            {mode === 'trainer' || mode === 'admin' ? (
-              <p className="flex gap-2 rounded-lg bg-teal-mist p-3 text-sm text-teal-deep">
-                <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
-                {t(`modes.${mode}.note`)}
-              </p>
-            ) : null}
-          </motion.div>
-        </AnimatePresence>
+      <div className="grid gap-2">
+        <h1 className="font-display font-light text-4xl text-ink md:text-[2.75rem]">
+          {t('modes.learner.title')}
+        </h1>
+        <p className="text-muted-foreground">{t('signIn.description')}</p>
       </div>
 
       <form
@@ -192,27 +173,50 @@ export function SignInPage({
         </form.AppForm>
       </form>
 
-      {mode === 'learner' ? (
-        <Button
-          type="button"
-          variant="secondary"
-          size="lg"
-          className="w-full"
-          onClick={() => setMode('trainer')}
-        >
-          <GraduationCap aria-hidden />
-          {t('signIn.asTrainer')}
-        </Button>
-      ) : (
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() => setMode('learner')}
-        >
-          {t('signIn.backToLearner')}
-        </Button>
-      )}
+      <section aria-labelledby="demo-title" className="grid gap-3">
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-ink/10" />
+          <h2 id="demo-title" className="text-muted-foreground text-xs">
+            {t('demo.title')}
+          </h2>
+          <span className="h-px flex-1 bg-ink/10" />
+        </div>
+        <ul className="grid gap-2">
+          {DEMO_ACCOUNTS.map((account) => {
+            const Icon = account.icon
+            return (
+              <li key={account.role}>
+                <button
+                  type="button"
+                  disabled={pendingDemo !== null}
+                  onClick={() => void openDemo(account)}
+                  className="group flex w-full items-center gap-3 rounded-xl border border-teal/15 bg-white px-4 py-3 text-start transition-colors hover:border-teal/40 hover:bg-teal-mist focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-60"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-mist text-teal">
+                    <Icon aria-hidden className="size-4" />
+                  </span>
+                  <span className="grid min-w-0 flex-1">
+                    <span className="font-medium text-ink text-sm">
+                      {t(`demo.${account.role}.title`)}
+                    </span>
+                    <span className="truncate text-muted-foreground text-xs" dir="ltr">
+                      {account.email}
+                    </span>
+                  </span>
+                  {pendingDemo === account.role ? (
+                    <Loader2 aria-hidden className="size-4 shrink-0 animate-spin text-teal" />
+                  ) : (
+                    <ChevronRight
+                      aria-hidden
+                      className="size-4 shrink-0 text-teal transition-transform group-hover:translate-x-0.5 rtl:rotate-180"
+                    />
+                  )}
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
 
       <SsoButtons redirect={redirect} />
     </AuthShell>
