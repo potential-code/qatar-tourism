@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { DEMO_LEARNERS } from '@shared/constants'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   createMemoryHistory,
@@ -142,6 +143,44 @@ describe('sign-in page', () => {
     expect(screen.getByLabelText(resources.ar.auth.password.label)).toBeDefined()
     expect(screen.getByRole('button', { name: resources.ar.auth.signIn.submit })).toBeDefined()
     expect(screen.getByText(resources.ar.auth.signIn.forgot)).toBeDefined()
+  })
+
+  test('the learner demo button opens Noor, and every other demo learner is one click away', async () => {
+    const db = freshDemo()
+    mount('/login', {
+      '/login': page,
+      '/': () => null,
+      '/register': () => null,
+      '/onboarding': () => null,
+      '/learner': () => null,
+    })
+    expect(await screen.findByText('noor.haddad@example.com')).toBeDefined()
+    expect(screen.getByText(resources.en.auth.demo.learner.title)).toBeDefined()
+    expect(screen.queryByText('omar.alsafi@example.com')).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: resources.en.auth.demo.more.title }))
+    for (const l of DEMO_LEARNERS.slice(1)) {
+      expect(await screen.findByText(l.email)).toBeDefined()
+      expect(screen.getByText(l.name)).toBeDefined()
+      expect(screen.getByText(resources.en.auth.demo.learners[l.key].purpose)).toBeDefined()
+    }
+
+    fireEvent.click(screen.getByText('noor.haddad@example.com'))
+    await waitFor(() => expect(db.session?.userId).toBe('user-l0036'))
+  })
+
+  test('the demo learner list is fully Arabic, with no missing keys', async () => {
+    mount('/login', { '/login': page, '/': () => null, '/register': () => null })
+    await screen.findByLabelText('Email')
+    fireEvent.click(screen.getAllByRole('button', { name: 'العربية' })[0] as HTMLElement)
+    await waitFor(() => expect(document.documentElement.dir).toBe('rtl'))
+
+    expect(await screen.findByText(resources.ar.auth.demo.learner.title)).toBeDefined()
+    fireEvent.click(screen.getByRole('button', { name: resources.ar.auth.demo.more.title }))
+    for (const l of DEMO_LEARNERS.slice(1)) {
+      expect(await screen.findByText(resources.ar.auth.demo.learners[l.key].purpose)).toBeDefined()
+    }
+    expect(document.body.textContent).not.toMatch(/demo\.[a-z]/)
   })
 
   test('shows translated validation messages and still signs in from the Arabic form', async () => {

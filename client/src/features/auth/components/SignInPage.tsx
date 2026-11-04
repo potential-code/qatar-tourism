@@ -1,11 +1,26 @@
-import { DEMO_PASSWORD } from '@shared/constants'
+import {
+  DEMO_ADMIN_EMAIL,
+  DEMO_LEARNERS,
+  DEMO_PASSWORD,
+  DEMO_TRAINER_EMAIL,
+} from '@shared/constants'
 import { useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { ChevronRight, GraduationCap, Loader2, Mail, Shield, UserRound } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  GraduationCap,
+  Loader2,
+  Mail,
+  Shield,
+  UserRound,
+  Users,
+} from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Label } from '@/components/ui/label'
 import { useAppForm } from '@/hooks/useAppForm'
 import { ApiError } from '@/lib/api-error'
@@ -25,12 +40,32 @@ const schema = z.object({
   password: z.string().min(1, 'auth:validation.password'),
 })
 
-/** The seeded demo accounts offered under the form; one click opens that portal. */
+/**
+ * The seeded demo accounts offered under the form; one click opens that portal. The learner is
+ * Noor, who starts the journey at the profile wizard; the other demo learners are listed below.
+ */
 const DEMO_ACCOUNTS: { role: SignInMode; email: string; icon: typeof UserRound }[] = [
-  { role: 'learner', email: 'maha.alnouri@example.com', icon: UserRound },
-  { role: 'trainer', email: 'amal.alnouri@example.com', icon: GraduationCap },
-  { role: 'admin', email: 'admin@example.com', icon: Shield },
+  { role: 'learner', email: DEMO_LEARNERS[0].email, icon: UserRound },
+  { role: 'trainer', email: DEMO_TRAINER_EMAIL, icon: GraduationCap },
+  { role: 'admin', email: DEMO_ADMIN_EMAIL, icon: Shield },
 ]
+
+/** Brief §15 personas and Mariam: each opens one state of the journey. */
+const MORE_LEARNERS = DEMO_LEARNERS.slice(1)
+
+const DEMO_ROW =
+  'group flex w-full items-center gap-3 rounded-xl border border-teal/15 bg-white px-4 py-3 text-start transition-colors hover:border-teal/40 hover:bg-teal-mist focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-60'
+
+function RowEnd({ pending }: { pending: boolean }) {
+  return pending ? (
+    <Loader2 aria-hidden className="size-4 shrink-0 animate-spin text-teal" />
+  ) : (
+    <ChevronRight
+      aria-hidden
+      className="size-4 shrink-0 text-teal transition-transform group-hover:translate-x-0.5 rtl:rotate-180"
+    />
+  )
+}
 
 /**
  * Sign in: one email and password form for every account (the account's real role decides
@@ -45,7 +80,8 @@ export function SignInPage({
   verified?: boolean
 }) {
   const { t } = useTranslation('auth')
-  const [pendingDemo, setPendingDemo] = useState<SignInMode | null>(null)
+  /** The email of the demo account being opened. */
+  const [pendingDemo, setPendingDemo] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -55,11 +91,11 @@ export function SignInPage({
   const image = MODE_IMAGE.learner
   const alt = t('modes.learner.alt')
 
-  async function openDemo(account: (typeof DEMO_ACCOUNTS)[number]) {
+  async function openDemo(email: string) {
     setError(null)
-    setPendingDemo(account.role)
+    setPendingDemo(email)
     try {
-      await signIn.mutateAsync({ email: account.email, password: DEMO_PASSWORD })
+      await signIn.mutateAsync({ email, password: DEMO_PASSWORD })
       // The next user must not see the previous user's cached data.
       queryClient.clear()
       await afterSignIn({ redirect })
@@ -189,8 +225,8 @@ export function SignInPage({
                 <button
                   type="button"
                   disabled={pendingDemo !== null}
-                  onClick={() => void openDemo(account)}
-                  className="group flex w-full items-center gap-3 rounded-xl border border-teal/15 bg-white px-4 py-3 text-start transition-colors hover:border-teal/40 hover:bg-teal-mist focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-60"
+                  onClick={() => void openDemo(account.email)}
+                  className={DEMO_ROW}
                 >
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-mist text-teal">
                     <Icon aria-hidden className="size-4" />
@@ -203,19 +239,47 @@ export function SignInPage({
                       {account.email}
                     </span>
                   </span>
-                  {pendingDemo === account.role ? (
-                    <Loader2 aria-hidden className="size-4 shrink-0 animate-spin text-teal" />
-                  ) : (
-                    <ChevronRight
-                      aria-hidden
-                      className="size-4 shrink-0 text-teal transition-transform group-hover:translate-x-0.5 rtl:rotate-180"
-                    />
-                  )}
+                  <RowEnd pending={pendingDemo === account.email} />
                 </button>
               </li>
             )
           })}
         </ul>
+        <Collapsible className="grid gap-2">
+          <CollapsibleTrigger className="group flex items-center justify-center gap-2 rounded-lg py-1.5 font-medium text-sm text-teal hover:underline focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50">
+            <Users aria-hidden className="size-4" />
+            {t('demo.more.title')}
+            <ChevronDown
+              aria-hidden
+              className="size-4 transition-transform group-data-[state=open]:rotate-180"
+            />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <ul className="grid gap-2">
+              {MORE_LEARNERS.map((learner) => (
+                <li key={learner.key}>
+                  <button
+                    type="button"
+                    disabled={pendingDemo !== null}
+                    onClick={() => void openDemo(learner.email)}
+                    className={DEMO_ROW}
+                  >
+                    <span className="grid min-w-0 flex-1">
+                      <span className="font-medium text-ink text-sm">{learner.name}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {t(`demo.learners.${learner.key}.purpose`)}
+                      </span>
+                      <span className="truncate text-muted-foreground text-xs" dir="ltr">
+                        {learner.email}
+                      </span>
+                    </span>
+                    <RowEnd pending={pendingDemo === learner.email} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </CollapsibleContent>
+        </Collapsible>
       </section>
 
       <SsoButtons redirect={redirect} />
