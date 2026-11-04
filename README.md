@@ -89,11 +89,16 @@ The seed is deterministic: the same reference date always gives the same rows, I
 
 Every seeded account uses the password **`password`**.
 
-| Account                                                | Role                                     |
-| ------------------------------------------------------ | ---------------------------------------- |
-| `admin@example.com` (Academy Admin)                    | Demo administrator. Has the demo toolbar |
-| `trainer01@example.com` to `trainer10@example.com`     | Trainers T01 to T10                      |
-| `learner0001@example.com` to `learner1200@example.com` | Learners L0001 to L1200                  |
+| Account                             | Role                                                             |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| `admin@example.com` (Academy Admin) | Demo administrator. Has the demo toolbar                         |
+| `noor.haddad@example.com`           | Fresh learner L0036. Starts at the profile wizard                |
+| `maha.alnouri@example.com`          | Principal persona L0001                                          |
+| `amal.alnouri@example.com`          | Trainer T01. Every trainer is `firstname.lastname@example.com`   |
+| Every other learner                 | `firstname.lastname@example.com`, e.g. `omar.alsafi@example.com` |
+
+The sign-in page offers Noor, a trainer and the admin in one click. **More demo learners** lists
+the personas below and Mariam. Addresses are name-based on purpose (`docs/DEVIATIONS.md` #9).
 
 **Walkthrough personas** (brief §15):
 
@@ -119,8 +124,8 @@ The **demo toolbar** appears only for `admin@example.com`. It switches between t
 personas, the ten trainers and the admin without re-entering passwords. It cannot reach any
 other account.
 
-The two simulated SSO buttons sign in as fixed learners `learner0013@example.com` and
-`learner0016@example.com`.
+The two simulated SSO buttons sign in as fixed learners `amira.alansari@example.com` (L0013) and
+`rania.althani@example.com` (L0016).
 
 For presenting or QA, `/<path>?demo-as=<userId>` opens any page signed in as a seeded account
 (for example `/learner?demo-as=user-l0002` for Omar). Ids: `user-admin`, `user-t01` to

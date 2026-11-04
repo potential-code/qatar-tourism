@@ -58,3 +58,9 @@ export async function resetDemoThroughUi(page: Page, adminId = 'user-admin') {
   await confirm.getByRole('button', { name: 'Reset demo data' }).click()
   await expect(page.getByText('Demo data reset').first()).toBeVisible({ timeout: 60_000 })
 }
+
+/** Picks an option in a labelled select (combobox). */
+export async function chooseOption(page: Page, label: string, option: string) {
+  await page.getByLabel(label, { exact: true }).click()
+  await page.getByRole('option', { name: option, exact: true }).click()
+}

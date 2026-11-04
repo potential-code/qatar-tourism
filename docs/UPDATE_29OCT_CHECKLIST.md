@@ -11,14 +11,15 @@ Password for every account: `password`.
 | Role | Email | Deep link (signs in without the form) |
 | --- | --- | --- |
 | Academy admin | `admin@example.com` | `/?demo-as=user-admin` |
+| Fresh learner Noor Haddad (LRN-0036), starts at the profile wizard | `noor.haddad@example.com` | `/onboarding?demo-as=user-l0036` |
 | Demonstration learner Mariam Al Nuaimi (LRN-0042, CRM-0042) | `mariam.alnuaimi@example.com` | `/learner?demo-as=user-l0042` |
-| Learner Maha (Program B path) | `learner0001@example.com` | `/learner?demo-as=user-l0001` |
-| Learner Omar (Program A, joins the waitlist) | `learner0002@example.com` | `/learner?demo-as=user-l0002` |
-| Waitlist, seat-offer learner (LRN-0096) | `learner0096@example.com` | `?demo-as=user-l0096` |
-| Confirmed learner who cancels (LRN-0060) | `learner0060@example.com` | `?demo-as=user-l0060` |
-| Assessment retake learner (LRN-0679, Program B) | `learner0679@example.com` | `?demo-as=user-l0679` |
-| Assessment demo learner, 50% baseline and 80% post (LRN-0022) | `learner0022@example.com` | `?demo-as=user-l0022` |
-| Trainer 1 (Amal Al Nouri) | `trainer01@example.com` (Trainer mode) | `/trainer?demo-as=user-t01` |
+| Learner Maha (Program B path) | `maha.alnouri@example.com` | `/learner?demo-as=user-l0001` |
+| Learner Omar (Program A, joins the waitlist) | `omar.alsafi@example.com` | `/learner?demo-as=user-l0002` |
+| Waitlist, seat-offer learner (LRN-0096) | `olivia.issa@example.com` | `?demo-as=user-l0096` |
+| Confirmed learner who cancels (LRN-0060) | `ali.khalil@example.com` | `?demo-as=user-l0060` |
+| Assessment retake learner (LRN-0679, Program B) | `samira.hussein@example.com` | `?demo-as=user-l0679` |
+| Assessment demo learner, 50% baseline and 80% post (LRN-0022) | `nadia.haddad@example.com` | `?demo-as=user-l0022` |
+| Trainer 1 (Amal Al Nouri) | `amal.alnouri@example.com` | `/trainer?demo-as=user-t01` |
 
 Append `?demo-as=<userId>` to any path, for example `/admin/manage/approvals?demo-as=user-admin`.
 The seeded locked learner is LRN-1199 (Rashid Menon). The full session is SES-T03-2.

@@ -1,6 +1,5 @@
-import type { Page } from '@playwright/test'
 import { answerAssessment } from './support/assessments'
-import { pageHeading } from './support/ui'
+import { chooseOption, pageHeading } from './support/ui'
 import { expect, test } from './support/walkthrough'
 
 /**
@@ -11,7 +10,7 @@ test.describe.configure({ mode: 'serial' })
 
 const stamp = Date.now().toString(36)
 const visitor = {
-  name: 'Noor Haddad',
+  name: 'Fatima Hassan',
   email: `visitor.${stamp}@example.com`,
   password: 'VisitorDemo2026!',
 }
@@ -83,7 +82,7 @@ test('2–5 min: register, profile, baseline and a generated B path', async ({ p
   await page.getByLabel('I accept the demo terms and privacy information.').check()
   await page.getByRole('button', { name: 'Finish my profile' }).click()
   await page.waitForURL(/onboarding\/welcome/)
-  await expect(page.getByRole('heading', { name: 'Welcome, Noor' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Welcome, Fatima' })).toBeVisible()
   // Default B routing with a tailored, rule-matched starting path.
   await expect(page.getByText('Program B: Visitor Service Essentials')).toBeVisible()
   await expect(page.getByText('Your starting path: Hotel guest services')).toBeVisible()
@@ -146,8 +145,3 @@ test('2–5 min: register, profile, baseline and a generated B path', async ({ p
   await expect(page.getByRole('heading', { name: 'Continue where you left off' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible()
 })
-
-async function chooseOption(page: Page, label: string, option: string) {
-  await page.getByLabel(label, { exact: true }).click()
-  await page.getByRole('option', { name: option, exact: true }).click()
-}

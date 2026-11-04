@@ -20,11 +20,17 @@ toolbar**, never with a second browser or a private window, which would start fr
    every browser shows the same dataset and Day +2 is Thursday 29 October. A build can move it
    with `VITE_DEMO_REFERENCE_DATE`.
 4. **Use Chrome** if you want to show voice practice with speech-to-text.
-5. **Prepare a fresh visitor email** ending in `@example.com` (for example
-   `visitor.demo1@example.com`). Reusing one gives the duplicate-account message.
-6. **Have a response plan ready to paste** (300–500 words). A fictional one is in
+5. **Lead with one learner.** Noor Haddad (`noor.haddad@example.com`, L0036) has just
+   registered. On the sign-in page, **Learner: start the journey** opens her at the profile
+   wizard; from there she goes to the Program B welcome and the baseline. Tell the story through
+   Noor. The other personas (sign-in page → **More demo learners**) each show one later state:
+   Maha mid-path, Omar ready to book, Leila in A and B, Daniel with a returned assignment, Sara
+   completed, Mariam's unified record. Reset the demo before each run so Noor starts fresh.
+6. **To show registration itself, prepare a fresh visitor email** ending in `@example.com`
+   (for example `visitor.demo1@example.com`). Reusing one gives the duplicate-account message.
+7. **Have a response plan ready to paste** (300–500 words). A fictional one is in
    `e2e/support/content.ts`.
-7. Keep one browser window. After the visitor registration (2–5 minutes), sign out and sign in
+8. Keep one browser window. After the visitor registration (2–5 minutes), sign out and sign in
    as the admin; the **Demo toolbar** then switches between personas, trainers and the admin
    without passwords.
 

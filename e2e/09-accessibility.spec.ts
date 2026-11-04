@@ -220,15 +220,18 @@ test.describe('keyboard operation', () => {
     await expect(page.locator('main#main')).toBeFocused()
   })
 
-  test('sign-in mode is a keyboard radio group (arrow keys)', async ({ page }) => {
+  test('"More demo learners" opens and closes from the keyboard', async ({ page }) => {
     await page.goto('/login')
-    const learner = page.getByRole('radio', { name: 'Learner' })
-    await learner.focus()
-    await expect(learner).toBeChecked()
-    // Held briefly, as a real key press is (Radix checks the radio that receives focus).
-    await page.keyboard.press('ArrowRight', { delay: 50 })
-    await expect(page.getByRole('radio', { name: 'Trainer' })).toBeChecked()
-    await expect(page.getByRole('radio', { name: 'Trainer' })).toBeFocused()
+    const more = page.getByRole('button', { name: 'More demo learners' })
+    await more.focus()
+    await expect(more).toHaveAttribute('aria-expanded', 'false')
+    await page.keyboard.press('Enter')
+    await expect(more).toHaveAttribute('aria-expanded', 'true')
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: /Maha Al Nouri/ })).toBeFocused()
+    await more.focus()
+    await page.keyboard.press('Space')
+    await expect(more).toHaveAttribute('aria-expanded', 'false')
   })
 
   test('the path builder reorders items with the keyboard (dnd-kit alternative)', async ({

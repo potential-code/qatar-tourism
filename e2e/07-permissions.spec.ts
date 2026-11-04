@@ -28,7 +28,7 @@ test('a learner is sent back to their portal from trainer and admin URLs', async
   await expect(page.getByRole('button', { name: 'Reset demo data' })).toHaveCount(0)
 })
 
-test('the Trainer sign-in mode works but never grants trainer access', async ({ page }) => {
+test('a ?mode=trainer link never grants a learner trainer access', async ({ page }) => {
   await signInWithForm(page, EMAILS.maha, 'trainer')
   await expect(page).toHaveURL(/\/learner/)
   await page.goto('/login?mode=trainer')
@@ -37,7 +37,8 @@ test('the Trainer sign-in mode works but never grants trainer access', async ({ 
   // Signed out, the connected sign-in options are labelled simulated.
   await signOut(page)
   await page.goto('/login?mode=trainer')
-  await expect(page.getByText('Choosing this mode does not grant trainer access.')).toBeVisible()
+  // One form for every account: the account's role decides access, not a chosen mode.
+  await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
   const sso = page.getByRole('region', { name: 'Or use connected sign-in' })
   await expect(sso.getByRole('button', { name: /Simulated$/ })).toHaveCount(2)
 })

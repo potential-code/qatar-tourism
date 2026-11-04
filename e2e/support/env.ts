@@ -19,6 +19,8 @@ export const CONTEXT_OPTIONS: BrowserContextOptions = {
 export const ACCOUNTS = {
   admin: 'user-admin',
   maha: 'user-l0001',
+  /** Noor Haddad, the fresh learner who starts at the profile wizard. */
+  noor: 'user-l0036',
   omar: 'user-l0002',
   leila: 'user-l0003',
   daniel: 'user-l0004',
@@ -45,6 +47,7 @@ const TRAINER_EMAILS = [
 export const EMAILS = {
   admin: 'admin@example.com',
   maha: 'maha.alnouri@example.com',
+  noor: 'noor.haddad@example.com',
   mariam: 'mariam.alnuaimi@example.com',
   /** T01–T10 in order: firstname.lastname@example.com. */
   trainer: (n: number) => TRAINER_EMAILS[n - 1] as string,
