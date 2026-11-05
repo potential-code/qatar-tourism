@@ -207,7 +207,14 @@ export function applyRevision(
   const enrolment = enrolmentOf(learnerId, code)
   if (!enrolment) return null
   const choice = resolvePathFor(learnerId, code)
-  if (choice.pathId === enrolment.pathId) return { changed: false, pathName: choice.pathName }
+  if (choice.pathId === enrolment.pathId) {
+    // Same path, but the recorded reason must still say why (e.g. no longer "profile incomplete").
+    const reason = `${choice.reason}; ${reasonSuffix}`
+    if (enrolment.assignmentReason !== reason && !enrolment.overrideReason) {
+      updateRow(enrolment, { assignmentReason: reason })
+    }
+    return { changed: false, pathName: choice.pathName }
+  }
   const before = pathName(enrolment.pathId)
   updateRow(enrolment, {
     pathId: choice.pathId,

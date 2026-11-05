@@ -111,6 +111,13 @@ function assertKind(programme: ProgrammeCode, kind: AssessmentKind) {
 const ruleFor = (programme: ProgrammeCode, kind: AssessmentKind): AssessmentRuleRow | null =>
   kind === 'formative' || programme === 'C' ? null : activeRule(programme, kind)
 
+/**
+ * Program B's post-assessment has no pass mark (brief §5): the score is shown with the baseline and
+ * the improvement, and below the review threshold a review is suggested. Nothing is passed or failed.
+ */
+const isAdvisory = (programme: ProgrammeCode, kind: AssessmentKind) =>
+  programme === 'B' && kind === 'post'
+
 function passMark(kind: AssessmentKind, programme: ProgrammeCode): number | null {
   if (kind === 'formative') return THRESHOLDS.foundationQuizPass
   return ruleFor(programme, kind)?.passPercent ?? null
@@ -147,7 +154,10 @@ type Availability = {
   attemptLimit: number | null
   attemptsRemaining: number | null
   extraGranted: number
+  /** The pass requirement. Null when nothing is passed or failed, such as Program B's post. */
   passMark: number | null
+  /** Program B's post only: below this score a review is suggested. It never blocks anything. */
+  reviewMark: number | null
   timeLimitMinutes: number | null
   scorePolicy: 'best' | 'latest' | null
   passed: boolean
@@ -197,6 +207,7 @@ function availability(
       attemptsRemaining: null,
       extraGranted: 0,
       passMark: mark,
+      reviewMark: null,
       timeLimitMinutes: null,
       scorePolicy: null,
       passed,
@@ -205,7 +216,9 @@ function availability(
 
   const allow = allowance(rule, enrolment.id, assessment.id)
   const best = countedScore(rule.scorePolicy, rows)
-  const passed = rule.passPercent !== null && best !== null && best >= rule.passPercent
+  const advisory = isAdvisory(enrolment.programme, kind)
+  // A high Program B post score never closes the assessment: only the attempt limit does.
+  const passed = !advisory && rule.passPercent !== null && best !== null && best >= rule.passPercent
   let reasonCode: ReasonCode | null = null
   let reason: string | null = null
   if (locked) {
@@ -234,7 +247,8 @@ function availability(
     attemptLimit: allow.limit,
     attemptsRemaining: allow.remaining,
     extraGranted: allow.granted,
-    passMark: rule.passPercent,
+    passMark: advisory ? null : rule.passPercent,
+    reviewMark: advisory ? THRESHOLDS.programmeBReviewSuggested : null,
     timeLimitMinutes: rule.timeLimitMinutes,
     scorePolicy: rule.scorePolicy,
     passed,
@@ -645,7 +659,9 @@ function resultView(learnerId: string, attemptId: string) {
   const programme = programmeOfEnrolment(row.enrolmentId)
   const engine = isEngineAttempt(row)
   const rule = ruleById(row.ruleId) ?? ruleFor(programme, kind)
-  const mark = engine ? (ruleById(row.ruleId)?.passPercent ?? null) : passMark(kind, programme)
+  const ruleMark = engine ? (ruleById(row.ruleId)?.passPercent ?? null) : passMark(kind, programme)
+  const advisory = isAdvisory(programme, kind)
+  const mark = advisory ? null : ruleMark
   const score = row.score ?? 0
   const passed = mark === null ? null : score >= mark
   const scores = row.competencyScores ?? {}
@@ -684,7 +700,9 @@ function resultView(learnerId: string, attemptId: string) {
     : null
 
   const release = rule?.feedbackRelease ?? 'after_submission'
-  const feedbackVisible = !engine || release !== 'after_pass' || passed !== false
+  // "After pass" release on Program B's post uses the rule's percentage as the release point.
+  const feedbackVisible =
+    !engine || release !== 'after_pass' || ruleMark === null || score >= ruleMark
   const review = feedbackVisible
     ? questions.map((entry) => {
         const selected = selections.get(entry.question.questionId) ?? []
@@ -734,15 +752,14 @@ function resultView(learnerId: string, attemptId: string) {
     score,
     passMark: mark,
     passed,
-    /** Programme B's post score is advisory: it never blocks completing the programme. */
-    gate:
-      mark === null
+    /** Programme B's post score is advisory: no pass mark, and it never blocks completion. */
+    gate: advisory
+      ? ('advisory' as const)
+      : mark === null
         ? ('none' as const)
-        : programme === 'B' && kind === 'post'
-          ? ('advisory' as const)
-          : ('required' as const),
-    reviewSuggested:
-      programme === 'B' && kind === 'post' && score < THRESHOLDS.programmeBReviewSuggested,
+        : ('required' as const),
+    reviewMark: advisory ? THRESHOLDS.programmeBReviewSuggested : null,
+    reviewSuggested: advisory && score < THRESHOLDS.programmeBReviewSuggested,
     submittedAt: row.submittedAt,
     autoSubmitted: wasAutoSubmitted(row),
     answeredCount: engine ? selections.size : COMPETENCIES.length,

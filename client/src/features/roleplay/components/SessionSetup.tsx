@@ -1,3 +1,4 @@
+import type { ProgrammeCode } from '@shared/constants'
 import { Clock, Keyboard, Mic, Target } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,20 +17,23 @@ import {
 import { tr } from '@/i18n/localised'
 import type { PracticeEnrolment, PracticeMode, ScenarioSummary } from '../types'
 import { COMPETENCY_LABEL, SCENARIO_IMAGE } from '../utils/labels'
+import { defaultEnrolmentId } from '../utils/programme'
 import { DifficultyPips } from './DifficultyPips'
 import { ModeOption } from './ModeOption'
 
 interface SessionSetupProps {
   scenario: ScenarioSummary
   enrolments: PracticeEnrolment[]
+  /** The active programme (top-bar switcher): the default for "Record this practice in". */
+  programme?: ProgrammeCode | null
   onStart: (choice: { mode: PracticeMode; enrolmentId: string }) => void
 }
 
 /** Before the conversation: the goal, the visitor's opening, and Text or Voice (brief §9). */
-export function SessionSetup({ scenario, enrolments, onStart }: SessionSetupProps) {
+export function SessionSetup({ scenario, enrolments, programme, onStart }: SessionSetupProps) {
   const { t, i18n } = useTranslation('learner')
   const [mode, setMode] = useState<PracticeMode>('text')
-  const [enrolmentId, setEnrolmentId] = useState(enrolments[0]?.id ?? '')
+  const [enrolmentId, setEnrolmentId] = useState(() => defaultEnrolmentId(enrolments, programme))
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">

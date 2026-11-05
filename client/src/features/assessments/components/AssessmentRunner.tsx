@@ -1,13 +1,12 @@
 import type { Competency, ProgrammeCode } from '@shared/constants'
 import { useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Send } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { type ReactNode, useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
 import { ApiError } from '@/lib/api-error'
 import {
   type AssessmentKind,
@@ -18,6 +17,7 @@ import {
 import type { AssessmentResult, AttemptAvailability, OpenAttempt } from '../types'
 import { AssessmentTimer } from './AssessmentTimer'
 import { QuestionStep } from './QuestionStep'
+import { RunnerHeader } from './RunnerHeader'
 
 /**
  * The questions one at a time, saved as you go so you can leave and resume (brief §5). Shows the
@@ -118,96 +118,73 @@ export function AssessmentRunner({
           onExpire={onExpire}
         />
       ) : null}
-      <div className="flex flex-col gap-6 rounded-xl border bg-white p-5 shadow-sm md:p-8">
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
-            <span className="font-medium text-ink">{title}</span>
-            <span className="text-muted-foreground tabular-nums">
-              {t('runner.answered', { answered, total })}
-            </span>
-          </div>
-          {availability.attemptLimit !== null ? (
-            <p className="text-sm text-muted-foreground">
-              {t('runner.attemptOf', { no: attempt.attemptNo, total: allowed })} ·{' '}
-              {t('runner.attemptsAfter', { n: availability.attemptsRemaining ?? 0 })}
-            </p>
-          ) : null}
-          <Progress value={(answered / total) * 100} aria-label={t('runner.progress')} />
-          {resumed ? (
-            <p className="text-xs text-teal" role="status">
-              {t('runner.resumed')}
-            </p>
-          ) : null}
-          <ol className="mt-1 flex flex-wrap gap-2" aria-label={t('runner.questions')}>
-            {attempt.questions.map((q, i) => {
-              const isAnswered = (answers[q.id]?.length ?? 0) > 0
-              return (
-                <li key={q.id}>
-                  <button
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    aria-current={i === index ? 'step' : undefined}
-                    aria-label={
-                      isAnswered
-                        ? t('runner.questionAnswered', { n: i + 1 })
-                        : t('runner.questionN', { n: i + 1 })
-                    }
-                    className={
-                      i === index
-                        ? 'grid size-8 place-items-center rounded-full bg-teal text-sm font-medium text-white'
-                        : isAnswered
-                          ? 'grid size-8 place-items-center rounded-full bg-teal-mist text-sm text-teal-deep'
-                          : 'grid size-8 place-items-center rounded-full border text-sm text-muted-foreground'
-                    }
-                  >
-                    {isAnswered && i !== index ? <Check aria-hidden className="size-3.5" /> : i + 1}
-                  </button>
-                </li>
-              )
-            })}
-          </ol>
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={question.id}
-            initial={reduce ? false : { opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduce ? undefined : { opacity: 0, x: -24 }}
-            transition={{ duration: 0.3, ease: easeOut }}
-          >
-            <QuestionStep
-              question={question}
-              index={index}
-              total={total}
-              selected={current}
-              disabled={timeUp}
-              onChange={change}
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-5">
-          <div className="flex gap-2">
-            <Button variant="outline" disabled={index === 0} onClick={() => setIndex((i) => i - 1)}>
-              <ArrowLeft aria-hidden className="rtl:-scale-x-100" /> {t('runner.previous')}
-            </Button>
-            {exitAction}
-          </div>
-          {last ? (
-            <Button
-              size="lg"
-              // Wait for the last answer to save, or the submit would find it missing.
-              disabled={answered < total || save.isPending || submit.isPending || timeUp}
-              onClick={finish}
+      <div className="qt-card-elevated overflow-hidden rounded-xl">
+        <RunnerHeader
+          title={title}
+          questions={attempt.questions}
+          answers={answers}
+          index={index}
+          attemptLine={
+            availability.attemptLimit !== null
+              ? `${t('runner.attemptOf', { no: attempt.attemptNo, total: allowed })} · ${t('runner.attemptsAfter', { n: availability.attemptsRemaining ?? 0 })}`
+              : null
+          }
+          resumed={resumed}
+          onJump={setIndex}
+        />
+        <div className="flex flex-col gap-6 p-5 md:p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={question.id}
+              initial={reduce ? false : { opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reduce ? undefined : { opacity: 0, x: -24 }}
+              transition={{ duration: 0.3, ease: easeOut }}
             >
-              {submit.isPending ? t('runner.submitting') : t('runner.submit')}
-            </Button>
-          ) : (
-            <Button disabled={current.length === 0} onClick={() => setIndex((i) => i + 1)}>
-              {t('runner.next')} <ArrowRight aria-hidden className="rtl:-scale-x-100" />
-            </Button>
-          )}
+              <QuestionStep
+                question={question}
+                index={index}
+                total={total}
+                selected={current}
+                disabled={timeUp}
+                onChange={change}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex flex-col-reverse gap-3 border-t border-ink/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={index === 0}
+                onClick={() => setIndex((i) => i - 1)}
+              >
+                <ArrowLeft aria-hidden className="rtl:-scale-x-100" /> {t('runner.previous')}
+              </Button>
+              {exitAction}
+            </div>
+            {last ? (
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                // Wait for the last answer to save, or the submit would find it missing.
+                disabled={answered < total || save.isPending || submit.isPending || timeUp}
+                onClick={finish}
+              >
+                <Send aria-hidden className="rtl:-scale-x-100" />
+                {submit.isPending ? t('runner.submitting') : t('runner.submit')}
+              </Button>
+            ) : (
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={current.length === 0}
+                onClick={() => setIndex((i) => i + 1)}
+              >
+                {t('runner.next')} <ArrowRight aria-hidden className="rtl:-scale-x-100" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -24,13 +24,9 @@ export function Field({
   const { t } = useTranslation('learner')
   return (
     <div className="grid content-start gap-2">
-      <Label htmlFor={id} className="flex items-baseline gap-2">
+      <Label htmlFor={id} className="flex items-center gap-2">
         {label}
-        {optional ? (
-          <span className="font-normal text-muted-foreground text-xs">
-            {t('profile.common.optional')}
-          </span>
-        ) : null}
+        {optional ? <OptionalMark>{t('profile.common.optional')}</OptionalMark> : null}
       </Label>
       {children}
       {error ? (
@@ -49,4 +45,13 @@ export function Field({
 export function describedBy(id: string, error?: string, hint?: unknown) {
   if (error) return `${id}-error`
   return hint ? `${id}-hint` : undefined
+}
+
+/** The "Optional" marker: a quiet pill, so optional fields read at a glance (brief §4). */
+export function OptionalMark({ children }: { children: ReactNode }) {
+  return (
+    <span className="rounded-full bg-sand-deep px-2 py-0.5 font-normal text-[0.7rem] text-ink/70 uppercase tracking-[0.08em] rtl:tracking-normal">
+      {children}
+    </span>
+  )
 }

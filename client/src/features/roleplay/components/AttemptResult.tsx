@@ -1,3 +1,4 @@
+import type { ProgrammeCode } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft, Info, Keyboard, Mic, RotateCcw } from 'lucide-react'
@@ -11,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { tr } from '@/i18n/localised'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import { practiceAttemptQuery, practiceAttemptsQuery } from '../queries/roleplay.queries'
+import { mentionsCertification } from '../utils/programme'
 import { AttemptHistory } from './AttemptHistory'
 import { ChatThread } from './ChatThread'
 import { CriterionRow } from './CriterionRow'
@@ -21,8 +23,12 @@ import { ScoreReveal } from './ScoreReveal'
 export function AttemptResult({ attemptId }: { attemptId: string }) {
   const { t, i18n } = useTranslation('learner')
   const attempt = useQuery(practiceAttemptQuery(attemptId))
+  // History stays in the attempt's own programme, so A and B attempts are never mixed.
   const history = useQuery({
-    ...practiceAttemptsQuery(attempt.data?.scenarioKey),
+    ...practiceAttemptsQuery(
+      attempt.data?.scenarioKey,
+      attempt.data?.programmeCode as ProgrammeCode | undefined,
+    ),
     enabled: Boolean(attempt.data),
   })
 
@@ -147,7 +153,9 @@ export function AttemptResult({ attemptId }: { attemptId: string }) {
           )}
           <p className="mt-auto flex gap-2 rounded-lg bg-teal-mist/60 p-3 text-xs leading-relaxed text-teal-deep">
             <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-            {t('roleplay.result.formative')}
+            {mentionsCertification(a.programmeCode)
+              ? t('roleplay.result.formative')
+              : t('roleplay.result.formativeNoCertificate')}
           </p>
           <DemoBadge compact className="self-start" />
         </section>

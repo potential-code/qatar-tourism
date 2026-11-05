@@ -32,6 +32,11 @@ import {
 export interface NavContext {
   /** Programmes the learner is enrolled in; null while unknown (show everything). */
   programmes: readonly ProgrammeCode[] | null
+  /**
+   * The programme picked in the "My programmes" switcher; null while unknown. Programme-only
+   * items follow it, so a learner on B never sees A's certification tabs.
+   */
+  activeProgramme?: ProgrammeCode | null
 }
 
 /** Keys of `learner:nav.*`: the learner portal follows the visitor's language (29 Oct update). */
@@ -59,9 +64,23 @@ export interface NavItem {
   visible?: (ctx: NavContext) => boolean
 }
 
-/** Certificates belong to the Program A certification track only (brief §5: B has none). */
-const hasCertificationTrack = (ctx: NavContext) =>
-  ctx.programmes === null || ctx.programmes.includes('A')
+/**
+ * Certificates belong to the Program A certification track only (brief §5: B has none). Shown
+ * while the learner is viewing A, or before the active programme is known and A is held.
+ */
+const hasCertificationTrack = (ctx: NavContext) => {
+  if (ctx.activeProgramme) return ctx.activeProgramme === 'A'
+  return ctx.programmes === null || ctx.programmes.includes('A')
+}
+
+/**
+ * Trainer-led sessions belong to Program A; Program B has none (brief §5). Hidden while the
+ * learner is viewing B. Sessions stay reachable from A, and by URL, for anyone who wants them.
+ */
+const hasSessions = (ctx: NavContext) => {
+  if (ctx.activeProgramme) return ctx.activeProgramme !== 'B'
+  return ctx.programmes === null || ctx.programmes.some((p) => p !== 'B')
+}
 
 export interface NavSection {
   label?: string
@@ -72,6 +91,7 @@ export const LEARNER_NAV: NavSection[] = [
   {
     items: [
       { label: 'Overview', labelKey: 'overview', to: '/learner', icon: LayoutDashboard },
+      { label: 'Progress', labelKey: 'progress', to: '/learner/progress', icon: TrendingUp },
       { label: 'My learning', labelKey: 'myLearning', to: '/learner/learning', icon: BookOpen },
       {
         label: 'Assessments',
@@ -85,9 +105,14 @@ export const LEARNER_NAV: NavSection[] = [
         to: '/learner/practice',
         icon: MessagesSquare,
       },
-      { label: 'My sessions', labelKey: 'mySessions', to: '/learner/sessions', icon: CalendarDays },
+      {
+        label: 'My sessions',
+        labelKey: 'mySessions',
+        to: '/learner/sessions',
+        icon: CalendarDays,
+        visible: hasSessions,
+      },
       { label: 'Assignments', labelKey: 'assignments', to: '/learner/assignments', icon: FileText },
-      { label: 'Progress', labelKey: 'progress', to: '/learner/progress', icon: TrendingUp },
       {
         label: 'Certificates',
         labelKey: 'certificates',

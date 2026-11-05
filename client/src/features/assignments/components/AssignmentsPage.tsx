@@ -1,6 +1,5 @@
 import { type ProgrammeCode, THRESHOLDS, UPLOAD_LIMITS } from '@shared/constants'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
 import { FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { DemoBadge } from '@/components/layout/DemoBadge'
@@ -8,22 +7,26 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useActiveProgramme } from '@/features/learning/hooks/useActiveProgramme'
 import { LoadError } from '@/features/roleplay/components/LoadError'
+import { cn } from '@/lib/utils'
 import { myAssignmentsQuery } from '../queries/assignments.queries'
 import { AssignmentCard } from './AssignmentCard'
 
 const MB = 1024 * 1024
 
 /**
- * Learner Assignments: every assignment across the learner's programmes. A `programme` (from a
- * path item link) narrows the list, with a way back to all of them.
+ * Learner Assignments for the active programme (top-bar switcher, brief §5): a learner in A and B
+ * sees only the programme they are looking at. A `programme` (from a path item link) wins.
  */
-export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
+export function AssignmentsPage({ programme: linked }: { programme?: ProgrammeCode }) {
   const { t } = useTranslation('learner')
+  const active = useActiveProgramme()
   const { data, isPending, isError, refetch } = useQuery(myAssignmentsQuery())
+  const programme = linked ?? active.programme ?? undefined
   const all = data?.items ?? []
   const items = programme ? all.filter((i) => i.enrolment.programmeCode === programme) : all
-  const filtered = Boolean(programme) && items.length > 0 && items.length < all.length
+  const showScope = Boolean(programme) && active.enrolments.length > 1
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -32,7 +35,7 @@ export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
         description={t('assignments.page.description')}
         actions={<DemoBadge compact />}
       />
-      {isPending ? (
+      {isPending || active.isLoading ? (
         <div className="grid gap-5 lg:grid-cols-2">
           <Skeleton className="h-64 rounded-xl" />
           <Skeleton className="h-64 rounded-xl" />
@@ -48,32 +51,44 @@ export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
         />
       ) : (
         <Stagger className="grid gap-5 lg:grid-cols-2">
-          {filtered ? (
+          {showScope ? (
             <p className="text-muted-foreground text-sm lg:col-span-2">
-              {t('assignments.page.filtered', { code: programme })}{' '}
-              <Link to="/learner/assignments" className="font-medium text-teal underline">
-                {t('assignments.page.showAll')}
-              </Link>
+              {t('assignments.page.filtered', { code: programme })}
             </p>
           ) : null}
-          {(filtered ? items : all).map((item) => (
+          {items.map((item) => (
             <StaggerItem key={item.assignment.id} className="h-full">
               <AssignmentCard item={item} />
             </StaggerItem>
           ))}
         </Stagger>
       )}
-      <Reveal className="grid gap-4 rounded-xl border bg-card p-6 shadow-xs sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
-        <div className="grid gap-1">
-          <h2 className="font-medium text-ink">{t('assignments.page.passMarkTitle')}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t('assignments.page.passMarkBody', { score: THRESHOLDS.assignmentPass })}
-          </p>
-        </div>
-        <div className="grid gap-1">
-          <h2 className="font-medium text-ink">{t('assignments.page.revisionsTitle')}</h2>
-          <p className="text-sm text-muted-foreground">{t('assignments.page.revisionsBody')}</p>
-        </div>
+      <AssignmentRules showUploads={programme === 'A'} />
+    </div>
+  )
+}
+
+/** Pass mark and revisions apply to every assignment; file uploads are Program A only. */
+function AssignmentRules({ showUploads }: { showUploads: boolean }) {
+  const { t } = useTranslation('learner')
+  return (
+    <Reveal
+      className={cn(
+        'grid gap-4 rounded-xl border bg-card p-6 shadow-xs md:grid-cols-1',
+        showUploads ? 'sm:grid-cols-3 lg:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-2',
+      )}
+    >
+      <div className="grid gap-1">
+        <h2 className="font-medium text-ink">{t('assignments.page.passMarkTitle')}</h2>
+        <p className="text-sm text-muted-foreground">
+          {t('assignments.page.passMarkBody', { score: THRESHOLDS.assignmentPass })}
+        </p>
+      </div>
+      <div className="grid gap-1">
+        <h2 className="font-medium text-ink">{t('assignments.page.revisionsTitle')}</h2>
+        <p className="text-sm text-muted-foreground">{t('assignments.page.revisionsBody')}</p>
+      </div>
+      {showUploads ? (
         <div className="grid gap-1">
           <h2 className="font-medium text-ink">{t('assignments.page.uploadsTitle')}</h2>
           <p className="text-sm text-muted-foreground">
@@ -83,7 +98,7 @@ export function AssignmentsPage({ programme }: { programme?: ProgrammeCode }) {
             })}
           </p>
         </div>
-      </Reveal>
-    </div>
+      ) : null}
+    </Reveal>
   )
 }

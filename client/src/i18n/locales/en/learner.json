@@ -105,6 +105,37 @@
       "previous": "Previous",
       "back": "Back to my path"
     },
+    "course": {
+      "units": "{{n}} units",
+      "levels": "{{n}} levels",
+      "oneStage": "One stage",
+      "certificateTrack": "Certification track",
+      "now": "Now:",
+      "progress": "Your progress",
+      "progressAria": "Programme progress",
+      "menu": "Course menu",
+      "menuSummary": "{{done}} of {{total}} required steps complete",
+      "showMenu": "Show course menu",
+      "hideMenu": "Hide course menu",
+      "recommended": "Recommended for you",
+      "current": "Current",
+      "preAssessment": "Pre-assessment",
+      "postAssessment": "Post-assessment",
+      "stepPosition": "Step {{n}} of {{total}}",
+      "offPath": "This unit is not on your current path.",
+      "lockedNext": "Opens when earlier steps are complete",
+      "overview": "Path overview",
+      "overviewHint": "Next step and why this path",
+      "nextStep": "Your next step",
+      "start": "Start",
+      "continue": "Continue",
+      "allDoneTitle": "Every required step is complete",
+      "allDoneBody": "Your path is done. Your results and summary are on Progress.",
+      "doneOf": "{{done}} of {{total}} done",
+      "remaining": "Time remaining",
+      "recommendedCount": "{{count}} extra units",
+      "recommendedNone": "None"
+    },
     "preview": {
       "badge": "{{label}}: illustrative programme",
       "worksheet": "Story-planning worksheet",
@@ -193,7 +224,8 @@
       "noneYet": "None yet",
       "practiceNote": "Simulated AI practice, formative only",
       "competencies": "Competencies",
-      "competenciesNote": "Points out of 20 per competency in each knowledge assessment."
+      "competenciesNote": "Points out of 20 per competency in each knowledge assessment.",
+      "notTaken": "Not taken yet"
     },
     "chart": {
       "baseline": "Baseline",
@@ -203,7 +235,16 @@
       "caption": "Points per competency, out of 20",
       "captionCompared": "Points per competency, out of 20, baseline compared with {{post}}",
       "competency": "Competency",
-      "notTaken": "Not yet taken"
+      "notTaken": "Not yet taken",
+      "gain": "+{{n}} points",
+      "loss": "-{{n}} points",
+      "noChange": "No change",
+      "summaryTotal": "{{series}}: {{n}} of {{max}} points.",
+      "summaryGain": "Biggest gain: {{name}}, +{{n}} points.",
+      "summaryFocus": "Focus next on {{names}}.",
+      "emptyTitle": "Your competency profile starts with the baseline",
+      "emptyDescription": "Take the five-question baseline to see your points in each competency. Your {{post}} result will sit beside it, so you can see your growth.",
+      "measures": "What we measure"
     },
     "history": {
       "title": "Knowledge assessments",
@@ -221,6 +262,7 @@
     "practice": {
       "title": "Practice scores",
       "subtitle": "Formative only. They never count towards knowledge scores or certification.",
+      "subtitleNoCertificate": "Formative only. They never count towards knowledge scores.",
       "emptyTitle": "No practice yet",
       "emptyDescription": "Text or voice role-play with a scripted visitor, scored on five criteria.",
       "goTo": "Go to AI practice",
@@ -238,7 +280,6 @@
       "emptyTitle": "No assignments yet",
       "emptyDescription": "Assignments appear when you join Program A or Program B. Program C is an illustrative sample with no assignments.",
       "filtered": "Showing Program {{code}} assignments.",
-      "showAll": "Show all programmes",
       "loadWhat": "Your assignments",
       "passMarkTitle": "Pass mark",
       "passMarkBody": "Assignments pass at {{score}} out of 100. This is an illustrative demo setting.",
@@ -401,6 +442,7 @@
       "crumb": "AI practice",
       "title": "AI practice",
       "description": "Practise real visitor conversations by text or voice, then see your score with evidence from what you said. Practice is formative: trainer marks and programme rules decide certification.",
+      "descriptionNoCertificate": "Practise real visitor conversations by text or voice, then see your score with evidence from what you said. Practice is formative.",
       "statScored": "Conversations scored",
       "statScoredNote": "Across all four scenarios",
       "statBest": "Best score",
@@ -544,6 +586,7 @@
       "historyTitle": "Attempts at this scenario",
       "historyLoadWhat": "Attempt history",
       "formative": "AI practice is formative. Trainer marks and programme rules control certification. Accent, voice and background are never scored.",
+      "formativeNoCertificate": "AI practice is formative. Accent, voice and background are never scored.",
       "usedDemo": "Recorded demonstration was used"
     },
     "criterion": {
@@ -561,6 +604,30 @@
   },
   "profile": {
     "whyWeAsk": "Your profile helps us recommend relevant learning.",
+    "onboarding": {
+      "sections": {
+        "organisation": "Where you work",
+        "organisationDesc": "Your organisation sets the learning path family.",
+        "role": "Your role",
+        "roleDesc": "Title, function and experience tune the examples you see.",
+        "location": "Where you are based",
+        "language": "Language and accessibility",
+        "languageDesc": "How content is presented to you.",
+        "goals": "What you want to improve",
+        "time": "Time you can give each week",
+        "contact": "Contact and updates"
+      },
+      "journeyTitle": "What happens next",
+      "journey1": "Your profile, in three short steps",
+      "journey2": "Your Program B welcome",
+      "journey3": "A five-question baseline",
+      "saved": "Profile saved",
+      "noPassMark": "No pass mark",
+      "fiveQuestions": "Five scenario questions",
+      "resume": "Save and resume at any time",
+      "perWeek": "minutes a week",
+      "heroAlt": "Guests dining on a garden terrace with the Doha skyline at sunset"
+    },
     "steps": {
       "work": {
         "title": "Your work",
@@ -838,7 +905,8 @@
       "profile": "Reading your profile",
       "baseline": "Comparing your baseline competencies",
       "paths": "Matching administrator-approved paths",
-      "gates": "Checking prerequisites and level gates"
+      "gates": "Checking prerequisites and level gates",
+      "gatesB": "Checking required and recommended units"
     },
     "building": "Building your learning path",
     "inputs": {
@@ -896,6 +964,7 @@
       "notAccepted": "Not yet accepted",
       "demoNote": "Demo mode: this recommendation is produced by scripted, deterministic logic, not a live AI model. It only uses administrator-approved courses and paths.",
       "extrasNote": "Recommended extras never replace required units, never bypass a prerequisite and never change certificate requirements. An administrator can override the path with a recorded reason.",
+      "extrasNoteB": "Recommended extras never replace required units and never bypass a prerequisite. An administrator can override the path with a recorded reason.",
       "strengths": "Strengths: {{list}}. Gaps: {{gaps}}.",
       "none": "none",
       "noneYet": "none yet"

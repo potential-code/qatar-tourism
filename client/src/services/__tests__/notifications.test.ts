@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { DemoDb } from '@/mocks/db'
+import { insertRow, nowIso } from '../api'
 import { listLog, listMine, markRead, notify, notifyEach } from '../notifications.service'
 import { actAs, freshDemo } from './helpers'
 
@@ -86,5 +87,81 @@ describe('notification log', () => {
 
     actAs(db, 'user-l0001')
     await expect(listLog()).rejects.toMatchObject({ status: 403 })
+  })
+})
+
+describe('the bell by programme', () => {
+  /** A learner enrolled in A and B, with a session in each and a B submission. */
+  function dualLearner() {
+    const code = (programmeId: string) => db.programmes.find((p) => p.id === programmeId)?.code
+    const learnerIds = [...new Set(db.enrolments.map((e) => e.learnerId))]
+    const userId = learnerIds.find((id) => {
+      const held = db.enrolments.filter((e) => e.learnerId === id).map((e) => code(e.programmeId))
+      return held.includes('A') && held.includes('B')
+    })
+    if (!userId) throw new Error('no A and B learner in the seed')
+    const sessionIn = (c: string) => db.sessions.find((s) => code(s.programmeId) === c)
+    const sessionA = sessionIn('A')
+    const sessionB = sessionIn('B')
+    const enrolmentB = db.enrolments.find(
+      (e) => e.learnerId === userId && code(e.programmeId) === 'B',
+    )
+    const assignmentB = db.assignments.find((a) => a.programmeId === enrolmentB?.programmeId)
+    if (!sessionA || !sessionB || !enrolmentB || !assignmentB) throw new Error('missing seed rows')
+    const submission = insertRow('submissions', {
+      assignmentId: assignmentB.id,
+      enrolmentId: enrolmentB.id,
+      learnerId: userId,
+      version: 1,
+      status: 'submitted',
+      submittedAt: nowIso(),
+    })
+    return { userId, sessionA, sessionB, submissionB: submission.id }
+  }
+
+  test('a learner in A and B sees the active programme plus unlinked messages', async () => {
+    const { userId, sessionA, sessionB, submissionB } = dualLearner()
+    const to = { recipientIds: [userId], kind: 'k', body: 'b' }
+    notify({ ...to, eventId: 'evt-a', subject: 'A session', sessionId: sessionA.id })
+    notify({ ...to, eventId: 'evt-b', subject: 'B session', sessionId: sessionB.id })
+    notify({ ...to, eventId: `evt-return-${submissionB}`, subject: 'B returned' })
+    notify({ ...to, eventId: 'evt-account', subject: 'Account' })
+    actAs(db, userId)
+
+    const subjects = async (programme?: 'A' | 'B') =>
+      (await listMine({ programme })).items.map((n) => n.subject).sort()
+    expect(await subjects('A')).toEqual(expect.arrayContaining(['A session', 'Account']))
+    expect(await subjects('A')).not.toContain('B session')
+    expect(await subjects('A')).not.toContain('B returned')
+    expect(await subjects('B')).toEqual(
+      expect.arrayContaining(['Account', 'B returned', 'B session']),
+    )
+    expect(await subjects('B')).not.toContain('A session')
+    expect(await subjects()).toEqual(
+      expect.arrayContaining(['A session', 'Account', 'B returned', 'B session']),
+    )
+
+    const unreadB = (await listMine({ programme: 'B' })).unread
+    expect(unreadB).toBeLessThan((await listMine()).unread)
+    await markRead(undefined, { programme: 'B' })
+    expect((await listMine({ programme: 'B' })).unread).toBe(0)
+    const a = (await listMine({ programme: 'A' })).items.find((n) => n.subject === 'A session')
+    expect(a?.readAt).toBeNull()
+  })
+
+  test('the programme filter never widens the user scope', async () => {
+    const { userId, sessionB } = dualLearner()
+    notify({
+      recipientIds: [userId],
+      kind: 'k',
+      body: 'b',
+      eventId: 'evt-x',
+      subject: 'Theirs',
+      sessionId: sessionB.id,
+    })
+    actAs(db, 'user-l0002')
+    const mine = await listMine({ programme: 'B' })
+    expect(mine.items.some((n) => n.subject === 'Theirs')).toBe(false)
+    await expect(listMine({ programme: 'Z' as 'A' })).rejects.toMatchObject({ status: 400 })
   })
 })

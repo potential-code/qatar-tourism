@@ -1,7 +1,7 @@
 import { profileCompleteInput } from '@shared/schemas'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, Loader2, Save } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CircleAlert, Loader2, Save, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ApiError } from '@/lib/api-error'
+import { FieldGroupFrame } from '../components/FieldGroup'
 import { OnboardingLayout } from '../components/OnboardingLayout'
 import { WhyWeAskPanel } from '../components/WhyWeAskPanel'
 import { WizardProgress } from '../components/WizardProgress'
@@ -188,19 +189,24 @@ export function ProfileWizard() {
             steps={WIZARD_STEP_KEYS.map((k) => t(`profile.steps.${k}.title`))}
             current={step}
           />
-          <div className="grid gap-2">
-            <p className="text-sm text-teal">
+          <div className="grid gap-3">
+            <p className="inline-flex items-center gap-3 font-medium text-sm text-teal">
+              <span aria-hidden className="h-px w-8 bg-teal/60" />
               {t('profile.common.stepOf', { step, code: profile.learnerCode })}
             </p>
             <h1
               ref={headingRef}
               tabIndex={-1}
-              className="font-display font-light text-4xl outline-none md:text-5xl"
+              className="font-display font-light text-4xl leading-[1.08] outline-none md:text-5xl"
             >
               {t(`profile.steps.${stepKey}.title`)}
             </h1>
-            <p className="text-muted-foreground">
-              {t('profile.whyWeAsk')} {t(`profile.steps.${stepKey}.why`)}
+            <p className="flex max-w-2xl items-start gap-3 rounded-xl border border-teal/15 bg-white/70 p-4 text-ink/80 text-sm leading-relaxed backdrop-blur-sm">
+              <Sparkles aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />
+              <span>
+                <span className="font-medium text-ink">{t('profile.whyWeAsk')}</span>{' '}
+                {t(`profile.steps.${stepKey}.why`)}
+              </span>
             </p>
           </div>
         </div>
@@ -215,33 +221,46 @@ export function ProfileWizard() {
             exit={reduce ? undefined : { opacity: 0, x: -slide }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            {step === 1 ? <StepWork draft={draft} set={set} errors={errors} /> : null}
-            {step === 2 ? <StepLocale draft={draft} set={set} errors={errors} /> : null}
-            {step === 3 ? <StepGoals draft={draft} set={set} errors={errors} /> : null}
+            <FieldGroupFrame.Provider value="card">
+              {step === 1 ? <StepWork draft={draft} set={set} errors={errors} /> : null}
+              {step === 2 ? <StepLocale draft={draft} set={set} errors={errors} /> : null}
+              {step === 3 ? <StepGoals draft={draft} set={set} errors={errors} /> : null}
+            </FieldGroupFrame.Provider>
           </motion.div>
         </AnimatePresence>
 
         {Object.keys(errors).length > 0 ? (
-          <p role="alert" className="text-destructive text-sm">
+          <p
+            role="alert"
+            className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-destructive text-sm"
+          >
+            <CircleAlert aria-hidden className="size-4 shrink-0" />
             {t('profile.wizard.needsAttention')}
           </p>
         ) : null}
 
-        <div className="flex flex-col-reverse gap-3 border-ink/10 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <Button variant="ghost" onClick={saveForLater} disabled={busy}>
+        <div className="sticky bottom-3 z-10 flex items-center justify-between gap-2 rounded-full border border-teal-night/8 bg-white/90 p-2 shadow-[var(--qt-shadow-lg)] backdrop-blur-md sm:ps-3">
+          {/* Narrow screens keep icons for the secondary actions; the label stays the accessible name. */}
+          <Button
+            variant="ghost"
+            onClick={saveForLater}
+            disabled={busy}
+            className="max-sm:size-11 max-sm:px-0"
+          >
             <Save aria-hidden />
-            {t('profile.wizard.saveLater')}
+            <span className="max-sm:sr-only">{t('profile.wizard.saveLater')}</span>
           </Button>
-          <div className="flex gap-3">
+          <div className="flex min-w-0 flex-1 justify-end gap-2 sm:flex-none sm:gap-3">
             {step > 1 ? (
               <Button
                 variant="outline"
                 size="lg"
                 onClick={() => goTo((step - 1) as Step)}
                 disabled={busy}
+                className="max-sm:size-12 max-sm:px-0"
               >
                 <ArrowLeft aria-hidden className="rtl:-scale-x-100" />
-                {t('profile.wizard.back')}
+                <span className="max-sm:sr-only">{t('profile.wizard.back')}</span>
               </Button>
             ) : null}
             {step < 3 ? (

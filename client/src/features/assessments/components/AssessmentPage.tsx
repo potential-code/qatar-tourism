@@ -108,7 +108,7 @@ function Assessment({ programme, kind }: { programme: ProgrammeCode; kind: Asses
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       {crumbs}
       <StartPanel
         data={data}

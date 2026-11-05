@@ -8,6 +8,7 @@ import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useActiveProgramme } from '@/features/learning/hooks/useActiveProgramme'
 import { tr } from '@/i18n/localised'
 import { practiceOverviewQuery } from '../queries/roleplay.queries'
 import type { PracticeMode } from '../types'
@@ -18,6 +19,7 @@ import { SessionSetup } from './SessionSetup'
 /** One practice run: setup, then the conversation. Feedback opens on its own page. */
 export function PracticeSession({ scenarioKey }: { scenarioKey: string }) {
   const { t, i18n } = useTranslation('learner')
+  const active = useActiveProgramme()
   const { data, isPending, isError, refetch } = useQuery(practiceOverviewQuery())
   const [choice, setChoice] = useState<{ mode: PracticeMode; enrolmentId: string } | null>(null)
   const scenario = data?.scenarios.find((s) => s.key === scenarioKey)
@@ -27,7 +29,7 @@ export function PracticeSession({ scenarioKey }: { scenarioKey: string }) {
     { label: scenario ? tr(scenario.title, i18n.language) : t('roleplay.session.scenarioCrumb') },
   ]
 
-  if (isPending) {
+  if (isPending || active.isLoading) {
     return (
       <div className="flex flex-col gap-6">
         <Skeleton className="h-16 w-72" />
@@ -83,7 +85,12 @@ export function PracticeSession({ scenarioKey }: { scenarioKey: string }) {
           label={tr(data.label, i18n.language)}
         />
       ) : (
-        <SessionSetup scenario={scenario} enrolments={data.enrolments} onStart={setChoice} />
+        <SessionSetup
+          scenario={scenario}
+          enrolments={data.enrolments}
+          programme={active.programme}
+          onStart={setChoice}
+        />
       )}
     </div>
   )

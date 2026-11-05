@@ -1,4 +1,4 @@
-import type { ProgrammeCode } from '@shared/constants'
+import { PROGRAMME_CODES, type ProgrammeCode } from '@shared/constants'
 import { ROLEPLAY_SCENARIOS, SIMULATED_AI_LABEL } from '@shared/content/scenarios'
 import {
   practiceAttemptInput,
@@ -39,11 +39,17 @@ function scenarioOrThrow(key: string) {
   return scenario
 }
 
-/** Scenario picker: the four scenarios with this learner's history, and their enrolments. */
-export async function getOverview() {
+const programmeParam = z.object({ programme: z.enum(PROGRAMME_CODES).optional() })
+
+/**
+ * Scenario picker: the four scenarios with this learner's history, and their enrolments (all of
+ * them, for "Record this practice in"). With `programme`, scores count that programme only.
+ */
+export async function getOverview(programme?: ProgrammeCode) {
   await delay()
   const viewer = requireRole('learner')
-  const attempts = attemptsOf(viewer.id)
+  const scope = parseInput(programmeParam, { programme }, 'query')
+  const attempts = attemptsOf(viewer.id, undefined, scope.programme)
   return out({
     label: SIMULATED_AI_LABEL,
     enrolments: practiceEnrolments(viewer.id),
@@ -61,11 +67,13 @@ export async function getOverview() {
   })
 }
 
-export async function listAttempts(scenarioKey?: string) {
+/** The learner's attempts, optionally for one scenario and one programme. */
+export async function listAttempts(scenarioKey?: string, programme?: ProgrammeCode) {
   await delay()
   const viewer = requireRole('learner')
   const query = parseInput(practiceAttemptsQuery, scenarioKey ? { scenarioKey } : {}, 'query')
-  const rows = attemptsOf(viewer.id, query.scenarioKey)
+  const scope = parseInput(programmeParam, { programme }, 'query')
+  const rows = attemptsOf(viewer.id, query.scenarioKey, scope.programme)
   return out({
     summary: summarise(rows),
     items: rows.map((r) => toAttemptView(r.attempt, r.programmeCode)),

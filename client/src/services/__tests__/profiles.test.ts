@@ -208,3 +208,21 @@ describe('joining a programme (brief §3 routing)', () => {
     expect((await listMyEnrolments()).map((e) => e.programme)).toEqual(['A', 'B'])
   })
 })
+
+describe('completing the profile on the default path', () => {
+  test('the recorded reason no longer says the profile is incomplete', async () => {
+    const id = await registeredLearner()
+    await completeProfile({
+      ...completeBody(null),
+      organisationOther: 'Agent Z Test Studio',
+      organisationType: 'other',
+      jobFunction: 'other',
+    })
+    const programme = db.programmes.find((p) => p.code === 'B')
+    const enrolment = db.enrolments.find(
+      (e) => e.learnerId === id && e.programmeId === programme?.id,
+    )
+    expect(pathOf(id).code).toBe('B-GENERAL')
+    expect(enrolment?.assignmentReason).not.toContain('profile incomplete')
+  })
+})

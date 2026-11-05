@@ -44,7 +44,10 @@
     "title": "Program B has no required sessions",
     "onlyB": "Visitor Service Essentials is completed entirely self-paced, so you never need to book a session to finish it.",
     "both": "Your Program B journey is self-paced and never waits on a session.",
-    "tail": "The optional clinics below add live practice with a trainer. Booking one does not change your completion requirements."
+    "tail": "The optional clinics below add live practice with a trainer. Booking one does not change your completion requirements.",
+    "tailStandalone": "Booking trainer-led sessions is part of Program A, the certification track.",
+    "openA": "See Program A sessions",
+    "explore": "Explore the programmes"
   },
   "catalogue": {
     "list": "List",

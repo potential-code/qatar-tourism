@@ -104,8 +104,8 @@ describe('Program B rules (brief §5)', () => {
     expect(result.nextItem?.kind).toBe('ai_practice')
     const practice = result.items.find((i) => i.kind === 'ai_practice')
     expect(practice?.state).toBe('available')
-    // Post-assessment stays locked until the practice conversation is done.
-    expect(result.items.find((i) => i.kind === 'assessment_post')?.state).toBe('locked')
+    // The B post-assessment is open once the baseline is done (no gate in the brief).
+    expect(result.items.find((i) => i.kind === 'assessment_post')?.state).not.toBe('locked')
   })
 
   test('a pending short response is awaiting review', () => {

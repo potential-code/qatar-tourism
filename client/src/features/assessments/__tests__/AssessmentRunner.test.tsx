@@ -33,6 +33,7 @@ const availability: AttemptAvailability = {
   attemptsRemaining: 1,
   extraGranted: 0,
   passMark: 80,
+  reviewMark: null,
   timeLimitMinutes: 15,
   scorePolicy: 'best',
   passed: false,

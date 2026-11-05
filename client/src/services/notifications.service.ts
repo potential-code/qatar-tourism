@@ -1,5 +1,7 @@
+import { PROGRAMME_CODES, type ProgrammeCode } from '@shared/constants'
 import type { NotificationLogFilter } from '@shared/schemas/trainer-ops'
 import type { NotificationRow } from '@shared/types/db'
+import { z } from 'zod'
 import {
   commit,
   currentScope,
@@ -9,6 +11,7 @@ import {
   insertRow,
   nowIso,
   out,
+  parseInput,
   requireRole,
   requireUser,
   updateRow,
@@ -93,11 +96,62 @@ export function notifyEach(
 const newestFirst = (a: NotificationRow, b: NotificationRow) =>
   b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id)
 
-/** The bell: the signed-in user's own in-app notifications, newest first, and the unread count. */
-export async function listMine(limit = 20) {
+/** Assignment events carry the submission id: `evt-return-<id>`, `evt-review-<id>`, ... */
+const SUBMISSION_EVENT =
+  /^evt-(?:return|review|correct|submitted)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/
+
+const bellOptions = z.object({
+  programme: z.enum(PROGRAMME_CODES).optional(),
+  limit: z.number().int().min(1).max(100).optional(),
+})
+
+export type BellOptions = { programme?: ProgrammeCode; limit?: number }
+
+/**
+ * The programme a notification belongs to: its session's programme, or the programme of the
+ * submission an assignment event names. `null` when nothing links it to a programme (account,
+ * approval and credential messages), and those show in every programme.
+ */
+function programmeLookup() {
+  const codes = new Map(db.programmes.map((p) => [p.id, p.code]))
+  const sessions = indexBy(db.sessions, (s) => s.id)
+  const enrolments = indexBy(db.enrolments, (e) => e.id)
+  const submissions = indexBy(db.submissions, (s) => s.id)
+  return (n: NotificationRow): ProgrammeCode | null => {
+    if (n.sessionId) {
+      const session = sessions.get(n.sessionId)
+      return session ? (codes.get(session.programmeId) ?? null) : null
+    }
+    const submissionId = SUBMISSION_EVENT.exec(n.eventId)?.[1]
+    const submission = submissionId ? submissions.get(submissionId) : undefined
+    const enrolment = submission ? enrolments.get(submission.enrolmentId) : undefined
+    return enrolment ? (codes.get(enrolment.programmeId) ?? null) : null
+  }
+}
+
+/** Keeps rows of `programme` and rows linked to no programme; everything when none is given. */
+function inProgramme(programme?: ProgrammeCode): (n: NotificationRow) => boolean {
+  if (!programme) return () => true
+  const programmeOf = programmeLookup()
+  return (n) => {
+    const code = programmeOf(n)
+    return code === null || code === programme
+  }
+}
+
+/**
+ * The bell: the signed-in user's own in-app notifications, newest first, and the unread count.
+ * A learner's bell passes the active programme so a learner in A and B sees only that
+ * programme's session and assignment messages.
+ */
+export async function listMine(options: BellOptions = {}) {
   await delay()
   const user = requireUser()
-  const mine = db.notifications.filter((n) => n.recipientId === user.id && n.channel === 'in_app')
+  const { programme, limit = 20 } = parseInput(bellOptions, options, 'query')
+  const shown = inProgramme(programme)
+  const mine = db.notifications.filter(
+    (n) => n.recipientId === user.id && n.channel === 'in_app' && shown(n),
+  )
   const items = [...mine]
     .sort(newestFirst)
     .slice(0, limit)
@@ -115,16 +169,22 @@ export async function listMine(limit = 20) {
   return out({ unread: mine.filter((n) => n.readAt === null).length, items })
 }
 
-/** Marks the user's own notifications read: the given ids, or all when none are given. */
-export async function markRead(ids?: string[]) {
+/**
+ * Marks the user's own notifications read: the given ids, or all when none are given. With a
+ * programme, "all" means all the bell shows for that programme.
+ */
+export async function markRead(ids?: string[], options: Pick<BellOptions, 'programme'> = {}) {
   await delay(120)
   const user = requireUser()
+  const { programme } = parseInput(bellOptions, options, 'query')
   const wanted = ids && ids.length > 0 ? new Set(ids) : null
+  const shown = inProgramme(programme)
   const readAt = nowIso()
   let updated = 0
   for (const n of db.notifications) {
     if (n.recipientId !== user.id || n.readAt !== null) continue
     if (wanted && !wanted.has(n.id)) continue
+    if (!wanted && !shown(n)) continue
     updateRow(n, { readAt })
     updated += 1
   }

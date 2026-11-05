@@ -2,6 +2,7 @@ import { Keyboard, Mic, RotateCcw, SendHorizontal, Square } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DemoFillButton } from '@/components/DemoFillButton'
 import { spring } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -19,6 +20,10 @@ interface VoiceComposerProps {
   restore?: string | null
   onShowDemonstration: () => void
   onTypeInstead: () => void
+  /** Simulated spoken reply the presenter can drop into the transcript (never sent on its own). */
+  sampleReply?: string | null
+  /** The attempt is then labelled as using the recorded demonstration (brief §9). */
+  onSampleUsed?: () => void
 }
 
 function clock(seconds: number) {
@@ -36,6 +41,8 @@ export function VoiceComposer({
   restore,
   onShowDemonstration,
   onTypeInstead,
+  sampleReply,
+  onSampleUsed,
 }: VoiceComposerProps) {
   const reduce = useReducedMotion()
   const { t } = useTranslation('learner')
@@ -91,6 +98,22 @@ export function VoiceComposer({
     await onSend(reply)
   }
 
+  const fillSample = () => {
+    if (!sampleReply) return
+    if (stage === 'recording') {
+      speech.stop()
+      mic.stopMeter()
+    }
+    setDraft(sampleReply)
+    setStage('review')
+    onSampleUsed?.()
+  }
+
+  const sampleButton =
+    sampleReply && stage !== 'intro' ? (
+      <DemoFillButton onFill={fillSample} disabled={disabled} className="mb-3" />
+    ) : null
+
   if (
     mic.permission === 'denied' ||
     mic.permission === 'unsupported' ||
@@ -107,6 +130,7 @@ export function VoiceComposer({
 
   return (
     <div className="rounded-2xl border border-border bg-white p-4 shadow-xs">
+      {sampleButton}
       <AnimatePresence mode="wait" initial={false}>
         {stage === 'intro' ? (
           <motion.div

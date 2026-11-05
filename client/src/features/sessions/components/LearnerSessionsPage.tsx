@@ -5,10 +5,12 @@ import { CalendarSearch } from 'lucide-react'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EmptyState } from '@/components/ui/empty-state'
+import { useActiveProgramme } from '@/features/learning/hooks/useActiveProgramme'
 import { catalogueQuery, mySessionsQuery } from '../queries/sessions.queries'
 import { BookingPolicyNote } from './BookingPolicyNote'
 import { MySessionsPanel } from './MySessionsPanel'
 import { ProgrammeBNotice } from './ProgrammeBNotice'
+import { ProgrammeBSessions } from './ProgrammeBSessions'
 import { QueryErrorPanel } from './QueryErrorPanel'
 import { RequestsPanel } from './RequestsPanel'
 import { SessionCatalogue } from './SessionCatalogue'
@@ -19,14 +21,21 @@ const LIVE = ['confirmed', 'waitlisted', 'offered']
 
 /**
  * Learner booking experience (brief §6): My sessions, then the eligible catalogue. A `programme`
- * (from a path item link) narrows the catalogue to that programme's sessions.
+ * (from a path item link) narrows the catalogue to that programme's sessions. With Program B
+ * active (the route's `programme` wins over the switcher) the page only explains that B has no
+ * required sessions (brief §5) and links on.
  */
 export function LearnerSessionsPage({ programme }: { programme?: ProgrammeCode }) {
   const { t } = useTranslation('sessions')
+  const active = useActiveProgramme()
   const catalogue = useQuery(catalogueQuery())
   const mine = useQuery(mySessionsQuery())
   const browseRef = useRef<HTMLElement>(null)
 
+  if (active.isLoading) return <SessionsSkeleton />
+  if ((programme ?? active.programme) === 'B') {
+    return <ProgrammeBSessions holdsA={active.enrolments.some((e) => e.programme === 'A')} />
+  }
   if (catalogue.isPending || mine.isPending) return <SessionsSkeleton />
   if (catalogue.isError || mine.isError) {
     return (

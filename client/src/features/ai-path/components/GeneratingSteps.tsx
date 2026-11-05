@@ -1,3 +1,4 @@
+import type { ProgrammeCode } from '@shared/constants'
 import { Check, LoaderCircle } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
@@ -7,8 +8,17 @@ import { cn } from '@/lib/utils'
 
 const STEPS = ['profile', 'baseline', 'paths', 'gates'] as const
 
-/** A short, honest generation sequence: each line is a real step of the scripted logic. */
-export function GeneratingSteps({ onDone }: { onDone: () => void }) {
+/**
+ * A short, honest generation sequence: each line is a real step of the scripted logic. Program B
+ * is one stage with no levels, so its last step checks required and recommended units instead.
+ */
+export function GeneratingSteps({
+  programme,
+  onDone,
+}: {
+  programme: ProgrammeCode
+  onDone: () => void
+}) {
   const { t, i18n } = useTranslation('learner')
   const reduce = useReducedMotion()
   // Lines enter from the reading start: the left in English, the right in Arabic.
@@ -61,7 +71,9 @@ export function GeneratingSteps({ onDone }: { onDone: () => void }) {
                 />
               ) : null}
             </span>
-            {t(`aiPath.steps.${step}`)}
+            {step === 'gates' && programme === 'B'
+              ? t('aiPath.steps.gatesB')
+              : t(`aiPath.steps.${step}`)}
           </motion.li>
         ))}
       </ol>

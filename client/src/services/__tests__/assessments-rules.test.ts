@@ -289,11 +289,15 @@ describe('Pre and Post through the rules engine', () => {
     return assessments.submit(attemptId)
   }
 
-  test('pass and fail use the 80 percent mark and the best score counts', async () => {
+  test('Program B post has no pass mark, suggests review below 80 and the best score counts', async () => {
     unlockPost()
     actAs(db, MAHA)
     const first = await takeAttempt(db, 'B', 'post', ['recover_service', 'protect_information'])
-    expect(first.result.passed).toBe(false)
+    expect(first.result.passed).toBeNull()
+    expect(first.result.passMark).toBeNull()
+    expect(first.result.gate).toBe('advisory')
+    expect(first.result.reviewMark).toBe(80)
+    expect(first.result.reviewSuggested).toBe(true)
     expect(first.result.score).toBeLessThan(80)
     expect(first.result.attemptsRemaining).toBe(1)
 
@@ -311,14 +315,43 @@ describe('Pre and Post through the rules engine', () => {
     })
   })
 
-  test('a passing attempt closes the assessment', async () => {
+  test('a high Program B post score does not pass or close the assessment', async () => {
     unlockPost()
     actAs(db, MAHA)
     const { result } = await takeAttempt(db, 'B', 'post')
     expect(result.score).toBe(100)
-    expect(result.passed).toBe(true)
+    expect(result.passed).toBeNull()
     expect(result.gate).toBe('advisory')
-    await expect(assessments.start('B', 'post')).rejects.toMatchObject({ status: 400 })
+    expect(result.reviewSuggested).toBe(false)
+    expect(result.canRetry).toBe(true)
+    const state = await assessments.getState('B', 'post')
+    expect(state.passMark).toBeNull()
+    expect(state.availability).toMatchObject({
+      canStart: true,
+      reasonCode: null,
+      passed: false,
+      passMark: null,
+      reviewMark: 80,
+      attemptsRemaining: 1,
+    })
+    const overview = await assessments.overview('B')
+    expect(overview.items.find((i) => i.kind === 'post')?.reasonCode).toBeNull()
+    const retake = await assessments.start('B', 'post')
+    expect(retake.resumed).toBe(false)
+  })
+
+  test('a passing Program A final assessment closes the assessment', async () => {
+    actAs(db, IMPROVER)
+    const state = await assessments.getState('A', 'post')
+    expect(state.passMark).toBe(80)
+    expect(state.availability).toMatchObject({
+      canStart: false,
+      reasonCode: 'passed',
+      passed: true,
+      reviewMark: null,
+    })
+    expect(state.lastResult).toMatchObject({ passed: true, gate: 'required', passMark: 80 })
+    await expect(assessments.start('A', 'post')).rejects.toMatchObject({ status: 400 })
   })
 
   test('two failed attempts block a third start with the support message', async () => {

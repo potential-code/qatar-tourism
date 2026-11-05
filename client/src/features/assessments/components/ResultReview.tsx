@@ -9,21 +9,26 @@ export function ResultReview({ review }: { review: AssessmentResult['review'] })
   if (review.length === 0) return null
   return (
     <section aria-labelledby="review-title" className="flex flex-col gap-3">
-      <h2 id="review-title" className="font-display text-2xl font-normal text-ink">
+      <h2 id="review-title" className="font-display text-2xl font-normal text-ink md:text-3xl">
         {t('result.reviewTitle')}
       </h2>
-      <ol className="grid gap-3">
+      <ol className="grid gap-3" aria-labelledby="review-title">
         {review.map((q, i) => (
           <li
             key={q.id}
             lang={q.language}
             dir={q.language === 'ar' ? 'rtl' : 'ltr'}
-            className="flex flex-col gap-2 rounded-xl border bg-white p-4"
+            className="qt-card-elevated flex flex-col gap-3 rounded-xl p-4 md:p-5"
           >
             <div className="flex items-start justify-between gap-3">
-              <p className="font-medium text-ink">
-                <span className="me-2 font-display text-lg text-teal tabular-nums">{i + 1}</span>
-                {q.prompt}
+              <p className="flex items-start gap-3 font-medium text-ink">
+                <span
+                  aria-hidden
+                  className="grid size-7 shrink-0 place-items-center rounded-full bg-teal-mist font-display text-sm text-teal-deep tabular-nums"
+                >
+                  {i + 1}
+                </span>
+                <span className="pt-0.5">{q.prompt}</span>
               </p>
               <span
                 className={cn(
@@ -39,7 +44,7 @@ export function ResultReview({ review }: { review: AssessmentResult['review'] })
                 {q.isCorrect ? t('result.correct') : t('result.incorrect')}
               </span>
             </div>
-            <dl className="grid gap-1 text-sm">
+            <dl className="grid gap-1.5 rounded-lg bg-sand p-3 text-sm">
               <div className="flex flex-wrap gap-x-2">
                 <dt className="text-muted-foreground">{t('result.yourAnswer')}:</dt>
                 <dd className="text-ink">

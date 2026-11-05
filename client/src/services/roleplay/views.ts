@@ -39,13 +39,22 @@ export function practiceEnrolments(learnerId: string) {
     .sort((a, b) => a.programmeCode.localeCompare(b.programmeCode))
 }
 
-/** The learner's attempts, newest first (completedAt desc, id desc). */
-export function attemptsOf(learnerId: string, scenarioKey?: string): AttemptWithProgramme[] {
+/**
+ * The learner's attempts, newest first (completedAt desc, id desc). `programme` keeps one
+ * programme's attempts, so a learner in A and B sees the active programme's practice only.
+ */
+export function attemptsOf(
+  learnerId: string,
+  scenarioKey?: string,
+  programme?: string,
+): AttemptWithProgramme[] {
   return db.rolePlayAttempts
     .filter((a) => a.learnerId === learnerId && (!scenarioKey || a.scenarioKey === scenarioKey))
     .flatMap((attempt) => {
       const programmeCode = programmeCodeOf(attempt.enrolmentId)
-      return programmeCode ? [{ attempt, programmeCode }] : []
+      return programmeCode && (!programme || programmeCode === programme)
+        ? [{ attempt, programmeCode }]
+        : []
     })
     .sort(
       (a, b) =>

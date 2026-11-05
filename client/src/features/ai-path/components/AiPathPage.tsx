@@ -111,7 +111,7 @@ function AiPath({ ctx }: { ctx: ProgrammeContext }) {
         <>
           <InputsPanel data={rec.data} />
           {phase === 'generating' ? (
-            <GeneratingSteps onDone={() => setPhase('done')} />
+            <GeneratingSteps programme={ctx.programme} onDone={() => setPhase('done')} />
           ) : shown ? (
             <RecommendationResult data={rec.data} />
           ) : (

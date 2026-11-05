@@ -320,8 +320,9 @@ test('check 4: question bank preview, randomised attempts, pass rule, attempt li
   const start = page.getByRole('button', { name: 'Start', exact: true })
   if (await start.isVisible()) await start.click()
   const second = await answerAssessment(page, 0)
+  // Program B has no pass mark: below 80 percent a review is suggested (brief §5).
   await expect(
-    page.getByText('Not yet passed. You need 80 percent.', { exact: false }),
+    page.getByText('Your score is below 80 percent, so a short review', { exact: false }),
   ).toBeVisible()
   await expect(page.getByText('Attempts remaining: 0 of 2')).toBeVisible()
 
@@ -341,13 +342,13 @@ test('check 4: question bank preview, randomised attempts, pass rule, attempt li
   await grant.getByRole('button', { name: 'Grant extra attempt' }).click()
   await expect(page.getByText(/extra attempt/i).first()).toBeVisible()
 
-  // Attempt 3 draws a different set; answered correctly it passes.
+  // Attempt 3 draws a different set; answered correctly it scores 100, with no pass verdict.
   await signInAs(page, ID.assessment, '/learner/assessments/post')
   await page.getByRole('button', { name: 'Retry' }).click()
   if (await start.isVisible()) await start.click()
   const third = await answerAssessment(page, 10)
   expect(third.drawn.map((q) => q.code)).not.toEqual(second.drawn.map((q) => q.code))
-  await expect(page.getByText('Passed. The pass requirement is 80 percent.')).toBeVisible()
+  await expect(page.getByText('Program B has no pass mark.', { exact: false })).toBeVisible()
   await expect(page.getByText('Counted score: 100% (best score)')).toBeVisible()
 
   // The grant is in the audit trail with the reason.

@@ -7,25 +7,37 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { SimulatedTag } from '@/components/layout/SimulatedTag'
 import { Reveal, Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useActiveProgramme } from '@/features/learning/hooks/useActiveProgramme'
 import { tr } from '@/i18n/localised'
 import { qatarDateTime } from '@/lib/format/qatar-time'
 import '../utils/arabic-copy'
 import { practiceAttemptsQuery, practiceOverviewQuery } from '../queries/roleplay.queries'
+import { mentionsCertification } from '../utils/programme'
 import { AttemptHistory } from './AttemptHistory'
 import { LoadError } from './LoadError'
 import { ScenarioCard } from './ScenarioCard'
 
-/** AI practice home: the four scenarios, best and latest scores, and recent attempts. */
+/**
+ * AI practice home: the four scenarios, best and latest scores, and recent attempts, all for the
+ * active programme (top-bar switcher), so a learner in A and B never sees the two mixed.
+ */
 export function PracticeOverview() {
   const { t, i18n } = useTranslation('learner')
-  const overview = useQuery(practiceOverviewQuery())
-  const attempts = useQuery(practiceAttemptsQuery())
+  const active = useActiveProgramme()
+  const programme = active.programme ?? undefined
+  const ready = !active.isLoading
+  const overview = useQuery({ ...practiceOverviewQuery(programme), enabled: ready })
+  const attempts = useQuery({ ...practiceAttemptsQuery(undefined, programme), enabled: ready })
 
   const header = (
     <PageHeader
       image="practice"
       title={t('roleplay.overview.title')}
-      description={t('roleplay.overview.description')}
+      description={
+        mentionsCertification(programme)
+          ? t('roleplay.overview.description')
+          : t('roleplay.overview.descriptionNoCertificate')
+      }
       actions={
         <SimulatedTag label={tr(overview.data?.label ?? 'Simulated AI practice', i18n.language)} />
       }

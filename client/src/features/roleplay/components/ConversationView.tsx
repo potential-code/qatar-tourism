@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { AlertCircle, Keyboard, Mic, RotateCcw, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { tr } from '@/i18n/localised'
 import { useConversation } from '../hooks/useConversation'
 import { useSpeak } from '../hooks/useSpeak'
-import { useSubmitAttempt } from '../queries/roleplay.queries'
+import { demonstrationQuery, useSubmitAttempt } from '../queries/roleplay.queries'
 import type { PracticeMode, ScenarioSummary } from '../types'
 import { ChatThread } from './ChatThread'
 import { PracticeSidePanel } from './PracticeSidePanel'
@@ -37,6 +38,13 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
   const [demo, setDemo] = useState(false)
   const [usedDemo, setUsedDemo] = useState(false)
   const spoken = useRef(0)
+  // Presenter aid for voice mode: the demonstration's next learner line, for rooms where the
+  // browser cannot hear the microphone. It fills the editable transcript; it never sends.
+  const demonstration = useQuery({ ...demonstrationQuery(scenario.key), enabled: mode === 'voice' })
+  const learnerSoFar = chat.transcript.filter((line) => line.speaker === 'learner').length
+  const sampleReply =
+    demonstration.data?.transcript.filter((line) => line.speaker === 'learner')[learnerSoFar]
+      ?.text ?? null
 
   // In voice mode the visitor's new line is read aloud once it arrives.
   const lines = chat.transcript.length
@@ -192,6 +200,8 @@ export function ConversationView({ scenario, mode, enrolmentId, label }: Convers
                       restore={chat.failedReply}
                       onShowDemonstration={showDemo}
                       onTypeInstead={() => setTyped(true)}
+                      sampleReply={sampleReply}
+                      onSampleUsed={() => setUsedDemo(true)}
                     />
                   </motion.div>
                 )}

@@ -262,19 +262,10 @@ function lockReasonFor(e: Evidence, item: PathItemInput, f: GateFacts): string |
   if (item.kind === 'assessment_pre') return null
   if (!f.baseline) return 'Complete the baseline assessment first. It is not an entry barrier.'
 
-  if (e.programme === 'B') {
-    if (item.kind === 'assessment_post') {
-      const lessons = e.items.filter(
-        (i) =>
-          i.required &&
-          ((i.kind === 'course' && i.courseCode !== 'C05') || i.kind === 'ai_practice'),
-      )
-      if (!lessons.every((i) => itemSatisfied(e, i))) {
-        return 'Opens after your core lessons and one practice conversation.'
-      }
-    }
-    return null
-  }
+  // Program B: everything, the post-assessment included, opens once the baseline is done.
+  // The brief sets no gate before the B post-assessment, and the demo must be able to show it
+  // at any point. Completion still requires every required item (brief §5 completion settings).
+  if (e.programme === 'B') return null
 
   if (e.programme === 'A') {
     if (item.kind === 'assessment_formative' && !f.level1Units) {

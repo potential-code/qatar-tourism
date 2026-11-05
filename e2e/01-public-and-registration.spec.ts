@@ -106,14 +106,23 @@ test('2–5 min: register, profile, baseline and a generated B path', async ({ p
   await expect(units.getByText('Welcoming every visitor')).toBeVisible()
   await expect(units.getByText(/AI complaint scenario/)).toBeVisible()
   await expect(units.getByText('Recommended extra')).toBeVisible()
+  // Start this path opens the course view on the first suggested unit.
   await page.getByRole('button', { name: 'Start this path' }).click()
-  await expect(page.getByRole('heading', { name: 'My learning', level: 1 })).toBeVisible()
+  await expect(page).toHaveURL(/\/learner\/learning\/C01/)
   await expect(
-    page.getByRole('link', { name: /Step 1 .*Pre-assessment \(baseline\).*Complete/ }),
+    page.getByRole('heading', { name: 'Welcoming every visitor', level: 1 }),
   ).toBeVisible()
+  const menu = page.getByRole('navigation', { name: 'Course menu' })
+  await expect(
+    menu.getByRole('link', { name: /Pre-assessment \(baseline\).*Complete/ }),
+  ).toBeVisible()
+  // My learning is the same course view, opened on the path overview.
+  await menu.getByRole('link', { name: /Path overview/ }).click()
+  await expect(page.getByRole('heading', { name: 'My learning', level: 1 })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Why this path' })).toBeVisible()
 
   // A playable, captioned video unit.
-  await page.getByRole('link', { name: /Welcoming every visitor/ }).click()
+  await menu.getByRole('link', { name: /Welcoming every visitor/ }).click()
   await expect(
     page.getByRole('heading', { name: 'Welcoming every visitor', level: 1 }),
   ).toBeVisible()

@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, ChevronDown, Clock, Quote, ShieldCheck, Sparkles } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -8,6 +9,7 @@ import { Stagger, StaggerItem } from '@/components/motion/Reveal'
 import { easeOut } from '@/components/motion/variants'
 import { Button } from '@/components/ui/button'
 import { ItemIcon } from '@/features/learning/components/ItemIcon'
+import { journeyQuery } from '@/features/learning/queries/learning.queries'
 import { minutesLabel } from '@/features/learning/utils/format'
 import { KIND_LABEL } from '@/features/learning/utils/itemLink'
 import { tr } from '@/i18n/localised'
@@ -27,11 +29,21 @@ export function RecommendationResult({ data }: { data: Recommendation }) {
   const navigate = useNavigate()
   const programme = data.programme
 
+  const queryClient = useQueryClient()
+
+  // Start this path: open the course view on the path's next unit, or on the path overview
+  // when the next step is not a unit (for example the practice conversation).
   const start = () =>
     accept.mutate(programme, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success(t('aiPath.result.pathSet'))
-        void navigate({ to: '/learner/learning', search: { programme } })
+        const journey = await queryClient.fetchQuery(journeyQuery(programme)).catch(() => null)
+        const code = journey?.nextAction?.kind === 'course' ? journey.nextAction.courseCode : null
+        void navigate(
+          code
+            ? { to: '/learner/learning/$code', params: { code }, search: { programme } }
+            : { to: '/learner/learning', search: { programme } },
+        )
       },
       onError: (e) =>
         toast.error(e instanceof ApiError ? e.message : t('aiPath.result.saveFailed')),
@@ -205,7 +217,11 @@ export function RecommendationResult({ data }: { data: Recommendation }) {
                   <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-teal" />
                   {t('aiPath.result.demoNote')}
                 </p>
-                <p className="text-muted-foreground">{t('aiPath.result.extrasNote')}</p>
+                <p className="text-muted-foreground">
+                  {programme === 'B'
+                    ? t('aiPath.result.extrasNoteB')
+                    : t('aiPath.result.extrasNote')}
+                </p>
                 <p className="text-muted-foreground">
                   {t('aiPath.result.strengths', {
                     list:

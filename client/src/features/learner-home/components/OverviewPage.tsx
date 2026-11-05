@@ -39,15 +39,14 @@ function Overview({ ctx, profileDeferred }: { ctx: ProgrammeContext; profileDefe
   return (
     <div className="flex flex-col gap-8">
       {draftProfile ? <ProfileReminder /> : null}
-      <div className="flex flex-col">
-        <WelcomeHero
-          journey={data}
-          enrolments={ctx.enrolments}
-          programme={ctx.programme}
-          onProgramme={ctx.setProgramme}
-        />
+      <WelcomeHero
+        journey={data}
+        enrolments={ctx.enrolments}
+        programme={ctx.programme}
+        onProgramme={ctx.setProgramme}
+      >
         <NextActionCard journey={data} />
-      </div>
+      </WelcomeHero>
       {data.complete ? <CompletionCelebration journey={data} /> : null}
       <Stagger className="grid gap-6 lg:grid-cols-12">
         <StaggerItem className="*:h-full lg:col-span-7">

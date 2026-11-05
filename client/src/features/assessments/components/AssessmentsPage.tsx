@@ -67,7 +67,9 @@ function Assessments({ ctx }: { ctx: ProgrammeContext }) {
             <h1 className="font-display text-3xl font-light text-white md:text-5xl">
               {t('page.title')}
             </h1>
-            <p className="max-w-xl text-white/85">{t('page.lead')}</p>
+            <p className="max-w-xl text-white/85">
+              {ctx.programme === 'B' ? t('page.leadB') : t('page.lead')}
+            </p>
           </div>
         </div>
       </PhotoPanel>
@@ -104,7 +106,7 @@ function Assessments({ ctx }: { ctx: ProgrammeContext }) {
                 overview.data.items.length === 3 && 'md:col-span-2 xl:col-span-3',
               )}
             >
-              <MeasurementNote />
+              <MeasurementNote programme={ctx.programme} />
             </StaggerItem>
           </Stagger>
         </>
@@ -150,6 +152,7 @@ function AssessmentCard({
   const facts = [
     t('card.questions', { n: item.questions }),
     item.passMark !== null ? t('card.passRequirement', { n: item.passMark }) : t('card.noPass'),
+    item.reviewMark !== null ? t('card.reviewBelow', { n: item.reviewMark }) : null,
     item.attemptLimit !== null
       ? t('card.attempts', { left: item.attemptsRemaining ?? 0, total: allowed })
       : null,
@@ -200,8 +203,11 @@ function AssessmentCard({
   )
 }
 
-/** How improvement is measured (brief §8): the same five competencies, matched attempts only. */
-function MeasurementNote() {
+/**
+ * How improvement is measured (brief §8): the same five competencies, matched attempts only.
+ * Program B has a post-assessment, not a final assessment (brief §5).
+ */
+function MeasurementNote({ programme }: { programme: ProgrammeCode }) {
   const { t } = useTranslation('assessments')
   const names = [
     'discover_needs',
@@ -228,7 +234,9 @@ function MeasurementNote() {
           </li>
         ))}
       </ul>
-      <p className="text-sm leading-relaxed text-ink/80">{t('measure.body')}</p>
+      <p className="text-sm leading-relaxed text-ink/80">
+        {programme === 'B' ? t('measure.bodyB') : t('measure.body')}
+      </p>
     </section>
   )
 }

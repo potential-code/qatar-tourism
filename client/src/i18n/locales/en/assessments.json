@@ -2,6 +2,7 @@
   "page": {
     "title": "Assessments",
     "lead": "Short scenario questions on five competencies. Your baseline and final results measure improvement on the same skills.",
+    "leadB": "Short scenario questions on five competencies. Your baseline and post-assessment results measure improvement on the same skills.",
     "loading": "Loading assessments",
     "loadError": "This assessment could not be opened",
     "emptyTitle": "No assessments in this programme",
@@ -34,6 +35,7 @@
     "questions": "{{n}} questions",
     "passRequirement": "Pass requirement: {{n}}%",
     "noPass": "No pass mark",
+    "reviewBelow": "Review suggested below {{n}}%",
     "attempts": "Attempts remaining: {{left}} of {{total}}",
     "timeLimit": "{{n}} minute limit",
     "inProgress": "In progress, saved",
@@ -62,16 +64,19 @@
   },
   "measure": {
     "title": "How improvement is measured",
-    "body": "The baseline and the final assessment draw questions on the same five competencies. Questions are drawn at random for each new attempt and can differ in language, wording and order. Improvement compares your first baseline with the score that counts for your final assessment."
+    "body": "The baseline and the final assessment draw questions on the same five competencies. Questions are drawn at random for each new attempt and can differ in language, wording and order. Improvement compares your first baseline with the score that counts for your final assessment.",
+    "bodyB": "The baseline and the post-assessment use equivalent questions on the same five competencies. Questions are drawn at random for each new attempt and can differ in language, wording and order. Improvement compares your first baseline with your counted post-assessment score, in percentage points."
   },
   "intro": {
     "pre": "A short diagnostic on five competencies. It is taken once, has no pass mark and is not an entry barrier. It shows where your learning path should focus.",
     "post": "Questions on the same five competencies as your baseline, drawn at random for each attempt. You need {{mark}} percent to pass, and the time limit applies.",
+    "postB": "Equivalent questions on the same five competencies as your baseline, drawn at random for each attempt. There is no pass mark: your result shows your baseline, post score and improvement in percentage points. The time limit applies.",
     "formative": "Five questions on the Level 1 foundation units. You need at least {{mark}} percent to open Level 2. Targeted review and retry are available."
   },
   "start": {
     "questions": "Questions",
     "passRequirement": "Pass requirement",
+    "reviewBelow": "Review suggested below",
     "timeLimit": "Time limit",
     "attempts": "Attempts remaining",
     "scoreCounts": "Score that counts",
@@ -83,7 +88,21 @@
     "start": "Start",
     "notice": "Questions are drawn at random for each new attempt. Reloading this page resumes the same attempt, and your answers save as you go.",
     "noticeTimed": "The timer starts when you begin and keeps running if you leave. When time ends, the answers you saved are submitted automatically.",
-    "language": "Questions are shown in {{lang}}, your portal language, when a version exists."
+    "language": "Questions are shown in {{lang}}, your portal language, when a version exists.",
+    "eyebrow": {
+      "pre": "Your starting point",
+      "post": "Measure your progress",
+      "formative": "Level 1 check"
+    },
+    "howTitle": "How it works",
+    "step1TitlePre": "{{n}} scenario questions",
+    "step1Title": "{{n}} questions",
+    "step1Body": "One at a time, with a progress indicator so you always know where you are.",
+    "step2Title": "Save and resume",
+    "step2Body": "Your answers save as you go. Leave at any time and pick up where you stopped.",
+    "step3Title": "Results by competency",
+    "step3BodyPre": "See your strong areas and skill gaps, then build your learning path.",
+    "step3Body": "See how you did on each competency and what to review next."
   },
   "runner": {
     "answered": "{{answered}} of {{total}} answered",
@@ -122,8 +141,8 @@
     "passed": "Passed. The pass requirement is {{mark}} percent.",
     "failed": "Not yet passed. You need {{mark}} percent. Review the areas below and retry if an attempt remains.",
     "baselineNote": "Your baseline identifies useful learning. It is not an entry barrier, and it does not reveal the answers to the post-assessment.",
-    "advisory": "For Program B this score does not block completing the programme.",
-    "reviewSuggested": "A short review of your lowest areas is suggested. It does not block completing Program B.",
+    "advisory": "Program B has no pass mark. Your post-assessment score never blocks completing the programme.",
+    "reviewSuggested": "Your score is below {{mark}} percent, so a short review of your lowest areas is suggested. It does not block completing Program B.",
     "autoTitle": "Time ran out",
     "autoBody": "Time ran out, so your saved answers were submitted automatically. You answered {{answered}} of {{total}} questions. Unanswered questions score no points.",
     "points": "{{earned}} of {{possible}} points",
@@ -133,6 +152,7 @@
     "limitReached": "Attempt limit reached — request support",
     "limitHelp": "Contact Academy support. An authorised administrator can grant one more attempt and records the reason.",
     "feedbackHeld": "Question feedback is released once you pass.",
+    "feedbackHeldB": "Question feedback for this attempt is released later, as set by the Academy.",
     "gapsTitle": "Skill gaps found",
     "gapsBody": "These gaps were sent to your AI learning path: {{list}}.",
     "gapsNone": "No gaps found. We recommend the standard order of your path.",
@@ -151,6 +171,15 @@
     "buildPath": "Build my learning path",
     "retry": "Retry",
     "all": "All assessments",
-    "score": "Score {{n}} percent"
+    "score": "Score {{n}} percent",
+    "eyebrow": "Your result",
+    "summaryStrong": "{{strong}} of {{total}} competencies strong",
+    "byCompetencyLead": "How you did on each competency, and what to do next.",
+    "statusStrong": "Strong area",
+    "statusFocus": "Focus area",
+    "gapsEyebrow": "Focus areas for your path",
+    "gapsLead": "These gaps were sent to your AI learning path:",
+    "nextTitle": "Next: your personalised learning path",
+    "nextBody": "The AI path generator uses your profile and these results to suggest units, an order and a time estimate."
   }
 }

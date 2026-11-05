@@ -1,25 +1,28 @@
+import type { ProgrammeCode } from '@shared/constants'
 import type { PracticeAttemptInput, PracticeTurnInput } from '@shared/schemas/practice-roleplay'
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as roleplay from '@/services/roleplay.service'
 
 export const roleplayKeys = {
   all: ['roleplay'] as const,
-  overview: () => ['roleplay', 'overview'] as const,
-  attempts: (scenarioKey?: string) => ['roleplay', 'attempts', scenarioKey ?? 'all'] as const,
+  overview: (programme?: ProgrammeCode) => ['roleplay', 'overview', programme ?? 'all'] as const,
+  attempts: (scenarioKey?: string, programme?: ProgrammeCode) =>
+    ['roleplay', 'attempts', scenarioKey ?? 'all', programme ?? 'all'] as const,
   attempt: (id: string) => ['roleplay', 'attempt', id] as const,
   demonstration: (key: string) => ['roleplay', 'demonstration', key] as const,
 }
 
-export const practiceOverviewQuery = () =>
+/** Scores for `programme` (the active one); the enrolment list always has every programme. */
+export const practiceOverviewQuery = (programme?: ProgrammeCode) =>
   queryOptions({
-    queryKey: roleplayKeys.overview(),
-    queryFn: () => roleplay.getOverview(),
+    queryKey: roleplayKeys.overview(programme),
+    queryFn: () => roleplay.getOverview(programme),
   })
 
-export const practiceAttemptsQuery = (scenarioKey?: string) =>
+export const practiceAttemptsQuery = (scenarioKey?: string, programme?: ProgrammeCode) =>
   queryOptions({
-    queryKey: roleplayKeys.attempts(scenarioKey),
-    queryFn: () => roleplay.listAttempts(scenarioKey),
+    queryKey: roleplayKeys.attempts(scenarioKey, programme),
+    queryFn: () => roleplay.listAttempts(scenarioKey, programme),
   })
 
 export const practiceAttemptQuery = (id: string) =>

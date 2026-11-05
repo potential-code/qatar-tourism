@@ -1,9 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
 import type { NavContext } from '@/app/navigation'
-import { enrolmentsQuery } from '../queries/learning.queries'
+import { useActiveProgramme } from './useActiveProgramme'
 
-/** The learner's programmes, for conditional portal navigation. Unknown until loaded. */
+/**
+ * The learner's programmes and the one being viewed, for conditional portal navigation.
+ * Unknown until loaded.
+ */
 export function useLearnerNavContext(): NavContext {
-  const { data } = useQuery(enrolmentsQuery())
-  return { programmes: data ? data.items.map((e) => e.programme) : null }
+  const { enrolments, programme, isLoading } = useActiveProgramme()
+  return {
+    programmes: isLoading ? null : enrolments.map((e) => e.programme),
+    activeProgramme: programme,
+  }
 }

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowUpRight, TrendingUp } from 'lucide-react'
+import { ArrowUpRight, CircleDashed, TrendingUp } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { CountUp } from '@/components/motion/CountUp'
 import { Button } from '@/components/ui/button'
@@ -40,7 +40,7 @@ export function ScoreCard({ journey }: { journey: Journey }) {
             {baseline ? (
               <CountUp value={baseline.score} suffix="%" />
             ) : (
-              <span className="text-2xl text-white/70">{t('home.scores.none')}</span>
+              <EmptyResult label={t('home.scores.none')} />
             )}
           </dd>
         </div>
@@ -50,7 +50,7 @@ export function ScoreCard({ journey }: { journey: Journey }) {
             {post ? (
               <CountUp value={post.score} suffix="%" />
             ) : (
-              <span className="text-2xl text-white/70">{t('home.scores.notYet')}</span>
+              <EmptyResult label={t('home.scores.notYet')} />
             )}
           </dd>
         </div>
@@ -62,7 +62,7 @@ export function ScoreCard({ journey }: { journey: Journey }) {
                 <CountUp value={gainPoints} prefix={gainPoints >= 0 ? '+' : ''} />
               </span>
             ) : (
-              <span className="text-2xl text-white/70">{t('home.scores.pending')}</span>
+              <EmptyResult label={t('home.scores.pending')} />
             )}
           </dd>
         </div>
@@ -80,5 +80,15 @@ export function ScoreCard({ journey }: { journey: Journey }) {
         </Link>
       </Button>
     </section>
+  )
+}
+
+/** No result yet: white UI text with an icon, readable on teal (AA) and not colour-only. */
+function EmptyResult({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-2.5 py-1 font-sans text-sm font-medium text-white">
+      <CircleDashed aria-hidden className="size-3.5" />
+      {label}
+    </span>
   )
 }

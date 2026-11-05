@@ -20,15 +20,17 @@ import { myCertificatesQuery } from '../queries/certificates.queries'
 
 /**
  * Certificates (brief §5 nav, §6). Only a certification-track enrolment (Program A) can hold
- * one; Program B and C never show a certificate. Renewal and the full wallet live in My
- * Learning Record.
+ * one; Program B and C never show a certificate. The page follows the active programme: with
+ * Program B active it explains there is no certificate and offers the switch to A when held.
+ * Renewal and the full wallet live in My Learning Record.
  */
 export function CertificatesPage() {
   const { t } = useTranslation('record')
   const active = useActiveProgramme()
   const mine = useQuery(myCertificatesQuery())
   const hasA = active.enrolments.some((e) => e.programme === 'A')
-  const journeyA = useQuery({ ...journeyQuery('A'), enabled: hasA })
+  const showA = hasA && active.programme !== 'B'
+  const journeyA = useQuery({ ...journeyQuery('A'), enabled: showA })
 
   return (
     <div className="flex flex-col gap-8">
@@ -50,17 +52,25 @@ export function CertificatesPage() {
         <Skeleton className="h-64 w-full rounded-xl" aria-label={t('common.loading')} />
       ) : active.error || mine.error ? (
         <LoadError error={active.error ?? mine.error} onRetry={() => void mine.refetch()} />
-      ) : !hasA ? (
+      ) : !showA ? (
         <div className="rounded-xl border bg-white">
           <EmptyState
             icon={ShieldCheck}
             size="lg"
-            title={t('certificate.list.noTrackTitle')}
-            description={t('certificate.list.noTrackBody')}
+            title={hasA ? t('certificate.list.noTrackTitleB') : t('certificate.list.noTrackTitle')}
+            description={
+              hasA ? t('certificate.list.noTrackBodyB') : t('certificate.list.noTrackBody')
+            }
             action={
-              <Button asChild variant="outline">
-                <Link to={'/programmes/A' as never}>{t('certificate.list.aboutA')}</Link>
-              </Button>
+              hasA ? (
+                <Button onClick={() => active.setProgramme('A')}>
+                  {t('certificate.list.switchA')}
+                </Button>
+              ) : (
+                <Button asChild variant="outline">
+                  <Link to={'/programmes/A' as never}>{t('certificate.list.aboutA')}</Link>
+                </Button>
+              )
             }
           />
         </div>

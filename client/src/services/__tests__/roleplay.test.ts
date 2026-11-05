@@ -6,6 +6,8 @@ import { actAs, freshDemo } from './helpers'
 
 const MAHA = 'user-l0001'
 const OMAR = 'user-l0002'
+/** Enrolled in Program A and Program B in the seed. */
+const DUAL = 'user-l0070'
 const REPLIES = DEMONSTRATION_REPLIES['changed-booking'] as readonly string[]
 
 let db: DemoDb
@@ -105,5 +107,38 @@ describe('AI practice service', () => {
     await expect(
       nextTurn({ scenarioKey: 'changed-booking', learnerTurns: ['Hi'] }),
     ).rejects.toMatchObject({ status: 403 })
+  })
+
+  test('overview and attempts narrow to one programme for a learner in A and B', async () => {
+    actAs(db, DUAL)
+    const enrolments = (await getOverview()).enrolments
+    const a = enrolments.find((e) => e.programmeCode === 'A')
+    const b = enrolments.find((e) => e.programmeCode === 'B')
+    if (!a || !b) throw new Error('the learner is not in A and B')
+    const run = (enrolmentId: string) =>
+      createAttempt({
+        enrolmentId,
+        scenarioKey: 'changed-booking',
+        mode: 'text',
+        learnerTurns: REPLIES,
+      })
+    const inA = await run(a.id)
+    const inB = await run(b.id)
+
+    const listB = await listAttempts(undefined, 'B')
+    expect(listB.items.every((i) => i.programmeCode === 'B')).toBe(true)
+    expect(listB.items.map((i) => i.id)).toContain(inB.id)
+    expect(listB.items.map((i) => i.id)).not.toContain(inA.id)
+    expect((await listAttempts('changed-booking', 'A')).items.map((i) => i.id)).not.toContain(
+      inB.id,
+    )
+    expect((await listAttempts()).items.map((i) => i.id)).toEqual(
+      expect.arrayContaining([inA.id, inB.id]),
+    )
+
+    const overviewB = await getOverview('B')
+    expect(overviewB.enrolments).toHaveLength(enrolments.length)
+    expect(overviewB.summary.attempts).toBe(listB.items.length)
+    await expect(getOverview('Z' as 'A')).rejects.toMatchObject({ status: 400 })
   })
 })
