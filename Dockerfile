@@ -29,7 +29,7 @@ RUN bun run build
 ##############################################################################
 # Stage 2: serve
 ##############################################################################
-FROM nginx:1.29-alpine AS runtime
+FROM nginx:1.30.7-alpine AS runtime
 
 # htpasswd, for the Basic Auth file rebuilt on each start.
 RUN apk add --no-cache apache2-utils
